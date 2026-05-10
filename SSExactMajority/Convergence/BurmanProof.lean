@@ -533,14 +533,47 @@ def HeapPrefix (C : Config (AgentState n) Opinion n) (k : ℕ) : Prop :=
 
 lemma FreshRankingStart.to_heapPrefix_one
     {C : Config (AgentState n) Opinion n} (hSeed : FreshRankingStart C) :
-    HeapPrefix C 1 := by sorry
+    HeapPrefix C 1 := by
+  obtain ⟨root, hroot_settled, hroot_rank, hroot_children, hothers⟩ := hSeed
+  refine ⟨by omega, ?_, ?_, ?_, ?_⟩
+  · -- All Settled agents have rank < 1
+    intro w hw; by_cases h : w = root
+    · subst h; omega
+    · exact absurd hw (by rw [hothers w h]; decide)
+  · -- Rank 0 has a unique Settled holder
+    intro r hr; have : r = 0 := by omega; subst this
+    exact ⟨root, ⟨hroot_settled, hroot_rank⟩,
+      fun w ⟨hw_s, hw_r⟩ => by
+        by_contra hne
+        exact absurd hw_s (by rw [hothers w hne]; decide)⟩
+  · -- Every agent is Settled or Unsettled
+    intro w; by_cases h : w = root
+    · exact Or.inl (h ▸ hroot_settled)
+    · exact Or.inr (hothers w h)
+  · -- Children counters match heapChildrenBefore 1
+    intro w hw; by_cases h : w = root
+    · subst h; simp [hroot_children, heapChildrenBefore]
+    · exact absurd hw (by rw [hothers w h]; decide)
 
 lemma FreshRankingStart.to_timerGood {C : Config (AgentState n) Opinion n}
     (hn4 : 4 ≤ n) (hSeed : FreshRankingStart C) :
-    SettledMedianTimerGood C := by sorry
+    SettledMedianTimerGood C := by
+  intro μ hμ_settled hμ_med
+  obtain ⟨root, hroot_settled, hroot_rank, _, hothers⟩ := hSeed
+  -- μ must be root (only Settled agent)
+  by_cases h : μ = root
+  · -- μ = root: rank.val = 0, so rank.val + 1 = 1. ceilHalf n ≥ 2 for n ≥ 4.
+    subst h; rw [hroot_rank] at hμ_med; unfold ceilHalf at hμ_med; omega
+  · -- μ ≠ root: μ is Unsettled, contradicts hμ_settled
+    exact absurd hμ_settled (by rw [hothers μ h]; decide)
 
 lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
-    (hHeap : HeapPrefix C n) : InSrank C := by sorry
+    (hHeap : HeapPrefix C n) : InSrank C := by
+  obtain ⟨_, hRankBound, hUnique, hRoles, _⟩ := hHeap
+  -- From hUnique: each rank r < n has a UNIQUE Settled holder.
+  -- So there's an injective map Fin n → Fin n (rank → holder).
+  -- By Fintype, this means ALL agents are Settled and ranks are injective.
+  sorry
 
 /-- The ONE protocol-specific lemma: recruit rank k into the heap prefix. -/
 theorem heapPrefix_recruit_step [Inhabited (Fin n × Fin n)]
