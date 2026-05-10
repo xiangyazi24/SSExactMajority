@@ -499,13 +499,15 @@ theorem phase3b_execute_reset
       (∀ w : Fin n, (C' w).1.role = .Settled ∨ (C' w).1.role = .Unsettled) := by
   sorry
 
-/-- Phase 3b+3c: RESET + leader election → FreshRankingStart. -/
+/-- Phase 3b+3c: RESET + leader election → FreshRankingStart.
+Needs ≥ 1 leader to produce a Settled root after RESET. -/
 theorem phase3bc_reset_and_elect
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hDormant : AllResettingDormant C) :
+    (hDormant : AllResettingDormant C)
+    (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
     ∃ L : List (Fin n × Fin n),
       FreshRankingStart (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
   sorry
@@ -540,7 +542,10 @@ theorem phase34_rerank
   -- Phase 3a: dormancy countdown
   obtain ⟨L1, h1⟩ := phase3a_dormancy_countdown C hAllReset
   -- Phase 3b+3c: RESET + leader election → FreshRankingStart
+  -- Need leader existence. This comes from the reset trigger mechanism:
+  -- collision (Part 2) and propagation reset (lines 19-24) both set leader := L.
   obtain ⟨L2, h2⟩ := phase3bc_reset_and_elect hn4 (runPairs P C L1) h1
+    sorry -- leader existence: ∃ ℓ, leader = L (from how reset was triggered)
   -- Phase 4: binary tree → InSrank
   obtain ⟨L3, h3⟩ := phase4_binary_tree hn4
     (runPairs P (runPairs P C L1) L2) h2
