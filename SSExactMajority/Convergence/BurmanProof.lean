@@ -466,7 +466,57 @@ theorem phase2_propagate_reset
   -- With Rmax ≥ n and at most n-1 propagation steps, resetcount stays > 0.
   sorry
 
-/-- Phase 3+4: From all-Resetting (with leader election), reach InSrank. -/
+/-- Phase 3a: countdown delaytimers to 0 for all Resetting agents. -/
+theorem phase3a_dormancy_countdown
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting) :
+    ∃ L : List (Fin n × Fin n),
+      AllResettingDormant (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
+  sorry
+
+/-- Phase 3b: execute RESET from dormant config → leaders Settled, followers Unsettled. -/
+theorem phase3b_execute_reset
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    (hDormant : AllResettingDormant C) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      -- After RESET: leaders become Settled(rank 0), followers become Unsettled
+      -- At least one leader exists (from IsAwakeningConfig or from protocol invariant)
+      (∃ ℓ : Fin n, (C' ℓ).1.role = .Settled ∧ (C' ℓ).1.rank = ⟨0, hn⟩) ∧
+      (∀ w : Fin n, (C' w).1.role = .Settled ∨ (C' w).1.role = .Unsettled) := by
+  sorry
+
+/-- Phase 3c: leader election — reduce to single leader. -/
+theorem phase3c_leader_election
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (C : Config (AgentState n) Opinion n)
+    (hLeader : ∃ ℓ : Fin n, (C ℓ).1.role = .Settled ∧ (C ℓ).1.rank = ⟨0, hn⟩)
+    (hRoles : ∀ w : Fin n, (C w).1.role = .Settled ∨ (C w).1.role = .Unsettled) :
+    ∃ L : List (Fin n × Fin n),
+      IsLeaderConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) hn := by
+  sorry
+
+/-- Phase 4: binary tree recruitment → InSrank. -/
+theorem phase4_binary_tree
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (C : Config (AgentState n) Opinion n)
+    (hLeader : IsLeaderConfig C hn) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      InSrank C' ∧
+      ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
+       IsConsensusConfig C') := by
+  sorry
+
+/-- Phase 3+4 composition: all-Resetting → InSrank. -/
 theorem phase34_rerank
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -478,7 +528,23 @@ theorem phase34_rerank
       InSrank C' ∧
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
-  sorry
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  -- Phase 3a: dormancy countdown
+  obtain ⟨L1, h1⟩ := phase3a_dormancy_countdown C hAllReset
+  -- Phase 3b: execute RESET
+  obtain ⟨L2, h2⟩ := phase3b_execute_reset (runPairs P C L1) h1
+  -- Phase 3c: leader election
+  obtain ⟨L3, h3⟩ := phase3c_leader_election hn4
+    (runPairs P (runPairs P C L1) L2)
+    (by rw [← runPairs_append]; exact h2.1)
+    (by rw [← runPairs_append]; exact h2.2)
+  -- Phase 4: binary tree
+  obtain ⟨L4, h4⟩ := phase4_binary_tree hn4
+    (runPairs P (runPairs P (runPairs P C L1) L2) L3) h3
+  -- Compose
+  refine ⟨L1 ++ L2 ++ L3 ++ L4, ?_⟩
+  simp only [runPairs_append, List.append_assoc] at h4 ⊢
+  exact h4
 
 /-! ### Phase 1a: Collision detection (same-rank Settled → Resetting)
 
