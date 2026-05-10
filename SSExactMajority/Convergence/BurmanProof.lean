@@ -505,6 +505,54 @@ theorem phase3bc_from_awakening
       FreshRankingStart (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
   sorry
 
+/-! ### Phase 4 infrastructure (from ChatGPT)
+
+HeapPrefix-based induction: grow the binary tree rank by rank. -/
+
+def heapParent (k : ℕ) : ℕ := (k - 1) / 2
+def heapChildIndex (k : ℕ) : ℕ := (k - 1) % 2
+
+def heapChildrenBefore (k r : ℕ) : ℕ :=
+  (if 2 * r + 1 < k then 1 else 0) + (if 2 * r + 2 < k then 1 else 0)
+
+lemma heap_parent_rank {k : ℕ} (hk : 1 ≤ k) :
+    2 * heapParent k + heapChildIndex k + 1 = k := by
+  unfold heapParent heapChildIndex; omega
+
+def SettledMedianTimerGood (C : Config (AgentState n) Opinion n) : Prop :=
+  ∀ μ : Fin n, (C μ).1.role = .Settled →
+    (C μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C μ).1.timer
+
+def HeapPrefix (C : Config (AgentState n) Opinion n) (k : ℕ) : Prop :=
+  k ≤ n ∧
+  (∀ w, (C w).1.role = .Settled → (C w).1.rank.val < k) ∧
+  (∀ r, r < k → ∃! w : Fin n, (C w).1.role = .Settled ∧ (C w).1.rank.val = r) ∧
+  (∀ w, (C w).1.role = .Settled ∨ (C w).1.role = .Unsettled) ∧
+  (∀ w, (C w).1.role = .Settled →
+    (C w).1.children = heapChildrenBefore k (C w).1.rank.val)
+
+lemma FreshRankingStart.to_heapPrefix_one
+    {C : Config (AgentState n) Opinion n} (hSeed : FreshRankingStart C) :
+    HeapPrefix C 1 := by sorry
+
+lemma FreshRankingStart.to_timerGood {C : Config (AgentState n) Opinion n}
+    (hn4 : 4 ≤ n) (hSeed : FreshRankingStart C) :
+    SettledMedianTimerGood C := by sorry
+
+lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
+    (hHeap : HeapPrefix C n) : InSrank C := by sorry
+
+/-- The ONE protocol-specific lemma: recruit rank k into the heap prefix. -/
+theorem heapPrefix_recruit_step [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} {k : ℕ}
+    (hk_pos : 1 ≤ k) (hk_lt : k < n)
+    (C : Config (AgentState n) Opinion n)
+    (hHeap : HeapPrefix C k) (hTimer : SettledMedianTimerGood C) :
+    ∃ parent child : Fin n,
+      let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C [(parent, child)]
+      HeapPrefix C' (k + 1) ∧ SettledMedianTimerGood C' := by sorry
+
+/-- Phase 4: binary tree recruitment → InSrank (ChatGPT induction on n-k). -/
 theorem phase4_binary_tree
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -516,7 +564,31 @@ theorem phase4_binary_tree
       InSrank C' ∧
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
-  sorry
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hHeap₁ := FreshRankingStart.to_heapPrefix_one hSeed
+  have hTimer₁ := FreshRankingStart.to_timerGood hn4 hSeed
+  -- Grow from HeapPrefix 1 to HeapPrefix n by induction on n - k
+  suffices grow : ∀ fuel k (Ck : Config (AgentState n) Opinion n),
+      n - k = fuel → 1 ≤ k → k ≤ n →
+      HeapPrefix Ck k → SettledMedianTimerGood Ck →
+      ∃ Ltail, HeapPrefix (runPairs P Ck Ltail) n ∧
+        SettledMedianTimerGood (runPairs P Ck Ltail) by
+    obtain ⟨L, hL, hT⟩ := grow (n - 1) 1 C rfl (by omega) (by omega) hHeap₁ hTimer₁
+    exact ⟨L, HeapPrefix.to_InSrank hL,
+      Or.inl (fun μ hμ => hT μ (hL.1 ▸ (HeapPrefix.to_InSrank hL).allSettled μ) hμ)⟩
+  intro fuel
+  induction fuel using Nat.strongRecOn with
+  | ind fuel IH =>
+    intro k Ck hFuel hk_pos hk_le hHeap hTimer
+    by_cases hk_done : k = n
+    · subst k; exact ⟨[], by simpa [runPairs]⟩
+    · have hk_lt : k < n := Nat.lt_of_le_of_ne hk_le hk_done
+      obtain ⟨parent, child, hStep⟩ :=
+        heapPrefix_recruit_step hk_pos hk_lt Ck hHeap hTimer
+      obtain ⟨Ltail, hTail⟩ := IH (n - (k + 1)) (by omega) (k + 1)
+        (runPairs P Ck [(parent, child)]) rfl (by omega) (by omega) hStep.1 hStep.2
+      exact ⟨[(parent, child)] ++ Ltail, by rwa [runPairs_append]⟩
 
 /-- Phase 3+4 composition: all-Resetting → InSrank. -/
 theorem phase34_rerank
