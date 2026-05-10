@@ -569,10 +569,9 @@ lemma FreshRankingStart.to_timerGood {C : Config (AgentState n) Opinion n}
 
 lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
     (hHeap : HeapPrefix C n) : InSrank C := by
-  obtain ⟨_, hRankBound, hUnique, hRoles, _⟩ := hHeap
-  -- From hUnique: each rank r < n has a UNIQUE Settled holder.
-  -- So there's an injective map Fin n → Fin n (rank → holder).
-  -- By Fintype, this means ALL agents are Settled and ranks are injective.
+  -- n unique Settled rank holders → injective map Fin n → Fin n → surjective → all Settled
+  -- Rank injectivity follows from uniqueness of holders
+  -- Asked ChatGPT for Fintype cardinality proof
   sorry
 
 /-- The ONE protocol-specific lemma: recruit rank k into the heap prefix. -/
