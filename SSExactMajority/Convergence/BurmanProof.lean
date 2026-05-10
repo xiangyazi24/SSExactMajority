@@ -636,7 +636,9 @@ theorem phase34_rerank
        IsConsensusConfig C') := by
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   -- Phase 3a: dormancy countdown
-  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 C hAllReset sorry
+  -- Leader existence: collision sets leader := L, propagation preserves ≥ 1 leader
+  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 C hAllReset
+    (sorry : ∃ ℓ : Fin n, (C ℓ).1.leader = .L)
   -- Phase 3b+3c: RESET + leader election → FreshRankingStart
   -- Need leader existence. This comes from the reset trigger mechanism:
   -- collision (Part 2) and propagation reset (lines 19-24) both set leader := L.
