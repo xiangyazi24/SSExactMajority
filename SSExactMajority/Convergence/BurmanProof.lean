@@ -401,61 +401,48 @@ theorem unsettled_branch_eventually_reset_or_allSettled
 Each phase takes a precondition and produces a list schedule + post-condition.
 The full convergence proof composes them via runPairs_append. -/
 
-/-- Phase 1: From non-InSrank config, produce a config with ≥ 1 Resetting agent. -/
-theorem phase1_trigger_reset
+/-- Phase 1: From ANY config, reach InSrank OR produce ≥ 1 Resetting agent.
+(ChatGPT insight: returning InSrank directly handles the case where
+Unsettled agents get recruited to Settled without triggering reset.) -/
+theorem phase1_trigger_reset_or_InSrank
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
-    (C : Config (AgentState n) Opinion n) (hNotInSrank : ¬InSrank C) :
+    (C : Config (AgentState n) Opinion n) :
     ∃ L : List (Fin n × Fin n),
-      ∃ w : Fin n,
-        (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L w).1.role = .Resetting := by
+      let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      InSrank C' ∨ (∃ w : Fin n, (C' w).1.role = .Resetting) := by
   classical
+  -- Case 1: already InSrank
+  by_cases hInSrank : InSrank C
+  · exact ⟨[], Or.inl hInSrank⟩
+  -- Case 2: some agent already Resetting
+  by_cases hSomeResetting : ∃ w : Fin n, (C w).1.role = .Resetting
+  · obtain ⟨w, hw⟩ := hSomeResetting
+    exact ⟨[], Or.inr ⟨w, hw⟩⟩
+  push_neg at hSomeResetting
+  -- Case 3: all Settled but not InSrank → collision
   by_cases hAllSettled : ∀ w : Fin n, (C w).1.role = .Settled
-  · -- All Settled but not InSrank → collision
-    obtain ⟨u, v, _huv, hu_reset, _⟩ :=
-      trigger_reset_from_all_settled_non_InSrank hAllSettled hNotInSrank
-    refine ⟨[(u, v)], u, ?_⟩
-    simpa [runPairs] using hu_reset
-  · -- Not all Settled
-    by_cases hSomeResetting : ∃ w : Fin n, (C w).1.role = .Resetting
-    · obtain ⟨w, hw⟩ := hSomeResetting
-      exact ⟨[], w, hw⟩
-    · -- No Resetting, not all Settled → some Unsettled
-      push_neg at hSomeResetting
-      have hUnsettled : ∃ w : Fin n, (C w).1.role = .Unsettled := by
-        push_neg at hAllSettled
-        obtain ⟨w, hw⟩ := hAllSettled
-        exact ⟨w, by cases h : (C w).1.role <;> simp_all⟩
-      -- Use ChatGPT's induction: unsettledMass decreases at each step
-      obtain ⟨L, hL⟩ := unsettled_branch_eventually_reset_or_allSettled
-        hn4 C hUnsettled (fun w => hSomeResetting w)
-      cases hL with
-      | inl hReset => exact ⟨L, hReset⟩
-      | inr hAllSettled' =>
-        -- All Settled after L. If InSrank: done (but goal is ∃ Resetting, contradiction?).
-        -- If not InSrank: collision.
-        set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-        set C' := runPairs P C L
-        by_cases hS : InSrank C'
-        · -- InSrank reached! But we need Resetting, not InSrank.
-          -- Actually phase1 goal is just ∃ w Resetting. If we reached InSrank
-          -- without Resetting, return to the caller which handles InSrank separately.
-          -- This case shouldn't happen in the not-InSrank branch.
-          -- But the Unsettled agents becoming Settled might create InSrank!
-          exfalso; exact hNotInSrank (by
-            -- C is not InSrank but runPairs P C L IS InSrank? That's fine,
-            -- but we're proving ∃ L, ∃ w Resetting. If C' is InSrank with no
-            -- Resetting, we need a different approach.
-            -- Actually: let the CALLER handle this. Return InSrank via a
-            -- modified phase1 that returns Resetting ∨ InSrank.
-            sorry)
-        · -- Not InSrank but all Settled → collision
-          obtain ⟨u, v, _huv, hu_res, _⟩ :=
-            trigger_reset_from_all_settled_non_InSrank hAllSettled' hS
-          refine ⟨L ++ [(u, v)], u, ?_⟩
-          rw [runPairs_append]
-          simpa [runPairs] using hu_res
+  · obtain ⟨u, v, _huv, hu_reset, _⟩ :=
+      trigger_reset_from_all_settled_non_InSrank hAllSettled hInSrank
+    exact ⟨[(u, v)], Or.inr ⟨u, by simpa [runPairs] using hu_reset⟩⟩
+  · -- Case 4: some Unsettled, no Resetting → induction on unsettledMass
+    push_neg at hAllSettled
+    have hUnsettled : ∃ w : Fin n, (C w).1.role = .Unsettled := by
+      obtain ⟨w, hw⟩ := hAllSettled
+      exact ⟨w, by cases h : (C w).1.role <;> simp_all⟩
+    obtain ⟨L, hL⟩ := unsettled_branch_eventually_reset_or_allSettled
+      hn4 C hUnsettled (fun w => hSomeResetting w)
+    set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    cases hL with
+    | inl hReset => exact ⟨L, Or.inr hReset⟩
+    | inr hAllSettled' =>
+      by_cases hS : InSrank (runPairs P C L)
+      · exact ⟨L, Or.inl hS⟩
+      · obtain ⟨u, v, _huv, hu_res, _⟩ :=
+          trigger_reset_from_all_settled_non_InSrank hAllSettled' hS
+        exact ⟨L ++ [(u, v)], Or.inr ⟨u, by
+          rw [runPairs_append]; simpa [runPairs] using hu_res⟩⟩
 
 /-- Phase 2: From config with ≥ 1 Resetting, spread to all agents. -/
 theorem phase2_propagate_reset
@@ -602,16 +589,27 @@ theorem burmanConvergence_concrete
           sorry
       · -- Not InSrank: compose phases via runPairs (ChatGPT pattern).
         set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-        obtain ⟨L1, h1⟩ := phase1_trigger_reset hn4 hEmax hDmax C₀ hInSrank
-        obtain ⟨L2, h2_raw⟩ := phase2_propagate_reset (show 1 < Dmax by omega)
-          (runPairs P C₀ L1) h1
-        have h2 : ∀ w, (runPairs P C₀ (L1 ++ L2) w).1.role = .Resetting := by
-          intro w; have := h2_raw w; rwa [runPairs_append] at this
-        obtain ⟨L34, h34⟩ := phase34_rerank hn4 (runPairs P C₀ (L1 ++ L2)) h2
-        apply exists_schedule_of_runPairs P C₀ (L1 ++ L2 ++ L34)
-        constructor
-        · rw [runPairs_append]; exact h34.1
-        · rw [runPairs_append]; exact h34.2
+        obtain ⟨L1, h1⟩ := phase1_trigger_reset_or_InSrank hn4 hEmax hDmax C₀
+        cases h1 with
+        | inl hInSrank₁ =>
+          -- Phase 1 reached InSrank directly (via recruitment)
+          by_cases h_timer₁ : ∀ μ : Fin n, (runPairs P C₀ L1 μ).1.rank.val + 1 = ceilHalf n →
+                2 ≤ (runPairs P C₀ L1 μ).1.timer
+          · apply exists_schedule_of_runPairs P C₀ L1
+            exact ⟨hInSrank₁, Or.inl h_timer₁⟩
+          · -- InSrank but timer < 2: trigger reset from there
+            sorry
+        | inr hReset₁ =>
+          -- Phase 1 produced Resetting → continue with phase 2+3+4
+          obtain ⟨L2, h2_raw⟩ := phase2_propagate_reset (show 1 < Dmax by omega)
+            (runPairs P C₀ L1) hReset₁
+          have h2 : ∀ w, (runPairs P C₀ (L1 ++ L2) w).1.role = .Resetting := by
+            intro w; have := h2_raw w; rwa [runPairs_append] at this
+          obtain ⟨L34, h34⟩ := phase34_rerank hn4 (runPairs P C₀ (L1 ++ L2)) h2
+          apply exists_schedule_of_runPairs P C₀ (L1 ++ L2 ++ L34)
+          constructor
+          · rw [runPairs_append]; exact h34.1
+          · rw [runPairs_append]; exact h34.2
   epidemic := fun C₀ h_correct => by
     -- From C₀ with ≥ 1 correct answer, reach InSswap + all correct + timer ≥ 1.
     --
