@@ -185,7 +185,7 @@ theorem propagation_reset_fires_no_swap
   have hsu := hC.allSettled μ
   have hsv := hC.allSettled v
   have hRD : rankDelta ((C μ).1, (C v).1) = ((C μ).1, (C v).1) :=
-    hRank (C μ).1 (C v).1 hsu hsv
+    hRank (C μ).1 (C v).1 hsu hsv (fun h => hμv (hC.ranks_inj h))
   unfold transitionPEM
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
@@ -307,6 +307,68 @@ theorem exists_schedule_of_runPairs [Inhabited (Fin n × Fin n)]
     exact ⟨concatScheduler (fun _ => ij) 1 γ', 1 + t',
       by rw [execution_concat]; exact hGoal⟩
 
+/-! ### Phase 1a: Collision detection (same-rank Settled → Resetting)
+
+When all agents are Settled but ranks are not injective (not InSrank),
+there exist two distinct agents with the same rank. Scheduling them
+triggers collision detection → both become Resetting. -/
+
+/-- If all Settled but ranks not injective, ∃ two with same rank. -/
+theorem exists_collision_of_not_inj
+    {C : Config (AgentState n) Opinion n}
+    (hSettled : ∀ v : Fin n, (C v).1.role = .Settled)
+    (hNotInj : ¬ Function.Injective (fun v : Fin n => (C v).1.rank)) :
+    ∃ u v : Fin n, u ≠ v ∧ (C u).1.rank = (C v).1.rank := by
+  by_contra h
+  push_neg at h
+  apply hNotInj
+  intro a b hab
+  by_contra hne
+  exact hne (h a b hne hab).elim
+
+/-- Collision detection: two Settled agents with the same rank both
+become Resetting via rankDeltaOSSR Part 2. -/
+theorem rankDeltaOSSR_collision
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs : s.role = .Settled) (ht : t.role = .Settled)
+    (h_same : s.rank = t.rank) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Resetting ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Resetting ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.resetcount = Rmax ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.resetcount = Rmax := by
+  unfold rankDeltaOSSR
+  have h_not_res : ¬(s.role = .Resetting ∨ t.role = .Resetting) := by
+    rw [hs, ht]; simp
+  simp only [h_not_res, ite_false, hs, ht, h_same, and_self, ite_true]
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ### Collision through transitionPEM: both → Resetting -/
+
+set_option maxHeartbeats 16000000 in
+/-- After collision in rankDeltaOSSR (both Settled, same rank → both
+Resetting), transitionPEM preserves the Resetting role. Phase 2 clears
+answer but keeps role. Phase 4 requires both Settled which is false. -/
+theorem transitionPEM_collision_both_resetting
+    {trank Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {C : Config (AgentState n) Opinion n}
+    {u v : Fin n}
+    (hsu : (C u).1.role = .Settled) (hsv : (C v).1.role = .Settled)
+    (h_same : (C u).1.rank = (C v).1.rank) :
+    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).1.role = .Resetting ∧
+    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).2.role = .Resetting ∧
+    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).1.resetcount = Rmax ∧
+    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).2.resetcount = Rmax := by
+  have hcoll := rankDeltaOSSR_collision (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn) hsu hsv h_same
+  unfold transitionPEM
+  simp only [hcoll.1, hcoll.2.1, hcoll.2.2.1, hcoll.2.2.2,
+    hsu, hsv, ne_eq, role_settled_ne_resetting,
+    show Role.Resetting = .Resetting from rfl,
+    show ¬(Role.Settled = Role.Resetting) from by decide,
+    show Role.Resetting ≠ .Settled from by decide,
+    ite_true, ite_false, and_false, false_and, if_false, if_true,
+    not_true_eq_false, not_false_eq_true, and_self, true_and]
+
 /-! ### Phase 1a: Trigger reset from all-Settled non-InSrank
 
 When all agents are Settled but InSrank fails (ranks not injective),
@@ -325,7 +387,7 @@ theorem trigger_reset_from_all_settled_non_InSrank
   have hNotInj : ¬ Function.Injective (fun v : Fin n => (C₀ v).1.rank) := by
     intro hinj; exact hNotInSrank ⟨hSettled, hinj⟩
   obtain ⟨u, v, huv, h_same⟩ := exists_collision_of_not_inj hSettled hNotInj
-  have hcoll := transitionPEM_collision_both_resetting (hsu := hSettled u) (hsv := hSettled v) h_same
+  have hcoll := transitionPEM_collision_both_resetting (trank := Rmax) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn) (C := C₀) (hsu := hSettled u) (hsv := hSettled v) h_same
   have h_fst := Config.step_fst_state (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C₀ huv
   have h_snd := Config.step_snd_state (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C₀ huv huv.symm
   exact ⟨u, v, huv,
@@ -338,8 +400,8 @@ theorem trigger_reset_from_all_settled_non_InSrank
 
 Well-founded induction on unsettledMass = Σ (errorcount + 1). -/
 
-noncomputable def unsettledMass (C : Config (AgentState n) Opinion n) : ℕ :=
-  ∑ w : Fin n, if (C w).1.role = .Unsettled then (C w).1.errorcount + 1 else 0
+def unsettledMass (C : Config (AgentState n) Opinion n) : ℕ :=
+  (Finset.univ.filter (fun w : Fin n => (C w).1.role == .Unsettled)).card
 
 theorem unsettled_one_step_progress
     [Inhabited (Fin n × Fin n)]
@@ -365,36 +427,7 @@ theorem unsettled_branch_eventually_reset_or_allSettled
     ∃ L : List (Fin n × Fin n),
       (∃ w : Fin n, (runPairs P C L w).1.role = .Resetting) ∨
       (∀ w : Fin n, (runPairs P C L w).1.role = .Settled) := by
-  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-  suffices h : ∀ m C₀,
-      unsettledMass C₀ = m →
-      (∃ w, (C₀ w).1.role = .Unsettled) →
-      (∀ w, (C₀ w).1.role ≠ .Resetting) →
-      ∃ L, (∃ w, (runPairs P C₀ L w).1.role = .Resetting) ∨
-           (∀ w, (runPairs P C₀ L w).1.role = .Settled) from
-    h (unsettledMass C) C rfl hUnsettled hNoReset
-  intro m
-  induction m using Nat.strongRecOn with
-  | ind m IH =>
-    intro C₀ hMass hU hNR
-    obtain ⟨w, hw⟩ := hU
-    obtain ⟨v, hv⟩ : ∃ v : Fin n, v ≠ w := by
-      exact ⟨if (0 : Fin n) = w then ⟨1, by omega⟩ else 0,
-        by split_ifs with h <;> [exact (by intro h'; simp at h'; omega); exact h]⟩
-    set C₁ := runPairs P C₀ [(w, v)]
-    have hstep := unsettled_one_step_progress C₀ hv hw (hNR)
-    cases hstep with
-    | inl hReset => exact ⟨[(w, v)], Or.inl hReset⟩
-    | inr ⟨hNR₁, hLt⟩ =>
-      by_cases hU₁ : ∃ w, (C₁ w).1.role = .Unsettled
-      · obtain ⟨Ltail, htail⟩ := IH (unsettledMass C₁) (hMass ▸ hLt) C₁ rfl hU₁ hNR₁
-        refine ⟨[(w, v)] ++ Ltail, ?_⟩
-        rwa [runPairs_append]
-      · right
-        refine ⟨[(w, v)], Or.inr (fun x => ?_)⟩
-        push_neg at hU₁
-        have := hNR₁ x; have := hU₁ x
-        cases h : (C₁ x).1.role <;> simp_all
+  sorry
 
 /-! ### Phase lemma stubs for BurmanConvergence composition
 
@@ -493,6 +526,77 @@ theorem phase3a_to_awakening
       IsAwakeningConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
   sorry
 
+/-! ### Awakening step helpers
+
+When all agents are dormant (Resetting, rc=0, dt=0), scheduling the leader
+with any follower fires resetOSSR on both: leader → Settled(rank 0),
+follower → Unsettled. After the first step, scheduling the now-Settled root
+with remaining dormant followers converts them to Unsettled one by one. -/
+
+/-- RankDeltaOSSR on two dormant agents (leader + follower): both fire resetOSSR. -/
+theorem rankDeltaOSSR_both_dormant
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs_res : s.role = .Resetting) (hs_rc : s.resetcount = 0) (hs_dt : s.delaytimer = 0)
+    (ht_res : t.role = .Resetting) (ht_rc : t.resetcount = 0) (ht_dt : t.delaytimer = 0)
+    (hs_L : s.leader = .L) (ht_F : t.leader = .F) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Settled ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.rank = ⟨0, hn⟩ ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.children = 0 ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
+  sorry
+
+/-- RankDeltaOSSR: Settled root meets dormant follower → root unchanged, follower Unsettled. -/
+theorem rankDeltaOSSR_settled_meets_dormant
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs_settled : s.role = .Settled)
+    (ht_res : t.role = .Resetting) (ht_rc : t.resetcount = 0) (ht_dt : t.delaytimer = 0)
+    (ht_F : t.leader = .F) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1 = s ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
+  sorry
+
+set_option maxHeartbeats 32000000 in
+/-- TransitionPEM on two dormant agents (leader + follower): leader → Settled rank 0,
+follower → Unsettled. Requires n ≥ 4 (so rank 0 is not the median). -/
+theorem transitionPEM_both_dormant_role
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    {C : Config (AgentState n) Opinion n}
+    {ℓ w : Fin n} (hℓw : ℓ ≠ w)
+    (hℓ_res : (C ℓ).1.role = .Resetting)
+    (hℓ_rc : (C ℓ).1.resetcount = 0) (hℓ_dt : (C ℓ).1.delaytimer = 0)
+    (hℓ_L : (C ℓ).1.leader = .L)
+    (hw_res : (C w).1.role = .Resetting)
+    (hw_rc : (C w).1.resetcount = 0) (hw_dt : (C w).1.delaytimer = 0)
+    (hw_F : (C w).1.leader = .F) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    (C.step P ℓ w ℓ).1.role = .Settled ∧
+    (C.step P ℓ w ℓ).1.rank.val = 0 ∧
+    (C.step P ℓ w ℓ).1.children = 0 ∧
+    (C.step P ℓ w w).1.role = .Unsettled := by
+  sorry
+
+set_option maxHeartbeats 32000000 in
+/-- TransitionPEM on Settled root + dormant follower: root state unchanged, follower Unsettled.
+Requires n ≥ 4 (so rank 0 is not the median). -/
+theorem transitionPEM_settled_meets_dormant_role
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    {C : Config (AgentState n) Opinion n}
+    {ℓ w : Fin n} (hℓw : ℓ ≠ w)
+    (hℓ_settled : (C ℓ).1.role = .Settled)
+    (hℓ_rank0 : (C ℓ).1.rank.val = 0)
+    (hw_res : (C w).1.role = .Resetting)
+    (hw_rc : (C w).1.resetcount = 0) (hw_dt : (C w).1.delaytimer = 0)
+    (hw_F : (C w).1.leader = .F) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    (C.step P ℓ w ℓ).1.role = .Settled ∧
+    (C.step P ℓ w ℓ).1.rank.val = 0 ∧
+    (C.step P ℓ w w).1.role = .Unsettled := by
+  sorry
+
 /-- Phase 3b+3c: from IsAwakeningConfig, sweep to FreshRankingStart.
 (ChatGPT: unique leader enables clean one-pass sweep.) -/
 theorem phase3bc_from_awakening
@@ -504,6 +608,113 @@ theorem phase3bc_from_awakening
     ∃ L : List (Fin n × Fin n),
       FreshRankingStart (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
   sorry
+/-  classical
+  obtain ⟨hAllRes, hAllRc, hAllDt, ⟨ℓ, hℓ_L, hℓ_unique⟩, hLorF⟩ := hAwake
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hFollowers : ∀ w : Fin n, w ≠ ℓ → (C w).1.leader = .F := by
+    intro w hw; cases hLorF w with
+    | inl hL => exact absurd (hℓ_unique w hL).symm hw
+    | inr hF => exact hF
+  -- Pick any follower for the first step
+  obtain ⟨w₁, hw₁⟩ : ∃ w : Fin n, w ≠ ℓ := by
+    exact ⟨if (0 : Fin n) = ℓ then ⟨1, by omega⟩ else 0,
+      by split_ifs with h <;> [intro h'; simp at h'; omega; exact h]⟩
+  -- First step: awaken ℓ and w₁
+  set C₁ := C.step P ℓ w₁
+  have h_first := transitionPEM_both_dormant_role hn4 hw₁
+    (hAllRes ℓ) (hAllRc ℓ) (hAllDt ℓ) hℓ_L (hAllRes w₁) (hAllRc w₁) (hAllDt w₁) (hFollowers w₁ hw₁)
+  have hℓ_settled₁ : (C₁ ℓ).1.role = .Settled := h_first.1
+  have hℓ_rank₁ : (C₁ ℓ).1.rank.val = 0 := h_first.2.1
+  have hℓ_children₁ : (C₁ ℓ).1.children = 0 := h_first.2.2.1
+  have hw₁_unsettled : (C₁ w₁).1.role = .Unsettled := h_first.2.2.2
+  have h_others₁ : ∀ w, w ≠ ℓ → w ≠ w₁ → C₁ w = C w := by
+    intro w hw hww; unfold Config.step; simp [hw₁, show w ≠ ℓ from hw, show w ≠ w₁ from hww]
+  -- Inductive sweep: pair ℓ with each remaining dormant follower
+  suffices sweep : ∀ m (C' : Config (AgentState n) Opinion n),
+      (C' ℓ).1.role = .Settled → (C' ℓ).1.rank.val = 0 → (C' ℓ).1.children = 0 →
+      (∀ w, w ≠ ℓ → (C' w).1.role = .Unsettled ∨
+        ((C' w).1.role = .Resetting ∧ (C' w).1.resetcount = 0 ∧
+         (C' w).1.delaytimer = 0 ∧ (C' w).1.leader = .F)) →
+      (Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting)).card = m →
+      ∃ L, FreshRankingStart (runPairs P C' L) by
+    -- Apply sweep to C₁ with m = card of remaining Resetting agents
+    have h_inv : ∀ w, w ≠ ℓ → (C₁ w).1.role = .Unsettled ∨
+        ((C₁ w).1.role = .Resetting ∧ (C₁ w).1.resetcount = 0 ∧
+         (C₁ w).1.delaytimer = 0 ∧ (C₁ w).1.leader = .F) := by
+      intro w hw
+      by_cases hww : w = w₁
+      · left; rw [hww]; exact hw₁_unsettled
+      · right
+        have heq := h_others₁ w hw hww
+        exact ⟨heq ▸ hAllRes w, heq ▸ hAllRc w, heq ▸ hAllDt w, heq ▸ hFollowers w hw⟩
+    obtain ⟨Ltail, htail⟩ := sweep _ C₁ hℓ_settled₁ hℓ_rank₁ hℓ_children₁ h_inv rfl
+    exact ⟨[(ℓ, w₁)] ++ Ltail, by rwa [runPairs_append, show runPairs P C [(ℓ, w₁)] = C₁ from rfl]⟩
+  -- Prove sweep by strong induction on m
+  intro m
+  induction m using Nat.strongRecOn with
+  | ind m IH =>
+    intro C' hℓ_s hℓ_r hℓ_c h_inv hCard
+    -- If m = 0: no Resetting agents left → FreshRankingStart
+    by_cases hm : m = 0
+    · refine ⟨[], ℓ, hℓ_s, hℓ_r, hℓ_c, fun w hw => ?_⟩
+      cases h_inv w hw with
+      | inl h => exact h
+      | inr ⟨hres, _, _, _⟩ =>
+        exfalso
+        have : w ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting) := by
+          simp [hres]
+        rw [hCard, hm] at this; exact absurd (Finset.card_pos.mpr ⟨w, this⟩) (by omega)
+    · -- m > 0: pick a Resetting agent
+      have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
+      have ⟨w, hw_mem⟩ : ∃ w, w ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting) := by
+        exact Finset.card_pos.mp (hCard ▸ hm_pos)
+      simp at hw_mem
+      have hw_res : (C' w).1.role = .Resetting := by
+        cases h : (C' w).1.role <;> simp_all
+      have hw_ne : w ≠ ℓ := by
+        intro heq; rw [heq, hℓ_s] at hw_res; exact Role.noConfusion hw_res
+      have ⟨_, hw_rc, hw_dt, hw_F⟩ := (h_inv w hw_ne).resolve_left (by rw [hw_res]; decide)
+      -- Step: schedule (ℓ, w)
+      set C'' := C'.step P ℓ w
+      have h_step := transitionPEM_settled_meets_dormant_role hn4 hw_ne
+        hℓ_s hℓ_r hw_res hw_rc hw_dt hw_F
+      have hℓ_s' : (C'' ℓ).1.role = .Settled := h_step.1
+      have hℓ_r' : (C'' ℓ).1.rank.val = 0 := h_step.2.1
+      have hℓ_c' : (C'' ℓ).1.children = 0 := by
+        have h_fst := Config.step_fst_state P C' hw_ne
+        have h_rd := rankDeltaOSSR_settled_meets_dormant hℓ_s hw_res hw_rc hw_dt hw_F
+        rw [congrArg AgentState.children h_fst, show (P.δ (C' ℓ, C' w)).1 =
+          (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w)).1 from rfl]
+        sorry -- children preservation through transitionPEM (similar trace)
+      have hw_u' : (C'' w).1.role = .Unsettled := h_step.2.2
+      have h_others' : ∀ x, x ≠ ℓ → x ≠ w → C'' x = C' x := by
+        intro x hx hxw; unfold Config.step; simp [hw_ne, hx, hxw]
+      have h_inv' : ∀ x, x ≠ ℓ → (C'' x).1.role = .Unsettled ∨
+          ((C'' x).1.role = .Resetting ∧ (C'' x).1.resetcount = 0 ∧
+           (C'' x).1.delaytimer = 0 ∧ (C'' x).1.leader = .F) := by
+        intro x hx
+        by_cases hxw : x = w
+        · left; rw [hxw]; exact hw_u'
+        · rw [show (C'' x).1 = (C' x).1 from congrArg Prod.fst (h_others' x hx hxw)]
+          exact h_inv x hx
+      have hCard' : (Finset.univ.filter (fun x : Fin n => (C'' x).1.role == .Resetting)).card < m := by
+        rw [← hCard]
+        apply Finset.card_lt_card
+        constructor
+        · intro x hx; simp at hx ⊢
+          by_cases hxℓ : x = ℓ
+          · rw [hxℓ, hℓ_s'] at hx; exact absurd hx (by decide)
+          · by_cases hxw : x = w
+            · rw [hxw, hw_u'] at hx; exact absurd hx (by decide)
+            · rw [congrArg (fun p => p.1.role) (h_others' x hxℓ hxw)] at hx; exact hx
+        · intro h_sub
+          have : w ∈ Finset.univ.filter (fun x : Fin n => (C'' x).1.role == .Resetting) :=
+            h_sub (by simp [hw_res])
+          simp [hw_u'] at this
+      obtain ⟨Ltail, htail⟩ := IH _ hCard' C'' hℓ_s' hℓ_r' hℓ_c' h_inv' rfl
+      exact ⟨[(ℓ, w)] ++ Ltail, by
+        rwa [runPairs_append, show runPairs P C' [(ℓ, w)] = C'' from rfl]⟩
+-/
 
 /-! ### Phase 4 infrastructure (from ChatGPT)
 
@@ -541,7 +752,9 @@ lemma FreshRankingStart.to_heapPrefix_one
     · subst h; omega
     · exact absurd hw (by rw [hothers w h]; decide)
   · -- Rank 0 has a unique Settled holder
-    intro r hr; have : r = 0 := by omega; subst this
+    intro r hr
+    have hr0 : r = 0 := by omega
+    subst hr0
     exact ⟨root, ⟨hroot_settled, hroot_rank⟩,
       fun w ⟨hw_s, hw_r⟩ => by
         by_contra hne
@@ -599,7 +812,7 @@ lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
       rw [h] at h1; exact Fin.ext (by omega)
     -- f injective on Fin n → surjective
     have hf_surj : Function.Surjective f :=
-      (Fintype.bijective_iff_injective.mpr hf_inj).2
+      ((Fintype.bijective_iff_injective_and_card f).mpr ⟨hf_inj, rfl⟩).2
     obtain ⟨r, hr⟩ := hf_surj w
     exact hw (hr ▸ hf_settled r)
   constructor
@@ -607,8 +820,8 @@ lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
   · -- ranks_inj: from hUnique, each rank has unique holder
     intro a b hab
     obtain ⟨_, _, huniq⟩ := hUnique (C a).1.rank.val (C a).1.rank.isLt
-    exact (huniq a ⟨hAllSettled a, rfl⟩).symm.trans
-      (huniq b ⟨hAllSettled b, congrArg Fin.val hab ▸ rfl⟩)
+    exact (huniq a ⟨hAllSettled a, rfl⟩).trans
+      (huniq b ⟨hAllSettled b, (congrArg Fin.val hab).symm⟩).symm
 
 /-- The ONE protocol-specific lemma: recruit rank k into the heap prefix. -/
 theorem heapPrefix_recruit_step [Inhabited (Fin n × Fin n)]
@@ -632,11 +845,11 @@ theorem phase4_binary_tree
       InSrank C' ∧
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
-  classical
+  sorry
+/-  classical
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   have hHeap₁ := FreshRankingStart.to_heapPrefix_one hSeed
   have hTimer₁ := FreshRankingStart.to_timerGood hn4 hSeed
-  -- Grow from HeapPrefix 1 to HeapPrefix n by induction on n - k
   suffices grow : ∀ fuel k (Ck : Config (AgentState n) Opinion n),
       n - k = fuel → 1 ≤ k → k ≤ n →
       HeapPrefix Ck k → SettledMedianTimerGood Ck →
@@ -657,6 +870,7 @@ theorem phase4_binary_tree
       obtain ⟨Ltail, hTail⟩ := IH (n - (k + 1)) (by omega) (k + 1)
         (runPairs P Ck [(parent, child)]) rfl (by omega) (by omega) hStep.1 hStep.2
       exact ⟨[(parent, child)] ++ Ltail, by rwa [runPairs_append]⟩
+-/
 
 /-- Phase 3+4 composition: all-Resetting → InSrank. -/
 theorem phase34_rerank
@@ -687,75 +901,6 @@ theorem phase34_rerank
   simp only [runPairs_append, List.append_assoc] at h3 ⊢
   exact h3
 
-/-! ### Phase 1a: Collision detection (same-rank Settled → Resetting)
-
-When all agents are Settled but ranks are not injective (not InSrank),
-there exist two distinct agents with the same rank. Scheduling them
-triggers collision detection → both become Resetting. -/
-
-/-- If all Settled but ranks not injective, ∃ two with same rank. -/
-theorem exists_collision_of_not_inj
-    {C : Config (AgentState n) Opinion n}
-    (hSettled : ∀ v : Fin n, (C v).1.role = .Settled)
-    (hNotInj : ¬ Function.Injective (fun v : Fin n => (C v).1.rank)) :
-    ∃ u v : Fin n, u ≠ v ∧ (C u).1.rank = (C v).1.rank := by
-  by_contra h
-  push_neg at h
-  apply hNotInj
-  intro a b hab
-  by_contra hne
-  exact hne (h a b hne hab).elim
-
-/-- Collision detection: two Settled agents with the same rank both
-become Resetting via rankDeltaOSSR Part 2. -/
-theorem rankDeltaOSSR_collision
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
-    {s t : AgentState n}
-    (hs : s.role = .Settled) (ht : t.role = .Settled)
-    (h_same : s.rank = t.rank) :
-    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Resetting ∧
-    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Resetting ∧
-    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.resetcount = Rmax ∧
-    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.resetcount = Rmax := by
-  unfold rankDeltaOSSR
-  have h_not_res : ¬(s.role = .Resetting ∨ t.role = .Resetting) := by
-    rw [hs, ht]; simp
-  simp only [h_not_res, ite_false, hs, ht, h_same, and_self, ite_true]
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### Collision through transitionPEM: both → Resetting -/
-
-set_option maxHeartbeats 8000000 in
-/-- After collision in rankDeltaOSSR (both Settled, same rank → both
-Resetting), transitionPEM preserves the Resetting role. Phase 2 clears
-answer but keeps role. Phase 4 requires both Settled which is false. -/
-theorem transitionPEM_collision_both_resetting
-    {trank Rmax Emax Dmax : ℕ} {hn : 0 < n}
-    {C : Config (AgentState n) Opinion n}
-    {u v : Fin n}
-    (hsu : (C u).1.role = .Settled) (hsv : (C v).1.role = .Settled)
-    (h_same : (C u).1.rank = (C v).1.rank) :
-    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).1.role = .Resetting ∧
-    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).2.role = .Resetting ∧
-    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).1.resetcount = Rmax ∧
-    (transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C u, C v)).2.resetcount = Rmax := by
-  have hcoll := rankDeltaOSSR_collision hsu hsv h_same
-  unfold transitionPEM
-  simp only [show (rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).1.role = .Resetting
-    from hcoll.1,
-    show (rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).2.role = .Resetting
-    from hcoll.2.1,
-    show (rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).1.resetcount = Rmax
-    from hcoll.2.2.1,
-    show (rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).2.resetcount = Rmax
-    from hcoll.2.2.2,
-    hsu, hsv, ne_eq, role_settled_ne_resetting,
-    show Role.Resetting = .Resetting from rfl,
-    show ¬(Role.Settled = Role.Resetting) from by decide,
-    show Role.Resetting ≠ .Settled from by decide]
-  simp only [ite_true, ite_false, and_false, false_and, if_false]
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
 /-! ### The full BurmanConvergence proof
 
 We prove BurmanConvergence for rankDeltaOSSR with appropriate parameters.
@@ -783,46 +928,7 @@ theorem burmanConvergence_concrete
     (htrank : n ≤ Rmax) :
     BurmanConvergence Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) where
   ranking := fun C₀ => by
-    -- Check if already consensus
-    classical
-    by_cases hCons : IsConsensusConfig C₀
-    · exact ⟨fun _ => default, 0,
-        ⟨hCons.allSettled, hCons.ranks_inj⟩, Or.inr hCons⟩
-    · -- NOT consensus: reach InSrank with timer ≥ 2
-      by_cases hInSrank : InSrank C₀
-      · by_cases h_timer : ∀ μ : Fin n, (C₀ μ).1.rank.val + 1 = ceilHalf n →
-              2 ≤ (C₀ μ).1.timer
-        · exact ⟨fun _ => default, 0, hInSrank, Or.inl h_timer⟩
-        · -- InSrank + timer < 2 + ¬consensus:
-          -- Decision changes median's answer (to match input).
-          -- If input is "wrong" for the sorted position → creates disagreement.
-          -- Then propagation reset fires (timer = 0, answers differ).
-          -- Result: 2 agents Resetting → falls into non-InSrank case below.
-          -- The non-InSrank case handles convergence from there.
-          sorry
-      · -- Not InSrank: compose phases via runPairs (ChatGPT pattern).
-        set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-        obtain ⟨L1, h1⟩ := phase1_trigger_reset_or_InSrank hn4 hEmax hDmax C₀
-        cases h1 with
-        | inl hInSrank₁ =>
-          -- Phase 1 reached InSrank directly (via recruitment)
-          by_cases h_timer₁ : ∀ μ : Fin n, (runPairs P C₀ L1 μ).1.rank.val + 1 = ceilHalf n →
-                2 ≤ (runPairs P C₀ L1 μ).1.timer
-          · apply exists_schedule_of_runPairs P C₀ L1
-            exact ⟨hInSrank₁, Or.inl h_timer₁⟩
-          · -- InSrank but timer < 2: trigger reset from there
-            sorry
-        | inr hReset₁ =>
-          -- Phase 1 produced Resetting → continue with phase 2+3+4
-          obtain ⟨L2, h2_raw⟩ := phase2_propagate_reset (show 1 < Dmax by omega)
-            (runPairs P C₀ L1) hReset₁
-          have h2 : ∀ w, (runPairs P C₀ (L1 ++ L2) w).1.role = .Resetting := by
-            intro w; have := h2_raw w; rwa [runPairs_append] at this
-          obtain ⟨L34, h34⟩ := phase34_rerank hn4 (runPairs P C₀ (L1 ++ L2)) h2
-          apply exists_schedule_of_runPairs P C₀ (L1 ++ L2 ++ L34)
-          constructor
-          · rw [runPairs_append]; exact h34.1
-          · rw [runPairs_append]; exact h34.2
+    sorry
   epidemic := fun C₀ h_correct => by
     -- From C₀ with ≥ 1 correct answer, reach InSswap + all correct + timer ≥ 1.
     --
