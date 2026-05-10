@@ -444,6 +444,12 @@ theorem phase1_trigger_reset_or_InSrank
         exact ⟨L ++ [(u, v)], Or.inr ⟨u, by
           rw [runPairs_append]; simpa [runPairs] using hu_res⟩⟩
 
+/-- All agents Resetting with resetcount = 0 and delaytimer = 0. -/
+def AllResettingDormant (C : Config (AgentState n) Opinion n) : Prop :=
+  (∀ w : Fin n, (C w).1.role = .Resetting) ∧
+  (∀ w : Fin n, (C w).1.resetcount = 0) ∧
+  (∀ w : Fin n, (C w).1.delaytimer = 0)
+
 /-- Phase 2: From config with ≥ 1 Resetting, spread to all agents. -/
 theorem phase2_propagate_reset
     [Inhabited (Fin n × Fin n)]
