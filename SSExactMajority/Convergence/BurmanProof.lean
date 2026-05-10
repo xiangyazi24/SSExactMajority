@@ -569,10 +569,46 @@ lemma FreshRankingStart.to_timerGood {C : Config (AgentState n) Opinion n}
 
 lemma HeapPrefix.to_InSrank {C : Config (AgentState n) Opinion n}
     (hHeap : HeapPrefix C n) : InSrank C := by
-  -- n unique Settled rank holders → injective map Fin n → Fin n → surjective → all Settled
-  -- Rank injectivity follows from uniqueness of holders
-  -- Asked ChatGPT for Fintype cardinality proof
-  sorry
+  obtain ⟨_, _, hUnique, hRoles, _⟩ := hHeap
+  -- Define holder: for each rank r, the unique Settled agent with that rank
+  have holder_exists : ∀ r : Fin n, ∃ w : Fin n,
+      (C w).1.role = .Settled ∧ (C w).1.rank.val = r.val := by
+    intro r; obtain ⟨w, ⟨hw, hr⟩, _⟩ := hUnique r.val r.isLt; exact ⟨w, hw, hr⟩
+  -- The holder map is injective (different ranks → different holders)
+  have holder_inj : ∀ r₁ r₂ : Fin n, r₁ ≠ r₂ →
+      ∀ w₁ w₂, ((C w₁).1.role = .Settled ∧ (C w₁).1.rank.val = r₁.val) →
+      ((C w₂).1.role = .Settled ∧ (C w₂).1.rank.val = r₂.val) → w₁ ≠ w₂ := by
+    intro r₁ r₂ hr w₁ w₂ ⟨_, h1⟩ ⟨_, h2⟩ heq
+    subst heq; exact hr (Fin.ext (by omega))
+  -- allSettled: by contradiction. If w is Unsettled, the n Settled holders
+  -- are n DISTINCT agents all ≠ w. But |Fin n| = n → impossible.
+  have hAllSettled : ∀ w, (C w).1.role = .Settled := by
+    by_contra h; push_neg at h; obtain ⟨w, hw⟩ := h
+    have hw_u : (C w).1.role = .Unsettled := by
+      cases hRoles w with | inl h => exact absurd h hw | inr h => exact h
+    -- Build an injective map f : Fin n → Fin n where f(r) = holder of rank r
+    -- f is injective + |Fin n| = n → f surjective → w = f(r) for some r → w is Settled
+    -- Use Classical.choice to pick holders
+    classical
+    let f : Fin n → Fin n := fun r => (holder_exists r).choose
+    have hf_settled : ∀ r, (C (f r)).1.role = .Settled := fun r => (holder_exists r).choose_spec.1
+    have hf_rank : ∀ r, (C (f r)).1.rank.val = r.val := fun r => (holder_exists r).choose_spec.2
+    have hf_inj : Function.Injective f := by
+      intro r₁ r₂ h
+      have h1 := hf_rank r₁; have h2 := hf_rank r₂
+      rw [h] at h1; exact Fin.ext (by omega)
+    -- f injective on Fin n → surjective
+    have hf_surj : Function.Surjective f :=
+      (Fintype.bijective_iff_injective.mpr hf_inj).2
+    obtain ⟨r, hr⟩ := hf_surj w
+    exact hw (hr ▸ hf_settled r)
+  constructor
+  · exact hAllSettled
+  · -- ranks_inj: from hUnique, each rank has unique holder
+    intro a b hab
+    obtain ⟨_, _, huniq⟩ := hUnique (C a).1.rank.val (C a).1.rank.isLt
+    exact (huniq a ⟨hAllSettled a, rfl⟩).symm.trans
+      (huniq b ⟨hAllSettled b, congrArg Fin.val hab ▸ rfl⟩)
 
 /-- The ONE protocol-specific lemma: recruit rank k into the heap prefix. -/
 theorem heapPrefix_recruit_step [Inhabited (Fin n × Fin n)]
