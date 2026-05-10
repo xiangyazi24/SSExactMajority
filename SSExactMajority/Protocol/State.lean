@@ -1,0 +1,74 @@
+/-
+Copyright (c) 2026. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+# Agent State for Protocol P_EM
+
+Each agent in P_EM has:
+  - input ∈ {A, B}  (read-only)
+  - Variables from Optimal-Silent-SSR (ranking protocol):
+    · role ∈ {Resetting, Settled, Unsettled}
+    · rank ∈ [1, n]
+    · leader ∈ {L, F}
+    · resetcount ∈ [0, R_max]   where R_max = 60 log n
+  - answer ∈ {φ, T, A, B}   (φ = undecided)
+  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)
+-/
+
+import SSExactMajority.Defs.Protocol
+
+namespace SSEM
+
+/-- The role of an agent in the ranking subprotocol. -/
+inductive Role
+  | Resetting
+  | Settled
+  | Unsettled
+  deriving DecidableEq, Repr
+
+/-- The leader status. -/
+inductive Leader
+  | L   -- leader
+  | F   -- follower
+  deriving DecidableEq, Repr
+
+/-- The answer variable: φ (undecided), or an output opinion. -/
+inductive Answer
+  | phi     -- φ, undecided
+  | outT    -- T (tie)
+  | outA    -- A
+  | outB    -- B
+  deriving DecidableEq, Repr
+
+namespace Answer
+
+def toOutput : Answer → Output
+  | .phi  => .T
+  | .outT => .T
+  | .outA => .A
+  | .outB => .B
+
+end Answer
+
+/-- The full state of an agent in P_EM, parametric in n.
+Includes fields from Optimal-Silent-SSR (Burman et al. PODC 2021):
+  * `children` — number of children recruited in the binary-tree ranking (0, 1, or 2)
+  * `errorcount` — error counter for Unsettled agents (triggers reset when 0)
+  * `delaytimer` — delay timer for Resetting agents (ensures dormancy before wake) -/
+structure AgentState (n : ℕ) where
+  role : Role
+  rank : Fin n
+  leader : Leader
+  resetcount : ℕ
+  answer : Answer
+  timer : ℕ
+  children : ℕ := 0
+  errorcount : ℕ := 0
+  delaytimer : ℕ := 0
+  deriving DecidableEq, Repr
+
+/-- The output function: if answer = φ, output T; otherwise output answer. -/
+def agentOutput (s : AgentState n) : Output :=
+  s.answer.toOutput
+
+end SSEM
