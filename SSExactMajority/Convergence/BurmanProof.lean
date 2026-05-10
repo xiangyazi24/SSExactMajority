@@ -468,11 +468,17 @@ theorem phase2_propagate_reset
     (hReset : ∃ w : Fin n, (C w).1.role = .Resetting) :
     ∃ L : List (Fin n × Fin n),
       ∀ w : Fin n, (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L w).1.role = .Resetting := by
-  -- Induction on # non-Resetting agents.
-  -- At each step: schedule (resetting_agent, non_resetting_agent)
-  -- → non_resetting becomes Resetting (via rankDeltaOSSR_propagate_reset)
-  -- Needs: resetting agent maintains resetcount > 0 through propagation.
-  -- With Rmax ≥ n and at most n-1 propagation steps, resetcount stays > 0.
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  -- Single-step: Resetting(rc>0) + non-Resetting → non-Resetting becomes Resetting
+  -- This needs the full Config.step trace, not just rankDeltaOSSR.
+  have one_step_spread : ∀ C₀ : Config (AgentState n) Opinion n,
+      ∀ r v : Fin n, r ≠ v →
+      (C₀ r).1.role = .Resetting → 0 < (C₀ r).1.resetcount →
+      (C₀ v).1.role ≠ .Resetting →
+      (runPairs P C₀ [(r, v)] v).1.role = .Resetting := by
+    sorry -- transitionPEM trace: rankDeltaOSSR_propagate_reset + Config.step lift
+  -- Induction on # non-Resetting
+  -- For now, the full induction also needs resetcount tracking
   sorry
 
 /-- Phase 3a: countdown delaytimers to 0 for all Resetting agents. -/
