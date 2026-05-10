@@ -444,11 +444,20 @@ theorem phase1_trigger_reset_or_InSrank
         exact ⟨L ++ [(u, v)], Or.inr ⟨u, by
           rw [runPairs_append]; simpa [runPairs] using hu_res⟩⟩
 
-/-- All agents Resetting with resetcount = 0 and delaytimer = 0. -/
+/-- Phase 3a target: all Resetting with counters expired. -/
 def AllResettingDormant (C : Config (AgentState n) Opinion n) : Prop :=
   (∀ w : Fin n, (C w).1.role = .Resetting) ∧
   (∀ w : Fin n, (C w).1.resetcount = 0) ∧
   (∀ w : Fin n, (C w).1.delaytimer = 0)
+
+/-- Phase 3b/3c target, Phase 4 input: one Settled root + rest Unsettled.
+(ChatGPT: uses rank.val = 0 to avoid hn parameter.) -/
+def FreshRankingStart (C : Config (AgentState n) Opinion n) : Prop :=
+  ∃ root : Fin n,
+    (C root).1.role = .Settled ∧
+    (C root).1.rank.val = 0 ∧
+    (C root).1.children = 0 ∧
+    ∀ w : Fin n, w ≠ root → (C w).1.role = .Unsettled
 
 /-- Phase 2: From config with ≥ 1 Resetting, spread to all agents. -/
 theorem phase2_propagate_reset
@@ -490,16 +499,15 @@ theorem phase3b_execute_reset
       (∀ w : Fin n, (C' w).1.role = .Settled ∨ (C' w).1.role = .Unsettled) := by
   sorry
 
-/-- Phase 3c: leader election — reduce to single leader. -/
-theorem phase3c_leader_election
+/-- Phase 3b+3c: RESET + leader election → FreshRankingStart. -/
+theorem phase3bc_reset_and_elect
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hLeader : ∃ ℓ : Fin n, (C ℓ).1.role = .Settled ∧ (C ℓ).1.rank = ⟨0, hn⟩)
-    (hRoles : ∀ w : Fin n, (C w).1.role = .Settled ∨ (C w).1.role = .Unsettled) :
+    (hDormant : AllResettingDormant C) :
     ∃ L : List (Fin n × Fin n),
-      IsLeaderConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) hn := by
+      FreshRankingStart (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
   sorry
 
 /-- Phase 4: binary tree recruitment → InSrank. -/
@@ -508,7 +516,7 @@ theorem phase4_binary_tree
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hLeader : IsLeaderConfig C hn) :
+    (hSeed : FreshRankingStart C) :
     ∃ L : List (Fin n × Fin n),
       let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
       InSrank C' ∧
@@ -531,20 +539,15 @@ theorem phase34_rerank
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   -- Phase 3a: dormancy countdown
   obtain ⟨L1, h1⟩ := phase3a_dormancy_countdown C hAllReset
-  -- Phase 3b: execute RESET
-  obtain ⟨L2, h2⟩ := phase3b_execute_reset (runPairs P C L1) h1
-  -- Phase 3c: leader election
-  obtain ⟨L3, h3⟩ := phase3c_leader_election hn4
-    (runPairs P (runPairs P C L1) L2)
-    (by rw [← runPairs_append]; exact h2.1)
-    (by rw [← runPairs_append]; exact h2.2)
-  -- Phase 4: binary tree
-  obtain ⟨L4, h4⟩ := phase4_binary_tree hn4
-    (runPairs P (runPairs P (runPairs P C L1) L2) L3) h3
+  -- Phase 3b+3c: RESET + leader election → FreshRankingStart
+  obtain ⟨L2, h2⟩ := phase3bc_reset_and_elect hn4 (runPairs P C L1) h1
+  -- Phase 4: binary tree → InSrank
+  obtain ⟨L3, h3⟩ := phase4_binary_tree hn4
+    (runPairs P (runPairs P C L1) L2) h2
   -- Compose
-  refine ⟨L1 ++ L2 ++ L3 ++ L4, ?_⟩
-  simp only [runPairs_append, List.append_assoc] at h4 ⊢
-  exact h4
+  refine ⟨L1 ++ L2 ++ L3, ?_⟩
+  simp only [runPairs_append, List.append_assoc] at h3 ⊢
+  exact h3
 
 /-! ### Phase 1a: Collision detection (same-rank Settled → Resetting)
 
