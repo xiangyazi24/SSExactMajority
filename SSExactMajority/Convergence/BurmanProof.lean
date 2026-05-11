@@ -644,7 +644,7 @@ theorem phase2_propagate_reset
 theorem phase3a_to_awakening
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
-    (hn4 : 4 ≤ n)
+    (hn4 : 4 ≤ n) (hRmax : 0 < Rmax) (hDmax : 0 < Dmax)
     (C : Config (AgentState n) Opinion n)
     (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
     (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
@@ -1029,6 +1029,14 @@ def SettledMedianTimerGood (C : Config (AgentState n) Opinion n) : Prop :=
   ∀ μ : Fin n, (C μ).1.role = .Settled →
     (C μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C μ).1.timer
 
+def SettledMedianTimerStrong (C : Config (AgentState n) Opinion n) : Prop :=
+  ∀ μ : Fin n, (C μ).1.role = .Settled →
+    (C μ).1.rank.val + 1 = ceilHalf n → 3 ≤ (C μ).1.timer
+
+theorem SettledMedianTimerStrong.toGood {C : Config (AgentState n) Opinion n}
+    (h : SettledMedianTimerStrong C) : SettledMedianTimerGood C :=
+  fun μ hs hr => Nat.le_of_lt_succ (Nat.lt_of_lt_of_le (by omega) (h μ hs hr))
+
 def HeapPrefix (C : Config (AgentState n) Opinion n) (k : ℕ) : Prop :=
   k ≤ n ∧
   (∀ w, (C w).1.role = .Settled → (C w).1.rank.val < k) ∧
@@ -1123,10 +1131,10 @@ theorem heapPrefix_recruit_step [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} {k : ℕ}
     (hk_pos : 1 ≤ k) (hk_lt : k < n)
     (C : Config (AgentState n) Opinion n)
-    (hHeap : HeapPrefix C k) (hTimer : SettledMedianTimerGood C) :
+    (hHeap : HeapPrefix C k) (hTimer : SettledMedianTimerStrong C) :
     ∃ parent child : Fin n,
       let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C [(parent, child)]
-      HeapPrefix C' (k + 1) ∧ SettledMedianTimerGood C' := by sorry
+      HeapPrefix C' (k + 1) ∧ SettledMedianTimerStrong C' := by sorry
 
 /-- Phase 4: binary tree recruitment → InSrank (ChatGPT induction on n-k). -/
 theorem phase4_binary_tree
@@ -1143,19 +1151,24 @@ theorem phase4_binary_tree
   classical
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   have hHeap₁ := FreshRankingStart.to_heapPrefix_one hSeed
-  have hTimer₁ := FreshRankingStart.to_timerGood hn4 hSeed
+  have hTimer₁ : SettledMedianTimerStrong C := by
+    intro μ hμ_settled hμ_med
+    obtain ⟨root, hroot_settled, hroot_rank, _, hothers⟩ := hSeed
+    by_cases h : μ = root
+    · subst h; rw [hroot_rank] at hμ_med; unfold ceilHalf at hμ_med; omega
+    · exact absurd hμ_settled (by rw [hothers μ h]; decide)
   suffices grow : ∀ fuel k (Ck : Config (AgentState n) Opinion n),
       n - k = fuel → 1 ≤ k → k ≤ n →
-      HeapPrefix Ck k → SettledMedianTimerGood Ck →
+      HeapPrefix Ck k → SettledMedianTimerStrong Ck →
       ∃ Ltail, HeapPrefix (runPairs P Ck Ltail) n ∧
-        SettledMedianTimerGood (runPairs P Ck Ltail) by
+        SettledMedianTimerStrong (runPairs P Ck Ltail) by
     obtain ⟨L, hL, hT⟩ := grow (n - 1) 1 C rfl (by omega) (by omega) hHeap₁ hTimer₁
     exact ⟨L, HeapPrefix.to_InSrank hL,
-      Or.inl (fun μ hμ => hT μ ((HeapPrefix.to_InSrank hL).allSettled μ) hμ)⟩
+      Or.inl (fun μ hμ => hT.toGood μ ((HeapPrefix.to_InSrank hL).allSettled μ) hμ)⟩
   intro fuel
   induction fuel using Nat.strongRecOn with
   | ind fuel IH =>
-    intro k Ck hFuel hk_pos hk_le hHeap hTimer
+    intro k Ck hFuel hk_pos hk_le hHeap (hTimer : SettledMedianTimerStrong Ck)
     by_cases hk_done : k = n
     · subst hk_done; exact ⟨[], hHeap, hTimer⟩
     · have hk_lt : k < n := Nat.lt_of_le_of_ne hk_le hk_done
@@ -1169,7 +1182,7 @@ theorem phase4_binary_tree
 theorem phase34_rerank
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
-    (hn4 : 4 ≤ n)
+    (hn4 : 4 ≤ n) (hRmax : 0 < Rmax) (hDmax : 0 < Dmax)
     (C : Config (AgentState n) Opinion n)
     (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
     (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
@@ -1179,7 +1192,7 @@ theorem phase34_rerank
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 C hAllReset hLeader
+  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 hRmax hDmax C hAllReset hLeader
   obtain ⟨L2, h2⟩ := phase3bc_from_awakening hn4 (runPairs P C L1) h1
   obtain ⟨L3, h3⟩ := phase4_binary_tree hn4
     (runPairs P (runPairs P C L1) L2) h2
