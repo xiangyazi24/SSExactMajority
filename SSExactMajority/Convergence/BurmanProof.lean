@@ -670,7 +670,113 @@ theorem phase3bc_from_awakening
     (hAwake : IsAwakeningConfig C) :
     ∃ L : List (Fin n × Fin n),
       FreshRankingStart (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
-  sorry
+  classical
+  obtain ⟨hAllRes, hAllRc, hAllDt, ⟨ℓ, hℓ_L, hℓ_unique⟩, hLorF⟩ := hAwake
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hFollowers : ∀ w : Fin n, w ≠ ℓ → (C w).1.leader = .F := by
+    intro w hw; cases hLorF w with
+    | inl hL => exact absurd (hℓ_unique w hL).symm hw
+    | inr hF => exact hF
+  -- First step wakes root and one follower
+  obtain ⟨w₁, hw₁⟩ : ∃ w : Fin n, w ≠ ℓ := by
+    have : 1 < n := by omega
+    exact ⟨if h : (⟨0, hn⟩ : Fin n) = ℓ then ⟨1, this⟩ else ⟨0, hn⟩,
+      by split_ifs with h; · intro heq; simp [Fin.ext_iff] at heq h; omega; · exact h⟩
+  set C₁ := C.step P ℓ w₁
+  have h_first := transitionPEM_both_dormant_role hn4 hw₁
+    (hAllRes ℓ) (hAllRc ℓ) (hAllDt ℓ) hℓ_L (hAllRes w₁) (hAllRc w₁) (hAllDt w₁) (hFollowers w₁ hw₁)
+  -- Inductive sweep on remaining dormant agents
+  suffices sweep : ∀ m (C' : Config (AgentState n) Opinion n),
+      (C' ℓ).1.role = .Settled → (C' ℓ).1.rank.val = 0 → (C' ℓ).1.children = 0 →
+      (∀ w, w ≠ ℓ → (C' w).1.role = .Unsettled ∨
+        ((C' w).1.role = .Resetting ∧ (C' w).1.resetcount = 0 ∧
+         (C' w).1.delaytimer = 0 ∧ (C' w).1.leader = .F)) →
+      (Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting)).card = m →
+      ∃ L, FreshRankingStart (runPairs P C' L) by
+    have h_inv : ∀ w, w ≠ ℓ → (C₁ w).1.role = .Unsettled ∨
+        ((C₁ w).1.role = .Resetting ∧ (C₁ w).1.resetcount = 0 ∧
+         (C₁ w).1.delaytimer = 0 ∧ (C₁ w).1.leader = .F) := by
+      intro w hw
+      by_cases hww : w = w₁
+      · left; rw [hww]; exact h_first.2.2.2
+      · right; have heq : C₁ w = C w := by
+          unfold Config.step; simp [hw₁, show w ≠ ℓ from hw, show w ≠ w₁ from hww]
+        exact ⟨heq ▸ hAllRes w, heq ▸ hAllRc w, heq ▸ hAllDt w, heq ▸ hFollowers w hw⟩
+    obtain ⟨Ltail, htail⟩ := sweep _ C₁ h_first.1 h_first.2.1 h_first.2.2.1 h_inv rfl
+    exact ⟨[(ℓ, w₁)] ++ Ltail, by rwa [runPairs_append, show runPairs P C [(ℓ, w₁)] = C₁ from rfl]⟩
+  intro m
+  induction m using Nat.strongRecOn with
+  | ind m IH =>
+    intro C' hℓ_s hℓ_r hℓ_c h_inv hCard
+    by_cases hm : m = 0
+    · refine ⟨[], ℓ, hℓ_s, hℓ_r, hℓ_c, fun w hw => ?_⟩
+      cases h_inv w hw with
+      | inl h => exact h
+      | inr ⟨hres, _, _, _⟩ =>
+        exfalso
+        have : w ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting) := by
+          simp [hres]
+        rw [hCard, hm] at this; exact absurd (Finset.card_pos.mpr ⟨w, this⟩) (by omega)
+    · have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
+      have ⟨w, hw_mem⟩ : ∃ w, w ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role == .Resetting) :=
+        Finset.card_pos.mp (hCard ▸ hm_pos)
+      simp at hw_mem
+      have hw_res : (C' w).1.role = .Resetting := by
+        cases h : (C' w).1.role <;> simp_all
+      have hw_ne : w ≠ ℓ := by
+        intro heq; rw [heq, hℓ_s] at hw_res; exact Role.noConfusion hw_res
+      have ⟨_, hw_rc, hw_dt, hw_F⟩ := (h_inv w hw_ne).resolve_left (by rw [hw_res]; decide)
+      set C'' := C'.step P ℓ w
+      have h_step := transitionPEM_settled_meets_dormant_role hn4 hw_ne hℓ_s hℓ_r hw_res hw_rc hw_dt hw_F
+      have h_others : ∀ x, x ≠ ℓ → x ≠ w → C'' x = C' x := by
+        intro x hx hxw; unfold Config.step; simp [hw_ne, hx, hxw]
+      have hℓ_fst_eq : (C'' ℓ).1 = (C' ℓ).1 := by
+        have h_fst := Config.step_fst_state P C' hw_ne
+        have h_rd := rankDeltaOSSR_settled_meets_dormant (hn := hn) hℓ_s hw_res hw_rc hw_dt hw_F
+        -- transitionPEM doesn't change the first output because:
+        -- Phase 2: s₀ already Settled, so timer/answer conditions false
+        -- Phase 3/4: w is Unsettled, not both Resetting/Settled
+        -- So output.1 = rankDeltaOSSR output.1 = (C' ℓ).1
+        conv at h_fst => rw [show P.δ (C' ℓ, C' w) = transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w) from rfl]
+        rw [show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w)).1 = (C' ℓ).1 from by
+          unfold transitionPEM
+          simp only [h_rd.1, h_rd.2, hℓ_s,
+            show ¬(Role.Settled = .Resetting) from by decide,
+            show ¬(Role.Unsettled = .Resetting) from by decide,
+            show ¬(Role.Settled = .Settled ∧ Role.Unsettled = .Settled) from by
+              intro ⟨_, h⟩; exact Role.noConfusion h,
+            show ¬((C' ℓ).1.role = .Settled ∧ (C' ℓ).1.role ≠ .Settled) from by tauto,
+            false_and, and_false, ite_false]] at h_fst
+        exact h_fst
+      have h_inv' : ∀ x, x ≠ ℓ → (C'' x).1.role = .Unsettled ∨
+          ((C'' x).1.role = .Resetting ∧ (C'' x).1.resetcount = 0 ∧
+           (C'' x).1.delaytimer = 0 ∧ (C'' x).1.leader = .F) := by
+        intro x hx
+        by_cases hxw : x = w
+        · left; rw [hxw]; exact h_step.2.2
+        · rw [show (C'' x).1 = (C' x).1 from congrArg Prod.fst (h_others x hx hxw)]
+          exact h_inv x hx
+      have hCard' : (Finset.univ.filter (fun x : Fin n => (C'' x).1.role == .Resetting)).card < m := by
+        rw [← hCard]; apply Finset.card_lt_card
+        constructor
+        · intro x hx; simp at hx ⊢
+          by_cases hxℓ : x = ℓ
+          · rw [hxℓ]; rw [show (C'' ℓ).1.role = (C' ℓ).1.role from congrArg AgentState.role hℓ_fst_eq]
+            rw [hℓ_s]; decide
+          · by_cases hxw' : x = w
+            · rw [hxw', h_step.2.2]; decide
+            · rw [congrArg (fun p => p.1.role) (h_others x hxℓ hxw')]; exact hx
+        · intro h_sub
+          have : w ∈ Finset.univ.filter (fun x : Fin n => (C'' x).1.role == .Resetting) :=
+            h_sub (by simp [hw_res])
+          simp [h_step.2.2] at this
+      obtain ⟨Ltail, htail⟩ := IH _ hCard' C''
+        (by rw [congrArg AgentState.role hℓ_fst_eq]; exact hℓ_s)
+        (by rw [congrArg (fun s => s.rank.val) hℓ_fst_eq]; exact hℓ_r)
+        (by rw [congrArg AgentState.children hℓ_fst_eq]; exact hℓ_c)
+        h_inv' rfl
+      exact ⟨[(ℓ, w)] ++ Ltail, by
+        rwa [runPairs_append, show runPairs P C' [(ℓ, w)] = C'' from rfl]⟩
 /-  classical
   obtain ⟨hAllRes, hAllRc, hAllDt, ⟨ℓ, hℓ_L, hℓ_unique⟩, hLorF⟩ := hAwake
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
