@@ -492,27 +492,120 @@ def FreshRankingStart (C : Config (AgentState n) Opinion n) : Prop :=
     (C root).1.children = 0 ∧
     ∀ w : Fin n, w ≠ root → (C w).1.role = .Unsettled
 
-/-- Phase 2: From config with ≥ 1 Resetting, spread to all agents. -/
+set_option maxHeartbeats 64000000 in
+/-- Single-step spread: Resetting(rc>0) meets non-Resetting → second becomes Resetting. -/
+theorem propagate_reset_one_step
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C₀ : Config (AgentState n) Opinion n)
+    {r v : Fin n} (hrv : r ≠ v)
+    (hr_res : (C₀ r).1.role = .Resetting) (hr_rc : 0 < (C₀ r).1.resetcount)
+    (hv_not : (C₀ v).1.role ≠ .Resetting) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    (C₀.step P r v v).1.role = .Resetting := by
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_snd := Config.step_snd_state P C₀ hrv hrv.symm
+  have h_rd := rankDeltaOSSR_propagate_reset (Rmax := Rmax) hr_res hr_rc hv_not hDmax
+  suffices h : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C₀ r, C₀ v)).2.role = .Resetting by
+    rw [congrArg AgentState.role h_snd]; exact h
+  unfold transitionPEM
+  simp only [h_rd,
+    show ¬((C₀ v).1.role = .Resetting) from hv_not,
+    show (C₀ v).1.role ≠ .Resetting from hv_not,
+    show Role.Resetting = .Resetting from rfl,
+    show ¬(Role.Resetting = .Settled) from by decide,
+    show Role.Resetting ≠ .Settled from by decide,
+    ite_true, ite_false, and_self, true_and, and_true, false_and, and_false]
+  split_ifs <;> simp_all [show Role.Resetting = .Resetting from rfl]
+
+set_option maxHeartbeats 64000000 in
+/-- After spread step, the spreader stays Resetting with rc decremented. -/
+theorem propagate_reset_spreader_state
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C₀ : Config (AgentState n) Opinion n)
+    {r v : Fin n} (hrv : r ≠ v)
+    (hr_res : (C₀ r).1.role = .Resetting) (hr_rc : 0 < (C₀ r).1.resetcount)
+    (hv_not : (C₀ v).1.role ≠ .Resetting) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    (C₀.step P r v r).1.role = .Resetting ∧
+    (C₀.step P r v r).1.resetcount = (C₀ r).1.resetcount - 1 := by
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_fst := Config.step_fst_state P C₀ hrv
+  suffices h : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C₀ r, C₀ v)).1.role = .Resetting ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C₀ r, C₀ v)).1.resetcount = (C₀ r).1.resetcount - 1 by
+    exact ⟨congrArg AgentState.role h_fst ▸ h.1,
+           congrArg AgentState.resetcount h_fst ▸ h.2⟩
+  unfold transitionPEM rankDeltaOSSR propagateReset
+  simp only [hr_res, hr_rc, hv_not,
+    show (C₀ r).1.role = .Resetting ∨ (C₀ v).1.role = .Resetting from Or.inl hr_res,
+    show (C₀ r).1.role = .Resetting ∧ 0 < (C₀ r).1.resetcount ∧ (C₀ v).1.role ≠ .Resetting from
+      ⟨hr_res, hr_rc, hv_not⟩,
+    ite_true, and_self, true_and]
+  simp only [show (C₀ r).1.role = .Resetting from hr_res,
+    show Role.Resetting = .Resetting from rfl,
+    show ¬(Role.Resetting = .Settled) from by decide,
+    show Role.Resetting ≠ .Settled from by decide,
+    and_self, ite_true, ite_false, true_and, false_and, and_false,
+    show Nat.max ((C₀ r).1.resetcount - 1) 0 = (C₀ r).1.resetcount - 1 from
+      Nat.max_eq_left (Nat.zero_le _)]
+  split_ifs <;> simp_all
+
+/-- Phase 2: From config with ≥ 1 Resetting (with sufficient resetcount), spread to all agents. -/
 theorem phase2_propagate_reset
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hDmax : 1 < Dmax)
     (C : Config (AgentState n) Opinion n)
-    (hReset : ∃ w : Fin n, (C w).1.role = .Resetting) :
+    (hReset : ∃ r : Fin n, (C r).1.role = .Resetting ∧ n ≤ (C r).1.resetcount) :
     ∃ L : List (Fin n × Fin n),
       ∀ w : Fin n, (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L w).1.role = .Resetting := by
+  classical
+  obtain ⟨r, hr_res, hr_rc⟩ := hReset
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-  -- Single-step: Resetting(rc>0) + non-Resetting → non-Resetting becomes Resetting
-  -- This needs the full Config.step trace, not just rankDeltaOSSR.
-  have one_step_spread : ∀ C₀ : Config (AgentState n) Opinion n,
-      ∀ r v : Fin n, r ≠ v →
-      (C₀ r).1.role = .Resetting → 0 < (C₀ r).1.resetcount →
-      (C₀ v).1.role ≠ .Resetting →
-      (runPairs P C₀ [(r, v)] v).1.role = .Resetting := by
-    sorry -- transitionPEM trace: rankDeltaOSSR_propagate_reset + Config.step lift
-  -- Induction on # non-Resetting
-  -- For now, the full induction also needs resetcount tracking
-  sorry
+  suffices sweep : ∀ m (C' : Config (AgentState n) Opinion n),
+      (C' r).1.role = .Resetting → m ≤ (C' r).1.resetcount →
+      (∀ w, (C' w).1.role = .Resetting → True) →
+      (Finset.univ.filter (fun w : Fin n => (C' w).1.role != .Resetting)).card = m →
+      ∃ L, ∀ w, (runPairs P C' L w).1.role = .Resetting by
+    exact sweep _ C hr_res (by omega) (fun _ _ => trivial) rfl
+  intro m
+  induction m using Nat.strongRecOn with
+  | ind m IH =>
+    intro C' hr_res' hr_rc' _ hCard
+    by_cases hm : m = 0
+    · refine ⟨[], fun w => ?_⟩
+      by_contra hw
+      have : w ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role != .Resetting) := by
+        simp; intro h; exact hw h
+      rw [hCard, hm] at this; exact absurd (Finset.card_pos.mpr ⟨w, this⟩) (by omega)
+    · have hm_pos : 0 < m := Nat.pos_of_ne_zero hm
+      have ⟨v, hv_mem⟩ : ∃ v, v ∈ Finset.univ.filter (fun w : Fin n => (C' w).1.role != .Resetting) :=
+        Finset.card_pos.mp (hCard ▸ hm_pos)
+      simp at hv_mem
+      have hv_not : (C' v).1.role ≠ .Resetting := hv_mem
+      have hrv : r ≠ v := by intro heq; rw [heq] at hr_res'; exact hv_not hr_res'
+      set C'' := C'.step P r v
+      have h_spread := propagate_reset_one_step hDmax C' hrv hr_res' (by omega : 0 < (C' r).1.resetcount) hv_not
+      have h_spreader := propagate_reset_spreader_state hDmax C' hrv hr_res' (by omega : 0 < (C' r).1.resetcount) hv_not
+      have h_others : ∀ x, x ≠ r → x ≠ v → C'' x = C' x := by
+        intro x hx hxv; unfold Config.step; simp [hrv, hx, hxv]
+      have hCard' : (Finset.univ.filter (fun w : Fin n => (C'' w).1.role != .Resetting)).card < m := by
+        rw [← hCard]; apply Finset.card_lt_card; constructor
+        · intro x hx; simp at hx ⊢; intro hx_res
+          by_cases hxr : x = r
+          · rw [hxr] at hx_res; exact absurd hx_res (by rw [h_spreader.1]; decide)
+          · by_cases hxv : x = v
+            · rw [hxv] at hx_res; exact absurd hx_res (by rw [h_spread]; decide)
+            · rw [congrArg (fun p => p.1.role) (h_others x hxr hxv)] at hx_res; exact hx hx_res
+        · intro h_sub
+          have : v ∈ Finset.univ.filter (fun w : Fin n => (C'' w).1.role != .Resetting) :=
+            h_sub (by simp [hv_not])
+          simp [h_spread] at this
+      obtain ⟨Ltail, htail⟩ := IH _ hCard' C'' h_spreader.1
+        (by rw [h_spreader.2]; omega) (fun _ _ => trivial) rfl
+      exact ⟨[(r, v)] ++ Ltail, by
+        intro w; rw [runPairs_append, show runPairs P C' [(r, v)] = C'' from rfl]; exact htail w⟩
 
 /-- Phase 3a: countdown delaytimers to 0 for all Resetting agents. -/
 theorem phase3a_to_awakening
