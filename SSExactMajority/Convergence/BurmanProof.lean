@@ -431,7 +431,36 @@ theorem unsettled_branch_eventually_reset_or_allSettled
     ∃ L : List (Fin n × Fin n),
       (∃ w : Fin n, (runPairs P C L w).1.role = .Resetting) ∨
       (∀ w : Fin n, (runPairs P C L w).1.role = .Settled) := by
-  sorry
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  suffices h : ∀ m C₀,
+      unsettledMass C₀ = m →
+      (∃ w, (C₀ w).1.role = .Unsettled) →
+      (∀ w, (C₀ w).1.role ≠ .Resetting) →
+      ∃ L, (∃ w, (runPairs P C₀ L w).1.role = .Resetting) ∨
+           (∀ w, (runPairs P C₀ L w).1.role = .Settled) from
+    h (unsettledMass C) C rfl hUnsettled hNoReset
+  intro m
+  induction m using Nat.strongRecOn with
+  | ind m IH =>
+    intro C₀ hMass hU hNR
+    obtain ⟨w, hw⟩ := hU
+    have hn1 : 1 < n := by omega
+    obtain ⟨v, hv⟩ : ∃ v : Fin n, v ≠ w := by
+      by_cases h : (⟨0, hn⟩ : Fin n) = w
+      · exact ⟨⟨1, hn1⟩, by intro heq; simp [Fin.ext_iff] at heq h; omega⟩
+      · exact ⟨⟨0, hn⟩, h⟩
+    have hstep := unsettled_one_step_progress (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) C₀ hv hw hNR
+    set C₁ := runPairs P C₀ [(w, v)]
+    cases hstep with
+    | inl hReset => exact ⟨[(w, v)], Or.inl hReset⟩
+    | inr ⟨hNR₁, hLt⟩ =>
+      by_cases hU₁ : ∃ w, (C₁ w).1.role = .Unsettled
+      · obtain ⟨Ltail, htail⟩ := IH (unsettledMass C₁) (hMass ▸ hLt) C₁ rfl hU₁ hNR₁
+        exact ⟨[(w, v)] ++ Ltail, by rwa [runPairs_append]⟩
+      · push_neg at hU₁
+        refine ⟨[(w, v)], Or.inr (fun x => ?_)⟩
+        have := hNR₁ x; have := hU₁ x
+        cases h : (C₁ x).1.role <;> simp_all
 
 /-! ### Phase lemma stubs for BurmanConvergence composition
 
