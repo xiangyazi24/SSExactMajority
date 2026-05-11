@@ -401,7 +401,8 @@ theorem trigger_reset_from_all_settled_non_InSrank
 Well-founded induction on unsettledMass = Σ (errorcount + 1). -/
 
 def unsettledMass (C : Config (AgentState n) Opinion n) : ℕ :=
-  (Finset.univ.filter (fun w : Fin n => (C w).1.role == .Unsettled)).card
+  Finset.fold (· + ·) 0 (fun w : Fin n =>
+    if (C w).1.role == .Unsettled then (C w).1.errorcount + 1 else 0) Finset.univ
 
 theorem unsettled_one_step_progress
     [Inhabited (Fin n × Fin n)]
@@ -1140,25 +1141,18 @@ theorem phase34_rerank
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting) :
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
     ∃ L : List (Fin n × Fin n),
       let C' := runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
       InSrank C' ∧
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-  -- Phase 3a: dormancy countdown
-  -- Leader existence: collision sets leader := L, propagation preserves ≥ 1 leader
-  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 C hAllReset
-    (sorry : ∃ ℓ : Fin n, (C ℓ).1.leader = .L)
-  -- Phase 3b+3c: RESET + leader election → FreshRankingStart
-  -- Need leader existence. This comes from the reset trigger mechanism:
-  -- collision (Part 2) and propagation reset (lines 19-24) both set leader := L.
+  obtain ⟨L1, h1⟩ := phase3a_to_awakening hn4 C hAllReset hLeader
   obtain ⟨L2, h2⟩ := phase3bc_from_awakening hn4 (runPairs P C L1) h1
-  -- Phase 4: binary tree → InSrank
   obtain ⟨L3, h3⟩ := phase4_binary_tree hn4
     (runPairs P (runPairs P C L1) L2) h2
-  -- Compose
   refine ⟨L1 ++ L2 ++ L3, ?_⟩
   simp only [runPairs_append, List.append_assoc] at h3 ⊢
   exact h3
