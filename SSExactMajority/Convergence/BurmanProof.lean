@@ -533,6 +533,7 @@ with any follower fires resetOSSR on both: leader → Settled(rank 0),
 follower → Unsettled. After the first step, scheduling the now-Settled root
 with remaining dormant followers converts them to Unsettled one by one. -/
 
+set_option maxHeartbeats 64000000 in
 /-- RankDeltaOSSR on two dormant agents (leader + follower): both fire resetOSSR. -/
 theorem rankDeltaOSSR_both_dormant
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -544,8 +545,19 @@ theorem rankDeltaOSSR_both_dormant
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.rank = ⟨0, hn⟩ ∧
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.children = 0 ∧
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
-  sorry
+  unfold rankDeltaOSSR propagateReset resetOSSR
+  simp only [hs_res, hs_rc, hs_dt, ht_res, ht_rc, ht_dt, hs_L, ht_F]
+  simp (config := { decide := true }) only [ite_true, ite_false, and_self, and_true, true_and,
+    true_or, or_true, false_and, and_false, not_true, not_false_eq_true,
+    show ¬(0 < (0 : ℕ)) from by omega, show (0 : ℕ) - 1 = 0 from rfl,
+    show Nat.max 0 0 = 0 from rfl,
+    show Role.Resetting = .Resetting from rfl,
+    show ¬(Role.Resetting = .Settled) from by decide,
+    show (Role.Resetting == .Resetting) = true from by decide,
+    show ¬(LeaderStatus.F = .L) from by decide]
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
+set_option maxHeartbeats 64000000 in
 /-- RankDeltaOSSR: Settled root meets dormant follower → root unchanged, follower Unsettled. -/
 theorem rankDeltaOSSR_settled_meets_dormant
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -555,7 +567,16 @@ theorem rankDeltaOSSR_settled_meets_dormant
     (ht_F : t.leader = .F) :
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1 = s ∧
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
-  sorry
+  unfold rankDeltaOSSR propagateReset resetOSSR
+  simp only [hs_settled, ht_res, ht_rc, ht_dt, ht_F]
+  simp (config := { decide := true }) only [ite_true, ite_false, and_self, and_true, true_and,
+    true_or, or_true, false_and, and_false, not_true, not_false_eq_true,
+    show ¬(Role.Settled = .Resetting) from by decide,
+    show ¬(0 < (0 : ℕ)) from by omega, show (0 : ℕ) - 1 = 0 from rfl,
+    show (Role.Settled == .Resetting) = false from by decide,
+    show ¬(Role.Settled = .Resetting ∧ Role.Resetting = .Resetting) from by decide,
+    show ¬(LeaderStatus.F = .L) from by decide]
+  exact ⟨rfl, rfl⟩
 
 set_option maxHeartbeats 32000000 in
 /-- TransitionPEM on two dormant agents (leader + follower): leader → Settled rank 0,
@@ -576,9 +597,31 @@ theorem transitionPEM_both_dormant_role
     (C.step P ℓ w ℓ).1.rank.val = 0 ∧
     (C.step P ℓ w ℓ).1.children = 0 ∧
     (C.step P ℓ w w).1.role = .Unsettled := by
-  sorry
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_fst := Config.step_fst_state P C hℓw
+  have h_snd := Config.step_snd_state P C hℓw hℓw.symm
+  have h_rd := rankDeltaOSSR_both_dormant hℓ_res hℓ_rc hℓ_dt hw_res hw_rc hw_dt hℓ_L hw_F
+  suffices h : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.role = .Settled ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.rank = ⟨0, hn⟩ ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.children = 0 ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.role = .Unsettled by
+    exact ⟨congrArg AgentState.role h_fst ▸ h.1,
+           congrArg (fun s => s.rank.val) h_fst ▸ congrArg Fin.val h.2.1,
+           congrArg AgentState.children h_fst ▸ h.2.2.1,
+           congrArg AgentState.role h_snd ▸ h.2.2.2⟩
+  unfold transitionPEM
+  simp only [h_rd.1, h_rd.2.1, h_rd.2.2.1, h_rd.2.2.2, hℓ_res,
+    show ¬(Role.Settled = .Resetting) from by decide,
+    show ¬(Role.Unsettled = .Resetting) from by decide,
+    show Role.Resetting ≠ .Settled from by decide,
+    show ¬(Role.Settled = .Settled ∧ Role.Unsettled = .Settled) from by
+      intro ⟨_, h⟩; exact Role.noConfusion h,
+    false_and, and_false, ite_false, true_and, and_true, ite_true,
+    show (⟨0, hn⟩ : Fin n).val + 1 = ceilHalf n ↔ False from by
+      constructor; · intro h; unfold ceilHalf at h; omega; · exact False.elim]
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
-set_option maxHeartbeats 32000000 in
+set_option maxHeartbeats 64000000 in
 /-- TransitionPEM on Settled root + dormant follower: root state unchanged, follower Unsettled.
 Requires n ≥ 4 (so rank 0 is not the median). -/
 theorem transitionPEM_settled_meets_dormant_role
@@ -595,7 +638,27 @@ theorem transitionPEM_settled_meets_dormant_role
     (C.step P ℓ w ℓ).1.role = .Settled ∧
     (C.step P ℓ w ℓ).1.rank.val = 0 ∧
     (C.step P ℓ w w).1.role = .Unsettled := by
-  sorry
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_fst := Config.step_fst_state P C hℓw
+  have h_snd := Config.step_snd_state P C hℓw hℓw.symm
+  have h_rd := rankDeltaOSSR_settled_meets_dormant hℓ_settled hw_res hw_rc hw_dt hw_F
+  suffices h : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.role = .Settled ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.rank.val = 0 ∧
+    (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.role = .Unsettled by
+    exact ⟨congrArg AgentState.role h_fst ▸ h.1,
+           congrArg (fun s => s.rank.val) h_fst ▸ h.2.1,
+           congrArg AgentState.role h_snd ▸ h.2.2⟩
+  unfold transitionPEM
+  have h_s_eq : (rankDeltaOSSR Rmax Emax Dmax hn ((C ℓ).1, (C w).1)).1 = (C ℓ).1 := h_rd.1
+  simp only [h_rd.2, hℓ_settled, h_s_eq,
+    show ¬(Role.Settled = .Resetting) from by decide,
+    show ¬(Role.Unsettled = .Resetting) from by decide,
+    show ¬(Role.Settled = .Settled ∧ Role.Unsettled = .Settled) from by
+      intro ⟨_, h⟩; exact Role.noConfusion h,
+    false_and, and_false, ite_false, true_and,
+    show ¬((C ℓ).1.role = .Settled ∧ (C ℓ).1.role ≠ .Settled) from by tauto]
+  simp only [hℓ_rank0]
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Phase 3b+3c: from IsAwakeningConfig, sweep to FreshRankingStart.
 (ChatGPT: unique leader enables clean one-pass sweep.) -/
