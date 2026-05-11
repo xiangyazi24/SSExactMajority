@@ -415,7 +415,10 @@ theorem unsettled_one_step_progress
     let C' := runPairs P C [(w, v)]
     (∃ x : Fin n, (C' x).1.role = .Resetting) ∨
     ((∀ x : Fin n, (C' x).1.role ≠ .Resetting) ∧ unsettledMass C' < unsettledMass C) := by
-  sorry
+  sorry -- Complex protocol trace: rankDeltaOSSR Part 3 recruitment / Part 4 errorcount
+  -- Cases: (A) v Settled + recruit guard → w Settled → mass ↓
+  --        (B) Part 4: errorcount hits 0 → both Resetting (left disjunct)
+  --        (C) Part 4: errorcount > 0 → mass ↓ by errorcount decrease
 
 theorem unsettled_branch_eventually_reset_or_allSettled
     [Inhabited (Fin n × Fin n)]
@@ -1108,8 +1111,7 @@ theorem phase4_binary_tree
       InSrank C' ∧
       ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
        IsConsensusConfig C') := by
-  sorry
-/-  classical
+  classical
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   have hHeap₁ := FreshRankingStart.to_heapPrefix_one hSeed
   have hTimer₁ := FreshRankingStart.to_timerGood hn4 hSeed
@@ -1120,20 +1122,19 @@ theorem phase4_binary_tree
         SettledMedianTimerGood (runPairs P Ck Ltail) by
     obtain ⟨L, hL, hT⟩ := grow (n - 1) 1 C rfl (by omega) (by omega) hHeap₁ hTimer₁
     exact ⟨L, HeapPrefix.to_InSrank hL,
-      Or.inl (fun μ hμ => hT μ (hL.1 ▸ (HeapPrefix.to_InSrank hL).allSettled μ) hμ)⟩
+      Or.inl (fun μ hμ => hT μ ((HeapPrefix.to_InSrank hL).allSettled μ) hμ)⟩
   intro fuel
   induction fuel using Nat.strongRecOn with
   | ind fuel IH =>
     intro k Ck hFuel hk_pos hk_le hHeap hTimer
     by_cases hk_done : k = n
-    · subst k; exact ⟨[], by simpa [runPairs]⟩
+    · subst hk_done; exact ⟨[], hHeap, hTimer⟩
     · have hk_lt : k < n := Nat.lt_of_le_of_ne hk_le hk_done
       obtain ⟨parent, child, hStep⟩ :=
         heapPrefix_recruit_step hk_pos hk_lt Ck hHeap hTimer
       obtain ⟨Ltail, hTail⟩ := IH (n - (k + 1)) (by omega) (k + 1)
         (runPairs P Ck [(parent, child)]) rfl (by omega) (by omega) hStep.1 hStep.2
       exact ⟨[(parent, child)] ++ Ltail, by rwa [runPairs_append]⟩
--/
 
 /-- Phase 3+4 composition: all-Resetting → InSrank. -/
 theorem phase34_rerank
