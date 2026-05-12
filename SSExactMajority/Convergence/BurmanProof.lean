@@ -729,6 +729,20 @@ theorem phase2_propagate_reset
         intro w; rw [runPairs_append, show runPairs P C' [(r, v)] = C'' from rfl]; exact htail w⟩
 
 /-- Phase 3a: countdown delaytimers to 0 for all Resetting agents. -/
+/-- From all-Resetting (with leader + sufficient Rmax/Dmax), reach IsDormantConfig.
+This requires: (1) resetcount countdown via sync, (2) leader deduplication,
+(3) delaytimer irrelevant (IsDormantConfig doesn't require dt=0). -/
+theorem all_resetting_to_dormant
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hRmax : 0 < Rmax) (hDmax : 0 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
+    ∃ L : List (Fin n × Fin n),
+      IsDormantConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
+  sorry
+
 theorem phase3a_to_awakening
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -2382,13 +2396,40 @@ theorem burmanConvergence_concrete
   ranking := fun C₀ => by
     classical
     set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-    -- The ranking field needs: from ANY config, reach InSrank ∧ (timer ≥ 2 ∨ consensus).
-    -- Strategy: compose phase1 → phase2 → phase34_rerank.
-    -- Gaps: (1) InSrank+timer<2 case, (2) rc=Rmax for phase2, (3) IsDormantConfig for phase34.
-    -- All three require multi-step countdown arguments that compose the fully-proved
-    -- sub-theorems (phase2, phase3a, phase3bc, phase4).
-    -- The sub-theorems are all proved; the gap is API threading.
-    sorry
+    -- Key: the cycle (config → InSrank → timer expires → Resetting → re-rank → InSrank)
+    -- runs AT MOST ONCE, because re-ranking initializes timer to 7*(Rmax+4) ≥ 2.
+    -- So the ranking proof is a finite 2-pass composition.
+    --
+    -- The "pipeline" (∃ Resetting with rc=Rmax → InSrank + timer≥2) needs:
+    --   phase2 (spread) → all_resetting_to_dormant (rc countdown + leader dedup)
+    --   → phase34_rerank (IsDormantConfig → InSrank + timer≥2)
+    --
+    -- Sub-gaps (each sorry'd as a clear lemma):
+    -- (A) any_config_to_resetting_with_rc: from ANY non-consensus config,
+    --     reach ∃ Resetting with rc = Rmax (via collision or errorcount)
+    -- (B) all_resetting_to_dormant: from all-Resetting config,
+    --     reach IsDormantConfig (rc=0, unique leader)
+    -- (C) InSrank_timer_low_to_resetting: InSrank + timer<2 + not consensus
+    --     → reach ∃ Resetting (via propagation reset after timer expires)
+    -- (D) epidemic answer propagation
+    --
+    -- Given (A)+(B): from non-InSrank config, reach InSrank + timer≥2.
+    -- Sub-gap (A): phase1 gives Resetting. For Cases 3/4 in phase1, rc=Rmax.
+    --   For Case 2 (pre-existing Resetting): sorry'd (needs rc tracking).
+    -- Sub-gap (B): all_resetting_to_dormant. Sorry'd (needs rc countdown + leader dedup).
+    -- Sub-gap (C): InSrank+timer<2. Sorry'd (needs propagation reset trace).
+    -- For now: compose what we have.
+    obtain ⟨L1, h1⟩ := phase1_trigger_reset_or_InSrank hn4 hEmax hDmax C₀
+    cases h1 with
+    | inl hInSrank₁ =>
+      by_cases h_timer₁ : ∀ μ, (runPairs P C₀ L1 μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (runPairs P C₀ L1 μ).1.timer
+      · exact exists_schedule_of_runPairs P C₀ L1 ⟨hInSrank₁, Or.inl h_timer₁⟩
+      · sorry -- Sub-gap (C): InSrank + timer < 2
+    | inr hReset₁ =>
+      -- Need: spread to all Resetting, then reach IsDormantConfig, then phase34.
+      -- Sub-gaps (A) rc=Rmax for phase2 + (B) all_resetting_to_dormant.
+      sorry
   epidemic := fun C₀ h_correct => by
     sorry
 
