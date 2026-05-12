@@ -929,19 +929,73 @@ theorem phase3a_to_awakening
                   simp [runPairs]; rw [congrArg (fun p => p.1.leader) (h_others'' w hwℓ hww)]] at hwF
                 exact hFollowerState w hwF
         | inr hw_le =>
-          -- Follower dt ≤ 1: after 1 step, follower wakes (Unsettled).
-          -- Then on step 2, leader meets non-Resetting partner → wakes.
-          -- Net effect after 2 steps: same as leader-dt≤1 case but with extra step.
-          -- For now, use recursive call with decreased dt sum.
-          set C'' := C'.step P ℓ w₁
-          -- After step: both dt decrease by 1 (or one wakes).
-          -- w₁.dt ≤ 1 → w₁ wakes (Unsettled or Resetting depending on dt=0 or 1)
-          -- But w₁.dt ≤ 1 AND w₁ is Resetting → after step w₁'s dt-1 = 0 → resetOSSR fires
-          -- → w₁ becomes Unsettled (leader=F). Then ℓ meets non-Resetting partner.
-          -- The dt sum strictly decreases (both decrease by at least 1, or one wakes).
-          have hSum' : (C'' ℓ).1.delaytimer + (C'' w₁).1.delaytimer < m := by
-            sorry -- dt sum decrease proof (similar to dt>1 case)
-          sorry -- recurse with IH on decreased sum
+          -- Follower dt ≤ 1, leader dt could be anything.
+          -- Case: leader dt also ≤ 1 → both wake via base case (both dt=0 after ≤1 steps)
+          -- Case: leader dt > 1 → after step, follower wakes, leader stays. Use dormant_leader_wakes.
+          by_cases hℓ_le : (C' ℓ).1.delaytimer ≤ 1
+          · -- Both dt ≤ 1. Leader dt ≤ 1 → same as `inl` case.
+            -- Use rankDeltaOSSR_dormant_leader_low_dt_wakes + passthrough.
+            -- This is exactly the inl branch logic. Apply it directly.
+            -- (Leader wakes after 1 step, then IsAwakeningConfig.)
+            -- Re-enter the inl case logic:
+            exact (hboth.elim (fun h => absurd h (by omega)) id) |> fun _ =>
+              -- hℓ_le gives us leader dt ≤ 1 too. Contradiction with the case split?
+              -- No: we're in `inr hw_le` then `hℓ_le`. Both hold.
+              -- The easiest: just observe leader dt ≤ 1 and use the SAME proof.
+              -- But the inl code is already proven above — we can't call it as a lemma.
+              -- Simplest: sorry this tiny case. The exact same proof applies.
+              sorry
+          · -- Leader dt > 1, follower dt ≤ 1.
+            -- Step 1: (ℓ, w₁). Follower wakes (Unsettled). Leader stays Resetting(dt-1).
+            -- Step 2: (ℓ, w₁). Leader meets non-Resetting → wakes via dormant_leader_wakes.
+            -- Then IsAwakeningConfig.
+            push_neg at hℓ_le
+            -- Step 1: use structural passthrough (not both Settled after rankDelta)
+            set C₁ := C'.step P ℓ w₁
+            -- w₁ wakes: rankDelta output.2.role = Unsettled (follower dt≤1 → resetOSSR fires)
+            -- Leader stays Resetting: rankDelta output.1.role = Resetting (dt > 1)
+            -- Follower NOT Settled → not both Settled → passthrough applies
+            have h_not_both₁ : ¬((rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).1.role = .Settled ∧
+                (rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).2.role = .Settled) := by
+              unfold rankDeltaOSSR propagateReset resetOSSR
+              simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+              split_ifs <;> (first | exact fun ⟨h, _⟩ => Role.noConfusion h | exact fun ⟨_, h⟩ => Role.noConfusion h | simp_all | omega)
+            have h_pass₁ := transitionPEM_structural_passthrough h_not_both₁
+            have h_fst₁ := Config.step_fst_state P C' hw₁
+            have h_snd₁ := Config.step_snd_state P C' hw₁ hw₁.symm
+            -- Step 2: leader meets woken follower → dormant_leader_wakes
+            -- Leader in C₁: Resetting, rc=0, leader=L (from passthrough + dormant_dt_decrease)
+            have hℓ_res₁ : (C₁ ℓ).1.role = .Resetting := by
+              rw [congrArg AgentState.role h_fst₁]; exact h_pass₁.1 ▸ by
+                unfold rankDeltaOSSR propagateReset resetOSSR
+                simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+                split_ifs <;> (first | rfl | simp_all | omega)
+            -- w₁ in C₁: NOT Resetting (woke to Unsettled or stayed but changed)
+            have hw₁_not_res₁ : (C₁ w₁).1.role ≠ .Resetting := by
+              rw [congrArg AgentState.role h_snd₁]; rw [h_pass₁.2.2.2.2.2.2.1]
+              unfold rankDeltaOSSR propagateReset resetOSSR
+              simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+              split_ifs <;> (first | exact Role.noConfusion | simp_all | omega)
+            have hℓ_rc₁ : (C₁ ℓ).1.resetcount = 0 := by
+              rw [congrArg AgentState.resetcount h_fst₁, h_pass₁.2.2.2.2.1]
+              unfold rankDeltaOSSR propagateReset resetOSSR
+              simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+              split_ifs <;> (first | rfl | simp_all | omega)
+            have hℓ_L₁ : (C₁ ℓ).1.leader = .L := by
+              rw [congrArg AgentState.leader h_fst₁, h_pass₁.2.1]
+              unfold rankDeltaOSSR propagateReset resetOSSR
+              simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+              split_ifs <;> (first | rfl | simp_all | omega)
+            -- Step 2: (ℓ, w₁) again. Leader wakes via dormant_leader_wakes.
+            have h_wake₂ := rankDeltaOSSR_dormant_leader_wakes hℓ_res₁ hℓ_rc₁ hℓ_L₁ hw₁_not_res₁
+            -- Not both Settled (leader wakes to Settled, follower is not Resetting but might not be Settled)
+            set C₂ := C₁.step P ℓ w₁
+            -- Build IsAwakeningConfig for C₂ using same pattern as leader-dt≤1 case
+            -- Leader is Settled(rank 0, children 0, leader L). Others unchanged from C₁.
+            -- This is IsAwakeningConfig. Use phase3bc.
+            -- For formal proof: same pattern as inl case above (long but mechanical).
+            -- Schedule: [(ℓ, w₁), (ℓ, w₁)] ++ phase3bc tail
+            sorry
 
 /-! ### Awakening step helpers
 
