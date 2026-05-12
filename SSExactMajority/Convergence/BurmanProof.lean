@@ -749,8 +749,12 @@ theorem phase3a_to_awakening
     exact ⟨if h : (⟨0, hn⟩ : Fin n) = ℓ then ⟨1, this⟩ else ⟨0, hn⟩,
       by split_ifs with h; · intro heq; simp [Fin.ext_iff] at heq h; omega; · exact h⟩
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-  -- Both ℓ and w₁ are Resetting(rc=0). Schedule (ℓ, w₁) until both dt=0.
-  -- Strategy: induction on dt_ℓ + dt_w₁. When both dt=0, use transitionPEM_both_dormant_role.
+  -- Strategy: schedule (ℓ, w₁) repeatedly. Each step either:
+  -- (a) Both wake (dt=0 case) → IsAwakeningConfig immediately
+  -- (b) Both stay Resetting with dt decreased → dt sum drops, recurse
+  -- (c) One wakes, other stays → next step wakes the other via !partnerResetting
+  -- Use induction on dt sum. The dt>1 case uses transitionPEM_dormant_dt_decrease.
+  -- The dt≤1 case uses transitionPEM_both_dormant_role (when both 0) or sorry.
   suffices countdown : ∀ m (C' : Config (AgentState n) Opinion n),
       (C' ℓ).1.role = .Resetting → (C' ℓ).1.resetcount = 0 → (C' ℓ).1.leader = .L →
       (C' w₁).1.role = .Resetting → (C' w₁).1.resetcount = 0 → (C' w₁).1.leader = .F →
@@ -808,13 +812,52 @@ theorem phase3a_to_awakening
             right; exact ⟨hRes w, hRc w⟩
     · -- Some dt > 0: schedule (ℓ, w₁), both dt decrease, recurse
       push_neg at hdt
-      -- At least one dt > 0. Schedule (ℓ, w₁): both dt decrease by 1.
-      -- We need both dt > 1 for dormant_dt_decrease. Handle edge cases:
-      -- Case: some dt ≤ 1. Then that dt becomes 0 after step, agent wakes.
-      -- If both wake → done. If one wakes, other is still Resetting →
-      -- use dormant_leader_wakes (non-Resetting partner → immediate wake).
-      -- For now, sorry this complex case split. The structure is correct.
-      sorry
+      -- At least one dt > 0. Need both dt > 1 for dormant_dt_decrease.
+      by_cases hboth : 1 < (C' ℓ).1.delaytimer ∧ 1 < (C' w₁).1.delaytimer
+      · -- Both dt > 1: use transitionPEM_dormant_dt_decrease, sum decreases, recurse
+        obtain ⟨hdt_ℓ_gt, hdt_w_gt⟩ := hboth
+        set C'' := C'.step P ℓ w₁
+        have h_dd := transitionPEM_dormant_dt_decrease hw₁ hℓ_res hℓ_rc hℓ_L' hw_res hw_rc hw_F' hdt_ℓ_gt hdt_w_gt
+        have h_others'' : ∀ w, w ≠ ℓ → w ≠ w₁ → C'' w = C w := by
+          intro x hx hxw
+          have : C'' x = C' x := by unfold Config.step; simp [hw₁, hx, hxw]
+          rw [this, hOthers x hx hxw]
+        have hSum' : (C'' ℓ).1.delaytimer + (C'' w₁).1.delaytimer < m := by
+          rw [h_dd.2.2.1, h_dd.2.2.2.2.2.2.1, hSum]; omega
+        obtain ⟨Ltail, htail⟩ := IH _ hSum' C''
+          h_dd.1 h_dd.2.1 h_dd.2.2.2.1
+          h_dd.2.2.2.2.1 h_dd.2.2.2.2.2.1 h_dd.2.2.2.2.2.2.2
+          h_others'' rfl
+        exact ⟨[(ℓ, w₁)] ++ Ltail, by rwa [runPairs_append]⟩
+      · -- Some dt ≤ 1: leader wakes after one step → IsAwakeningConfig
+        push_neg at hboth
+        cases hboth with
+        | inl hℓ_le =>
+          -- Leader dt ≤ 1: wakes in one step via rankDeltaOSSR_dormant_leader_low_dt_wakes
+          set C'' := C'.step P ℓ w₁
+          have h_fst := Config.step_fst_state P C' hw₁
+          have h_wake := rankDeltaOSSR_dormant_leader_low_dt_wakes hℓ_res hℓ_rc hℓ_le hℓ_L' hw_res hw_rc hw_F'
+          -- ℓ is now Settled(rank 0, children 0) after transitionPEM lift
+          -- (Phase 4 doesn't fire: follower output role ≠ Settled)
+          -- Build IsAwakeningConfig for C''
+          have h_others'' : ∀ w, w ≠ ℓ → w ≠ w₁ → C'' w = C w := by
+            intro x hx hxw
+            have : C'' x = C' x := by unfold Config.step; simp [hw₁, hx, hxw]
+            rw [this, hOthers x hx hxw]
+          -- ℓ is Settled in rankDelta output. Phase 4 doesn't fire (follower not Settled).
+          -- So transitionPEM output.1 = rankDelta output.1 = Settled rank 0.
+          -- IsAwakeningConfig: ℓ is Settled, all others are F → Unsettled/Resetting.
+          -- Use phase3bc_from_awakening (which is already proved for Settled leader case)!
+          -- But we need to rebuild IsAwakeningConfig for C'' first.
+          -- Actually: just observe ℓ is Settled in C'', then call phase3bc.
+          -- But I need the full transitionPEM trace. Let me sorry for now — the structure is identical
+          -- to the Unsettled-follower case in phase3bc which is already proved.
+          sorry
+        | inr hw_le =>
+          -- Follower dt ≤ 1: follower wakes, leader might not.
+          -- Schedule (ℓ, w₁): follower wakes (Unsettled). Leader stays Resetting or wakes.
+          -- If leader wakes → IsAwakeningConfig. If stays → use dormant_leader_wakes next.
+          sorry
 
 /-! ### Awakening step helpers
 
@@ -871,6 +914,79 @@ theorem rankDeltaOSSR_dormant_dt_decrease
     true_and, and_true, not_false_eq_true, Bool.true_eq_true, Bool.not_true,
     show ¬(s.delaytimer - 1 = 0) from by omega,
     show ¬(t.delaytimer - 1 = 0) from by omega]
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+set_option maxHeartbeats 200000000 in
+/-- When leader has dt ≤ 1: leader wakes via resetOSSR regardless of follower dt. -/
+theorem rankDeltaOSSR_dormant_leader_low_dt_wakes
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs : s.role = .Resetting) (hs_rc : s.resetcount = 0) (hs_dt : s.delaytimer ≤ 1)
+    (hs_L : s.leader = .L)
+    (ht : t.role = .Resetting) (ht_rc : t.resetcount = 0)
+    (ht_F : t.leader = .F) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Settled ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.rank = ⟨0, hn⟩ ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.children = 0 ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.leader = .L := by
+  unfold rankDeltaOSSR propagateReset resetOSSR
+  simp only [hs, ht, hs_rc, ht_rc, hs_L, ht_F,
+    show ¬(0 < (0:ℕ)) from by omega, show Nat.max 0 0 = 0 from rfl,
+    show (Role.Resetting == Role.Resetting) = true from rfl,
+    show ¬(Leader.F = Leader.L) from Leader.noConfusion,
+    true_or, or_true, ite_true, ite_false, false_and, and_false, and_self,
+    true_and, and_true, not_false_eq_true, Bool.true_eq_true, Bool.not_true,
+    show s.delaytimer - 1 = 0 from by omega]
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+set_option maxHeartbeats 200000000 in
+/-- TransitionPEM wrapper: both dormant with dt > 1 → both stay Resetting, dt decreased. -/
+theorem transitionPEM_dormant_dt_decrease
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {C : Config (AgentState n) Opinion n}
+    {ℓ w : Fin n} (hℓw : ℓ ≠ w)
+    (hℓ_res : (C ℓ).1.role = .Resetting) (hℓ_rc : (C ℓ).1.resetcount = 0)
+    (hℓ_L : (C ℓ).1.leader = .L)
+    (hw_res : (C w).1.role = .Resetting) (hw_rc : (C w).1.resetcount = 0)
+    (hw_F : (C w).1.leader = .F)
+    (hℓ_dt : 1 < (C ℓ).1.delaytimer) (hw_dt : 1 < (C w).1.delaytimer) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    let C' := C.step P ℓ w
+    (C' ℓ).1.role = .Resetting ∧ (C' ℓ).1.resetcount = 0 ∧
+    (C' ℓ).1.delaytimer = (C ℓ).1.delaytimer - 1 ∧ (C' ℓ).1.leader = .L ∧
+    (C' w).1.role = .Resetting ∧ (C' w).1.resetcount = 0 ∧
+    (C' w).1.delaytimer = (C w).1.delaytimer - 1 ∧ (C' w).1.leader = .F := by
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_fst := Config.step_fst_state P C hℓw
+  have h_snd := Config.step_snd_state P C hℓw hℓw.symm
+  have h_dd := rankDeltaOSSR_dormant_dt_decrease hℓ_res hℓ_rc hw_res hw_rc hℓ_L hw_F hℓ_dt hw_dt
+  -- transitionPEM: Phase 2/3/4 don't change role/rc/dt/leader when both stay Resetting
+  suffices ht :
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.role = .Resetting ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.resetcount = 0 ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.delaytimer = (C ℓ).1.delaytimer - 1 ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).1.leader = .L ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.role = .Resetting ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.resetcount = 0 ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.delaytimer = (C w).1.delaytimer - 1 ∧
+      (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C ℓ, C w)).2.leader = .F by
+    exact ⟨congrArg AgentState.role h_fst ▸ ht.1,
+           congrArg AgentState.resetcount h_fst ▸ ht.2.1,
+           congrArg AgentState.delaytimer h_fst ▸ ht.2.2.1,
+           congrArg AgentState.leader h_fst ▸ ht.2.2.2.1,
+           congrArg AgentState.role h_snd ▸ ht.2.2.2.2.1,
+           congrArg AgentState.resetcount h_snd ▸ ht.2.2.2.2.2.1,
+           congrArg AgentState.delaytimer h_snd ▸ ht.2.2.2.2.2.2.1,
+           congrArg AgentState.leader h_snd ▸ ht.2.2.2.2.2.2.2⟩
+  unfold transitionPEM
+  simp only [h_dd.1, h_dd.2.1, h_dd.2.2.1, h_dd.2.2.2.1,
+    h_dd.2.2.2.2.1, h_dd.2.2.2.2.2.1, h_dd.2.2.2.2.2.2.1, h_dd.2.2.2.2.2.2.2,
+    hℓ_res, hw_res,
+    show Role.Resetting = .Resetting from rfl,
+    show ¬(Role.Resetting = .Settled) from by decide,
+    show Role.Resetting ≠ .Settled from by decide,
+    show ¬(Role.Resetting = .Settled ∧ Role.Resetting = .Settled) from by decide,
+    false_and, and_false, ite_false, ite_true, true_and, and_true]
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 set_option maxHeartbeats 64000000 in
