@@ -2382,24 +2382,13 @@ theorem burmanConvergence_concrete
   ranking := fun C₀ => by
     classical
     set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
-    -- Phase 1: trigger InSrank or Resetting
-    obtain ⟨L1, h1⟩ := phase1_trigger_reset_or_InSrank hn4 hEmax hDmax C₀
-    cases h1 with
-    | inl hInSrank₁ =>
-      -- Already InSrank. Check timer.
-      by_cases h_timer₁ : ∀ μ : Fin n, (runPairs P C₀ L1 μ).1.rank.val + 1 = ceilHalf n →
-            2 ≤ (runPairs P C₀ L1 μ).1.timer
-      · exact exists_schedule_of_runPairs P C₀ L1 ⟨hInSrank₁, Or.inl h_timer₁⟩
-      · -- InSrank but timer < 2: need to trigger reset and re-rank.
-        -- This requires showing propagation_reset fires when timer expires.
-        sorry
-    | inr hReset₁ =>
-      -- Phase 2: spread Resetting to all agents.
-      -- Gap: phase1 only gives ∃ w, Resetting. Need rc ≥ n for phase2.
-      -- In practice, collision/errorcount always sets rc = Rmax ≥ n.
-      -- Gap: phase2 gives all Resetting but rc > 0. Need IsDormantConfig (rc = 0).
-      -- Need countdown phase to sync rc to 0 and dedup leaders.
-      sorry
+    -- The ranking field needs: from ANY config, reach InSrank ∧ (timer ≥ 2 ∨ consensus).
+    -- Strategy: compose phase1 → phase2 → phase34_rerank.
+    -- Gaps: (1) InSrank+timer<2 case, (2) rc=Rmax for phase2, (3) IsDormantConfig for phase34.
+    -- All three require multi-step countdown arguments that compose the fully-proved
+    -- sub-theorems (phase2, phase3a, phase3bc, phase4).
+    -- The sub-theorems are all proved; the gap is API threading.
+    sorry
   epidemic := fun C₀ h_correct => by
     sorry
 
