@@ -741,6 +741,17 @@ theorem all_resetting_to_dormant
     (hLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
     ∃ L : List (Fin n × Fin n),
       IsDormantConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
+  -- Strategy:
+  -- 1. Count down all rc to 0: schedule any pair repeatedly, max(rc) decreases by 1 per step.
+  --    After at most n * Rmax steps, all rc = 0.
+  -- 2. Dedup leaders: schedule L,L pairs, count decreases by 1 each time.
+  --    After at most n-1 dedup steps, unique leader.
+  -- 3. IsDormantConfig = all Resetting ∧ all rc=0 ∧ unique leader ∧ all L or F.
+  --    Conditions (1)+(2) give this. "All L or F" is trivially true (Leader only has 2 constructors).
+  --
+  -- Key trace needed: when two Resetting agents interact (rc sync + dedup),
+  -- they stay Resetting and rc = max(old_rc₁-1, old_rc₂-1).
+  -- This trace is similar to rankDeltaOSSR_dormant_dt_decrease but for rc instead of dt.
   sorry
 
 theorem phase3a_to_awakening
