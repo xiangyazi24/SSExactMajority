@@ -749,6 +749,75 @@ theorem phase3a_to_awakening
     exact ⟨if h : (⟨0, hn⟩ : Fin n) = ℓ then ⟨1, this⟩ else ⟨0, hn⟩,
       by split_ifs with h; · intro heq; simp [Fin.ext_iff] at heq h; omega; · exact h⟩
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  -- Helper: when leader has dt ≤ 1, one step produces IsAwakeningConfig
+  have leader_low_dt : ∀ (C' : Config (AgentState n) Opinion n),
+      (C' ℓ).1.role = .Resetting → (C' ℓ).1.resetcount = 0 → (C' ℓ).1.leader = .L →
+      (C' w₁).1.role = .Resetting → (C' w₁).1.resetcount = 0 → (C' w₁).1.leader = .F →
+      (∀ w, w ≠ ℓ → w ≠ w₁ → C' w = C w) →
+      (C' ℓ).1.delaytimer ≤ 1 →
+      ∃ L, IsAwakeningConfig (runPairs P C' L) := by
+    intro C' hℓ_res hℓ_rc hℓ_L' hw_res hw_rc hw_F' hOthers hℓ_le
+    -- Leader wakes (Settled) after rankDelta. Follower either Resetting or Unsettled.
+    have h_wake := rankDeltaOSSR_dormant_leader_low_dt_wakes hℓ_res hℓ_rc hℓ_le hℓ_L' hw_res hw_rc hw_F'
+    have h_fol_not_settled : (rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).2.role ≠ .Settled := by
+      unfold rankDeltaOSSR propagateReset resetOSSR
+      simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+      split_ifs <;> (first | exact Role.noConfusion | exact fun h => Role.noConfusion h | omega | simp_all)
+    have h_not_both : ¬((rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).1.role = .Settled ∧
+        (rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).2.role = .Settled) :=
+      fun ⟨_, h2⟩ => h_fol_not_settled h2
+    have h_pass := transitionPEM_structural_passthrough h_not_both
+    have h_fst := Config.step_fst_state P C' hw₁
+    have h_snd := Config.step_snd_state P C' hw₁ hw₁.symm
+    set C'' := C'.step P ℓ w₁
+    have hC_ℓ_role : (C'' ℓ).1.role = .Settled := by
+      rw [congrArg AgentState.role h_fst]; exact h_pass.1 ▸ h_wake.1
+    have hC_ℓ_rank : (C'' ℓ).1.rank = ⟨0, hn⟩ := by
+      rw [congrArg AgentState.rank h_fst]; exact h_pass.2.2.1 ▸ h_wake.2
+    have hC_ℓ_children : (C'' ℓ).1.children = 0 := by
+      rw [congrArg AgentState.children h_fst]; exact h_pass.2.2.2.1 ▸ h_wake.3
+    have hC_ℓ_leader : (C'' ℓ).1.leader = .L := by
+      rw [congrArg AgentState.leader h_fst]; exact h_pass.2.1 ▸ h_wake.4
+    have h_others'' : ∀ w, w ≠ ℓ → w ≠ w₁ → C'' w = C w := by
+      intro x hx hxw; have : C'' x = C' x := by unfold Config.step; simp [hw₁, hx, hxw]
+      rw [this, hOthers x hx hxw]
+    refine ⟨[(ℓ, w₁)], ⟨ℓ, hC_ℓ_leader, fun y hy => ?_⟩, fun y hyL => ?_, fun w hwF => ?_⟩
+    · by_cases hyℓ : y = ℓ; · exact hyℓ
+      by_cases hyw : y = w₁
+      · subst hyw; rw [congrArg AgentState.leader h_snd, h_pass.2.2.2.2.2.2.2.1, hw_F'] at hy
+        exact absurd hy Leader.noConfusion
+      · rw [show (runPairs P C' [(ℓ, w₁)] y).1.leader = (C y).1.leader from by
+          simp [runPairs]; rw [congrArg (fun p => p.1.leader) (h_others'' y hyℓ hyw)]] at hy
+        exact absurd (hℓ_unique y hy) hyℓ.symm
+    · by_cases hyℓ : y = ℓ
+      · subst hyℓ; exact ⟨hC_ℓ_role, congrArg Fin.val hC_ℓ_rank, hC_ℓ_children⟩
+      · by_cases hyw : y = w₁
+        · subst hyw; rw [show (runPairs P C' [(ℓ, w₁)] w₁).1.leader = (C w₁).1.leader from by
+            simp [runPairs]; rw [congrArg AgentState.leader h_snd, h_pass.2.2.2.2.2.2.2.1, hw_F']] at hyL
+          exact absurd hyL Leader.noConfusion
+        · rw [show (runPairs P C' [(ℓ, w₁)] y).1.leader = (C y).1.leader from by
+            simp [runPairs]; rw [congrArg (fun p => p.1.leader) (h_others'' y hyℓ hyw)]] at hyL
+          exact absurd (hℓ_unique y hyL) hyℓ.symm
+    · by_cases hwℓ : w = ℓ
+      · subst hwℓ; rw [hC_ℓ_leader] at hwF; exact absurd hwF Leader.noConfusion
+      · by_cases hww : w = w₁
+        · subst hww
+          have hw₁_role : (runPairs P C' [(ℓ, w₁)] w₁).1.role = (rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).2.role := by
+            simp [runPairs]; rw [congrArg AgentState.role h_snd]; exact h_pass.2.2.2.2.2.2.1
+          cases h : (rankDeltaOSSR Rmax Emax Dmax hn ((C' ℓ).1, (C' w₁).1)).2.role with
+          | Settled => exact absurd h h_fol_not_settled
+          | Unsettled => left; rw [hw₁_role, h]
+          | Resetting =>
+            right; rw [hw₁_role, h]; constructor; · rfl
+            rw [congrArg AgentState.resetcount h_snd, h_pass.2.2.2.2.2.2.2.2.2.2.1]
+            unfold rankDeltaOSSR propagateReset resetOSSR at h
+            simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F'] at h
+            split_ifs at h <;> simp_all <;> omega
+        · rw [show (runPairs P C' [(ℓ, w₁)] w).1 = (C w).1 from by
+            simp [runPairs]; rw [congrArg Prod.fst (h_others'' w hwℓ hww)]]
+          rw [show (runPairs P C' [(ℓ, w₁)] w).1.leader = (C w).1.leader from by
+            simp [runPairs]; rw [congrArg (fun p => p.1.leader) (h_others'' w hwℓ hww)]] at hwF
+          exact hFollowerState w hwF
   -- Strategy: schedule (ℓ, w₁) repeatedly. Each step either:
   -- (a) Both wake (dt=0 case) → IsAwakeningConfig immediately
   -- (b) Both stay Resetting with dt decreased → dt sum drops, recurse
@@ -833,7 +902,8 @@ theorem phase3a_to_awakening
         push_neg at hboth
         cases hboth with
         | inl hℓ_le =>
-          -- Leader dt ≤ 1: wakes in one step via rankDeltaOSSR_dormant_leader_low_dt_wakes
+          exact leader_low_dt C' hℓ_res hℓ_rc hℓ_L' hw_res hw_rc hw_F' hOthers hℓ_le
+        /-  OLD inl proof (now in leader_low_dt helper):
           set C'' := C'.step P ℓ w₁
           have h_fst := Config.step_fst_state P C' hw₁
           have h_wake := rankDeltaOSSR_dormant_leader_low_dt_wakes hℓ_res hℓ_rc hℓ_le hℓ_L' hw_res hw_rc hw_F'
@@ -928,23 +998,14 @@ theorem phase3a_to_awakening
                 rw [show (runPairs P C' [(ℓ, w₁)] w).1.leader = (C w).1.leader from by
                   simp [runPairs]; rw [congrArg (fun p => p.1.leader) (h_others'' w hwℓ hww)]] at hwF
                 exact hFollowerState w hwF
+        -/
         | inr hw_le =>
           -- Follower dt ≤ 1, leader dt could be anything.
           -- Case: leader dt also ≤ 1 → both wake via base case (both dt=0 after ≤1 steps)
           -- Case: leader dt > 1 → after step, follower wakes, leader stays. Use dormant_leader_wakes.
           by_cases hℓ_le : (C' ℓ).1.delaytimer ≤ 1
-          · -- Both dt ≤ 1. Leader dt ≤ 1 → same as `inl` case.
-            -- Use rankDeltaOSSR_dormant_leader_low_dt_wakes + passthrough.
-            -- This is exactly the inl branch logic. Apply it directly.
-            -- (Leader wakes after 1 step, then IsAwakeningConfig.)
-            -- Re-enter the inl case logic:
-            exact (hboth.elim (fun h => absurd h (by omega)) id) |> fun _ =>
-              -- hℓ_le gives us leader dt ≤ 1 too. Contradiction with the case split?
-              -- No: we're in `inr hw_le` then `hℓ_le`. Both hold.
-              -- The easiest: just observe leader dt ≤ 1 and use the SAME proof.
-              -- But the inl code is already proven above — we can't call it as a lemma.
-              -- Simplest: sorry this tiny case. The exact same proof applies.
-              sorry
+          · -- Both dt ≤ 1. Leader dt ≤ 1 → use helper.
+            exact leader_low_dt C' hℓ_res hℓ_rc hℓ_L' hw_res hw_rc hw_F' hOthers hℓ_le
           · -- Leader dt > 1, follower dt ≤ 1.
             -- Step 1: (ℓ, w₁). Follower wakes (Unsettled). Leader stays Resetting(dt-1).
             -- Step 2: (ℓ, w₁). Leader meets non-Resetting → wakes via dormant_leader_wakes.
@@ -990,12 +1051,80 @@ theorem phase3a_to_awakening
             have h_wake₂ := rankDeltaOSSR_dormant_leader_wakes hℓ_res₁ hℓ_rc₁ hℓ_L₁ hw₁_not_res₁
             -- Not both Settled (leader wakes to Settled, follower is not Resetting but might not be Settled)
             set C₂ := C₁.step P ℓ w₁
-            -- Build IsAwakeningConfig for C₂ using same pattern as leader-dt≤1 case
-            -- Leader is Settled(rank 0, children 0, leader L). Others unchanged from C₁.
-            -- This is IsAwakeningConfig. Use phase3bc.
-            -- For formal proof: same pattern as inl case above (long but mechanical).
-            -- Schedule: [(ℓ, w₁), (ℓ, w₁)] ++ phase3bc tail
-            sorry
+            -- After step 2: leader Settled. Build IsAwakeningConfig for C₂.
+            -- Use passthrough (not both Settled: leader Settled, follower from dormant_leader_wakes .2 = (C₁ w₁).1)
+            have hw₁_not_settled₁ : (C₁ w₁).1.role ≠ .Settled := by
+              intro h; have := hw₁_not_res₁; rw [h] at this ⊢; exact Role.noConfusion
+            have h_wake₂_fol_not_settled : (rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).2.role ≠ .Settled := by
+              rw [h_wake₂.2.2.2.2]; intro h
+              exact hw₁_not_settled₁ (by rw [show (C₁ w₁).1.role = _ from rfl]; exact h)
+            have h_not_both₂ : ¬((rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).1.role = .Settled ∧
+                (rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).2.role = .Settled) :=
+              fun ⟨_, h⟩ => h_wake₂_fol_not_settled h
+            have h_pass₂ := transitionPEM_structural_passthrough h_not_both₂
+            have h_fst₂ := Config.step_fst_state P C₁ hw₁
+            have h_snd₂ := Config.step_snd_state P C₁ hw₁ hw₁.symm
+            have hC₂_ℓ_role : (C₂ ℓ).1.role = .Settled := by
+              rw [congrArg AgentState.role h_fst₂]; exact h_pass₂.1 ▸ h_wake₂.1
+            have hC₂_ℓ_leader : (C₂ ℓ).1.leader = .L := by
+              rw [congrArg AgentState.leader h_fst₂]; exact h_pass₂.2.1 ▸ h_wake₂.2.2.2.1
+            have hC₂_ℓ_rank : (C₂ ℓ).1.rank = ⟨0, hn⟩ := by
+              rw [congrArg AgentState.rank h_fst₂]; exact h_pass₂.2.2.1 ▸ h_wake₂.2
+            have hC₂_ℓ_children : (C₂ ℓ).1.children = 0 := by
+              rw [congrArg AgentState.children h_fst₂]; exact h_pass₂.2.2.2.1 ▸ h_wake₂.2.2.1
+            have h_others₁ : ∀ w, w ≠ ℓ → w ≠ w₁ → C₁ w = C' w := by
+              intro x hx hxw; unfold Config.step; simp [hw₁, hx, hxw]
+            have h_others₂ : ∀ w, w ≠ ℓ → w ≠ w₁ → C₂ w = C w := by
+              intro x hx hxw
+              have : C₂ x = C₁ x := by unfold Config.step; simp [hw₁, hx, hxw]
+              rw [this, h_others₁ x hx hxw, hOthers x hx hxw]
+            -- w₁'s leader in C₁: preserved through passthrough
+            have hw₁_leader₁ : (C₁ w₁).1.leader = .F := by
+              rw [congrArg AgentState.leader h_snd₁, h_pass₁.2.2.2.2.2.2.2.1]
+              unfold rankDeltaOSSR propagateReset resetOSSR
+              simp only [hℓ_res, hw_res, hℓ_rc, hw_rc, hℓ_L', hw_F']
+              split_ifs <;> (first | rfl | simp_all | omega)
+            -- w₁'s leader in C₂: preserved through step 2 (dormant_leader_wakes .2 = t)
+            have hw₁_leader₂ : (C₂ w₁).1.leader = .F := by
+              rw [congrArg AgentState.leader h_snd₂, h_pass₂.2.2.2.2.2.2.2.1,
+                show (rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).2.leader = (C₁ w₁).1.leader from h_wake₂.2.2.2.2.2,
+                hw₁_leader₁]
+            refine ⟨[(ℓ, w₁), (ℓ, w₁)], ⟨ℓ, hC₂_ℓ_leader, fun y hy => ?_⟩, fun y hyL => ?_, fun w hwF => ?_⟩
+            · by_cases hyℓ : y = ℓ; · exact hyℓ
+              by_cases hyw : y = w₁
+              · subst hyw; rw [congrArg AgentState.leader h_snd₂] at hy
+                rw [h_pass₂.2.2.2.2.2.2.2.1, show (rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).2.leader = (C₁ w₁).1.leader from h_wake₂.2.2.2.2.2] at hy
+                rw [hw₁_leader₁] at hy; exact absurd hy Leader.noConfusion
+              · rw [show (C₂ y).1.leader = (C y).1.leader from
+                  congrArg (fun p => p.1.leader) (h_others₂ y hyℓ hyw)] at hy
+                exact absurd (hℓ_unique y hy) hyℓ.symm
+            · by_cases hyℓ : y = ℓ
+              · subst hyℓ; exact ⟨hC₂_ℓ_role, congrArg Fin.val hC₂_ℓ_rank, hC₂_ℓ_children⟩
+              · by_cases hyw : y = w₁
+                · subst hyw; rw [hw₁_leader₂] at hyL; exact absurd hyL Leader.noConfusion
+                · rw [show (C₂ y).1.leader = (C y).1.leader from
+                    congrArg (fun p => p.1.leader) (h_others₂ y hyℓ hyw)] at hyL
+                  exact absurd (hℓ_unique y hyL) hyℓ.symm
+            · by_cases hwℓ : w = ℓ
+              · subst hwℓ; rw [hC₂_ℓ_leader] at hwF; exact absurd hwF Leader.noConfusion
+              · by_cases hww : w = w₁
+                · subst hww
+                  -- w₁'s role in C₂: from passthrough + dormant_leader_wakes .2 = (C₁ w₁).1
+                  have hw₁_role₂ : (C₂ w₁).1.role = (C₁ w₁).1.role := by
+                    rw [congrArg AgentState.role h_snd₂, h_pass₂.2.2.2.2.2.2.1,
+                      show (rankDeltaOSSR Rmax Emax Dmax hn ((C₁ ℓ).1, (C₁ w₁).1)).2.role = (C₁ w₁).1.role from by
+                        rw [show (rankDeltaOSSR _ _ _ _ _).2 = (C₁ w₁).1 from h_wake₂.2.2.2.2.2]]
+                  rw [hw₁_leader₂] at hwF
+                  -- w₁ in C₂ has same role as C₁. w₁ in C₁ was NOT Resetting (hw₁_not_res₁).
+                  -- Its role is Unsettled (from step 1 where follower woke).
+                  cases h : (C₁ w₁).1.role with
+                  | Settled => exact absurd h hw₁_not_settled₁
+                  | Unsettled => left; rw [hw₁_role₂, h]
+                  | Resetting => exact absurd h hw₁_not_res₁
+                · rw [show (C₂ w).1 = (C w).1 from congrArg Prod.fst (h_others₂ w hwℓ hww)]
+                  rw [show (C₂ w).1.leader = (C w).1.leader from
+                    congrArg (fun p => p.1.leader) (h_others₂ w hwℓ hww)] at hwF
+                  exact hFollowerState w hwF
 
 /-! ### Awakening step helpers
 
