@@ -737,6 +737,28 @@ theorem phase3a_to_awakening
     (hDormant : IsDormantConfig C) :
     ∃ L : List (Fin n × Fin n),
       IsAwakeningConfig (runPairs (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L) := by
+  obtain ⟨hRes, hRc, hUniq, hLorF⟩ := hDormant
+  obtain ⟨ℓ, hℓ_L, hℓ_unique⟩ := hUniq
+  have hF_of_ne : ∀ w, w ≠ ℓ → (C w).1.leader = .F := by
+    intro w hw; cases hLorF w with
+    | inl h => exact absurd (hℓ_unique w h).symm hw
+    | inr h => exact h
+  -- Pick a follower
+  obtain ⟨w₁, hw₁⟩ : ∃ w : Fin n, w ≠ ℓ := by
+    have : 1 < n := by omega
+    exact ⟨if h : (⟨0, hn⟩ : Fin n) = ℓ then ⟨1, this⟩ else ⟨0, hn⟩,
+      by split_ifs with h; · intro heq; simp [Fin.ext_iff] at heq h; omega; · exact h⟩
+  -- Both ℓ and w₁ are Resetting with rc=0.
+  -- Schedule them repeatedly until both dt reach 0, then both wake via resetOSSR.
+  -- ℓ (leader=L) → Settled(rank 0, children 0), w₁ (leader=F) → Unsettled.
+  -- Then ℓ is Settled = IsAwakeningConfig leader condition.
+  -- Remaining followers: still Resetting(rc=0) or already Unsettled.
+  -- This satisfies IsAwakeningConfig.
+  --
+  -- For now: use transitionPEM_both_dormant_role when both dt=0.
+  -- General dt countdown: schedule (ℓ, w₁) max(dt_ℓ, dt_w₁) + 1 times.
+  -- Each step decrements both dt by 1 (when both Resetting).
+  -- When dt reaches 0, resetOSSR fires.
   sorry
 
 /-! ### Awakening step helpers
@@ -784,18 +806,13 @@ theorem rankDeltaOSSR_both_dormant
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
   unfold rankDeltaOSSR propagateReset resetOSSR
   simp only [hs_res, hs_rc, hs_dt, ht_res, ht_rc, ht_dt, hs_L, ht_F]
-  simp (config := { decide := true }) only [ite_true, ite_false, and_self, and_true, true_and,
-    true_or, or_true, false_and, and_false, not_true, not_false_eq_true,
-    show ¬(0 < (0 : ℕ)) from by omega, show (0 : ℕ) - 1 = 0 from rfl,
-    show Nat.max 0 0 = 0 from rfl,
-    show Role.Resetting = .Resetting from rfl,
-    show ¬(Role.Resetting = .Settled) from by decide,
-    show (Role.Resetting == .Resetting) = true from by decide,
-    show ¬(LeaderStatus.F = .L) from by decide]
-  exact ⟨rfl, rfl, rfl, rfl⟩
+  split_ifs
+  all_goals (first | exact ⟨rfl, rfl, rfl, rfl⟩ | simp_all | omega)
 
 set_option maxHeartbeats 64000000 in
 /-- RankDeltaOSSR: Settled root meets dormant follower → root unchanged, follower Unsettled. -/
+set_option maxHeartbeats 200000000 in
+set_option maxRecDepth 2000 in
 theorem rankDeltaOSSR_settled_meets_dormant
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     {s t : AgentState n}
@@ -806,14 +823,7 @@ theorem rankDeltaOSSR_settled_meets_dormant
     (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Unsettled := by
   unfold rankDeltaOSSR propagateReset resetOSSR
   simp only [hs_settled, ht_res, ht_rc, ht_F]
-  simp (config := { decide := true }) only [ite_true, ite_false, and_self, and_true, true_and,
-    true_or, or_true, false_and, and_false, not_true, not_false_eq_true,
-    show ¬(Role.Settled = .Resetting) from by decide,
-    show ¬(0 < (0 : ℕ)) from by omega,
-    show (Role.Settled == .Resetting) = false from by decide,
-    show ¬(Role.Settled = .Resetting ∧ Role.Resetting = .Resetting) from by decide,
-    show ¬(LeaderStatus.F = .L) from by decide]
-  exact ⟨rfl, rfl⟩
+  split_ifs <;> simp_all <;> omega
 
 set_option maxHeartbeats 32000000 in
 /-- TransitionPEM on two dormant agents (leader + follower): leader → Settled rank 0,
@@ -1050,12 +1060,12 @@ theorem phase3bc_from_awakening
         intro heq; rw [heq, hℓ_s] at hw_res; exact Role.noConfusion hw_res
       have ⟨_, hw_rc, hw_dt, hw_F⟩ := (h_inv w hw_ne).resolve_left (by rw [hw_res]; decide)
       set C'' := C'.step P ℓ w
-      have h_step := transitionPEM_settled_meets_dormant_role hn4 hw_ne hℓ_s hℓ_r hw_res hw_rc hw_dt hw_F
+      have h_step := transitionPEM_settled_meets_dormant_role hn4 hw_ne hℓ_s hℓ_r hw_res hw_rc hw_F
       have h_others : ∀ x, x ≠ ℓ → x ≠ w → C'' x = C' x := by
         intro x hx hxw; unfold Config.step; simp [hw_ne, hx, hxw]
       have hℓ_fst_eq : (C'' ℓ).1 = (C' ℓ).1 := by
         have h_fst := Config.step_fst_state P C' hw_ne
-        have h_rd := rankDeltaOSSR_settled_meets_dormant (hn := hn) hℓ_s hw_res hw_rc hw_dt hw_F
+        have h_rd := rankDeltaOSSR_settled_meets_dormant (hn := hn) hℓ_s hw_res hw_rc hw_F
         -- transitionPEM doesn't change the first output because:
         -- Phase 2: s₀ already Settled, so timer/answer conditions false
         -- Phase 3/4: w is Unsettled, not both Resetting/Settled
@@ -1169,15 +1179,23 @@ theorem phase3bc_from_awakening
       -- Step: schedule (ℓ, w)
       set C'' := C'.step P ℓ w
       have h_step := transitionPEM_settled_meets_dormant_role hn4 hw_ne
-        hℓ_s hℓ_r hw_res hw_rc hw_dt hw_F
+        hℓ_s hℓ_r hw_res hw_rc hw_F
       have hℓ_s' : (C'' ℓ).1.role = .Settled := h_step.1
       have hℓ_r' : (C'' ℓ).1.rank.val = 0 := h_step.2.1
       have hℓ_c' : (C'' ℓ).1.children = 0 := by
         have h_fst := Config.step_fst_state P C' hw_ne
-        have h_rd := rankDeltaOSSR_settled_meets_dormant hℓ_s hw_res hw_rc hw_dt hw_F
-        rw [congrArg AgentState.children h_fst, show (P.δ (C' ℓ, C' w)).1 =
-          (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w)).1 from rfl]
-        sorry -- children preservation through transitionPEM (similar trace)
+        have h_rd := rankDeltaOSSR_settled_meets_dormant (hn := hn) hℓ_s hw_res hw_rc hw_F
+        conv at h_fst => rw [show P.δ (C' ℓ, C' w) = transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w) from rfl]
+        rw [show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) (C' ℓ, C' w)).1 = (C' ℓ).1 from by
+          unfold transitionPEM
+          simp only [h_rd.1, h_rd.2, hℓ_s,
+            show ¬(Role.Settled = .Resetting) from by decide,
+            show ¬(Role.Unsettled = .Resetting) from by decide,
+            show ¬(Role.Settled = .Settled ∧ Role.Unsettled = .Settled) from by
+              intro ⟨_, h⟩; exact Role.noConfusion h,
+            show ¬((C' ℓ).1.role = .Settled ∧ (C' ℓ).1.role ≠ .Settled) from by tauto,
+            false_and, and_false, ite_false]] at h_fst
+        rw [congrArg AgentState.children h_fst]; exact hℓ_c
       have hw_u' : (C'' w).1.role = .Unsettled := h_step.2.2
       have h_others' : ∀ x, x ≠ ℓ → x ≠ w → C'' x = C' x := by
         intro x hx hxw; unfold Config.step; simp [hw_ne, hx, hxw]
