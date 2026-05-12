@@ -748,18 +748,73 @@ theorem phase3a_to_awakening
     have : 1 < n := by omega
     exact ⟨if h : (⟨0, hn⟩ : Fin n) = ℓ then ⟨1, this⟩ else ⟨0, hn⟩,
       by split_ifs with h; · intro heq; simp [Fin.ext_iff] at heq h; omega; · exact h⟩
-  -- Both ℓ and w₁ are Resetting with rc=0.
-  -- Schedule them repeatedly until both dt reach 0, then both wake via resetOSSR.
-  -- ℓ (leader=L) → Settled(rank 0, children 0), w₁ (leader=F) → Unsettled.
-  -- Then ℓ is Settled = IsAwakeningConfig leader condition.
-  -- Remaining followers: still Resetting(rc=0) or already Unsettled.
-  -- This satisfies IsAwakeningConfig.
-  --
-  -- For now: use transitionPEM_both_dormant_role when both dt=0.
-  -- General dt countdown: schedule (ℓ, w₁) max(dt_ℓ, dt_w₁) + 1 times.
-  -- Each step decrements both dt by 1 (when both Resetting).
-  -- When dt reaches 0, resetOSSR fires.
-  sorry
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  -- Both ℓ and w₁ are Resetting(rc=0). Schedule (ℓ, w₁) until both dt=0.
+  -- Strategy: induction on dt_ℓ + dt_w₁. When both dt=0, use transitionPEM_both_dormant_role.
+  suffices countdown : ∀ m (C' : Config (AgentState n) Opinion n),
+      (C' ℓ).1.role = .Resetting → (C' ℓ).1.resetcount = 0 → (C' ℓ).1.leader = .L →
+      (C' w₁).1.role = .Resetting → (C' w₁).1.resetcount = 0 → (C' w₁).1.leader = .F →
+      (∀ w, w ≠ ℓ → w ≠ w₁ → C' w = C w) →
+      (C' ℓ).1.delaytimer + (C' w₁).1.delaytimer = m →
+      ∃ L, IsAwakeningConfig (runPairs P C' L) by
+    exact countdown _ C (hRes ℓ) (hRc ℓ) hℓ_L (hRes w₁) (hRc w₁) (hF_of_ne w₁ hw₁)
+      (fun w h1 h2 => rfl) rfl
+  intro m
+  induction m using Nat.strongRecOn with
+  | ind m IH =>
+    intro C' hℓ_res hℓ_rc hℓ_L' hw_res hw_rc hw_F' hOthers hSum
+    by_cases hdt : (C' ℓ).1.delaytimer = 0 ∧ (C' w₁).1.delaytimer = 0
+    · -- Both dt=0: use transitionPEM_both_dormant_role to wake both
+      obtain ⟨hdt_ℓ, hdt_w⟩ := hdt
+      have h_first := transitionPEM_both_dormant_role hn4 hw₁
+        hℓ_res hℓ_rc hdt_ℓ hℓ_L' hw_res hw_rc hdt_w hw_F'
+      set C₁ := C'.step P ℓ w₁
+      -- After step: ℓ Settled(rank 0, children 0), w₁ Unsettled. Others unchanged.
+      have h_others₁ : ∀ w, w ≠ ℓ → w ≠ w₁ → C₁ w = C' w := by
+        intro x hx hxw; unfold Config.step; simp [hw₁, hx, hxw]
+      -- Build IsAwakeningConfig
+      refine ⟨[(ℓ, w₁)], ⟨ℓ, ?_, ?_⟩, ?_, ?_⟩
+      · -- ℓ has leader = L in C₁
+        exact h_first.2.2.2.1
+      · -- uniqueness
+        intro y hy
+        by_cases hyℓ : y = ℓ; · exact hyℓ
+        by_cases hyw : y = w₁
+        · subst hyw; rw [h_first.2.2.2.2.2] at hy; exact absurd hy Leader.noConfusion
+        · rw [show (C₁ y).1.leader = (C' y).1.leader from
+            congrArg (fun p => p.1.leader) (h_others₁ y hyℓ hyw)] at hy
+          rw [show (C' y).1.leader = (C y).1.leader from
+            congrArg (fun p => p.1.leader) (hOthers y hyℓ hyw)] at hy
+          exact absurd (hℓ_unique y hy) hyℓ.symm
+      · -- leader state: ℓ is Settled rank 0 children 0
+        intro y hyL
+        by_cases hyℓ : y = ℓ
+        · subst hyℓ; exact ⟨h_first.1, h_first.2.1, h_first.2.2.1⟩
+        · by_cases hyw : y = w₁
+          · subst hyw; rw [h_first.2.2.2.2.2] at hyL; exact absurd hyL Leader.noConfusion
+          · rw [show (C₁ y).1.leader = (C y).1.leader from by
+              rw [congrArg (fun p => p.1.leader) (h_others₁ y hyℓ hyw),
+                  congrArg (fun p => p.1.leader) (hOthers y hyℓ hyw)]] at hyL
+            exact absurd (hℓ_unique y hyL) hyℓ.symm
+      · -- follower state
+        intro w hwF
+        by_cases hwℓ : w = ℓ
+        · subst hwℓ; rw [h_first.2.2.2.1] at hwF; exact absurd hwF Leader.noConfusion
+        · by_cases hww : w = w₁
+          · subst hww; left; exact h_first.2.2.2
+          · rw [show (C₁ w).1 = (C w).1 from by
+              rw [congrArg Prod.fst (h_others₁ w hwℓ hww),
+                  congrArg Prod.fst (hOthers w hwℓ hww)]]
+            right; exact ⟨hRes w, hRc w⟩
+    · -- Some dt > 0: schedule (ℓ, w₁), both dt decrease, recurse
+      push_neg at hdt
+      -- At least one dt > 0. Schedule (ℓ, w₁): both dt decrease by 1.
+      -- We need both dt > 1 for dormant_dt_decrease. Handle edge cases:
+      -- Case: some dt ≤ 1. Then that dt becomes 0 after step, agent wakes.
+      -- If both wake → done. If one wakes, other is still Resetting →
+      -- use dormant_leader_wakes (non-Resetting partner → immediate wake).
+      -- For now, sorry this complex case split. The structure is correct.
+      sorry
 
 /-! ### Awakening step helpers
 
@@ -791,6 +846,32 @@ theorem rankDeltaOSSR_dormant_leader_wakes
     show ¬(t.role = .Resetting ∧ 0 < t.resetcount ∧ s.role ≠ .Resetting) from by
       intro ⟨h, _, _⟩; exact ht_not_res h]
   split_ifs <;> simp_all
+
+set_option maxHeartbeats 200000000 in
+/-- When two dormant agents (Resetting, rc=0) with dt > 1 interact,
+both stay Resetting with dt decreased by 1 and leader preserved. -/
+theorem rankDeltaOSSR_dormant_dt_decrease
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs : s.role = .Resetting) (hs_rc : s.resetcount = 0)
+    (ht : t.role = .Resetting) (ht_rc : t.resetcount = 0)
+    (hs_L : s.leader = .L) (ht_F : t.leader = .F)
+    (hs_dt : 1 < s.delaytimer) (ht_dt : 1 < t.delaytimer) :
+    let r := rankDeltaOSSR Rmax Emax Dmax hn (s, t)
+    r.1.role = .Resetting ∧ r.1.resetcount = 0 ∧
+    r.1.delaytimer = s.delaytimer - 1 ∧ r.1.leader = .L ∧
+    r.2.role = .Resetting ∧ r.2.resetcount = 0 ∧
+    r.2.delaytimer = t.delaytimer - 1 ∧ r.2.leader = .F := by
+  unfold rankDeltaOSSR propagateReset resetOSSR
+  simp only [hs, ht, hs_rc, ht_rc, hs_L, ht_F,
+    show ¬(0 < (0:ℕ)) from by omega, show Nat.max 0 0 = 0 from rfl,
+    show (Role.Resetting == Role.Resetting) = true from rfl,
+    show ¬(Leader.F = Leader.L) from Leader.noConfusion,
+    true_or, or_true, ite_true, ite_false, false_and, and_false, and_self,
+    true_and, and_true, not_false_eq_true, Bool.true_eq_true, Bool.not_true,
+    show ¬(s.delaytimer - 1 = 0) from by omega,
+    show ¬(t.delaytimer - 1 = 0) from by omega]
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 set_option maxHeartbeats 64000000 in
 /-- RankDeltaOSSR on two dormant agents (leader + follower): both fire resetOSSR. -/
@@ -843,7 +924,9 @@ theorem transitionPEM_both_dormant_role
     (C.step P ℓ w ℓ).1.role = .Settled ∧
     (C.step P ℓ w ℓ).1.rank.val = 0 ∧
     (C.step P ℓ w ℓ).1.children = 0 ∧
-    (C.step P ℓ w w).1.role = .Unsettled := by
+    (C.step P ℓ w ℓ).1.leader = .L ∧
+    (C.step P ℓ w w).1.role = .Unsettled ∧
+    (C.step P ℓ w w).1.leader = .F := by
   set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
   have h_fst := Config.step_fst_state P C hℓw
   have h_snd := Config.step_snd_state P C hℓw hℓw.symm
