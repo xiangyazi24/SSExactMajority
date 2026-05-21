@@ -9382,7 +9382,27 @@ theorem step_median_answer_of_InSswap_both
     (hS' : InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j))
     (hM : MedianAnswerCorrect D) :
     MedianAnswerCorrect (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
-  sorry
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hmaj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+    simpa [P, PEMProtocolCoupled, PEMProtocol] using
+      majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+        (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+  intro ν hν; rw [hmaj]
+  have hν_pre : (D ν).1.rank.val + 1 = ceilHalf n := by
+    rw [← step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+      (Dmax := Dmax) hn0 hS ν]; exact hν
+  by_cases hij : i = j
+  · subst hij; simp [Config.step]; exact hM ν hν_pre
+  · by_cases hνi : ν = i
+    · sorry -- ν = i: transitionPEM .1.answer = majorityAnswer
+    · by_cases hνj : ν = j
+      · sorry -- ν = j: transitionPEM .2.answer = majorityAnswer
+      · -- bystander: unchanged
+        have hbyst : D.step P i j ν = D ν := by
+          unfold Config.step; simp [hij, hνi, hνj]
+        rw [show (D.step P i j ν).1.answer = (D ν).1.answer from
+          congrArg (fun x => x.1.answer) hbyst]
+        exact hM ν hν_pre
 
 /-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
