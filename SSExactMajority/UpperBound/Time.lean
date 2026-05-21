@@ -9377,6 +9377,25 @@ theorem PEM_expected_timer_drain
         sorry)
     (by -- hDescent: ∃ (median,max) pair that decrements timer
         intro D ⟨hS, hM, hT⟩ hG hφ
+        have hn_pos : 0 < n := by omega
+        obtain ⟨μ, hμ_med⟩ := hS.toInSrank.exists_median hn_pos
+        -- Get max-rank agent via surjectivity
+        have hsurj : Function.Surjective (fun v => (D v).1.rank) :=
+          Finite.injective_iff_surjective.mp hS.toInSrank.ranks_inj
+        have hn_bound : n - 1 < n := by omega
+        obtain ⟨v, hv_eq⟩ := hsurj ⟨n - 1, hn_bound⟩
+        have hv_max : (D v).1.rank.val + 1 = n := by
+          have h := congrArg Fin.val hv_eq
+          simp only [Fin.val_mk] at h
+          omega
+        have huv : μ ≠ v := by
+          intro h; subst h
+          have : ceilHalf n = n := by omega
+          have : ceilHalf n ≤ (n + 1) / 2 := by unfold ceilHalf; omega
+          omega
+        refine ⟨μ, v, huv, ?_⟩
+        -- Step at (median, max) either decrements timer (Inv with lower φ)
+        -- or triggers reset/exit (Goal)
         sorry)
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
