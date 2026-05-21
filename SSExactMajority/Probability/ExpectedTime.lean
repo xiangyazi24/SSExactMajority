@@ -4541,5 +4541,67 @@ noncomputable def expectedParallelTimeToConsensus
     (C₀ : Config (AgentState n) Opinion n) : ENNReal :=
   expectedParallelTime P hn C₀ IsConsensusConfig
 
+/-! ### Bridge: deterministic reachability → probabilistic expected time
+
+If `reach_zero_potential` provides a deterministic descent pair for every
+non-zero potential level, the uniform random scheduler hits that pair with
+probability ≥ 1/(n(n-1)). This gives E[T] ≤ φ₀ · n(n-1). -/
+
+theorem expectedHittingTime_le_of_deterministic_descent
+    [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C₀ : Config Q X n)
+    (Goal Inv : Config Q X n → Prop)
+    [DecidablePred Goal] [DecidablePred Inv]
+    (φ : Config Q X n → ℕ)
+    (hInv₀ : Inv C₀)
+    (hZeroGoal : ∀ C, Inv C → φ C = 0 → Goal C)
+    (hInvStep : ∀ C, Inv C → ¬ Goal C →
+      ∀ i j : Fin n, Inv (C.step P i j) ∨ Goal (C.step P i j))
+    (hNonincrease : ∀ C, Inv C → ¬ Goal C →
+      ∀ i j : Fin n, φ (C.step P i j) ≤ φ C)
+    (hDescent : ∀ C, Inv C → ¬ Goal C → 0 < φ C →
+      ∃ u v : Fin n, u ≠ v ∧
+        ((Inv (C.step P u v) ∧ φ (C.step P u v) < φ C) ∨
+          Goal (C.step P u v))) :
+    expectedHittingTime P hn C₀ Goal ≤
+      ↑(φ C₀) * ((n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  let pUnif : ENNReal := ((n * (n - 1) : ℕ) : ENNReal)⁻¹
+  have hpStep : ∀ k : ℕ, 0 < k → ∀ C : Config Q X n, Inv C → φ C = k →
+      pUnif ≤ ProbHitWithin P hn C
+        (fun D => Goal D ∨ (Inv D ∧ φ D < k)) 1 := by
+    intro k hk C hInvC hφ
+    by_cases hGoalC : Goal C
+    · have h1 : ProbHitWithin P hn C (fun D => Goal D ∨ (Inv D ∧ φ D < k)) 0 = 1 :=
+        probHitBy_zero_of_goal P hn C _ (Or.inl hGoalC)
+      calc pUnif ≤ 1 := by
+              simp only [pUnif]
+              exact ENNReal.inv_le_one.mpr (by
+                norm_cast
+                have : 1 ≤ n := by omega
+                have : 1 ≤ n - 1 := by omega
+                exact Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero (by omega) (by omega)))
+        _ = ProbHitWithin P hn C (fun D => Goal D ∨ (Inv D ∧ φ D < k)) 0 := h1.symm
+        _ ≤ ProbHitWithin P hn C (fun D => Goal D ∨ (Inv D ∧ φ D < k)) 1 :=
+              ProbHitWithin_le_succ P hn C _ 0
+    · obtain ⟨u, v, huv, hprog⟩ := hDescent C hInvC hGoalC (by omega)
+      have hTarget : (fun D => Goal D ∨ (Inv D ∧ φ D < k)) (C.step P u v) := by
+        rcases hprog with ⟨hI, hlt⟩ | hG
+        · exact Or.inr ⟨hI, by rwa [hφ] at hlt⟩
+        · exact Or.inl hG
+      have hNotGoalOr : ¬ (fun D => Goal D ∨ (Inv D ∧ φ D < k)) C := by
+        intro h; rcases h with hG | ⟨_, hlt⟩
+        · exact hGoalC hG
+        · rw [hφ] at hlt; omega
+      exact ProbHitWithin_one_lower_bound_of_step P hn C _ hNotGoalOr huv hTarget
+  have hBound := expectedHittingTime_le_of_variable_descent_until_goal
+    P hn C₀ Goal Inv φ (fun _ => pUnif)
+    hInv₀ hZeroGoal hInvStep hNonincrease hpStep
+  calc expectedHittingTime P hn C₀ Goal
+      ≤ ∑ _k ∈ Finset.range (φ C₀), pUnif⁻¹ := hBound
+    _ = ↑(φ C₀) * ((n * (n - 1) : ℕ) : ENNReal) := by
+        simp only [pUnif, inv_inv, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+
 end Probability
 end SSEM
