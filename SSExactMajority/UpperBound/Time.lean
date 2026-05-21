@@ -9235,4 +9235,23 @@ theorem PEM_expected_parallel_time_from_global_expected_phase_bounds
       P hn2 C₀ IsConsensusConfig Inv K ((16 : ENNReal)⁻¹)
       hp_le_one hTimer₀ hInvStep hwin)
 
+/-! ### Phase bound proofs (Lemma 6 + Lemma 9+11)
+
+The end-to-end composition is conditional on two phase E[T] bounds:
+- hRankBound (Lemma 6): E[T to InSrank ∧ timer≥35 ∧ timer-bounded] ≤ Rmax·n²
+- hConsensusBound (Lemma 9+11): E[T to consensus from InSswap+timer] ≤ 10·Rmax·n²
+
+Strategy for hConsensusBound (ChatGPT "exit = progress" design):
+Define DecisionProgress := MedianAnswerCorrect ∨ CorrectResetSeed.
+The exit from LiveSwap is absorbed as progress (not failure).
+Chain: InSswap → DecisionProgress → CorrectSeed → Epidemic → Consensus.
+
+For odd n: exit is deterministically good progress (phase4_decide sets
+median answer at the same step as the potential reset).
+For even n: requires the (lower-median, upper-median) decision interaction
+to happen before timer exhaustion (probabilistic, high probability). -/
+
+def DecisionProgress (C : Config (AgentState n) Opinion n) : Prop :=
+  MedianAnswerCorrect C ∨ CorrectResetSeed C
+
 end SSEM
