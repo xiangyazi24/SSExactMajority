@@ -9403,6 +9403,7 @@ noncomputable def maxMedianTimer (C : Config (AgentState n) Opinion n) : ℕ :=
   Finset.sup Finset.univ
     (fun μ : Fin n => if (C μ).1.rank.val + 1 = ceilHalf n then (C μ).1.timer else 0)
 
+set_option maxHeartbeats 16000000 in
 theorem PEM_expected_timer_drain
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -9545,12 +9546,37 @@ theorem PEM_expected_timer_drain
             intro ⟨hS', hT'⟩
             -- post-step median μ has timer 0 but hT' says timer ≥ 1
             -- rank at μ post-step = ceilHalf n (ranks preserved from InSswap)
-            -- Both rank and timer claims use Config.step_fst_state
+            -- rank preserved at μ
+            have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
+              rw [step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                (Dmax := Dmax) hn0 hS μ]; exact hμ_med
+            -- timer at μ post-step: use brute-force unfold to show = 0
             have h_fst := Config.step_fst_state P D huv
-            -- h_fst : (D.step P μ v μ).1 = (P.δ (D μ, D v)).1
-            -- P.δ goes through transitionPEM which preserves rank (no swap)
-            -- and decrements timer (median-max pair)
-            sorry))))
+            have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
+              rw [show (D.step P μ v μ).1.timer = ((P.δ (D μ, D v)).1).timer from
+                congrArg AgentState.timer h_fst]
+              show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                (D μ, D v)).1.timer = 0
+              have hsi := hS.toInSrank.allSettled μ
+              have hsv := hS.toInSrank.allSettled v
+              have hne := fun h : (D μ).1.rank = (D v).1.rank => huv (hS.toInSrank.ranks_inj h)
+              have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+                (Dmax := Dmax) (hn := hn0) (D μ).1 (D v).1 hsi hsv hne
+              have h_no_swap := hS.swap_condition_false μ v
+              unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+                phase4_swap phase4_decide phase4_propagate
+              simp only [hRD, hsi, hsv, ne_eq,
+                role_settled_ne_resetting,
+                not_true_eq_false, not_false_eq_true,
+                false_and, and_false, if_false,
+                and_self, if_true, h_no_swap, hμ_med, hv_max, hTimer1]
+              by_cases hpar : n % 2 = 0
+              · simp only [hpar, if_true]
+                split_ifs <;> dsimp only [] <;> omega
+              · simp only [hpar, if_false]
+                split_ifs <;> dsimp only [] <;> omega
+            have h0 := hT' μ hμ_rank_post
+            omega))))
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
     apply Finset.sup_le
