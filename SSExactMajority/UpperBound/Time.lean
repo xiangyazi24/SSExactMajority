@@ -9414,9 +9414,19 @@ theorem PEM_expected_timer_drain
           have : ceilHalf n ≤ (n + 1) / 2 := by unfold ceilHalf; omega
           omega
         refine ⟨μ, v, huv, ?_⟩
-        -- Step at (median, max) either decrements timer (Inv with lower φ)
-        -- or triggers reset/exit (Goal)
-        sorry)
+        -- Case split on median timer value
+        have hTimerPos : 1 ≤ (D μ).1.timer := hT μ hμ_med
+        by_cases hTimer2 : 2 ≤ (D μ).1.timer
+        · -- timer ≥ 2: step decrements, Inv preserved, φ decreases
+          sorry -- need: InSswap preserved, MedianCorrect preserved,
+                -- timer≥1 preserved, maxMedianTimer strictly decreased
+        · -- timer = 1: step decrements to 0 → Goal
+          have hTimer1 : (D μ).1.timer = 1 := by omega
+          -- After decrement, timer = 0 → ¬(MedianTimerAtLeast 1) → Goal
+          exact Or.inr (Or.inr (Or.inr (by
+            intro ⟨_, hT'⟩
+            -- post-step median timer should be 0
+            sorry))))
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
     apply Finset.sup_le
