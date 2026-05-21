@@ -9372,9 +9372,16 @@ theorem PEM_expected_timer_drain
           · exact Or.inr (Or.inr (Or.inr (fun h => hT' h.2)))
         · exact Or.inr (Or.inr (Or.inr (fun h => hS' h.1))))
     (by -- hNonincrease: maxMedianTimer doesn't increase
-        -- Timer only decrements (by (median,max) pair) or stays same
         intro D ⟨hS, hM, hT⟩ hG i j
-        sorry)
+        unfold maxMedianTimer
+        apply Finset.sup_le
+        intro μ _
+        split_ifs with hμ_med
+        · -- μ is a median agent: show timer at μ after step ≤ maxMedianTimer D
+          -- maxMedianTimer D ≥ (D μ').1.timer for any median μ'
+          -- After step: timer at μ ≤ (pre-step timer at median agent) ≤ maxMedianTimer D
+          sorry
+        · exact Nat.zero_le _)
     (by -- hDescent: ∃ (median,max) pair that decrements timer
         intro D ⟨hS, hM, hT⟩ hG hφ
         have hn_pos : 0 < n := by omega
