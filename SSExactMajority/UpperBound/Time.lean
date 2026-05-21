@@ -9321,6 +9321,12 @@ Total: O(Rmax · n²). -/
 /-! Stage 1: Timer drain. Inv = InSswap ∧ MedianCorrect ∧ timer≥1,
 φ = medianTimer. Each (median,max) step decreases timer. -/
 
+/-! φ for timer drain: max timer across all median-rank agents.
+In InSswap there is exactly one, but we define it for all configs. -/
+noncomputable def maxMedianTimer (C : Config (AgentState n) Opinion n) : ℕ :=
+  Finset.sup Finset.univ
+    (fun μ : Fin n => if (C μ).1.rank.val + 1 = ceilHalf n then (C μ).1.timer else 0)
+
 theorem PEM_expected_timer_drain
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -9336,7 +9342,24 @@ theorem PEM_expected_timer_drain
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
         ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) ≤
       ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
-  sorry
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  set Goal := fun D : Config (AgentState n) Opinion n =>
+    IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+  set Inv := fun D : Config (AgentState n) Opinion n =>
+    InSswap D ∧ MedianAnswerCorrect D ∧ MedianTimerAtLeast 1 D
+  have hBridge := Probability.expectedHittingTime_le_of_deterministic_descent
+    P (by omega : 2 ≤ n) C Goal Inv maxMedianTimer
+    ⟨hSswap, hMedCorrect, hTimerLo⟩
+    (by intro D hInv h0; sorry)
+    (by intro D hInv hG i j; sorry)
+    (by intro D hInv hG i j; sorry)
+    (by intro D hInv hG hφ; sorry)
+  calc Probability.expectedHittingTime P (by omega) C Goal
+      ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
+    _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+        sorry
 
 /-! Stage 2: Reset trigger. From timer=0 + MedianCorrect + wrongAnswer>0,
 one (median,max) interaction with wrong partner → CorrectResetSeed.
