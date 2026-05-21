@@ -9421,7 +9421,7 @@ theorem PEM_expected_median_correct_to_consensus
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (hRmax : n ≤ Rmax)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hMedCorrect : MedianAnswerCorrect C)
@@ -9431,7 +9431,32 @@ theorem PEM_expected_median_correct_to_consensus
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
       ((5 * Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hn2 : 2 ≤ n := by omega
+  let Mid := fun D : Config (AgentState n) Opinion n =>
+    IsConsensusConfig D ∨ CorrectResetSeed D
+  have hMidGoal : ∀ D, IsConsensusConfig D → Mid D := fun D h => Or.inl h
+  have hStage1 : Probability.expectedHittingTime P hn2 C Mid ≤
+      ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
+    sorry -- Stage 1 (timer drain) + Stage 2 (reset trigger) via strong Markov
+  have hStage3 : ∀ D : Config (AgentState n) Opinion n, Mid D →
+      Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
+        ((3 * Rmax * n * n : ℕ) : ENNReal) := by
+    intro D hD
+    rcases hD with hCons | hSeed
+    · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
+      exact zero_le _
+    · exact PEM_expected_epidemic_to_consensus hn4 hn0 hRmax D hSeed
+  have hCompose := Probability.expectedHittingTime_add_le P hn2 C Mid IsConsensusConfig
+    ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal)
+    ((3 * Rmax * n * n : ℕ) : ENNReal)
+    hStage1 hStage3 hMidGoal
+  calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
+      ≤ ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) +
+        ((3 * Rmax * n * n : ℕ) : ENNReal) := hCompose
+    _ ≤ ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+        sorry -- arithmetic: 7(Rmax+4)n(n-1) + n(n-1) + 3Rmax·n² ≤ 5Rmax·n²
 
 /-! Phase C assembly: compose median-wrong descent + median-correct via
 strong Markov to get the full hConsensusBound. -/
