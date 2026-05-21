@@ -9465,7 +9465,7 @@ theorem PEM_hConsensusBound_from_bridge
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (hRmax : n ≤ Rmax) (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hTimerLo : MedianTimerAtLeast 1 C)
@@ -9474,6 +9474,35 @@ theorem PEM_hConsensusBound_from_bridge
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
       ((10 * Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hn2 : 2 ≤ n := by omega
+  have hDecision : Probability.expectedHittingTime P hn2 C DecisionProgress ≤
+      ((n * (n - 1) : ℕ) : ENNReal) := by
+    sorry -- E[T to DecisionProgress] via exit=progress monotonicity
+  have hFromDP : ∀ D : Config (AgentState n) Opinion n, DecisionProgress D →
+      Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
+        ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+    intro D hD
+    rcases hD with hMed | hSeed
+    · sorry -- from MedianAnswerCorrect D: need InSswap/timer hypotheses
+      -- These should be inherited from the Region of the DecisionProgress phase
+    · calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
+          ≤ ((3 * Rmax * n * n : ℕ) : ENNReal) :=
+            PEM_expected_epidemic_to_consensus hn4 hn0 hRmax D hSeed
+        _ ≤ ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+            norm_cast; exact Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (by omega))
+  have hMidGoal : ∀ D : Config (AgentState n) Opinion n,
+      IsConsensusConfig D → DecisionProgress D := by
+    intro D hD
+    exact Or.inl (fun μ hμ => hD.allAnswerCorrect μ)
+  have hCompose := Probability.expectedHittingTime_add_le P hn2 C
+    DecisionProgress IsConsensusConfig
+    ((n * (n - 1) : ℕ) : ENNReal) ((5 * Rmax * n * n : ℕ) : ENNReal)
+    hDecision hFromDP hMidGoal
+  calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
+      ≤ ((n * (n - 1) : ℕ) : ENNReal) + ((5 * Rmax * n * n : ℕ) : ENNReal) := hCompose
+    _ ≤ ((10 * Rmax * n * n : ℕ) : ENNReal) := by
+        sorry -- arithmetic: n(n-1) + 5Rmax·n² ≤ 10Rmax·n² for Rmax≥n≥4
 
 end SSEM
