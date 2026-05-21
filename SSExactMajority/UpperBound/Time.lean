@@ -9318,6 +9318,62 @@ Sub-phase C.2d: Re-ranking + consensus. From all-resetting with correct answer:
 
 Total: O(Rmax · n²). -/
 
+/-! Stage 1: Timer drain. Inv = InSswap ∧ MedianCorrect ∧ timer≥1,
+φ = medianTimer. Each (median,max) step decreases timer. -/
+
+theorem PEM_expected_timer_drain
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) ≤
+      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+  sorry
+
+/-! Stage 2: Reset trigger. From timer=0 + MedianCorrect + wrongAnswer>0,
+one (median,max) interaction with wrong partner → CorrectResetSeed.
+E[T] ≤ n(n-1). -/
+
+theorem PEM_expected_reset_trigger
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hWrong : 0 < wrongAnswerCount C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+      ((n * (n - 1) : ℕ) : ENNReal) := by
+  sorry
+
+/-! Stage 3: Epidemic propagation. From CorrectResetSeed:
+E[T to consensus] via nonResettingCount descent + re-ranking. -/
+
+theorem PEM_expected_epidemic_to_consensus
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSeed : CorrectResetSeed C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C IsConsensusConfig ≤
+      ((3 * Rmax * n * n : ℕ) : ENNReal) := by
+  sorry
+
+/-! Full median-correct → consensus via Strong Markov on stages 1-3. -/
+
 theorem PEM_expected_median_correct_to_consensus
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
