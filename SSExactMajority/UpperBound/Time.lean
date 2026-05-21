@@ -9286,7 +9286,26 @@ theorem step_rank_preserved_of_InSswap
     (w : Fin n) :
     (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j w).1.rank =
       (D w).1.rank := by
-  sorry
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  by_cases hij : i = j
+  · subst hij; simp [Config.step]
+  · have hsi := hS.toInSrank.allSettled i
+    have hsj := hS.toInSrank.allSettled j
+    have hne := fun h : (D i).1.rank = (D j).1.rank => hij (hS.toInSrank.ranks_inj h)
+    have h_no_swap := hS.swap_condition_false i j
+    have h_rank := transitionPEM_rank_of_no_swap (trank := Rmax) (Rmax := Rmax)
+      (rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0))
+      hsi hsj h_no_swap hne
+    by_cases hwi : w = i
+    · rw [hwi]
+      have h_fst := Config.step_fst_state P D hij
+      exact congrArg AgentState.rank h_fst ▸ h_rank.1
+    · by_cases hwj : w = j
+      · rw [hwj]
+        have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
+        exact congrArg AgentState.rank h_snd ▸ h_rank.2
+      · -- bystander
+        unfold Config.step; simp [hij, hwi, hwj]
 
 theorem step_timer_le_of_InSswap
     {n Rmax Emax Dmax : ℕ} (hn0 : 0 < n)
