@@ -9298,6 +9298,26 @@ theorem PEM_expected_median_wrong_descent
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
 E[T to consensus] ≤ O(Rmax·n²). Uses epidemic reachability. -/
 
+/-! Phase C.2 sub-decomposition (median correct → consensus):
+
+Sub-phase C.2a: Timer drain. From InSswap + MedianCorrect + timer≥1:
+  potential = medianTimer, descent at (median,max) pair.
+  E[T to timer=0 ∨ consensus] ≤ timer · n(n-1) ≤ 7(Rmax+4) · n(n-1)
+
+Sub-phase C.2b: Reset seed creation. When timer=0 + answers disagree:
+  One (median,max) interaction triggers reset → CorrectResetSeed.
+  E[T to CorrectResetSeed ∨ consensus] ≤ n(n-1)
+
+Sub-phase C.2c: Epidemic propagation. From CorrectResetSeed:
+  potential = nonResettingCount, descent via propagate-reset.
+  E[T to all-resetting ∨ consensus] ≤ n · n(n-1)
+
+Sub-phase C.2d: Re-ranking + consensus. From all-resetting with correct answer:
+  potential = resetFuel → ranking → InSswap → consensus.
+  E[T] ≤ O(Rmax · n²)
+
+Total: O(Rmax · n²). -/
+
 theorem PEM_expected_median_correct_to_consensus
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
