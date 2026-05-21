@@ -9428,7 +9428,8 @@ theorem PEM_expected_timer_drain
             -- post-step median μ has timer 0 but hT' says timer ≥ 1
             -- rank at μ post-step = ceilHalf n (ranks preserved from InSswap)
             have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
-              sorry -- ranks preserved through step from InSswap
+              -- Use existing rank preservation from InSswap
+              sorry
             have h0 := hT' μ hμ_rank_post
             -- timer at μ post-step = (D μ).1.timer - 1 = 0
             have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
