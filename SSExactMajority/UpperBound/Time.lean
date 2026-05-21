@@ -9380,9 +9380,25 @@ theorem PEM_expected_timer_drain
             calc (D μ).1.timer = f μ := hfμ.symm
               _ ≤ Finset.univ.sup f := Finset.le_sup (Finset.mem_univ μ)
           omega)))
-    (by intro D hInv hG i j; sorry)
-    (by intro D hInv hG i j; sorry)
-    (by intro D hInv hG hφ; sorry)
+    (by -- hInvStep: Inv D → ¬Goal D → ∀ i j, Inv(step) ∨ Goal(step)
+        -- Key: ¬Inv → (¬InSswap ∨ ¬timer≥1) → Goal (third disjunct)
+        -- MedianCorrect is preserved under InSswap (phase4_decide is idempotent,
+        -- phase4_propagate copies FROM median)
+        intro D ⟨hS, hM, hT⟩ hG i j
+        by_cases hS' : InSswap (D.step P i j)
+        · by_cases hT' : MedianTimerAtLeast 1 (D.step P i j)
+          · by_cases hM' : MedianAnswerCorrect (D.step P i j)
+            · exact Or.inl ⟨hS', hM', hT'⟩
+            · sorry -- MedianCorrect should be preserved; needs protocol case analysis
+          · exact Or.inr (Or.inr (Or.inr (fun h => hT' h.2)))
+        · exact Or.inr (Or.inr (Or.inr (fun h => hS' h.1))))
+    (by -- hNonincrease: maxMedianTimer doesn't increase
+        -- Timer only decrements (by (median,max) pair) or stays same
+        intro D ⟨hS, hM, hT⟩ hG i j
+        sorry)
+    (by -- hDescent: ∃ (median,max) pair that decrements timer
+        intro D ⟨hS, hM, hT⟩ hG hφ
+        sorry)
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
     apply Finset.sup_le
