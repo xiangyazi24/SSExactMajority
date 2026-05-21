@@ -9405,11 +9405,28 @@ theorem step_median_answer_of_InSswap_both
         rw [← Config.step_fst_state P D hij]; exact hS'.toInSrank.allSettled i
       -- Need: (transitionPEM ...).1.answer = majorityAnswer D
       -- From InSswap: both Settled, distinct ranks, no swap
-      -- transitionPEM = prePhase4(id) → phase4(swap=id → decide → propagate)
-      -- phase4_decide sets median answer to opinionToAnswer(input)
-      -- phase4_propagate: if reset fires, role=Resetting (contradicts h_settled)
-      --   so no reset → answer unchanged from phase4_decide
-      -- opinionToAnswer(input) = majorityAnswer from InSswap sorted inputs
+      -- Brute-force: unfold transitionPEM, use h_settled to eliminate reset
+      show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        (D i, D j)).1.answer = majorityAnswer D
+      have hsi := hS.toInSrank.allSettled i
+      have hsj := hS.toInSrank.allSettled j
+      have hne : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
+      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+        (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hne
+      have h_no_swap := hS.swap_condition_false i j
+      -- Rewrite h_settled to be about transitionPEM
+      change (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        (D i, D j)).1.role = .Settled at h_settled
+      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+        phase4_swap phase4_decide phase4_propagate at h_settled ⊢
+      simp only [hRD, hsi, hsj, ne_eq,
+        role_settled_ne_resetting,
+        not_true_eq_false, not_false_eq_true,
+        false_and, and_false, if_false,
+        and_self, if_true, h_no_swap, hν_pre] at h_settled ⊢
+      -- split_ifs generates many goals; h_settled eliminates reset branches
+      -- (role = Resetting contradicts h_settled = Settled)
+      -- remaining goals have answer = opinionToAnswer(input)
       sorry
     · by_cases hνj : ν = j
       · sorry -- ν = j: transitionPEM .2.answer = majorityAnswer
