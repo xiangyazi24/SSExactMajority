@@ -9361,24 +9361,44 @@ theorem PEM_expected_timer_drain
     _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
         sorry
 
-/-! Stage 2: Reset trigger. From timer=0 + MedianCorrect + wrongAnswer>0,
-one (median,max) interaction with wrong partner → CorrectResetSeed.
-E[T] ≤ n(n-1). -/
+/-! Stage 2: Reset trigger. From InSswap + MedianCorrect + timer=0 +
+wrongAnswer > 0: trigger_correct_reset_from_InSrank gives a deterministic
+pair that creates CorrectResetSeed.
+E[T] ≤ n(n-1) via ProbHitWithin_one_lower_bound_of_step. -/
 
 theorem PEM_expected_reset_trigger
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hMedCorrect : MedianAnswerCorrect C)
-    (hWrong : 0 < wrongAnswerCount C) :
+    (hWrong : 0 < wrongAnswerCount C)
+    (hTimer0 : ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n →
+      (C μ).1.timer = 0) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
       ((n * (n - 1) : ℕ) : ENNReal) := by
-  sorry
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  set Goal := fun D : Config (AgentState n) Opinion n =>
+    IsConsensusConfig D ∨ CorrectResetSeed D
+  have hGoalC : ¬ Goal C := by
+    sorry -- IsConsensusConfig contradicts wrongAnswer>0; CorrectResetSeed contradicts InSswap
+  have hOneStep : ∀ D : Config (AgentState n) Opinion n, ¬ Goal D →
+      ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ≤
+        Probability.ProbHitWithin P (by omega : 2 ≤ n) D Goal 1 := by
+    intro D hGoalD
+    sorry -- From trigger_correct_reset_from_InSrank: ∃ (μ,v), step creates CorrectResetSeed
+  calc Probability.expectedHittingTime P (by omega) C Goal
+      ≤ (((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹ :=
+        Probability.expectedHittingTime_le_inv_of_ProbHitWithin_one_lower_bound
+          P (by omega) C Goal _ hGoalC hOneStep
+    _ = ((n * (n - 1) : ℕ) : ENNReal) := by
+        rw [inv_inv]
 
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
