@@ -9424,9 +9424,16 @@ theorem PEM_expected_timer_drain
           have hTimer1 : (D μ).1.timer = 1 := by omega
           -- After decrement, timer = 0 → ¬(MedianTimerAtLeast 1) → Goal
           exact Or.inr (Or.inr (Or.inr (by
-            intro ⟨_, hT'⟩
-            -- post-step median timer should be 0
-            sorry))))
+            intro ⟨hS', hT'⟩
+            -- post-step median μ has timer 0 but hT' says timer ≥ 1
+            -- rank at μ post-step = ceilHalf n (ranks preserved from InSswap)
+            have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
+              sorry -- ranks preserved through step from InSswap
+            have h0 := hT' μ hμ_rank_post
+            -- timer at μ post-step = (D μ).1.timer - 1 = 0
+            have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
+              sorry -- transitionPEM output .1.timer = input.timer - 1 = 0
+            omega))))
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
     apply Finset.sup_le
