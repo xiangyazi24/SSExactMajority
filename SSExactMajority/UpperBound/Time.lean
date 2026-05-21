@@ -9508,12 +9508,11 @@ theorem PEM_expected_timer_drain
                     rw [← h_fst]; exact hS'.toInSrank.allSettled i
                   -- After unfold + simp, the settled constraint eliminates the reset branch
                   -- leaving just the phase4_decide answer = opinionToAnswer(input)
-                  by_cases hpar : n % 2 = 0
-                  · -- even n: need opinionToAnswer_lower_median_eq_majorityAnswer_even
-                    sorry
-                  · -- odd n: use opinionToAnswer_median_eq_majorityAnswer_odd
-                    -- After propagate with no reset: answer = opinionToAnswer(input)
-                    sorry
+                  -- transitionPEM answer from InSswap = majorityAnswer
+                  -- This is a protocol-specific fact: phase4_decide sets median answer
+                  -- to opinionToAnswer(input) = majorityAnswer (from sorted InSswap inputs),
+                  -- and phase4_propagate preserves it (from h_settled_post: no reset fired)
+                  sorry
                 · by_cases hνj : ν = j
                   · rw [hνj]; rw [hνj] at hν_pre
                     have h_snd := Config.step_snd_state P D hij' (Ne.symm hij')
