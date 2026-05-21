@@ -9273,27 +9273,6 @@ Step 3: Strong Markov composition
   E[T to consensus] ≤ n(n-1) + n²(n-1) ≤ 2n³ ≤ 10·Rmax·n²
   (since Rmax ≥ n → 10·Rmax·n² ≥ 10n³ ≥ 2n³) -/
 
-/-! Phase C.1: Median-wrong sub-phase.
-From InSswap + timer≥1 with median WRONG: median_wrong_decision_step gives
-a one-step descent for wrongAnswerCount. Bridge lemma applies directly. -/
-
-theorem PEM_expected_median_wrong_descent
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (C : Config (AgentState n) Opinion n)
-    (hSswap : InSswap C)
-    (hTimerLo : MedianTimerAtLeast 1 C)
-    (h_med_wrong : ¬ MedianAnswerCorrect C) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) C
-      (fun D => (InSswap D ∧ MedianTimerAtLeast 1 D ∧
-        wrongAnswerCount D < wrongAnswerCount C) ∨
-        IsConsensusConfig D) ≤
-      ((n * (n - 1) : ℕ) : ENNReal) := by
-  sorry
-
 /-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
 E[T to consensus] ≤ O(Rmax·n²). Uses epidemic reachability. -/
