@@ -9502,11 +9502,18 @@ theorem PEM_expected_timer_drain
                     not_true_eq_false, not_false_eq_true,
                     false_and, and_false, if_false,
                     and_self, if_true, h_no_swap, hν_pre]
-                  -- The transitionPEM output .1.answer from InSswap:
-                  -- From hS' (InSswap post-step): all agents Settled → reset didn't fire
-                  -- → answer = phase4_decide output = opinionToAnswer(input)
-                  -- = majorityAnswer (from InSswap sorted inputs)
-                  sorry
+                  -- Role at position i post-step is Settled (from hS')
+                  -- This rules out the reset branch of phase4_propagate
+                  have h_settled_post : ((P.δ (D i, D j)).1).role = .Settled := by
+                    rw [← h_fst]; exact hS'.toInSrank.allSettled i
+                  -- After unfold + simp, the settled constraint eliminates the reset branch
+                  -- leaving just the phase4_decide answer = opinionToAnswer(input)
+                  by_cases hpar : n % 2 = 0
+                  · -- even n: need opinionToAnswer_lower_median_eq_majorityAnswer_even
+                    sorry
+                  · -- odd n: use opinionToAnswer_median_eq_majorityAnswer_odd
+                    -- After propagate with no reset: answer = opinionToAnswer(input)
+                    sorry
                 · by_cases hνj : ν = j
                   · rw [hνj]; rw [hνj] at hν_pre
                     have h_snd := Config.step_snd_state P D hij' (Ne.symm hij')
