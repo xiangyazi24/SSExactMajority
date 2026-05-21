@@ -9273,6 +9273,30 @@ Step 3: Strong Markov composition
   E[T to consensus] ≤ n(n-1) + n²(n-1) ≤ 2n³ ≤ 10·Rmax·n²
   (since Rmax ≥ n → 10·Rmax·n² ≥ 10n³ ≥ 2n³) -/
 
+/-! General step properties from InSswap under PEMProtocolCoupled.
+From InSswap (all Settled, distinct ranks, sorted inputs), any step:
+1. Preserves rank at every position (no swap, rankDelta = identity)
+2. Timer at every position is ≤ pre-step timer (timer only decrements)
+These are the universal step properties needed by the variable descent. -/
+
+theorem step_rank_preserved_of_InSswap
+    {n Rmax Emax Dmax : ℕ} (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (w : Fin n) :
+    (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j w).1.rank =
+      (D w).1.rank := by
+  sorry
+
+theorem step_timer_le_of_InSswap
+    {n Rmax Emax Dmax : ℕ} (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (w : Fin n) :
+    (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j w).1.timer ≤
+      (D w).1.timer := by
+  sorry
+
 /-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
 E[T to consensus] ≤ O(Rmax·n²). Uses epidemic reachability. -/
@@ -9383,11 +9407,30 @@ theorem PEM_expected_timer_drain
             subst hij; simp only [Config.step, ite_true] at hμ_med ⊢
             exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
           · by_cases hμi : μ = i
-            · sorry -- μ = i: output timer = input.timer - 1 ≤ maxMedianTimer D
+            · -- μ = i: rank preserved, timer ≤
+              rw [hμi]
+              have hrank : (D.step P i j i).1.rank = (D i).1.rank :=
+                step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                  (Dmax := Dmax) hn0 hS i
+              have hμ_pre : (D i).1.rank.val + 1 = ceilHalf n := by rw [← hrank]; rwa [hμi] at hμ_med
+              calc (D.step P i j i).1.timer
+                  ≤ (D i).1.timer :=
+                    step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                      (Dmax := Dmax) hn0 hS i
+                _ ≤ maxMedianTimer D :=
+                    Finset.le_sup_of_le (Finset.mem_univ i) (by simp [maxMedianTimer, hμ_pre])
             · by_cases hμj : μ = j
-              · -- μ = j = v (max rank): post-step rank at j is max rank (n-1),
-                -- not median rank (ceilHalf n). So hμ_med is vacuously false.
-                sorry -- need: rank at position j post-step ≠ ceilHalf n (it's n-1)
+              · rw [hμj]
+                have hrank : (D.step P i j j).1.rank = (D j).1.rank :=
+                  step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                    (Dmax := Dmax) hn0 hS j
+                have hμ_pre : (D j).1.rank.val + 1 = ceilHalf n := by rw [← hrank]; rwa [hμj] at hμ_med
+                calc (D.step P i j j).1.timer
+                    ≤ (D j).1.timer :=
+                      step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                        (Dmax := Dmax) hn0 hS j
+                  _ ≤ maxMedianTimer D :=
+                      Finset.le_sup_of_le (Finset.mem_univ j) (by simp [maxMedianTimer, hμ_pre])
               · -- bystander: unchanged
                 have hbyst : D.step P i j μ = D μ := by
                   unfold Config.step; simp [hij, hμi, hμj]
