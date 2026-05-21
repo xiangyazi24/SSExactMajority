@@ -9536,9 +9536,11 @@ theorem PEM_expected_timer_drain
         -- Case split on median timer value
         have hTimerPos : 1 ≤ (D μ).1.timer := hT μ hμ_med
         by_cases hTimer2 : 2 ≤ (D μ).1.timer
-        · -- timer ≥ 2: step decrements, Inv preserved, φ decreases
-          sorry -- need: InSswap preserved, MedianCorrect preserved,
-                -- timer≥1 preserved, maxMedianTimer strictly decreased
+        · -- timer ≥ 2: Inv preserved + maxMedianTimer strictly decreased
+          -- Uses: InSswap preservation (step_at_*_preserves_InSswap),
+          -- MedianCorrect preservation, timer ≥ 1 from step_timer_le,
+          -- strict decrease from timer decrement at (median, max)
+          sorry
         · -- timer = 1: step decrements to 0 → Goal
           have hTimer1 : (D μ).1.timer = 1 := by omega
           -- After decrement, timer = 0 → ¬(MedianTimerAtLeast 1) → Goal
