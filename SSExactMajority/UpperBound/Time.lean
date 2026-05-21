@@ -9466,7 +9466,59 @@ theorem PEM_expected_timer_drain
         · by_cases hT' : MedianTimerAtLeast 1 (D.step P i j)
           · by_cases hM' : MedianAnswerCorrect (D.step P i j)
             · exact Or.inl ⟨hS', hM', hT'⟩
-            · sorry -- MedianCorrect should be preserved; needs protocol case analysis
+            · -- MedianCorrect preserved: use majorityAnswer_step_eq + step_rank_preserved
+              exfalso; apply hM'
+              have hmaj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+                simpa [P, PEMProtocolCoupled, PEMProtocol] using
+                  majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+                    (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+              intro ν hν; rw [hmaj]
+              have hν_pre : (D ν).1.rank.val + 1 = ceilHalf n := by
+                rw [← step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                  (Dmax := Dmax) hn0 hS ν]; exact hν
+              -- ν has median rank pre-step → answer at ν post-step is correct
+              by_cases hij' : i = j
+              · subst hij'; simp [Config.step] at hν ⊢; exact hM ν hν_pre
+              · by_cases hνi : ν = i
+                · -- ν = i: answer set by transitionPEM .1
+                  rw [hνi]
+                  rw [hνi] at hν_pre
+                  have h_fst := Config.step_fst_state P D hij'
+                  rw [show (D.step P i j i).1.answer = ((P.δ (D i, D j)).1).answer from
+                    congrArg AgentState.answer h_fst]
+                  show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                    (D i, D j)).1.answer = majorityAnswer D
+                  have hsi := hS.toInSrank.allSettled i
+                  have hsj := hS.toInSrank.allSettled j
+                  have hne := fun h : (D i).1.rank = (D j).1.rank =>
+                    hij' (hS.toInSrank.ranks_inj h)
+                  have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+                    (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hne
+                  have h_no_swap := hS.swap_condition_false i j
+                  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+                    phase4_swap phase4_decide phase4_propagate
+                  simp only [hRD, hsi, hsj, ne_eq,
+                    role_settled_ne_resetting,
+                    not_true_eq_false, not_false_eq_true,
+                    false_and, and_false, if_false,
+                    and_self, if_true, h_no_swap, hν_pre]
+                  -- The transitionPEM output .1.answer from InSswap:
+                  -- From hS' (InSswap post-step): all agents Settled → reset didn't fire
+                  -- → answer = phase4_decide output = opinionToAnswer(input)
+                  -- = majorityAnswer (from InSswap sorted inputs)
+                  sorry
+                · by_cases hνj : ν = j
+                  · rw [hνj]; rw [hνj] at hν_pre
+                    have h_snd := Config.step_snd_state P D hij' (Ne.symm hij')
+                    rw [show (D.step P i j j).1.answer = ((P.δ (D i, D j)).2).answer from
+                      congrArg AgentState.answer h_snd]
+                    sorry
+                  · -- bystander: unchanged
+                    have hbyst : D.step P i j ν = D ν := by
+                      unfold Config.step; simp [hij', hνi, hνj]
+                    rw [show (D.step P i j ν).1.answer = (D ν).1.answer from
+                      congrArg (fun x => x.1.answer) hbyst]
+                    exact hM ν hν_pre
           · exact Or.inr (Or.inr (Or.inr (fun h => hT' h.2)))
         · exact Or.inr (Or.inr (Or.inr (fun h => hS' h.1))))
     (by -- hNonincrease: maxMedianTimer doesn't increase
