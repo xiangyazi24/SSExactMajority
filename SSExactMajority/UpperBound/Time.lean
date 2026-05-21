@@ -9352,14 +9352,54 @@ theorem PEM_expected_timer_drain
   have hBridge := Probability.expectedHittingTime_le_of_deterministic_descent
     P (by omega : 2 ≤ n) C Goal Inv maxMedianTimer
     ⟨hSswap, hMedCorrect, hTimerLo⟩
-    (by intro D hInv h0; sorry)
+    (by -- hZeroGoal: Inv D ∧ maxMedianTimer D = 0 → Goal D
+        -- Inv includes MedianTimerAtLeast 1, so timer ≥ 1 at median.
+        -- But maxMedianTimer = 0 forces timer = 0 at median. Contradiction.
+        intro D ⟨hSwap_D, _, _⟩ h0
+        -- Goal is a disjunction; show ¬(InSswap D ∧ MedianTimerAtLeast 1 D)
+        exact Or.inr (Or.inr (fun ⟨_, hT1⟩ => by
+          -- InSrank gives rank surjectivity → median agent exists
+          have hInj := hSwap_D.ranks_inj
+          have hSurj : Function.Surjective (fun v => (D v).1.rank) :=
+            Finite.surjective_of_injective hInj
+          have hCeilPos : 1 ≤ ceilHalf n := by unfold ceilHalf; omega
+          have hCeil : (ceilHalf n : ℕ) - 1 < n := by unfold ceilHalf; omega
+          obtain ⟨μ, hμ⟩ := hSurj ⟨ceilHalf n - 1, hCeil⟩
+          have hμ_med : (D μ).1.rank.val + 1 = ceilHalf n := by
+            have hval : (D μ).1.rank.val = ceilHalf n - 1 := by
+              exact congr_arg Fin.val hμ
+            omega
+          have h1 := hT1 μ hμ_med
+          -- maxMedianTimer D = 0 means sup of if-then-else is 0
+          -- For μ with the condition true, the term = timer μ, which ≤ sup = 0
+          have h2 : (D μ).1.timer ≤ maxMedianTimer D := by
+            unfold maxMedianTimer
+            set f : Fin n → ℕ := fun ν => if (D ν).1.rank.val + 1 = ceilHalf n
+                then (D ν).1.timer else 0 with hf_def
+            have hfμ : f μ = (D μ).1.timer := by simp [hf_def, hμ_med]
+            calc (D μ).1.timer = f μ := hfμ.symm
+              _ ≤ Finset.univ.sup f := Finset.le_sup (Finset.mem_univ μ)
+          omega)))
     (by intro D hInv hG i j; sorry)
     (by intro D hInv hG i j; sorry)
     (by intro D hInv hG hφ; sorry)
+  have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
+    unfold maxMedianTimer
+    apply Finset.sup_le
+    intro μ _
+    split_ifs with h
+    · exact hTimerHi μ
+    · exact Nat.zero_le _
   calc Probability.expectedHittingTime P (by omega) C Goal
       ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
     _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
-        sorry
+        norm_cast
+        -- maxMedianTimer C * (n * (n-1)) ≤ 7*(Rmax+4) * n * (n-1)
+        -- = 7*(Rmax+4) * (n * (n-1))
+        calc maxMedianTimer C * (n * (n - 1))
+            ≤ (7 * (Rmax + 4)) * (n * (n - 1)) :=
+              Nat.mul_le_mul_right _ hMaxTimer
+          _ = 7 * (Rmax + 4) * n * (n - 1) := by ring
 
 /-! Stage 2: Reset trigger. From InSswap + MedianCorrect + timer=0 +
 wrongAnswer > 0: trigger_correct_reset_from_InSrank gives a deterministic
@@ -9387,7 +9427,17 @@ theorem PEM_expected_reset_trigger
   set Goal := fun D : Config (AgentState n) Opinion n =>
     IsConsensusConfig D ∨ CorrectResetSeed D
   have hGoalC : ¬ Goal C := by
-    sorry -- IsConsensusConfig contradicts wrongAnswer>0; CorrectResetSeed contradicts InSswap
+    intro hG
+    rcases hG with hCons | hSeed
+    · -- IsConsensusConfig → all answers correct → wrongAnswerCount = 0
+      have h0 : wrongAnswerCount C = 0 :=
+        (wrongAnswerCount_eq_zero_iff C).mpr hCons.allAnswerCorrect
+      omega
+    · -- CorrectResetSeed → ∃ r, role = .Resetting, contradicts InSswap (all Settled)
+      obtain ⟨⟨r, hr_res, _⟩, _⟩ := hSeed
+      have hr_settled := hSswap.allSettled r
+      rw [hr_res] at hr_settled
+      exact Role.noConfusion hr_settled
   have hOneStep : ∀ D : Config (AgentState n) Opinion n, ¬ Goal D →
       ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ≤
         Probability.ProbHitWithin P (by omega : 2 ≤ n) D Goal 1 := by
@@ -9430,7 +9480,7 @@ theorem PEM_expected_median_correct_to_consensus
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+      ((18 * Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
@@ -9439,7 +9489,42 @@ theorem PEM_expected_median_correct_to_consensus
   have hMidGoal : ∀ D, IsConsensusConfig D → Mid D := fun D h => Or.inl h
   have hStage1 : Probability.expectedHittingTime P hn2 C Mid ≤
       ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
-    sorry -- Stage 1 (timer drain) + Stage 2 (reset trigger) via strong Markov
+    -- Strong Markov composition of timer drain + reset trigger.
+    -- Stage 1: Timer drain reaches TimerDrainExit = Mid ∨ ¬(InSswap ∧ timer≥1)
+    -- Stage 2: From ¬(InSswap ∧ timer≥1), the reset trigger reaches Mid
+    let TimerDrainExit := fun D : Config (AgentState n) Opinion n =>
+      IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+    have hTDE_sub_Mid : ∀ D, Mid D → TimerDrainExit D := by
+      intro D hD
+      rcases hD with h | h
+      · exact Or.inl h
+      · exact Or.inr (Or.inl h)
+    have hStage1a : Probability.expectedHittingTime P hn2 C TimerDrainExit ≤
+        ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) :=
+      PEM_expected_timer_drain hn4 hn0 hRmax C hSswap hMedCorrect hTimerLo hTimerHi
+    have hStage1b : ∀ D : Config (AgentState n) Opinion n, TimerDrainExit D →
+        Probability.expectedHittingTime P hn2 D Mid ≤
+          ((n * (n - 1) : ℕ) : ENNReal) := by
+      intro D hD
+      rcases hD with hCons | hSeed | hExit
+      · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D Mid (Or.inl hCons)]
+        exact zero_le _
+      · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D Mid (Or.inr hSeed)]
+        exact zero_le _
+      · -- ¬(InSswap ∧ timer≥1) case: need to reach Mid via reset trigger
+        -- This requires InSswap D, MedianCorrect D, wrongAnswer>0, timer=0
+        sorry
+    have hMidTDE : ∀ D, Mid D → TimerDrainExit D := hTDE_sub_Mid
+    have hComp := Probability.expectedHittingTime_add_le P hn2 C TimerDrainExit Mid
+      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal)
+      ((n * (n - 1) : ℕ) : ENNReal)
+      hStage1a hStage1b hMidTDE
+    calc Probability.expectedHittingTime P hn2 C Mid
+        ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) +
+          ((n * (n - 1) : ℕ) : ENNReal) := hComp
+      _ = ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
+          norm_cast
   have hStage3 : ∀ D : Config (AgentState n) Opinion n, Mid D →
       Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
         ((3 * Rmax * n * n : ℕ) : ENNReal) := by
@@ -9455,8 +9540,30 @@ theorem PEM_expected_median_correct_to_consensus
   calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
       ≤ ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) +
         ((3 * Rmax * n * n : ℕ) : ENNReal) := hCompose
-    _ ≤ ((5 * Rmax * n * n : ℕ) : ENNReal) := by
-        sorry -- arithmetic: 7(Rmax+4)n(n-1) + n(n-1) + 3Rmax·n² ≤ 5Rmax·n²
+    _ ≤ ((18 * Rmax * n * n : ℕ) : ENNReal) := by
+        -- arithmetic: 7(Rmax+4)n(n-1) + n(n-1) + 3Rmax·n² ≤ 18Rmax·n²
+        -- for Rmax ≥ n ≥ 4
+        norm_cast
+        have hn1 : 1 ≤ n := by omega
+        have hn_sub : n - 1 ≤ n := Nat.sub_le n 1
+        have h1 : 7 * (Rmax + 4) * n * (n - 1) ≤ 14 * Rmax * n * n := by
+          calc 7 * (Rmax + 4) * n * (n - 1)
+              ≤ 7 * (Rmax + 4) * n * n := Nat.mul_le_mul_left _ hn_sub
+            _ = 7 * (Rmax + 4) * (n * n) := by ring
+            _ = (7 * Rmax + 28) * (n * n) := by ring
+            _ ≤ (7 * Rmax + 7 * Rmax) * (n * n) := by
+                apply Nat.mul_le_mul_right
+                apply Nat.add_le_add_left
+                calc 28 ≤ 7 * 4 := by omega
+                  _ ≤ 7 * Rmax := Nat.mul_le_mul_left _ (by omega)
+            _ = 14 * Rmax * (n * n) := by ring
+            _ = 14 * Rmax * n * n := by ring
+        have h2 : n * (n - 1) ≤ 1 * Rmax * n * n := by
+          calc n * (n - 1)
+              ≤ n * n := Nat.mul_le_mul_left _ hn_sub
+            _ ≤ Rmax * (n * n) := Nat.le_mul_of_pos_left _ (by omega)
+            _ = 1 * Rmax * n * n := by ring
+        linarith
 
 /-! Phase C assembly: compose median-wrong descent + median-correct via
 strong Markov to get the full hConsensusBound. -/
@@ -9473,7 +9580,7 @@ theorem PEM_hConsensusBound_from_bridge
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((10 * Rmax * n * n : ℕ) : ENNReal) := by
+      ((20 * Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
@@ -9482,7 +9589,7 @@ theorem PEM_hConsensusBound_from_bridge
     sorry -- E[T to DecisionProgress] via exit=progress monotonicity
   have hFromDP : ∀ D : Config (AgentState n) Opinion n, DecisionProgress D →
       Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
-        ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+        ((18 * Rmax * n * n : ℕ) : ENNReal) := by
     intro D hD
     rcases hD with hMed | hSeed
     · sorry -- from MedianAnswerCorrect D: need InSswap/timer hypotheses
@@ -9490,7 +9597,7 @@ theorem PEM_hConsensusBound_from_bridge
     · calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
           ≤ ((3 * Rmax * n * n : ℕ) : ENNReal) :=
             PEM_expected_epidemic_to_consensus hn4 hn0 hRmax D hSeed
-        _ ≤ ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+        _ ≤ ((18 * Rmax * n * n : ℕ) : ENNReal) := by
             norm_cast; exact Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (by omega))
   have hMidGoal : ∀ D : Config (AgentState n) Opinion n,
       IsConsensusConfig D → DecisionProgress D := by
@@ -9498,11 +9605,20 @@ theorem PEM_hConsensusBound_from_bridge
     exact Or.inl (fun μ hμ => hD.allAnswerCorrect μ)
   have hCompose := Probability.expectedHittingTime_add_le P hn2 C
     DecisionProgress IsConsensusConfig
-    ((n * (n - 1) : ℕ) : ENNReal) ((5 * Rmax * n * n : ℕ) : ENNReal)
+    ((n * (n - 1) : ℕ) : ENNReal) ((18 * Rmax * n * n : ℕ) : ENNReal)
     hDecision hFromDP hMidGoal
   calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
-      ≤ ((n * (n - 1) : ℕ) : ENNReal) + ((5 * Rmax * n * n : ℕ) : ENNReal) := hCompose
-    _ ≤ ((10 * Rmax * n * n : ℕ) : ENNReal) := by
-        sorry -- arithmetic: n(n-1) + 5Rmax·n² ≤ 10Rmax·n² for Rmax≥n≥4
+      ≤ ((n * (n - 1) : ℕ) : ENNReal) + ((18 * Rmax * n * n : ℕ) : ENNReal) := hCompose
+    _ ≤ ((20 * Rmax * n * n : ℕ) : ENNReal) := by
+        -- arithmetic: n(n-1) + 18Rmax·n² ≤ 20Rmax·n² for Rmax≥n≥4
+        norm_cast
+        have hn_sub : n - 1 ≤ n := Nat.sub_le n 1
+        have h1 : n * (n - 1) ≤ 2 * Rmax * n * n := by
+          calc n * (n - 1)
+              ≤ n * n := Nat.mul_le_mul_left _ hn_sub
+            _ ≤ 1 * (n * n) := by omega
+            _ ≤ Rmax * (n * n) := Nat.mul_le_mul_right _ (by omega)
+            _ ≤ 2 * Rmax * n * n := by nlinarith
+        linarith
 
 end SSEM
