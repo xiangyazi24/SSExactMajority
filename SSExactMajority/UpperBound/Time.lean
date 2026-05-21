@@ -9307,6 +9307,7 @@ theorem step_rank_preserved_of_InSswap
       · -- bystander
         unfold Config.step; simp [hij, hwi, hwj]
 
+set_option maxHeartbeats 8000000 in
 theorem step_timer_le_of_InSswap
     {n Rmax Emax Dmax : ℕ} (hn0 : 0 < n)
     {D : Config (AgentState n) Opinion n}
@@ -9314,7 +9315,60 @@ theorem step_timer_le_of_InSswap
     (w : Fin n) :
     (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j w).1.timer ≤
       (D w).1.timer := by
-  sorry
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  by_cases hij : i = j
+  · subst hij; simp [Config.step]
+  · by_cases hwi : w = i
+    · rw [hwi]
+      have h_fst := Config.step_fst_state P D hij
+      rw [show (D.step P i j i).1.timer = ((P.δ (D i, D j)).1).timer from
+        congrArg AgentState.timer h_fst]
+      -- Unfold P.δ = transitionPEM and show timer ≤
+      show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        (D i, D j)).1.timer ≤ (D i).1.timer
+      have hsi := hS.toInSrank.allSettled i
+      have hsj := hS.toInSrank.allSettled j
+      have hne := fun h : (D i).1.rank = (D j).1.rank => hij (hS.toInSrank.ranks_inj h)
+      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hne
+      have h_no_swap := hS.swap_condition_false i j
+      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+        phase4_swap phase4_decide phase4_propagate
+      simp only [hRD, hsi, hsj, ne_eq,
+        role_settled_ne_resetting,
+        not_true_eq_false, not_false_eq_true,
+        false_and, and_false, if_false,
+        and_self, if_true, h_no_swap]
+      by_cases hpar : n % 2 = 0
+      · simp only [hpar, if_true]
+        split_ifs <;> dsimp only [] <;> omega
+      · simp only [hpar, if_false]
+        split_ifs <;> dsimp only [] <;> omega
+    · by_cases hwj : w = j
+      · rw [hwj]
+        have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
+        rw [show (D.step P i j j).1.timer = ((P.δ (D i, D j)).2).timer from
+          congrArg AgentState.timer h_snd]
+        show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+          (D i, D j)).2.timer ≤ (D j).1.timer
+        have hsi := hS.toInSrank.allSettled i
+        have hsj := hS.toInSrank.allSettled j
+        have hne := fun h : (D i).1.rank = (D j).1.rank => hij (hS.toInSrank.ranks_inj h)
+        have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hne
+        have h_no_swap := hS.swap_condition_false i j
+        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+          phase4_swap phase4_decide phase4_propagate
+        simp only [hRD, hsi, hsj, ne_eq,
+          role_settled_ne_resetting,
+          not_true_eq_false, not_false_eq_true,
+          false_and, and_false, if_false,
+          and_self, if_true, h_no_swap]
+        by_cases hpar : n % 2 = 0
+        · simp only [hpar, if_true]
+          split_ifs <;> dsimp only [] <;> omega
+        · simp only [hpar, if_false]
+          split_ifs <;> dsimp only [] <;> omega
+      · -- bystander
+        unfold Config.step; simp [hij, hwi, hwj]
 
 /-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
