@@ -9394,7 +9394,23 @@ theorem step_median_answer_of_InSswap_both
   by_cases hij : i = j
   · subst hij; simp [Config.step]; exact hM ν hν_pre
   · by_cases hνi : ν = i
-    · sorry -- ν = i: transitionPEM .1.answer = majorityAnswer
+    · -- ν = i: transitionPEM .1.answer = majorityAnswer
+      rw [hνi]
+      -- Get the transition output at position i
+      have h_fst := Config.step_fst_state P D hij
+      rw [show (D.step P i j i).1.answer = ((P.δ (D i, D j)).1).answer from
+        congrArg AgentState.answer h_fst]
+      -- The output .1.role = Settled (from hS' post-step InSswap)
+      have h_settled : ((P.δ (D i, D j)).1).role = .Settled := by
+        rw [← Config.step_fst_state P D hij]; exact hS'.toInSrank.allSettled i
+      -- Need: (transitionPEM ...).1.answer = majorityAnswer D
+      -- From InSswap: both Settled, distinct ranks, no swap
+      -- transitionPEM = prePhase4(id) → phase4(swap=id → decide → propagate)
+      -- phase4_decide sets median answer to opinionToAnswer(input)
+      -- phase4_propagate: if reset fires, role=Resetting (contradicts h_settled)
+      --   so no reset → answer unchanged from phase4_decide
+      -- opinionToAnswer(input) = majorityAnswer from InSswap sorted inputs
+      sorry
     · by_cases hνj : ν = j
       · sorry -- ν = j: transitionPEM .2.answer = majorityAnswer
       · -- bystander: unchanged
