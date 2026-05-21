@@ -9254,4 +9254,82 @@ to happen before timer exhaustion (probabilistic, high probability). -/
 def DecisionProgress (C : Config (AgentState n) Opinion n) : Prop :=
   MedianAnswerCorrect C ∨ CorrectResetSeed C
 
+/-! Strategy sketch for hConsensusBound using the bridge lemma:
+
+Step 1: E[T from InSswap to DecisionProgress] ≤ n(n-1)
+  Use expectedHittingTime_mono_goal on PEM_expected_Tswap_..._or_exit_le
+  (needs exit_target_subset_DecisionProgress — protocol-specific sorry)
+
+Step 2: E[T from DecisionProgress to IsConsensusConfig]
+  Case MedianAnswerCorrect:
+    Use epidemic_timer_branch_to_consensus (deterministic) +
+    expectedHittingTime_le_of_deterministic_descent (bridge lemma)
+    → E[T] ≤ wrongAnswerCount · n(n-1) ≤ n · n(n-1) = n²(n-1)
+  Case CorrectResetSeed:
+    Use reset epidemic propagation (nonResettingCount descent)
+    → E[T] ≤ nonResettingCount · n(n-1) ≤ n · n(n-1) = n²(n-1)
+
+Step 3: Strong Markov composition
+  E[T to consensus] ≤ n(n-1) + n²(n-1) ≤ 2n³ ≤ 10·Rmax·n²
+  (since Rmax ≥ n → 10·Rmax·n² ≥ 10n³ ≥ 2n³) -/
+
+/-! Phase C.1: Median-wrong sub-phase.
+From InSswap + timer≥1 with median WRONG: median_wrong_decision_step gives
+a one-step descent for wrongAnswerCount. Bridge lemma applies directly. -/
+
+theorem PEM_expected_median_wrong_descent
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (h_med_wrong : ¬ MedianAnswerCorrect C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => (InSswap D ∧ MedianTimerAtLeast 1 D ∧
+        wrongAnswerCount D < wrongAnswerCount C) ∨
+        IsConsensusConfig D) ≤
+      ((n * (n - 1) : ℕ) : ENNReal) := by
+  sorry
+
+/-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
+From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
+E[T to consensus] ≤ O(Rmax·n²). Uses epidemic reachability. -/
+
+theorem PEM_expected_median_correct_to_consensus
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C IsConsensusConfig ≤
+      ((5 * Rmax * n * n : ℕ) : ENNReal) := by
+  sorry
+
+/-! Phase C assembly: compose median-wrong descent + median-correct via
+strong Markov to get the full hConsensusBound. -/
+
+theorem PEM_hConsensusBound_from_bridge
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C IsConsensusConfig ≤
+      ((10 * Rmax * n * n : ℕ) : ENNReal) := by
+  sorry
+
 end SSEM
