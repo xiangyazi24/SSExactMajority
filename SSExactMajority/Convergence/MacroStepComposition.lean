@@ -102,7 +102,7 @@ theorem step_at_median_max_timer_one_no_reset
     ({(C μ).1 with answer := opinionToAnswer (C μ).2,
                    timer := 0},
      (C v).1) := by
-    unfold transitionPEM
+    unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
     simp only [hRD, hsu, hsv, ne_eq,
       role_settled_ne_resetting,
       not_true_eq_false, not_false_eq_true,
@@ -232,8 +232,12 @@ theorem discharge_BurmanMacroDecision
     intro w; rw [hmaj]; exact h_all_correct w
   exact ⟨γ, t, hC_final, by omega⟩
 
-/-- BurmanMacroDecision with timer ≥ 1 at output.
-Derived from epidemic with timer ≥ 1 (strengthened BurmanConvergence). -/
+/-- When the median already holds the correct answer, the epidemic drives
+the whole configuration to consensus. (The earlier formulation also asserted
+`1 ≤ timer@median` at the endpoint, but that is FALSE in general — a
+stable all-correct `InSswap` with `timer = 0` has no recovery mechanism.
+Since `InSswap ∧ all-correct ⟺ IsConsensusConfig`, reaching consensus is
+the honest and sufficient post-condition for the decision phase.) -/
 def BurmanMacroDecisionWithTimer
     (trank Rmax : ℕ)
     (rankDelta : AgentState n × AgentState n → AgentState n × AgentState n) : Prop :=
@@ -242,12 +246,7 @@ def BurmanMacroDecisionWithTimer
     (∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n →
                   (C μ).1.answer = majorityAnswer C) →
     ∃ (γ : DetScheduler n) (k : ℕ),
-      InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ k) ∧
-      wrongAnswerCount (execution (protocolPEM n trank Rmax rankDelta) C γ k)
-        < wrongAnswerCount C ∧
-      ∀ μ : Fin n,
-        (execution (protocolPEM n trank Rmax rankDelta) C γ k μ).1.rank.val + 1 = ceilHalf n →
-        1 ≤ (execution (protocolPEM n trank Rmax rankDelta) C γ k μ).1.timer
+      IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ k)
 
 /-- Discharge BurmanMacroDecisionWithTimer from the strengthened epidemic. -/
 theorem discharge_BurmanMacroDecisionWithTimer
@@ -260,21 +259,24 @@ theorem discharge_BurmanMacroDecisionWithTimer
         InSswap (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t) ∧
         (∀ w : Fin n,
           (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t w).1.answer = majorityAnswer C₀) ∧
-        (∀ μ : Fin n,
+        ((∀ μ : Fin n,
           (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
-          1 ≤ (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.timer))
+          1 ≤ (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.timer) ∨
+         IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t)))
     (hn : 0 < n) :
     BurmanMacroDecisionWithTimer trank Rmax rankDelta := by
   intro C hC hpos hmed_correct
   set P := protocolPEM n trank Rmax rankDelta
   obtain ⟨μ, hμ_med⟩ := hC.toInSrank.exists_median hn
   have hμ_correct : (C μ).1.answer = majorityAnswer C := hmed_correct μ hμ_med
-  obtain ⟨γ, t, hC_final, h_all_correct, h_timer⟩ := hEpidemic C ⟨μ, hμ_correct⟩
+  obtain ⟨γ, t, hC_final, h_all_correct, _h_disj⟩ := hEpidemic C ⟨μ, hμ_correct⟩
+  -- `InSswap ∧ all-answers-correct ⟺ IsConsensusConfig` (InStim).
   have hmaj : majorityAnswer (execution P C γ t) = majorityAnswer C :=
     majorityAnswer_execution_eq C γ t
-  have h_zero : wrongAnswerCount (execution P C γ t) = 0 := by
-    rw [wrongAnswerCount_eq_zero_iff]
+  have hOut : InSout (execution P C γ t) := by
     intro w; rw [hmaj]; exact h_all_correct w
-  exact ⟨γ, t, hC_final, by omega, h_timer⟩
+  refine ⟨γ, t, ?_⟩
+  exact (InStim_iff_IsConsensusConfig _).mp
+    { toInSswap := hC_final, allAnswerCorrect := hOut }
 
 end SSEM

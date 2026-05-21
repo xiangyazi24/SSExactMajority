@@ -67,6 +67,15 @@ structure AgentState (n : ℕ) where
   delaytimer : ℕ := 0
   deriving DecidableEq, Repr
 
+@[simp] theorem AgentState.role_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).role = s.role := rfl
+@[simp] theorem AgentState.role_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).role = s.role := rfl
+@[simp] theorem AgentState.errorcount_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).errorcount = s.errorcount := rfl
+@[simp] theorem AgentState.errorcount_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).errorcount = s.errorcount := rfl
+
 /-- The output function: if answer = φ, output T; otherwise output answer. -/
 def agentOutput (s : AgentState n) : Output :=
   s.answer.toOutput

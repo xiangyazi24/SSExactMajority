@@ -209,7 +209,7 @@ theorem transitionPEM_timer_of_no_max_no_swap
     (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.timer = s₀.timer ∧
     (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).2.timer = s₁.timer := by
   have hRD : rankDelta (s₀, s₁) = (s₀, s₁) := hRank s₀ s₁ hs₀ hs₁ hne
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hs₀, hs₁, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -234,7 +234,7 @@ theorem transitionPEM_rank_of_no_swap
     (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.rank = s₀.rank ∧
     (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).2.rank = s₁.rank := by
   have hRD : rankDelta (s₀, s₁) = (s₀, s₁) := hRank s₀ s₁ hs₀ hs₁ hne
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hs₀, hs₁, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -269,7 +269,7 @@ theorem transitionPEM_timer_of_no_max_at_misorder
     hRank (C u).1 (C v).1 hsu hsv (ne_of_lt hlt)
   have hswap : (C u).1.rank < (C v).1.rank ∧ (C u).2 = Opinion.B ∧ (C v).2 = Opinion.A :=
     ⟨hlt, huB, hvA⟩
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -303,7 +303,7 @@ theorem transitionPEM_timer_of_v_max_at_misorder
     ⟨hlt, huB, hvA⟩
   have h_max_ne_med : ¬((C v).1.rank.val + 1 = ceilHalf n) := by
     intro h; unfold ceilHalf at h; omega
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -521,5 +521,7 @@ theorem swap_reaches_Sswap_from_timer_bound_with_timer
   cases hTimerDisj with
   | inl h_ge2 => exact le_trans (by omega : 1 ≤ 2) (h_ge2 μ hμ)
   | inr h_ge1_maxB => exact h_ge1_maxB.1 μ hμ
+
+#print axioms swap_reaches_Sswap_from_timer_bound_with_timer
 
 end SSEM

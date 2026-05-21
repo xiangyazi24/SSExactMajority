@@ -57,15 +57,26 @@ structure BurmanConvergence
         (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
         2 ≤ (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.timer) ∨
        IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t))
+  -- NOTE: the median-timer clause is a *disjunct* with `IsConsensusConfig`,
+  -- mirroring the `ranking` field above. An unconditional `1 ≤ timer@median`
+  -- is FALSE: a configuration that is already `InSswap`, all-answers-correct,
+  -- with `timer = 0` at the median satisfies the hypothesis but admits no
+  -- recovery (`phase4_propagate` only does `timer := timer - 1`, never
+  -- increases; no answer-mismatch ⇒ no reset ⇒ no re-rank ⇒ no timer
+  -- re-init). Since `InSswap ∧ all-correct ⟺ IsConsensusConfig`
+  -- (`InStim_iff_IsConsensusConfig`), the consensus disjunct is the honest
+  -- post-condition; the timer disjunct is kept for the decision-phase
+  -- consumer that still has wrong answers to fix.
   epidemic : ∀ C₀ : Config (AgentState n) Opinion n,
     (∃ w : Fin n, (C₀ w).1.answer = majorityAnswer C₀) →
     ∃ (γ : DetScheduler n) (t : ℕ),
       InSswap (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t) ∧
       (∀ w : Fin n,
         (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t w).1.answer = majorityAnswer C₀) ∧
-      (∀ μ : Fin n,
+      ((∀ μ : Fin n,
         (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
-        1 ≤ (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.timer)
+        1 ≤ (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t))
 
 /-! ### Derivation of the three hypotheses -/
 
@@ -184,6 +195,112 @@ theorem step_preserves_timer_no_max
 
 /-! ### Master theorem from BurmanConvergence alone -/
 
+/-- `BurmanConvergence` gives deterministic reachability of an
+`IsConsensusConfig` endpoint from every initial configuration.  This is the
+reachability fact hidden inside the qualitative `SolvesSSEM` theorem and is
+the deterministic input needed by the stochastic time-bound layer. -/
+theorem P_EM_consensus_reachable_from_BurmanConvergence_only
+    [Inhabited (Fin n × Fin n)]
+    {trank Rmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    (hRank : RankDeltaSettledFix rankDelta)
+    (hn4 : 4 ≤ n)
+    (hBC : BurmanConvergence trank Rmax rankDelta) :
+    ∀ C₀ : Config (AgentState n) Opinion n,
+      ∃ (γ : DetScheduler n) (t : ℕ),
+        IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t) := by
+  set P := protocolPEM n trank Rmax rankDelta
+  have hBMDT := discharge_BurmanMacroDecisionWithTimer hBC.epidemic (by omega : 0 < n)
+  intro C₀
+  obtain ⟨γ₁, t₁, hInSrank₁, h_timer_or_cons⟩ := hBC.ranking C₀
+  obtain h_timer₁ | hCons := h_timer_or_cons
+  · obtain ⟨γ₂, t₂, hInSswap₂, h_timer₂⟩ :=
+    swap_reaches_Sswap_from_timer_bound_with_timer hRank hn4 hInSrank₁ h_timer₁
+    -- Decision phase. `DecInv` carries `timer ≥ 1 @ median`, needed by the
+    -- median-wrong single-step witnesses. The median-correct case escapes
+    -- via the epidemic, which yields `IsConsensusConfig` directly (the goal),
+    -- so we recurse on `wrongAnswerCount` with an early exit on consensus.
+    set DecInv := fun C : Config (AgentState n) Opinion n =>
+      InSswap C ∧ ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n → 1 ≤ (C μ).1.timer
+      with hDecInv_def
+    have hDrive : ∀ (b : ℕ) (C : Config (AgentState n) Opinion n),
+        DecInv C → wrongAnswerCount C ≤ b →
+        ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution P C γ t) := by
+      intro b
+      induction b with
+      | zero =>
+        intro C ⟨hC, _⟩ hle
+        have hzero : wrongAnswerCount C = 0 := Nat.le_zero.mp hle
+        exact ⟨fun _ => default, 0,
+          isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hC hzero⟩
+      | succ b ih =>
+        intro C ⟨hC, hC_timer⟩ hle
+        classical
+        by_cases hpos : 0 < wrongAnswerCount C
+        · by_cases h_med_correct :
+              ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n →
+                           (C μ).1.answer = majorityAnswer C
+          · -- Median correct → epidemic reaches consensus directly.
+            exact hBMDT C hC hpos h_med_correct
+          · -- Median wrong → non-circular single step, then recurse.
+            push_neg at h_med_correct
+            obtain ⟨μ, hμ_med, hμ_wrong⟩ := h_med_correct
+            -- One non-circular decision step at a chosen pair, decreasing
+            -- `wrongAnswerCount` and preserving `DecInv`; then recurse.
+            have hStep : ∃ p : Fin n × Fin n,
+                DecInv (C.step P p.1 p.2) ∧
+                wrongAnswerCount (C.step P p.1 p.2) < wrongAnswerCount C := by
+              by_cases hpar : n % 2 = 0
+              · by_cases hTie : nAOf C = nBOf C
+                · obtain ⟨u, v, huv, hu_med, hv_upper, h_disagree, h_wrong⟩ :=
+                    evenCase_witness_when_median_wrong_tie hC hpar hn4 hTie ⟨μ, hμ_med, hμ_wrong⟩
+                  have h_dec := decision_step_at_median_pair_even_tie_decreases
+                    (trank := trank) (Rmax := Rmax) hRank hC huv hpar hu_med hv_upper h_disagree hTie hn4 h_wrong
+                  have hu_no_max : (C u).1.rank.val + 1 ≠ n := by omega
+                  have hv_no_max : (C v).1.rank.val + 1 ≠ n := by omega
+                  exact ⟨(u, v),
+                    ⟨h_dec.1,
+                     step_preserves_timer_no_max hRank hC.toInSrank huv hu_no_max hv_no_max hC_timer⟩,
+                    h_dec.2⟩
+                · obtain ⟨u, v, huv, hu_med, hv_upper, h_agree, h_wrong⟩ :=
+                    evenCase_witness_when_median_wrong hC hpar hn4 hTie ⟨μ, hμ_med, hμ_wrong⟩
+                  have h_dec := decision_step_at_median_pair_even_decreases
+                    (trank := trank) (Rmax := Rmax) hRank hC huv hpar hu_med hv_upper h_agree hTie hn4 h_wrong
+                  have hu_no_max : (C u).1.rank.val + 1 ≠ n := by omega
+                  have hv_no_max : (C v).1.rank.val + 1 ≠ n := by omega
+                  exact ⟨(u, v),
+                    ⟨h_dec.1,
+                     step_preserves_timer_no_max hRank hC.toInSrank huv hu_no_max hv_no_max hC_timer⟩,
+                    h_dec.2⟩
+              · obtain ⟨μ', v, hμv, hμ'_med, hv_no_med, hv_no_max, h_rank_gt, h_timer, hμ'_wrong⟩ :=
+                  oddCase_witness_when_median_wrong_with_timer hC hpar (by omega : 3 ≤ n)
+                    ⟨μ, hμ_med, hμ_wrong⟩ hC_timer
+                have h_step := decision_step_at_median_no_swap_odd_decreases
+                  (trank := trank) (Rmax := Rmax) hRank hC hμv hpar hμ'_med hv_no_med hv_no_max h_rank_gt h_timer hμ'_wrong
+                have hμ'_no_max : (C μ').1.rank.val + 1 ≠ n := by
+                  unfold ceilHalf at hμ'_med; omega
+                exact ⟨(μ', v),
+                  ⟨h_step.1,
+                   step_preserves_timer_no_max hRank hC.toInSrank hμv hμ'_no_max hv_no_max hC_timer⟩,
+                  h_step.2⟩
+            obtain ⟨p, hC', hdec⟩ := hStep
+            have hle' : wrongAnswerCount (C.step P p.1 p.2) ≤ b := by omega
+            obtain ⟨γ', t', hcons⟩ := ih (C.step P p.1 p.2) hC' hle'
+            refine ⟨concatScheduler (fun _ => p) 1 γ', 1 + t', ?_⟩
+            have hone : execution P C (fun _ => p) 1 = C.step P p.1 p.2 := rfl
+            rw [execution_concat, hone]; exact hcons
+        · push_neg at hpos
+          have hzero : wrongAnswerCount C = 0 := Nat.le_zero.mp hpos
+          exact ⟨fun _ => default, 0,
+            isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hC hzero⟩
+    set C₂ := execution P (execution P C₀ γ₁ t₁) γ₂ t₂
+    obtain ⟨γ₃, t₃, hCons₃⟩ :=
+      hDrive (wrongAnswerCount C₂) C₂ ⟨hInSswap₂, h_timer₂⟩ le_rfl
+    exact ⟨concatScheduler (concatScheduler γ₁ t₁ γ₂) (t₁ + t₂) γ₃,
+      t₁ + t₂ + t₃,
+      by rw [execution_concat, execution_concat]; exact hCons₃⟩
+  · exact ⟨γ₁, t₁, hCons⟩
+
 /-- **Theorem 4 from BurmanConvergence alone** (no timer_inv). -/
 theorem P_EM_solves_SSEM_from_BurmanConvergence_only
     [Inhabited (Fin n × Fin n)]
@@ -193,74 +310,8 @@ theorem P_EM_solves_SSEM_from_BurmanConvergence_only
     (hn4 : 4 ≤ n)
     (hBC : BurmanConvergence trank Rmax rankDelta) :
     SolvesSSEM (protocolPEM n trank Rmax rankDelta) n := by
-  set P := protocolPEM n trank Rmax rankDelta
-  have hBMD := discharge_BurmanMacroDecision hBC.burmanRankingCorrect (by omega : 0 < n)
-  have hBMDT := discharge_BurmanMacroDecisionWithTimer hBC.epidemic (by omega : 0 < n)
   apply P_EM_solves_SSEM_of_consensus_reachable hRank
-  intro C₀
-  obtain ⟨γ₁, t₁, hInSrank₁, h_timer_or_cons⟩ := hBC.ranking C₀
-  obtain h_timer₁ | hCons := h_timer_or_cons
-  · obtain ⟨γ₂, t₂, hInSswap₂, h_timer₂⟩ :=
-    swap_reaches_Sswap_from_timer_bound_with_timer hRank hn4 hInSrank₁ h_timer₁
-    -- Decision phase with DecisionInv via reach_zero_potential_macro
-    set DecInv := fun C : Config (AgentState n) Opinion n =>
-      InSswap C ∧ ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n → 1 ≤ (C μ).1.timer
-    have hMacro : ∀ C, DecInv C → 0 < wrongAnswerCount C →
-        ∃ (γ : DetScheduler n) (k : ℕ),
-          DecInv (execution P C γ k) ∧
-          wrongAnswerCount (execution P C γ k) < wrongAnswerCount C := by
-      intro C ⟨hC, hC_timer⟩ hpos
-      classical
-      by_cases h_med_correct :
-          ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n →
-                       (C μ).1.answer = majorityAnswer C
-      · -- Median correct → BurmanMacroDecisionWithTimer
-        obtain ⟨γ, k, hSwap', hCount', hTimer'⟩ := hBMDT C hC hpos h_med_correct
-        exact ⟨γ, k, ⟨hSwap', hTimer'⟩, hCount'⟩
-      · -- Median wrong → single step + timer preservation
-        push_neg at h_med_correct
-        obtain ⟨μ, hμ_med, hμ_wrong⟩ := h_med_correct
-        -- Use even-n or odd-n single step
-        by_cases hpar : n % 2 = 0
-        · -- Even n, median wrong: use the tie/non-tie case analysis.
-          -- The median pair (ranks n/2, n/2+1) has no max rank → timer preserved.
-          by_cases hTie : nAOf C = nBOf C
-          · -- Tie case
-            obtain ⟨u, v, huv, hu_med, hv_upper, h_disagree, h_wrong⟩ :=
-              evenCase_witness_when_median_wrong_tie hC hpar hn4 hTie ⟨μ, hμ_med, hμ_wrong⟩
-            have h_dec := decision_step_at_median_pair_even_tie_decreases
-              (trank := trank) (Rmax := Rmax) hRank hC huv hpar hu_med hv_upper h_disagree hTie hn4 h_wrong
-            have hu_no_max : (C u).1.rank.val + 1 ≠ n := by omega
-            have hv_no_max : (C v).1.rank.val + 1 ≠ n := by omega
-            refine ⟨fun _ => (u, v), 1, ⟨h_dec.1, ?_⟩, h_dec.2⟩
-            exact step_preserves_timer_no_max hRank hC.toInSrank huv hu_no_max hv_no_max hC_timer
-          · -- Non-tie case
-            obtain ⟨u, v, huv, hu_med, hv_upper, h_agree, h_wrong⟩ :=
-              evenCase_witness_when_median_wrong hC hpar hn4 hTie ⟨μ, hμ_med, hμ_wrong⟩
-            have h_dec := decision_step_at_median_pair_even_decreases
-              (trank := trank) (Rmax := Rmax) hRank hC huv hpar hu_med hv_upper h_agree hTie hn4 h_wrong
-            have hu_no_max : (C u).1.rank.val + 1 ≠ n := by omega
-            have hv_no_max : (C v).1.rank.val + 1 ≠ n := by omega
-            refine ⟨fun _ => (u, v), 1, ⟨h_dec.1, ?_⟩, h_dec.2⟩
-            exact step_preserves_timer_no_max hRank hC.toInSrank huv hu_no_max hv_no_max hC_timer
-        · -- Odd n: single step at (μ, v) non-max
-          obtain ⟨μ', v, hμv, hμ'_med, hv_no_med, hv_no_max, h_rank_gt, h_timer, hμ'_wrong⟩ :=
-            oddCase_witness_when_median_wrong_with_timer hC hpar (by omega : 3 ≤ n)
-              ⟨μ, hμ_med, hμ_wrong⟩ hC_timer
-          have h_step := decision_step_at_median_no_swap_odd_decreases
-            (trank := trank) (Rmax := Rmax) hRank hC hμv hpar hμ'_med hv_no_med hv_no_max h_rank_gt h_timer hμ'_wrong
-          have hμ'_no_max : (C μ').1.rank.val + 1 ≠ n := by
-            unfold ceilHalf at hμ'_med; omega
-          refine ⟨fun _ => (μ', v), 1, ⟨h_step.1, ?_⟩, h_step.2⟩
-          exact step_preserves_timer_no_max hRank hC.toInSrank hμv hμ'_no_max hv_no_max hC_timer
-    set C₂ := execution P (execution P C₀ γ₁ t₁) γ₂ t₂
-    obtain ⟨γ₃, t₃, ⟨hSwap₃, _⟩, hZero₃⟩ :=
-      reach_zero_potential_macro P DecInv wrongAnswerCount hMacro C₂ ⟨hInSswap₂, h_timer₂⟩
-    exact ⟨concatScheduler (concatScheduler γ₁ t₁ γ₂) (t₁ + t₂) γ₃,
-      t₁ + t₂ + t₃,
-      by rw [execution_concat, execution_concat]
-         exact isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hSwap₃ hZero₃⟩
-  · exact ⟨γ₁, t₁, hCons⟩
+  exact P_EM_consensus_reachable_from_BurmanConvergence_only hRank hn4 hBC
 
 /-! ### Timer_inv elimination — infrastructure complete
 

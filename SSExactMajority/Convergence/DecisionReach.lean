@@ -171,6 +171,35 @@ theorem opinionToAnswer_lower_median_eq_majorityAnswer_even
     unfold majorityAnswer opinionToAnswer
     simp [show ¬ (nAOf C > nBOf C) from by omega, h_BmajA]
 
+/-- For even `n` with no tie, the **upper** median agent (rank `n/2`) also
+has `opinionToAnswer` equal to `majorityAnswer`. Same arithmetic as lower. -/
+theorem opinionToAnswer_upper_median_eq_majorityAnswer_even
+    {C : Config (AgentState n) Opinion n} (hC : InSswap C)
+    {μ : Fin n} (hμ : (C μ).1.rank.val + 1 = n / 2 + 1)
+    (hpar : n % 2 = 0) (hne : nAOf C ≠ nBOf C) :
+    opinionToAnswer (C μ).2 = majorityAnswer C := by
+  have h_total : nAOf C + nBOf C = n := nAOf_add_nBOf C
+  have hμ_rank : (C μ).1.rank.val = n / 2 := by omega
+  rcases hxμ : (C μ).2 with _ | _
+  · have h_lt : (C μ).1.rank.val < nAOf C := (hC.input_rank μ).mp hxμ
+    have h_gt : nAOf C > n / 2 := by omega
+    have h_AmajB : nAOf C > nBOf C := by omega
+    unfold majorityAnswer opinionToAnswer
+    simp [h_AmajB]
+  · have h_ge_inputB : ¬ ((C μ).2 = Opinion.A) := by rw [hxμ]; intro h; cases h
+    have h_not_lt : ¬ ((C μ).1.rank.val < nAOf C) := by
+      intro h_lt
+      exact h_ge_inputB ((hC.input_rank μ).mpr h_lt)
+    have h_le : nAOf C ≤ n / 2 := by omega
+    have h_BmajA : nBOf C > nAOf C := by
+      by_contra h_not_gt
+      push_neg at h_not_gt
+      have : nAOf C = n / 2 := by omega
+      have hnB : nBOf C = n / 2 := by omega
+      rw [this, hnB] at hne; exact hne rfl
+    unfold majorityAnswer opinionToAnswer
+    simp [show ¬ (nAOf C > nBOf C) from by omega, h_BmajA]
+
 /-! ### Median's input matches the majority side (odd n) -/
 
 /-- For odd `n`, an `InSswap` configuration's median agent has input
@@ -261,7 +290,7 @@ theorem transitionPEM_at_median_pair_even_agreed_inputs
   -- Decision branch 1 fires: b₀ at n/2 ∧ b₁ at n/2 + 1.
   have hd1 : (C u).1.rank.val + 1 = n / 2 ∧ (C v).1.rank.val + 1 = n / 2 + 1 :=
     ⟨hu_med, hv_upper⟩
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -573,7 +602,7 @@ theorem transitionPEM_at_median_no_swap_odd_v_not_max
   -- Swap precondition fails: rank_u < rank_v is False.
   have h_no_swap_rank : ¬ ((C u).1.rank < (C v).1.rank) := by
     intro h; exact absurd h (lt_asymm h_rank_gt)
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

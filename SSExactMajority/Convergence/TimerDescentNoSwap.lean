@@ -96,7 +96,7 @@ theorem step_at_median_max_no_swap_odd
     ({(C μ).1 with answer := opinionToAnswer (C μ).2,
                    timer := (C μ).1.timer - 1},
      (C v).1) := by
-    unfold transitionPEM
+    unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
     simp only [hRD, hsu, hsv, ne_eq,
       role_settled_ne_resetting,
       not_true_eq_false, not_false_eq_true,
@@ -339,7 +339,7 @@ theorem step_at_median_timer_zero_reset_fires
                     role := .Resetting, leader := .L, resetcount := Rmax },
      { (C w).1 with answer := opinionToAnswer (C μ).2,
                     role := .Resetting, leader := .L, resetcount := Rmax }) := by
-    unfold transitionPEM
+    unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
     simp only [hRD, hsu, hsw, ne_eq,
       role_settled_ne_resetting,
       not_true_eq_false, not_false_eq_true,
