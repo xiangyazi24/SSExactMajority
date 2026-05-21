@@ -9377,10 +9377,23 @@ theorem PEM_expected_timer_drain
         apply Finset.sup_le
         intro μ _
         split_ifs with hμ_med
-        · -- μ is a median agent: show timer at μ after step ≤ maxMedianTimer D
-          -- maxMedianTimer D ≥ (D μ').1.timer for any median μ'
-          -- After step: timer at μ ≤ (pre-step timer at median agent) ≤ maxMedianTimer D
-          sorry
+        · -- μ is a median agent post-step: timer ≤ maxMedianTimer D
+          by_cases hij : i = j
+          · -- self-interaction: no-op
+            subst hij; simp only [Config.step, ite_true] at hμ_med ⊢
+            exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
+          · by_cases hμi : μ = i
+            · sorry -- μ = i: need transitionPEM output timer ≤ pre-step median timer
+            · by_cases hμj : μ = j
+              · sorry -- μ = j: need transitionPEM output timer ≤ pre-step median timer
+              · -- bystander: unchanged
+                have hbyst : D.step P i j μ = D μ := by
+                  unfold Config.step; simp [hij, hμi, hμj]
+                rw [show (D.step P i j μ).1.timer = (D μ).1.timer from
+                  congrArg (fun x => x.1.timer) hbyst]
+                rw [show (D.step P i j μ).1.rank = (D μ).1.rank from
+                  congrArg (fun x => x.1.rank) hbyst] at hμ_med
+                exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
         · exact Nat.zero_le _)
     (by -- hDescent: ∃ (median,max) pair that decrements timer
         intro D ⟨hS, hM, hT⟩ hG hφ
