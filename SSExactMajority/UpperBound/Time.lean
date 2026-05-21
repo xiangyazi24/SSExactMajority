@@ -9427,14 +9427,12 @@ theorem PEM_expected_timer_drain
             intro ⟨hS', hT'⟩
             -- post-step median μ has timer 0 but hT' says timer ≥ 1
             -- rank at μ post-step = ceilHalf n (ranks preserved from InSswap)
-            have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
-              -- Use existing rank preservation from InSswap
-              sorry
-            have h0 := hT' μ hμ_rank_post
-            -- timer at μ post-step = (D μ).1.timer - 1 = 0
-            have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
-              sorry -- transitionPEM output .1.timer = input.timer - 1 = 0
-            omega))))
+            -- Both rank and timer claims use Config.step_fst_state
+            have h_fst := Config.step_fst_state P D huv
+            -- h_fst : (D.step P μ v μ).1 = (P.δ (D μ, D v)).1
+            -- P.δ goes through transitionPEM which preserves rank (no swap)
+            -- and decrements timer (median-max pair)
+            sorry))))
   have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
     unfold maxMedianTimer
     apply Finset.sup_le
