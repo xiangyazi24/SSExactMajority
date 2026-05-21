@@ -9383,9 +9383,11 @@ theorem PEM_expected_timer_drain
             subst hij; simp only [Config.step, ite_true] at hμ_med ⊢
             exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
           · by_cases hμi : μ = i
-            · sorry -- μ = i: need transitionPEM output timer ≤ pre-step median timer
+            · sorry -- μ = i: output timer = input.timer - 1 ≤ maxMedianTimer D
             · by_cases hμj : μ = j
-              · sorry -- μ = j: need transitionPEM output timer ≤ pre-step median timer
+              · -- μ = j = v (max rank): post-step rank at j is max rank (n-1),
+                -- not median rank (ceilHalf n). So hμ_med is vacuously false.
+                sorry -- need: rank at position j post-step ≠ ceilHalf n (it's n-1)
               · -- bystander: unchanged
                 have hbyst : D.step P i j μ = D μ := by
                   unfold Config.step; simp [hij, hμi, hμj]
