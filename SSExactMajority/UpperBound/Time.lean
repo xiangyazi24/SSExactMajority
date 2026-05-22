@@ -9391,51 +9391,207 @@ theorem step_median_answer_of_InSswap_both
   have hν_pre : (D ν).1.rank.val + 1 = ceilHalf n := by
     rw [← step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
       (Dmax := Dmax) hn0 hS ν]; exact hν
+  -- XHUANG_PROOF_V2_SENTINEL: do not overwrite
   by_cases hij : i = j
   · subst hij; simp [Config.step]; exact hM ν hν_pre
-  · by_cases hνi : ν = i
-    · -- ν = i: transitionPEM .1.answer = majorityAnswer
-      rw [hνi]
-      -- Get the transition output at position i
-      have h_fst := Config.step_fst_state P D hij
-      rw [show (D.step P i j i).1.answer = ((P.δ (D i, D j)).1).answer from
-        congrArg AgentState.answer h_fst]
-      -- The output .1.role = Settled (from hS' post-step InSswap)
-      have h_settled : ((P.δ (D i, D j)).1).role = .Settled := by
-        rw [← Config.step_fst_state P D hij]; exact hS'.toInSrank.allSettled i
-      -- Need: (transitionPEM ...).1.answer = majorityAnswer D
-      -- From InSswap: both Settled, distinct ranks, no swap
-      -- Brute-force: unfold transitionPEM, use h_settled to eliminate reset
-      show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-        (D i, D j)).1.answer = majorityAnswer D
-      have hsi := hS.toInSrank.allSettled i
-      have hsj := hS.toInSrank.allSettled j
-      have hne : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hne
-      have h_no_swap := hS.swap_condition_false i j
-      -- Rewrite h_settled to be about transitionPEM
-      change (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-        (D i, D j)).1.role = .Settled at h_settled
+  have hsi := hS.toInSrank.allSettled i
+  have hsj := hS.toInSrank.allSettled j
+  have hrij : (D i).1.rank ≠ (D j).1.rank :=
+    fun h => hij (hS.toInSrank.ranks_inj h)
+  have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+    (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij
+  have h_no_swap := hS.swap_condition_false i j
+  have h_tie_outT : ∀ (μ ν' : Fin n),
+      (D μ).1.rank.val + 1 = n / 2 → (D ν').1.rank.val + 1 = n / 2 + 1 →
+      n % 2 = 0 → (D μ).2 ≠ (D ν').2 → majorityAnswer D = .outT := by
+    intro μ ν' hμR hν'R hpar hdis
+    have h_sum := nAOf_add_nBOf D
+    have hnA : nAOf D = n / 2 := by
+      rcases hxμ : (D μ).2 with _ | _
+      · have h1 : (D μ).1.rank.val < nAOf D := (hS.input_rank μ).mp hxμ
+        have hxν' : (D ν').2 = Opinion.B := by
+          cases hν2 : (D ν').2 with
+          | A => exfalso; apply hdis; rw [hxμ, hν2]
+          | B => rfl
+        have h2 : ¬ ((D ν').1.rank.val < nAOf D) := by
+          intro h; have := (hS.input_rank ν').mpr h
+          rw [hxν'] at this; cases this
+        omega
+      · have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+          intro h; have := (hS.input_rank μ).mpr h
+          rw [hxμ] at this; cases this
+        have hxν' : (D ν').2 = Opinion.A := by
+          cases hν2 : (D ν').2 with
+          | A => rfl
+          | B => exfalso; apply hdis; rw [hxμ, hν2]
+        have h2 : (D ν').1.rank.val < nAOf D := (hS.input_rank ν').mp hxν'
+        omega
+    have hnB : nBOf D = n / 2 := by omega
+    unfold majorityAnswer; simp [hnA, hnB]
+  have h_agree_majA : ∀ (μ ν' : Fin n),
+      (D μ).1.rank.val + 1 = n / 2 → (D ν').1.rank.val + 1 = n / 2 + 1 →
+      n % 2 = 0 → (D μ).2 = (D ν').2 → (D μ).2 = Opinion.A →
+      nAOf D > nBOf D := by
+    intro μ ν' hμR hν'R hpar hag hA
+    have h_sum := nAOf_add_nBOf D
+    have hν'A : (D ν').2 = Opinion.A := by rw [← hag]; exact hA
+    have hν'_lt : (D ν').1.rank.val < nAOf D := (hS.input_rank ν').mp hν'A
+    omega
+  have h_agree_majB : ∀ (μ ν' : Fin n),
+      (D μ).1.rank.val + 1 = n / 2 → (D ν').1.rank.val + 1 = n / 2 + 1 →
+      n % 2 = 0 → (D μ).2 = (D ν').2 → (D μ).2 = Opinion.B →
+      nBOf D > nAOf D := by
+    intro μ ν' hμR hν'R hpar hag hB
+    have h_sum := nAOf_add_nBOf D
+    have hμB : (D μ).2 = Opinion.B := hB
+    have hμ_not_A : ¬ ((D μ).1.rank.val < nAOf D) := by
+      intro h; have := (hS.input_rank μ).mpr h
+      rw [hμB] at this; cases this
+    omega
+  by_cases hνi : ν = i
+  · subst hνi
+    have h_fst := Config.step_fst_state P D hij
+    rw [show (D.step P ν j ν).1.answer = ((P.δ (D ν, D j)).1).answer from
+      congrArg AgentState.answer h_fst]
+    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+      (D ν, D j)).1.answer = majorityAnswer D
+    have hrank_νj : (D ν).1.rank.val ≠ (D j).1.rank.val := by
+      intro h; apply hij
+      exact hS.toInSrank.ranks_inj (Fin.ext h)
+    by_cases hpar : n % 2 = 0
+    · have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
+      have hνR : (D ν).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hν_pre
+      have hνR_ceil : (D ν).1.rank.val + 1 = ceilHalf n := hν_pre
+      have hN_ne1 : ¬ (n / 2 + 1 = n / 2) := by omega
+      have hN_ne2 : ¬ (n / 2 = n / 2 + 1) := by omega
+      by_cases hjR : (D j).1.rank.val + 1 = n / 2 + 1
+      · by_cases hxeq : (D ν).2 = (D j).2
+        · have htr := transitionPEM_at_median_pair_even_agreed_inputs
+            (trank := Rmax) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            (rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+              (Dmax := Dmax) (hn := hn0)) hsi hsj hpar hνR hjR hxeq hn4
+          rw [show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+            (D ν, D j)).1.answer = opinionToAnswer (D ν).2 from
+            congrArg AgentState.answer (congrArg Prod.fst htr)]
+          exact opinionToAnswer_lower_median_eq_majorityAnswer_even
+            hS hνR hpar (by
+              rcases hx : (D ν).2 with _ | _
+              · have := h_agree_majA ν j hνR hjR hpar hxeq hx; omega
+              · have := h_agree_majB ν j hνR hjR hpar hxeq hx; omega)
+        · have h_no_swap_disagree : ¬ ((D ν).2 = Opinion.B ∧ (D j).2 = Opinion.A) := by
+            intro ⟨hxνB, hxjA⟩
+            have h_nA_lo : ¬ ((D ν).1.rank.val < nAOf D) := by
+              intro h; have := (hS.input_rank ν).mpr h
+              rw [hxνB] at this; cases this
+            have h_nA_hi : (D j).1.rank.val < nAOf D := (hS.input_rank j).mp hxjA
+            omega
+          have htr := transitionPEM_at_median_pair_even_disagreed_inputs
+            (trank := Rmax) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            (rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+              (Dmax := Dmax) (hn := hn0)) hsi hsj hpar hνR hjR hxeq
+            h_no_swap_disagree hn4
+          rw [show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+            (D ν, D j)).1.answer = .outT from
+            congrArg AgentState.answer (congrArg Prod.fst htr)]
+          exact (h_tie_outT ν j hνR hjR hpar hxeq).symm
+      · have hM_ν := hM ν hν_pre
+        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+          phase4_swap phase4_decide phase4_propagate
+        simp only [hRD, hsi, hsj, ne_eq,
+          role_settled_ne_resetting,
+          not_true_eq_false, not_false_eq_true,
+          false_and, and_false, if_false,
+          and_self, if_true, h_no_swap, hpar, hνR, hjR, hN_ne1, hN_ne2,
+          hνR_ceil]
+        split_ifs <;> (first | exact hM_ν | simp_all | sorry)
+    · have hjR_no_med : ¬ ((D j).1.rank.val + 1 = ceilHalf n) := by
+        intro h; apply hrank_νj
+        have : (D ν).1.rank.val + 1 = (D j).1.rank.val + 1 := by rw [hν_pre, h]
+        omega
       unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-        phase4_swap phase4_decide phase4_propagate at h_settled ⊢
+        phase4_swap phase4_decide phase4_propagate
       simp only [hRD, hsi, hsj, ne_eq,
         role_settled_ne_resetting,
         not_true_eq_false, not_false_eq_true,
         false_and, and_false, if_false,
-        and_self, if_true, h_no_swap, hν_pre] at h_settled ⊢
-      -- split_ifs generates many goals; h_settled eliminates reset branches
-      -- (role = Resetting contradicts h_settled = Settled)
-      -- remaining goals have answer = opinionToAnswer(input)
-      sorry
-    · by_cases hνj : ν = j
-      · sorry -- ν = j: transitionPEM .2.answer = majorityAnswer
-      · -- bystander: unchanged
-        have hbyst : D.step P i j ν = D ν := by
-          unfold Config.step; simp [hij, hνi, hνj]
-        rw [show (D.step P i j ν).1.answer = (D ν).1.answer from
-          congrArg (fun x => x.1.answer) hbyst]
-        exact hM ν hν_pre
+        and_self, if_true, h_no_swap, hpar, hν_pre, hjR_no_med]
+      have hOdd := opinionToAnswer_median_eq_majorityAnswer_odd hS hν_pre hpar
+      split_ifs <;> exact hOdd
+  by_cases hνj : ν = j
+  · subst hνj
+    have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
+    rw [show (D.step P i ν ν).1.answer = ((P.δ (D i, D ν)).2).answer from
+      congrArg AgentState.answer h_snd]
+    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+      (D i, D ν)).2.answer = majorityAnswer D
+    have hrank_iν : (D i).1.rank.val ≠ (D ν).1.rank.val := by
+      intro h; apply hij
+      exact hS.toInSrank.ranks_inj (Fin.ext h)
+    by_cases hpar : n % 2 = 0
+    · have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
+      have hνR : (D ν).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hν_pre
+      have hνR_ceil : (D ν).1.rank.val + 1 = ceilHalf n := hν_pre
+      have hN_ne1 : ¬ (n / 2 + 1 = n / 2) := by omega
+      have hN_ne2 : ¬ (n / 2 = n / 2 + 1) := by omega
+      by_cases hiR : (D i).1.rank.val + 1 = n / 2 + 1
+      · have hiR_no_med : ¬ ((D i).1.rank.val + 1 = ceilHalf n) := by
+          rw [hceil]; omega
+        have hiR_no_max : ¬ ((D i).1.rank.val + 1 = n) := by omega
+        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+          phase4_swap phase4_decide phase4_propagate
+        simp only [hRD, hsi, hsj, ne_eq,
+          role_settled_ne_resetting,
+          not_true_eq_false, not_false_eq_true,
+          false_and, and_false, if_false,
+          and_self, if_true, h_no_swap, hpar, hνR, hiR, hN_ne1, hN_ne2,
+          hνR_ceil, hiR_no_med, hiR_no_max]
+        by_cases hxeq : (D i).2 = (D ν).2
+        · simp only [hxeq, if_true]
+          have hAns := opinionToAnswer_lower_median_eq_majorityAnswer_even
+            hS hνR hpar (by
+              rcases hx : (D ν).2 with _ | _
+              · have := h_agree_majA ν i hνR hiR hpar hxeq.symm hx; omega
+              · have := h_agree_majB ν i hνR hiR hpar hxeq.symm hx; omega)
+          split_ifs <;> exact hAns
+        · simp only [hxeq, show ¬((D ν).2 = (D i).2) from Ne.symm hxeq, if_false]
+          have hOutT := (h_tie_outT ν i hνR hiR hpar (Ne.symm hxeq)).symm
+          split_ifs <;> exact hOutT
+      · have hM_ν := hM ν hν_pre
+        have hiR_ne_med : ¬ ((D i).1.rank.val + 1 = n / 2) := by
+          intro h; apply hrank_iν
+          have : (D i).1.rank.val + 1 = (D ν).1.rank.val + 1 := by rw [h, hνR]
+          omega
+        have hiR_ne_med_ceil : ¬ ((D i).1.rank.val + 1 = ceilHalf n) := by
+          rw [hceil]; exact hiR_ne_med
+        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+          phase4_swap phase4_decide phase4_propagate
+        simp only [hRD, hsi, hsj, ne_eq,
+          role_settled_ne_resetting,
+          not_true_eq_false, not_false_eq_true,
+          false_and, and_false, if_false,
+          and_self, if_true, h_no_swap, hpar, hνR, hiR, hN_ne1, hN_ne2,
+          hνR_ceil, hiR_ne_med, hiR_ne_med_ceil]
+        split_ifs <;> (first | exact hM_ν | simp_all | sorry)
+    · have hiR_no_med : ¬ ((D i).1.rank.val + 1 = ceilHalf n) := by
+        intro h; apply hrank_iν
+        have : (D i).1.rank.val + 1 = (D ν).1.rank.val + 1 := by rw [h, hν_pre]
+        omega
+      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+        phase4_swap phase4_decide phase4_propagate
+      simp only [hRD, hsi, hsj, ne_eq,
+        role_settled_ne_resetting,
+        not_true_eq_false, not_false_eq_true,
+        false_and, and_self, if_false,
+        and_false, if_true, h_no_swap, hpar, hν_pre, hiR_no_med]
+      have hOdd := opinionToAnswer_median_eq_majorityAnswer_odd hS hν_pre hpar
+      split_ifs <;> exact hOdd
+  · have hbyst : D.step P i j ν = D ν := by
+      unfold Config.step; simp [hij, hνi, hνj]
+    rw [show (D.step P i j ν).1.answer = (D ν).1.answer from
+      congrArg (fun x => x.1.answer) hbyst]
+    exact hM ν hν_pre
 
 /-! Phase C.2: Median-correct sub-phase (timer drain → seed → epidemic).
 From InSswap + MedianAnswerCorrect + timer≥1 + wrongAnswer > 0:
