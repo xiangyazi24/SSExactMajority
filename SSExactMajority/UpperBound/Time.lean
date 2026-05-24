@@ -11620,9 +11620,21 @@ theorem PEM_hConsensusBound_from_bridge
               · -- InSswap broke → CRS → DP → Mid
                 right
                 by_cases hpar : n % 2 = 0
-                · -- Even n: without MedC, CRS might not hold.
-                  -- But Mid includes MedC: check if MedC holds at step.
-                  sorry -- Even n InSswap break: need MedC or CRS at step
+                · -- Even n: split on pre-step MedC
+                  by_cases hMedC_D : MedianAnswerCorrect D
+                  · -- MedC pre-step: use step_InSswap_break_creates_CorrectResetSeed
+                    -- Need hT (timer=0). InSswap break implies propagation fired →
+                    -- timer=0 (post-decrement). Derive pre-step timer value.
+                    -- Even n + MedC: use existing CRS lemma with sorry for hT
+                    have hT : ∀ μ' : Fin n, (D μ').1.rank.val + 1 = ceilHalf n →
+                        (D μ').1.timer = 0 := by
+                      sorry -- timer=0 derivation from InSswap break
+                    exact Or.inr (step_InSswap_break_creates_CorrectResetSeed
+                      hn4 hn0 hRmax hSD hMedC_D hT hSD')
+                  · -- ¬MedC pre-step: for even n, InSswap break without MedC
+                    -- creates Resetting agents with wrong answer → neither MedC nor DP.
+                    -- This is the genuine even-n gap.
+                    sorry -- Even n + ¬MedC + InSswap break: structural gap
                 · -- Odd n: phase4_decide corrects → CRS
                   exact Or.inr (Or.inr (step_InSswap_break_creates_CorrectResetSeed_odd
                     hn4 hn0 hRmax hSD hpar hSD')))
