@@ -11626,11 +11626,22 @@ theorem PEM_hConsensusBound_from_bridge
                     -- Need hT (timer=0). InSswap break implies propagation fired →
                     -- timer=0 (post-decrement). Derive pre-step timer value.
                     -- Even n + MedC: use existing CRS lemma with sorry for hT
-                    have hT : ∀ μ' : Fin n, (D μ').1.rank.val + 1 = ceilHalf n →
-                        (D μ').1.timer = 0 := by
-                      sorry -- timer=0 derivation from InSswap break
-                    exact Or.inr (step_InSswap_break_creates_CorrectResetSeed
-                      hn4 hn0 hRmax hSD hMedC_D hT hSD')
+                    -- InSswap break with MedC: use existing CRS lemma if timer=0,
+                    -- or CRS-odd approach adapted for even n if timer=1.
+                    -- For timer=0: existing lemma applies directly.
+                    -- For timer=1: same CRS but with decrement.
+                    obtain ⟨μ', hμ'_med⟩ := hSD.toInSrank.exists_median (by omega : 0 < n)
+                    by_cases hT0 : (D μ').1.timer = 0
+                    · have hT : ∀ μ'' : Fin n, (D μ'').1.rank.val + 1 = ceilHalf n →
+                          (D μ'').1.timer = 0 := by
+                        intro μ'' hμ''_med
+                        have := hSD.toInSrank.ranks_inj (Fin.ext (by omega))
+                        subst this; exact hT0
+                      exact Or.inr (step_InSswap_break_creates_CorrectResetSeed
+                        hn4 hn0 hRmax hSD hMedC_D hT hSD')
+                    · -- timer > 0: even n + MedC + timer>0 + InSswap break → CRS
+                      -- Uses step_InSswap_break_creates_CorrectResetSeed_even_MedC
+                      sorry -- timer>0 + MedC + even n CRS (protocol unfolding ~280 lines)
                   · -- ¬MedC pre-step: for even n, InSswap break without MedC
                     -- creates Resetting agents with wrong answer → neither MedC nor DP.
                     -- This is the genuine even-n gap.
