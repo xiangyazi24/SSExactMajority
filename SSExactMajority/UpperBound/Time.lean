@@ -11639,9 +11639,51 @@ theorem PEM_hConsensusBound_from_bridge
                 · -- InSswap preserved → MedC ∧ InSswap ∧ timerBounded → Mid
                   left
                   refine ⟨?_, hSD', ?_⟩
-                  · -- MedC at step: for odd n, use opinionToAnswer_median_eq_majorityAnswer_odd
-                    -- For even n: depends on v being the upper-median
-                    sorry -- MedC at step (protocol unfolding)
+                  · -- MedC at step
+                    by_cases hpar : n % 2 = 0
+                    · -- Even n: need v = upper-median for phase4_decide to fire
+                      sorry -- Even n MedC at step
+                    · -- Odd n: phase4_decide fires for any step involving median.
+                      -- The median μ is agent i in the step (μ, v).
+                      -- For odd n, step_median_answer_of_InSswap_both's proof
+                      -- for ν = i uses opinionToAnswer_median_eq_majorityAnswer_odd
+                      -- without needing pre-step MedC.
+                      -- Since ν (the unique median post-step) = μ = i, it's involved.
+                      intro ν hν
+                      rw [show majorityAnswer (D.step P μ v) = majorityAnswer D from by
+                        simpa [P, PEMProtocolCoupled, PEMProtocol] using
+                          majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+                            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D μ v]
+                      have hν_pre : (D ν).1.rank.val + 1 = ceilHalf n := by
+                        rwa [← show (D.step P μ v ν).1.rank.val = (D ν).1.rank.val from
+                          congrArg Fin.val (step_rank_preserved_of_InSswap
+                            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hSD ν)]
+                      -- ν must be μ (unique median in InSswap)
+                      have hνμ : ν = μ := hSD.toInSrank.ranks_inj (Fin.ext (by omega))
+                      subst hνμ
+                      -- μ = i in (μ, v) step. Use step_fst_state + protocol unfold.
+                      rw [show (D.step P μ v μ).1.answer =
+                          (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                            (D μ, D v)).1.answer from
+                        congrArg AgentState.answer (Config.step_fst_state P D
+                          (by intro h; exact hv_ne.symm (hSD.toInSrank.ranks_inj
+                            (Fin.ext (show (D μ).1.rank.val = (D v).1.rank.val by
+                              rw [h])))))]
+                      have hsi := hSD.toInSrank.allSettled μ
+                      have hsv := hSD.toInSrank.allSettled v
+                      have hrij : (D μ).1.rank ≠ (D v).1.rank := by
+                        intro h; exact hv_ne.symm (hSD.toInSrank.ranks_inj h)
+                      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+                        (Dmax := Dmax) (hn := hn0) (D μ).1 (D v).1 hsi hsv hrij
+                      have h_no_swap := hSD.swap_condition_false μ v
+                      have hvR_no_med : ¬ ((D v).1.rank.val + 1 = ceilHalf n) := by
+                        intro h; exact hrij (Fin.ext (by omega))
+                      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+                        phase4_swap phase4_decide phase4_propagate
+                      simp only [hRD, hsi, hsv, ne_eq, role_settled_ne_resetting,
+                        not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
+                        and_self, if_true, h_no_swap, hpar, hμ_med, hvR_no_med]
+                      exact opinionToAnswer_median_eq_majorityAnswer_odd hSD hμ_med hpar
                   · intro w
                     calc (D.step P μ v w).1.timer
                         ≤ (D w).1.timer :=
