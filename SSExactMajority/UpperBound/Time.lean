@@ -11661,7 +11661,62 @@ theorem PEM_hConsensusBound_from_bridge
                       -- μ is the first agent in (μ, ξ). phase4_decide at (n/2, n/2+1) fires.
                       have hμ_lower : (D μ).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hμ_med
                       have hξ_upper : (D ξ).1.rank.val + 1 = n / 2 + 1 := by rw [hξ_rank]
-                      sorry -- Even n protocol unfolding at (n/2, n/2+1) pair
+                      -- Protocol unfolding for even n at (lower-median, upper-median)
+                      rw [show (D.step P μ ξ μ).1.answer =
+                          (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                            (D μ, D ξ)).1.answer from
+                        congrArg AgentState.answer (Config.step_fst_state P D
+                          (by intro h; exact hμξ (hSD.toInSrank.ranks_inj
+                            (Fin.ext (show (D μ).1.rank.val = (D ξ).1.rank.val by rw [h])))))]
+                      have hsi := hSD.toInSrank.allSettled μ
+                      have hsξ := hSD.toInSrank.allSettled ξ
+                      have hrij : (D μ).1.rank ≠ (D ξ).1.rank := by
+                        intro h; exact hμξ (hSD.toInSrank.ranks_inj h)
+                      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+                        (Dmax := Dmax) (hn := hn0) (D μ).1 (D ξ).1 hsi hsξ hrij
+                      have h_no_swap := hSD.swap_condition_false μ ξ
+                      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+                        phase4_swap phase4_decide phase4_propagate
+                      simp only [hRD, hsi, hsξ, ne_eq, role_settled_ne_resetting,
+                        not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
+                        and_self, if_true, h_no_swap, hpar, hμ_lower, hξ_upper]
+                      -- After simp: the median's answer is set by phase4_decide (even n)
+                      -- to opinionToAnswer of the majority opinion.
+                      by_cases hxeq : (D μ).2 = (D ξ).2
+                      · -- Agreed inputs (strict majority)
+                        simp only [hxeq, if_true]
+                        have hne : nAOf D ≠ nBOf D := by
+                          have h_sum := nAOf_add_nBOf D
+                          cases hx : (D μ).2 with
+                          | A => have hξA := hxeq ▸ hx
+                                 have h2 : (D ξ).1.rank.val < nAOf D := (hSD.input_rank ξ).mp hξA
+                                 intro h; omega
+                          | B => have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+                                   intro hh; have := (hSD.input_rank μ).mpr hh; rw [hx] at this; cases this
+                                 intro h; omega
+                        exact opinionToAnswer_lower_median_eq_majorityAnswer_even hSD hμ_lower hpar hne
+                      · -- Disagreed inputs (tie)
+                        simp only [show ¬((D μ).2 = (D ξ).2) from hxeq, if_false]
+                        -- Tie: nAOf = nBOf, both get .outT = majorityAnswer
+                        have hTie : nAOf D = nBOf D := by
+                          have h_sum := nAOf_add_nBOf D
+                          cases hxμ : (D μ).2 with
+                          | A => cases hxξ : (D ξ).2 with
+                                 | A => exact absurd (hxμ.trans hxξ.symm) hxeq
+                                 | B => have h1 := (hSD.input_rank μ).mp hxμ
+                                        have h2 : ¬ ((D ξ).1.rank.val < nAOf D) := by
+                                          intro hh; have := (hSD.input_rank ξ).mpr hh
+                                          rw [hxξ] at this; cases this
+                                        omega
+                          | B => cases hxξ : (D ξ).2 with
+                                 | A => have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+                                          intro hh; have := (hSD.input_rank μ).mpr hh
+                                          rw [hxμ] at this; cases this
+                                        have h2 := (hSD.input_rank ξ).mp hxξ
+                                        omega
+                                 | B => exact absurd (hxμ.trans hxξ.symm) hxeq
+                        rw [majorityAnswer_eq_outT_of_tie hTie]
+                        split_ifs <;> rfl
                     · intro w
                       calc (D.step P μ ξ w).1.timer
                           ≤ (D w).1.timer :=
