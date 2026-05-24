@@ -51,7 +51,7 @@ private theorem inSswap_step_of_scheduled_roles
         (nAOf_step_eq
           (trank := Rmax) (Rmax := Rmax)
           (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)]
-	    exact hS.input_rank w
+    exact hS.input_rank w
 
 private theorem majorityAnswer_eq_outT_of_even_lower_upper_disagree
     {n : ℕ} {C : Config (AgentState n) Opinion n}
@@ -130,8 +130,8 @@ private theorem phase4_decide_fst_median_answer_correct
     · simp only [hp₁, if_true]
       by_cases hagree : (D i).2 = (D j).2
       · simp only [hagree, if_true]
-        exact opinionToAnswer_lower_median_eq_majorityAnswer_even
-          hS hi_lower hpar
+        exact opinionToAnswer_upper_median_eq_majorityAnswer_even
+          hS hp₁.2 hpar
           (nA_ne_nB_of_even_lower_upper_agree hS hp₁.1 hp₁.2 hpar hagree)
       · simp only [hagree, if_false]
         exact (majorityAnswer_eq_outT_of_even_lower_upper_disagree
@@ -176,8 +176,8 @@ private theorem phase4_decide_snd_median_answer_correct
     · simp only [hp₂, if_true]
       by_cases hagree : (D j).2 = (D i).2
       · simp only [hagree, if_true]
-        exact opinionToAnswer_lower_median_eq_majorityAnswer_even
-          hS hj_lower hpar
+        exact opinionToAnswer_upper_median_eq_majorityAnswer_even
+          hS hp₂.2 hpar
           (nA_ne_nB_of_even_lower_upper_agree hS hp₂.1 hp₂.2 hpar hagree)
       · simp only [hagree, if_false]
         exact (majorityAnswer_eq_outT_of_even_lower_upper_disagree
@@ -261,6 +261,8 @@ theorem crs_of_InSswap_break_with_MedC
             (D i, D j)).2.leader = .L ∧
         (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
             (D i, D j)).2.answer = majorityAnswer D := by
+      let dec :=
+        phase4_decide n (D i).1 (D j).1 (D i).2 (D j).2
       have hnot_pair_settled :
           ¬ ((transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
                 (D i, D j)).1.role = .Settled ∧
@@ -275,16 +277,117 @@ theorem crs_of_InSswap_break_with_MedC
         · dsimp [C', P]
           rw [congrArg AgentState.role hsnd]
           exact hsettled.2
-      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-        phase4_swap phase4_decide phase4_propagate
-      simp only [hRD, hsi, hsj, ne_eq,
-        role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
-        false_and, and_false, if_false, and_self, if_true, h_no_swap]
-      by_cases hpar : n % 2 = 0
-      · simp only [hpar, if_true]
-        split_ifs with h <;> trace_state <;> sorry
-      · simp only [hpar, if_false]
-        split_ifs with h <;> trace_state <;> sorry
+      have htrans :
+          transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+              (D i, D j) =
+            phase4_propagate n Rmax dec.1 dec.2 := by
+        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+          phase4_swap
+        simp only [hRD, hsi, hsj, ne_eq,
+          role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
+          false_and, and_false, if_false, and_self, if_true, h_no_swap, dec]
+      have hdec_role_i : dec.1.role = .Settled := by
+        dsimp [dec]
+        unfold phase4_decide
+        split_ifs <;> simp [hsi]
+      have hdec_role_j : dec.2.role = .Settled := by
+        dsimp [dec]
+        unfold phase4_decide
+        split_ifs <;> simp [hsj]
+      have hdec_rank_i : dec.1.rank = (D i).1.rank := by
+        dsimp [dec]
+        unfold phase4_decide
+        split_ifs <;> rfl
+      have hdec_rank_j : dec.2.rank = (D j).1.rank := by
+        dsimp [dec]
+        unfold phase4_decide
+        split_ifs <;> rfl
+      have hdec_ans_i :
+          dec.1.rank.val + 1 = ceilHalf n →
+            dec.1.answer = majorityAnswer D := by
+        intro hmed
+        have hi_med : (D i).1.rank.val + 1 = ceilHalf n := by
+          simpa [hdec_rank_i] using hmed
+        simpa [dec] using
+          (phase4_decide_fst_median_answer_correct
+            (D := D) hn4 hS hM (i := i) (j := j) hi_med)
+      have hdec_ans_j :
+          dec.2.rank.val + 1 = ceilHalf n →
+            dec.2.answer = majorityAnswer D := by
+        intro hmed
+        have hj_med : (D j).1.rank.val + 1 = ceilHalf n := by
+          simpa [hdec_rank_j] using hmed
+        simpa [dec] using
+          (phase4_decide_snd_median_answer_correct
+            (D := D) hn4 hS hM (i := i) (j := j) hj_med)
+      have hnot_prop_settled :
+          ¬ ((phase4_propagate n Rmax dec.1 dec.2).1.role = .Settled ∧
+             (phase4_propagate n Rmax dec.1 dec.2).2.role = .Settled) := by
+        intro hsettled
+        exact hnot_pair_settled (by simpa [htrans] using hsettled)
+      rw [htrans]
+      unfold phase4_propagate
+      by_cases hi_med : dec.1.rank.val + 1 = ceilHalf n
+      · by_cases hj_max : dec.2.rank.val + 1 = n
+        · by_cases hreset :
+            ({dec.1 with timer := dec.1.timer - 1} : AgentState n).timer = 0 ∧
+              ({dec.1 with timer := dec.1.timer - 1} : AgentState n).answer ≠
+                dec.2.answer
+          · have hAns := hdec_ans_i (by simpa [hdec_rank_i] using hi_med)
+            have hNe : majorityAnswer D ≠ dec.2.answer := by
+              intro hEq
+              exact hreset.2 (by rw [hAns, hEq])
+            simp [hi_med, hj_max, hreset, hAns, hNe]
+          · exfalso
+            apply hnot_prop_settled
+            simp [phase4_propagate, hi_med, hj_max, hreset, hdec_role_i,
+              hdec_role_j]
+        · by_cases hreset :
+            dec.1.timer = 0 ∧ dec.1.answer ≠ dec.2.answer
+          · have hAns := hdec_ans_i hi_med
+            have hNe : majorityAnswer D ≠ dec.2.answer := by
+              intro hEq
+              exact hreset.2 (by rw [hAns, hEq])
+            simp [hi_med, hj_max, hreset, hAns, hNe]
+          · exfalso
+            apply hnot_prop_settled
+            simp [phase4_propagate, hi_med, hj_max, hreset, hdec_role_i,
+              hdec_role_j]
+      · by_cases hj_med : dec.2.rank.val + 1 = ceilHalf n
+        · by_cases hi_max : dec.1.rank.val + 1 = n
+          · by_cases hreset :
+              ({dec.2 with timer := dec.2.timer - 1} : AgentState n).timer = 0 ∧
+                ({dec.2 with timer := dec.2.timer - 1} : AgentState n).answer ≠
+                  dec.1.answer
+            · have hAns := hdec_ans_j (by simpa [hdec_rank_j] using hj_med)
+              have hNe : majorityAnswer D ≠ dec.1.answer := by
+                intro hEq
+                exact hreset.2 (by rw [hAns, hEq])
+              have hn_ne_ceil : ¬ n = ceilHalf n := by
+                intro hEq
+                exact hi_med (hi_max.trans hEq)
+              simp [hi_med, hj_med, hi_max, hreset, hAns, hNe, hn_ne_ceil]
+            · exfalso
+              apply hnot_prop_settled
+              have hn_ne_ceil : ¬ n = ceilHalf n := by
+                intro hEq
+                exact hi_med (hi_max.trans hEq)
+              simp [phase4_propagate, hi_med, hj_med, hi_max, hreset,
+                hdec_role_i, hdec_role_j, hn_ne_ceil]
+          · by_cases hreset :
+              dec.2.timer = 0 ∧ dec.2.answer ≠ dec.1.answer
+            · have hAns := hdec_ans_j hj_med
+              have hNe : majorityAnswer D ≠ dec.1.answer := by
+                intro hEq
+                exact hreset.2 (by rw [hAns, hEq])
+              simp [hi_med, hj_med, hi_max, hreset, hAns, hNe]
+            · exfalso
+              apply hnot_prop_settled
+              simp [phase4_propagate, hi_med, hj_med, hi_max, hreset,
+                hdec_role_i, hdec_role_j]
+        · exfalso
+          apply hnot_prop_settled
+          simp [phase4_propagate, hi_med, hj_med, hdec_role_i, hdec_role_j]
     rcases hpair_pre with
       ⟨hi_role, hi_rc, hi_leader, hi_ans, hj_role, hj_rc, hj_leader, hj_ans⟩
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
