@@ -11646,7 +11646,22 @@ theorem PEM_hConsensusBound_from_bridge
                   · -- InSswap preserved → MedC via phase4_decide at (n/2, n/2+1)
                     left; refine ⟨?_, hSD', ?_⟩
                     · -- MedC at step for even n at (μ, ξ)
-                      sorry -- Even n MedC: phase4_decide at (n/2, n/2+1) → correct answer
+                      -- Even n at (μ, ξ) = (lower-median, upper-median)
+                      intro ν hν
+                      rw [show majorityAnswer (D.step P μ ξ) = majorityAnswer D from by
+                        simpa [P, PEMProtocolCoupled, PEMProtocol] using
+                          majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+                            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D μ ξ]
+                      have hν_pre : (D ν).1.rank.val + 1 = ceilHalf n := by
+                        rwa [← show (D.step P μ ξ ν).1.rank.val = (D ν).1.rank.val from
+                          congrArg Fin.val (step_rank_preserved_of_InSswap
+                            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hSD ν)]
+                      have hνμ : ν = μ := hSD.toInSrank.ranks_inj (Fin.ext (by omega))
+                      subst hνμ
+                      -- μ is the first agent in (μ, ξ). phase4_decide at (n/2, n/2+1) fires.
+                      have hμ_lower : (D μ).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hμ_med
+                      have hξ_upper : (D ξ).1.rank.val + 1 = n / 2 + 1 := by rw [hξ_rank]
+                      sorry -- Even n protocol unfolding at (n/2, n/2+1) pair
                     · intro w
                       calc (D.step P μ ξ w).1.timer
                           ≤ (D w).1.timer :=
