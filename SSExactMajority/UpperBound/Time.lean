@@ -11632,7 +11632,32 @@ theorem PEM_hConsensusBound_from_bridge
               obtain ⟨μ, hμ_med⟩ := hSD.toInSrank.exists_median (by omega : 0 < n)
               by_cases hpar : n % 2 = 0
               · -- Even n: pick upper-median, phase4_decide fires at (n/2, n/2+1)
-                sorry -- Even n hwin: pick upper-median ξ, step → MedC or DP
+                -- Even n: pick upper-median ξ at rank n/2
+                have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
+                have h_upper_lt : n / 2 < n := by omega
+                obtain ⟨ξ, hξ_rank⟩ := hSD.toInSrank.exists_at_rank (by omega : 0 < n) ⟨n / 2, h_upper_lt⟩
+                have hμξ : μ ≠ ξ := by
+                  intro h; subst h
+                  have : (D μ).1.rank.val = n / 2 := by rw [hξ_rank]
+                  have : (D μ).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hμ_med
+                  omega
+                have hMidStep : Mid (D.step P μ ξ) := by
+                  by_cases hSD' : InSswap (D.step P μ ξ)
+                  · -- InSswap preserved → MedC via phase4_decide at (n/2, n/2+1)
+                    left; refine ⟨?_, hSD', ?_⟩
+                    · -- MedC at step for even n at (μ, ξ)
+                      sorry -- Even n MedC: phase4_decide at (n/2, n/2+1) → correct answer
+                    · intro w
+                      calc (D.step P μ ξ w).1.timer
+                          ≤ (D w).1.timer :=
+                            step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                              (Dmax := Dmax) hn0 hSD w
+                        _ ≤ 7 * (Rmax + 4) := hTBD w
+                  · -- InSswap broke at (μ, ξ) → phase4_decide set correct answer → CRS
+                    right
+                    sorry -- Even n InSswap break at (μ, ξ): CRS via correct-answer propagation
+                exact Probability.ProbHitWithin_one_lower_bound_of_step P hn2 D Mid
+                  hNotMid hμξ hMidStep
               · -- Odd n: any v works, phase4_decide fires for any median step
                 have hn_ge : 1 < Fintype.card (Fin n) := by rw [Fintype.card_fin]; omega
                 obtain ⟨v, hv_ne⟩ := Fintype.exists_ne_of_one_lt_card hn_ge μ
