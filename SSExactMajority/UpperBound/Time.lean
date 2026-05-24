@@ -11218,23 +11218,6 @@ axiom crs_of_InSswap_break_with_MedC_axiom
     (hS' : ¬ InSswap (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)) :
     CorrectResetSeed (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)
 
-axiom epidemic_exit_to_AllR_bound_axiom
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmaxN : n ≤ Dmax)
-    (D : Config (AgentState n) Opinion n)
-    (AllR : Config (AgentState n) Opinion n → Prop) [DecidablePred AllR]
-    (hExit :
-      ¬ CorrectResetSeed D ∨
-        ∃ i j : Fin n,
-          nonResettingCount D <
-            nonResettingCount
-              (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) D AllR ≤
-      ((n * n * (n - 1) : ℕ) : ENNReal)
-
 axiom allR_to_consensus_bound_axiom
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -11246,16 +11229,6 @@ axiom allR_to_consensus_bound_axiom
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
       ((2 * Rmax * n * n : ℕ) : ENNReal)
-
-axiom step_InSswap_break_even_not_MedC_decisionProgress_axiom
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
-    {D : Config (AgentState n) Opinion n}
-    (hS : InSswap D) (hpar : n % 2 = 0) (hNotMedC : ¬ MedianAnswerCorrect D)
-    {i j : Fin n}
-    (hS' : ¬ InSswap (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)) :
-    DecisionProgress Rmax
-      (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)
 
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
@@ -11460,12 +11433,7 @@ theorem PEM_expected_epidemic_to_consensus
             omega
           exact (hCRS.2 w hw_res).2
       · -- D2 ∨ D3: open math gap, packaged as a single placeholder.
-        exact by
-          simpa [P] using
-            epidemic_exit_to_AllR_bound_axiom
-              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-              hn4 hn0 hRmax hDmaxN D AllR
-              (by simpa [P] using hExit)
+        sorry
     have hComp := Probability.expectedHittingTime_add_le P hn2 C Goal' AllR
       ((n * n * (n - 1) : ℕ) : ENNReal)
       ((n * n * (n - 1) : ℕ) : ENNReal)
@@ -11682,10 +11650,10 @@ theorem PEM_hConsensusBound_from_bridge
                 by_cases hpar : n % 2 = 0
                 · -- Even n: split on pre-step MedC
                   by_cases hMedC_D : MedianAnswerCorrect D
-                    · -- MedC pre-step: use step_InSswap_break_creates_CorrectResetSeed
+                  · -- MedC pre-step: use step_InSswap_break_creates_CorrectResetSeed
                     -- Need hT (timer=0). InSswap break implies propagation fired →
                     -- timer=0 (post-decrement). Derive pre-step timer value.
-                    -- Even n + MedC: use existing CRS lemma in the timer-zero case.
+                    -- Even n + MedC: use existing CRS lemma with sorry for hT
                     -- InSswap break with MedC: use existing CRS lemma if timer=0,
                     -- or CRS-odd approach adapted for even n if timer=1.
                     -- For timer=0: existing lemma applies directly.
@@ -11699,7 +11667,8 @@ theorem PEM_hConsensusBound_from_bridge
                         subst this; exact hT0
                       exact Or.inr (step_InSswap_break_creates_CorrectResetSeed
                         hn4 hn0 hRmax hSD hMedC_D hT hSD')
-                    · -- timer > 0: MedC already gives the correct reset answer.
+                    · -- timer > 0: even n + MedC + timer>0 + InSswap break → CRS
+                      -- Uses step_InSswap_break_creates_CorrectResetSeed_even_MedC
                       exact Or.inr (by
                         simpa [P, PEMProtocolCoupled, PEMProtocol] using
                           crs_of_InSswap_break_with_MedC_axiom
@@ -11710,13 +11679,7 @@ theorem PEM_hConsensusBound_from_bridge
                   · -- ¬MedC pre-step: for even n, InSswap break without MedC
                     -- creates Resetting agents with wrong answer → neither MedC nor DP.
                     -- This is the genuine even-n gap.
-                    exact Or.inr (by
-                      simpa [P, PEMProtocolCoupled, PEMProtocol] using
-                        step_InSswap_break_even_not_MedC_decisionProgress_axiom
-                          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-                          hn4 hn0 hRmax hSD hpar hMedC_D
-                          (by
-                            simpa [P, PEMProtocolCoupled, PEMProtocol] using hSD'))
+                    sorry -- Even n + ¬MedC + InSswap break: structural gap
                 · -- Odd n: phase4_decide corrects → CRS
                   exact Or.inr (Or.inr (step_InSswap_break_creates_CorrectResetSeed_odd
                     hn4 hn0 hRmax hSD hpar hSD')))
