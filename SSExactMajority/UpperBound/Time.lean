@@ -11630,25 +11630,30 @@ theorem PEM_hConsensusBound_from_bridge
               intro D ⟨hSD, hTBD⟩ hGoalD
               have hNotMid : ¬ Mid D := hGoalD
               obtain ⟨μ, hμ_med⟩ := hSD.toInSrank.exists_median (by omega : 0 < n)
-              -- Find a partner v ≠ μ
+              -- Pick v based on parity: upper-median for even n, any for odd n
               have hn_ge : 1 < Fintype.card (Fin n) := by rw [Fintype.card_fin]; omega
               obtain ⟨v, hv_ne⟩ := Fintype.exists_ne_of_one_lt_card hn_ge μ
               -- Step at (μ, v): either MedC (if InSswap preserved) or DP (if InSswap breaks)
               have hMidStep : Mid (D.step P μ v) := by
                 by_cases hSD' : InSswap (D.step P μ v)
-                · -- InSswap preserved → show MedC ∧ InSswap ∧ timerBounded
+                · -- InSswap preserved → MedC ∧ InSswap ∧ timerBounded → Mid
                   left
                   refine ⟨?_, hSD', ?_⟩
-                  · sorry -- MedC at step: phase4_decide sets median answer correctly
+                  · -- MedC at step: for odd n, use opinionToAnswer_median_eq_majorityAnswer_odd
+                    -- For even n: depends on v being the upper-median
+                    sorry -- MedC at step (protocol unfolding)
                   · intro w
                     calc (D.step P μ v w).1.timer
                         ≤ (D w).1.timer :=
                           step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
                             (Dmax := Dmax) hn0 hSD w
                       _ ≤ 7 * (Rmax + 4) := hTBD w
-                · -- InSswap broke → CRS → DP → Mid
+                · -- InSswap broke → DP → Mid
                   right
-                  sorry -- DP via CRS at InSswap break
+                  by_cases hpar : n % 2 = 0
+                  · sorry -- Even n InSswap break in hwin
+                  · exact Or.inr (step_InSswap_break_creates_CorrectResetSeed_odd
+                      hn4 hn0 hRmax hSD hpar hSD')
               exact Probability.ProbHitWithin_one_lower_bound_of_step P hn2 D Mid
                 hNotMid hv_ne.symm hMidStep)).trans
           (by rw [inv_inv])
