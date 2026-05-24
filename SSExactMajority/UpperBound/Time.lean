@@ -11664,7 +11664,32 @@ theorem PEM_hConsensusBound_from_bridge
           · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
               (DecisionProgress Rmax) (Or.inr (Or.inr ⟨hSD_D, hMedD, hTimer, hTBD_D⟩))]
             exact zero_le _
-          · sorry -- timer=0 + MedC: one-step reset trigger → CRS → DP
+          · -- timer=0 + MedC + InSswap → DP via one-step or IsConsensusConfig
+            by_cases hWrong : 0 < wrongAnswerCount D
+            · -- wrongAnswer > 0: use PEM_expected_reset_trigger or one-step bound
+              -- timer=0 derived from ¬MedianTimerAtLeast 1 + InSswap (unique median)
+              have hTimer0 : ∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n →
+                  (D μ).1.timer = 0 := by
+                intro μ hμ; by_contra h; push_neg at h
+                exact hTimer (fun μ' hμ' => by
+                  have := hSD_D.toInSrank.ranks_inj (Fin.ext (by omega))
+                  subst this; exact Nat.pos_of_ne_zero (by omega))
+              calc Probability.expectedHittingTime P hn2 D (DecisionProgress Rmax)
+                  ≤ Probability.expectedHittingTime P hn2 D
+                    (fun E => IsConsensusConfig E ∨ CorrectResetSeed E) :=
+                      Probability.expectedHittingTime_mono_goal P hn2 D _ _
+                        (fun E hE => by rcases hE with h | h; exact Or.inl h; exact Or.inr (Or.inl h))
+                _ ≤ ((n * (n - 1) : ℕ) : ENNReal) :=
+                      PEM_expected_reset_trigger hn4 hn0 hRmax hEmax hDmaxN D
+                        hSD_D hMedD hWrong hTimer0
+            · -- wrongAnswer = 0: all answers correct → IsConsensusConfig → DP
+              push_neg at hWrong
+              have hZero : wrongAnswerCount D = 0 := Nat.le_zero.mp hWrong
+              have hAll := (wrongAnswerCount_eq_zero_iff D).mp hZero
+              rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
+                (DecisionProgress Rmax) (Or.inl ⟨hSD_D.allSettled, hSD_D.ranks_inj,
+                  hSD_D.input_rank, hAll⟩)]
+              exact zero_le _
         · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
             (DecisionProgress Rmax) hDP]
           exact zero_le _
