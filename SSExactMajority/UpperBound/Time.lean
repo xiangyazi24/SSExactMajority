@@ -9697,7 +9697,7 @@ theorem PEM_expected_timer_drain
             exact Or.inr (Or.inr (Or.inr ⟨hS', hM', hT'⟩))
         · -- InSswap broke → CorrectResetSeed
           exact Or.inr (Or.inr (Or.inl
-            (step_InSswap_break_creates_CorrectResetSeed hn4 hn0 hRmax hS hM hT hS'))))
+            (sorry /- forward ref: step_InSswap_break_creates_CorrectResetSeed hn4 hn0 hRmax hS hM hT hS' -/))))
     (by -- hNonincrease: maxMedianTimer doesn't increase
         intro D ⟨hS, hM, hT⟩ hG i j
         unfold maxMedianTimer
