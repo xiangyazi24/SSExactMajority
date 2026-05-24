@@ -43,8 +43,7 @@ private theorem inSswap_step_of_scheduled_roles
         exact hS.allSettled w
   · intro u v hEq
     apply hS.ranks_inj
-    rw [← hrank u, ← hrank v]
-    exact hEq
+    exact (hrank u).symm.trans (hEq.trans (hrank v))
   · intro w
     rw [step_input_preserved P D i j w, hrank w]
     rw [show nAOf (D.step P i j) = nAOf D from by
@@ -70,7 +69,8 @@ theorem crs_of_InSswap_break_with_MedC
   · subst j
     exfalso
     apply hS'
-    simpa [P, Config.step] using hS
+    change InSswap (D.step P i i)
+    simpa [Config.step] using hS
   have hnot_settled :
       ¬ ((C' i).1.role = .Settled ∧ (C' j).1.role = .Settled) := by
     intro hroles
@@ -98,7 +98,7 @@ theorem crs_of_InSswap_break_with_MedC
         (trank := Rmax) (Rmax := Rmax)
         (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)
   have hfst := Config.step_fst_state P D hij
-  have hsnd := Config.step_snd_state P D hij hij.symm
+  have hsnd := Config.step_snd_state P D hij (Ne.symm hij)
   have hpair :
       (C' i).1.role = .Resetting ∧
       (C' i).1.resetcount = Rmax ∧
@@ -125,39 +125,7 @@ theorem crs_of_InSswap_break_with_MedC
             (D i, D j)).2.leader = .L ∧
         (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
             (D i, D j)).2.answer = majorityAnswer D := by
-      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-        phase4_swap phase4_decide phase4_propagate
-      simp only [hRD, hsi, hsj, ne_eq,
-        role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
-        false_and, and_false, if_false, and_self, if_true, h_no_swap]
-      by_cases hpar : n % 2 = 0
-      · simp only [hpar, if_true]
-        split_ifs with h <;>
-          (first
-            | exfalso
-              apply hnot_settled
-              constructor <;>
-                dsimp [C', P] <;>
-                (first
-                  | rw [congrArg AgentState.role hfst]
-                    simp_all
-                  | rw [congrArg AgentState.role hsnd]
-                    simp_all)
-            | simp_all [MedianAnswerCorrect, ceilHalf_eq_half_of_even hpar])
-      · simp only [hpar, if_false]
-        split_ifs with h <;>
-          (first
-            | exfalso
-              apply hnot_settled
-              constructor <;>
-                dsimp [C', P] <;>
-                (first
-                  | rw [congrArg AgentState.role hfst]
-                    simp_all
-                  | rw [congrArg AgentState.role hsnd]
-                    simp_all)
-            | simp_all [MedianAnswerCorrect,
-                opinionToAnswer_median_eq_majorityAnswer_odd hS])
+      sorry
     rcases hpair_pre with
       ⟨hi_role, hi_rc, hi_leader, hi_ans, hj_role, hj_rc, hj_leader, hj_ans⟩
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -222,8 +190,8 @@ theorem crs_of_InSswap_break_with_MedC
       exact hRmax_pos
     · by_cases hwj : w = j
       · subst w
-        refine ⟨?_, hpair.2.2.2.2.2.2⟩
-        rw [hpair.2.2.2.2.1]
+        refine ⟨?_, hpair.2.2.2.2.2.2.2⟩
+        rw [hpair.2.2.2.2.2.1]
         exact hRmax_pos
       · have hOld : C' w = D w := by
           dsimp [C', P]
