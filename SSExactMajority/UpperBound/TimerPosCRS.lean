@@ -51,7 +51,143 @@ private theorem inSswap_step_of_scheduled_roles
         (nAOf_step_eq
           (trank := Rmax) (Rmax := Rmax)
           (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)]
-    exact hS.input_rank w
+	    exact hS.input_rank w
+
+private theorem majorityAnswer_eq_outT_of_even_lower_upper_disagree
+    {n : ℕ} {C : Config (AgentState n) Opinion n}
+    (hS : InSswap C) {μ ν : Fin n}
+    (hμR : (C μ).1.rank.val + 1 = n / 2)
+    (hνR : (C ν).1.rank.val + 1 = n / 2 + 1)
+    (hpar : n % 2 = 0) (hdis : (C μ).2 ≠ (C ν).2) :
+    majorityAnswer C = .outT := by
+  have h_sum := nAOf_add_nBOf C
+  have hnA : nAOf C = n / 2 := by
+    rcases hxμ : (C μ).2 with _ | _
+    · have h1 : (C μ).1.rank.val < nAOf C := (hS.input_rank μ).mp hxμ
+      have hxν : (C ν).2 = Opinion.B := by
+        cases hxν' : (C ν).2 with
+        | A => exfalso; exact hdis (by rw [hxμ, hxν'])
+        | B => rfl
+      have h2 : ¬ ((C ν).1.rank.val < nAOf C) := by
+        intro hlt
+        have := (hS.input_rank ν).mpr hlt
+        rw [hxν] at this
+        cases this
+      omega
+    · have h1 : ¬ ((C μ).1.rank.val < nAOf C) := by
+        intro hlt
+        have := (hS.input_rank μ).mpr hlt
+        rw [hxμ] at this
+        cases this
+      have hxν : (C ν).2 = Opinion.A := by
+        cases hxν' : (C ν).2 with
+        | A => rfl
+        | B => exfalso; exact hdis (by rw [hxμ, hxν'])
+      have h2 : (C ν).1.rank.val < nAOf C := (hS.input_rank ν).mp hxν
+      omega
+  have hnB : nBOf C = n / 2 := by omega
+  exact majorityAnswer_eq_outT_of_tie (C := C) (by omega)
+
+private theorem nA_ne_nB_of_even_lower_upper_agree
+    {n : ℕ} {C : Config (AgentState n) Opinion n}
+    (hS : InSswap C) {μ ν : Fin n}
+    (hμR : (C μ).1.rank.val + 1 = n / 2)
+    (hνR : (C ν).1.rank.val + 1 = n / 2 + 1)
+    (hpar : n % 2 = 0) (hagree : (C μ).2 = (C ν).2) :
+    nAOf C ≠ nBOf C := by
+  intro htie
+  have h_sum := nAOf_add_nBOf C
+  have hnA : nAOf C = n / 2 := by omega
+  rcases hxμ : (C μ).2 with _ | _
+  · have hxν : (C ν).2 = Opinion.A := by
+      rw [← hagree]
+      exact hxμ
+    have hν_lt : (C ν).1.rank.val < nAOf C := (hS.input_rank ν).mp hxν
+    omega
+  · have hμ_lt : (C μ).1.rank.val < nAOf C := by omega
+    have hxμA : (C μ).2 = Opinion.A := (hS.input_rank μ).mpr hμ_lt
+    rw [hxμ] at hxμA
+    cases hxμA
+
+private theorem phase4_decide_fst_median_answer_correct
+    {n : ℕ} {D : Config (AgentState n) Opinion n}
+    (hn4 : 4 ≤ n) (hS : InSswap D) (hM : MedianAnswerCorrect D)
+    {i j : Fin n}
+    (hi_med : (D i).1.rank.val + 1 = ceilHalf n) :
+    (phase4_decide n (D i).1 (D j).1 (D i).2 (D j).2).1.answer =
+      majorityAnswer D := by
+  classical
+  by_cases hpar : n % 2 = 0
+  · have hceil : ceilHalf n = n / 2 := ceilHalf_eq_half_of_even hpar
+    have hi_lower : (D i).1.rank.val + 1 = n / 2 := by
+      rw [← hceil]
+      exact hi_med
+    unfold phase4_decide
+    simp only [hpar, if_true]
+    by_cases hp₁ :
+        (D i).1.rank.val + 1 = n / 2 ∧
+          (D j).1.rank.val + 1 = n / 2 + 1
+    · simp only [hp₁, if_true]
+      by_cases hagree : (D i).2 = (D j).2
+      · simp only [hagree, if_true]
+        exact opinionToAnswer_lower_median_eq_majorityAnswer_even
+          hS hi_lower hpar
+          (nA_ne_nB_of_even_lower_upper_agree hS hp₁.1 hp₁.2 hpar hagree)
+      · simp only [hagree, if_false]
+        exact (majorityAnswer_eq_outT_of_even_lower_upper_disagree
+          hS hp₁.1 hp₁.2 hpar hagree).symm
+    · simp only [hp₁, if_false]
+      have hp₂_false :
+          ¬ ((D j).1.rank.val + 1 = n / 2 ∧
+            (D i).1.rank.val + 1 = n / 2 + 1) := by
+        intro hp₂
+        omega
+      simp only [hp₂_false, if_false]
+      exact hM i hi_med
+  · have hOdd := opinionToAnswer_median_eq_majorityAnswer_odd hS hi_med hpar
+    unfold phase4_decide
+    simp only [hpar, if_false, hi_med, if_true]
+    exact hOdd
+
+private theorem phase4_decide_snd_median_answer_correct
+    {n : ℕ} {D : Config (AgentState n) Opinion n}
+    (hn4 : 4 ≤ n) (hS : InSswap D) (hM : MedianAnswerCorrect D)
+    {i j : Fin n}
+    (hj_med : (D j).1.rank.val + 1 = ceilHalf n) :
+    (phase4_decide n (D i).1 (D j).1 (D i).2 (D j).2).2.answer =
+      majorityAnswer D := by
+  classical
+  by_cases hpar : n % 2 = 0
+  · have hceil : ceilHalf n = n / 2 := ceilHalf_eq_half_of_even hpar
+    have hj_lower : (D j).1.rank.val + 1 = n / 2 := by
+      rw [← hceil]
+      exact hj_med
+    unfold phase4_decide
+    simp only [hpar, if_true]
+    have hp₁_false :
+        ¬ ((D i).1.rank.val + 1 = n / 2 ∧
+          (D j).1.rank.val + 1 = n / 2 + 1) := by
+      intro hp₁
+      omega
+    simp only [hp₁_false, if_false]
+    by_cases hp₂ :
+        (D j).1.rank.val + 1 = n / 2 ∧
+          (D i).1.rank.val + 1 = n / 2 + 1
+    · simp only [hp₂, if_true]
+      by_cases hagree : (D j).2 = (D i).2
+      · simp only [hagree, if_true]
+        exact opinionToAnswer_lower_median_eq_majorityAnswer_even
+          hS hj_lower hpar
+          (nA_ne_nB_of_even_lower_upper_agree hS hp₂.1 hp₂.2 hpar hagree)
+      · simp only [hagree, if_false]
+        exact (majorityAnswer_eq_outT_of_even_lower_upper_disagree
+          hS hp₂.1 hp₂.2 hpar hagree).symm
+    · simp only [hp₂, if_false]
+      exact hM j hj_med
+  · have hOdd := opinionToAnswer_median_eq_majorityAnswer_odd hS hj_med hpar
+    unfold phase4_decide
+    simp only [hpar, if_false, hj_med, if_true]
+    exact hOdd
 
 set_option maxHeartbeats 64000000 in
 theorem crs_of_InSswap_break_with_MedC
@@ -125,7 +261,30 @@ theorem crs_of_InSswap_break_with_MedC
             (D i, D j)).2.leader = .L ∧
         (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
             (D i, D j)).2.answer = majorityAnswer D := by
-      sorry
+      have hnot_pair_settled :
+          ¬ ((transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                (D i, D j)).1.role = .Settled ∧
+             (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+                (D i, D j)).2.role = .Settled) := by
+        intro hsettled
+        apply hnot_settled
+        constructor
+        · dsimp [C', P]
+          rw [congrArg AgentState.role hfst]
+          exact hsettled.1
+        · dsimp [C', P]
+          rw [congrArg AgentState.role hsnd]
+          exact hsettled.2
+      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+        phase4_swap phase4_decide phase4_propagate
+      simp only [hRD, hsi, hsj, ne_eq,
+        role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
+        false_and, and_false, if_false, and_self, if_true, h_no_swap]
+      by_cases hpar : n % 2 = 0
+      · simp only [hpar, if_true]
+        split_ifs with h <;> trace_state <;> sorry
+      · simp only [hpar, if_false]
+        split_ifs with h <;> trace_state <;> sorry
     rcases hpair_pre with
       ⟨hi_role, hi_rc, hi_leader, hi_ans, hj_role, hj_rc, hj_leader, hj_ans⟩
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
