@@ -11725,7 +11725,38 @@ theorem PEM_hConsensusBound_from_bridge
                         _ ≤ 7 * (Rmax + 4) := hTBD w
                   · -- InSswap broke at (μ, ξ) → phase4_decide set correct answer → CRS
                     right
-                    sorry -- Even n InSswap break at (μ, ξ): CRS via correct-answer propagation
+                    -- At (μ, ξ) = (n/2, n/2+1) for even n with InSswap:
+                    -- phase4_decide fires and sets BOTH answers to majorityAnswer.
+                    -- After decide: no disagreement → propagation doesn't fire →
+                    -- InSswap is PRESERVED. So ¬InSswap(step) is IMPOSSIBLE.
+                    exfalso
+                    apply hSD'
+                    -- InSswap preserved at (μ, ξ) = (n/2, n/2+1)
+                    have hRankFix := rankDeltaOSSR_satisfies_fix
+                      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+                    by_cases hxeq : (D μ).2 = (D ξ).2
+                    · simpa [P, PEMProtocolCoupled, PEMProtocol] using
+                        step_at_median_pair_even_preserves_InSswap
+                          (n := n) (trank := Rmax) (Rmax := Rmax)
+                          (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+                          hRankFix hSD hμξ hpar hμ_lower hξ_upper hxeq hn4
+                    · -- Disagreed inputs (tie): both get .outT, no propagation
+                      have hNotMedC : ¬ MedianAnswerCorrect D := by
+                        intro hM; exact hNotMid (Or.inl ⟨hM, hSD, hTBD⟩)
+                      have hμ_wrong : (D μ).1.answer ≠ majorityAnswer D := by
+                        intro h; exact hNotMedC (fun ν hν => by
+                          have := hSD.toInSrank.ranks_inj (Fin.ext (by omega))
+                          subst this; exact h)
+                      have hTie : nAOf D = nBOf D := by
+                        by_contra hne; push_neg at hne
+                        exact hxeq (InSswap_even_median_pair_inputs_agree_of_strict
+                          hSD hpar hne hμ_lower hξ_upper)
+                      simpa [P, PEMProtocolCoupled, PEMProtocol] using
+                        (decision_step_at_median_pair_even_tie_decreases
+                          (trank := Rmax) (Rmax := Rmax)
+                          (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+                          rankDeltaOSSR_satisfies_fix hSD hμξ hpar hμ_lower hξ_upper
+                          hxeq hTie hn4 (Or.inl hμ_wrong)).1
                 exact Probability.ProbHitWithin_one_lower_bound_of_step P hn2 D Mid
                   hNotMid hμξ hMidStep
               · -- Odd n: any v works, phase4_decide fires for any median step
