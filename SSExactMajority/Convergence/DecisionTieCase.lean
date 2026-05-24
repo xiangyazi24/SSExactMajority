@@ -56,7 +56,7 @@ theorem transitionPEM_at_median_pair_even_disagreed_inputs
   have h_no_swap_full : ¬ ((C u).1.rank < (C v).1.rank ∧
                       (C u).2 = Opinion.B ∧ (C v).2 = Opinion.A) := by
     intro ⟨_, hB, hA⟩; exact h_no_swap ⟨hB, hA⟩
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

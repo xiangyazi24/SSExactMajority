@@ -17,27 +17,39 @@ namespace SSEM
 
 variable {n : ℕ}
 
-theorem AgentState.rank_with_answer (s : AgentState n) (a : Answer) :
+@[simp] theorem AgentState.rank_with_answer (s : AgentState n) (a : Answer) :
     ({s with answer := a}).rank = s.rank := rfl
 
-theorem AgentState.rank_with_timer (s : AgentState n) (t : ℕ) :
+@[simp] theorem AgentState.rank_with_timer (s : AgentState n) (t : ℕ) :
     ({s with timer := t}).rank = s.rank := rfl
 
-theorem AgentState.rank_with_role (s : AgentState n) (r : Role) :
+@[simp] theorem AgentState.rank_with_role (s : AgentState n) (r : Role) :
     ({s with role := r}).rank = s.rank := rfl
 
-theorem AgentState.rank_with_leader (s : AgentState n) (l : Leader) :
+@[simp] theorem AgentState.rank_with_leader (s : AgentState n) (l : Leader) :
     ({s with leader := l}).rank = s.rank := rfl
 
-theorem AgentState.rank_with_resetcount (s : AgentState n) (rc : ℕ) :
+@[simp] theorem AgentState.rank_with_resetcount (s : AgentState n) (rc : ℕ) :
     ({s with resetcount := rc}).rank = s.rank := rfl
 
-theorem AgentState.role_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).role = s.role := rfl
-
-theorem AgentState.role_with_timer (s : AgentState n) (t : ℕ) :
-    ({s with timer := t}).role = s.role := rfl
-
+-- Struct update projection lemmas: answer/timer changes preserve all structural fields
+-- role_with_answer and role_with_timer are now in Protocol/State.lean
+@[simp] theorem AgentState.leader_with_answer (s : AgentState n) (a : Answer) :
+    ({s with answer := a}).leader = s.leader := rfl
+@[simp] theorem AgentState.children_with_answer (s : AgentState n) (a : Answer) :
+    ({s with answer := a}).children = s.children := rfl
+@[simp] theorem AgentState.resetcount_with_answer (s : AgentState n) (a : Answer) :
+    ({s with answer := a}).resetcount = s.resetcount := rfl
+@[simp] theorem AgentState.delaytimer_with_answer (s : AgentState n) (a : Answer) :
+    ({s with answer := a}).delaytimer = s.delaytimer := rfl
+@[simp] theorem AgentState.leader_with_timer (s : AgentState n) (t : ℕ) :
+    ({s with timer := t}).leader = s.leader := rfl
+@[simp] theorem AgentState.children_with_timer (s : AgentState n) (t : ℕ) :
+    ({s with timer := t}).children = s.children := rfl
+@[simp] theorem AgentState.resetcount_with_timer (s : AgentState n) (t : ℕ) :
+    ({s with timer := t}).resetcount = s.resetcount := rfl
+@[simp] theorem AgentState.delaytimer_with_timer (s : AgentState n) (t : ℕ) :
+    ({s with timer := t}).delaytimer = s.delaytimer := rfl
 /-! ### Propagation rank preservation -/
 
 /-- The propagation phase preserves the `.rank` field of both agents. -/
@@ -119,7 +131,7 @@ theorem decision_rank_preserved_odd (b₀ b₁ : AgentState n) (x₀ x₁ : Opin
 /-! ### Combined: rank-swap at misorder -/
 
 set_option maxHeartbeats 16000000 in
-/-- **Unconditional rank-swap lemma at any misorder pair.**  -/
+/-- **Unconditional rank-swap lemma at any misorder pair.** -/
 theorem transitionPEM_rank_swap_at_misorder
     {trank Rmax : ℕ}
     {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
@@ -135,7 +147,7 @@ theorem transitionPEM_rank_swap_at_misorder
     hRank (C u).1 (C v).1 hsu hsv (ne_of_lt hlt)
   have hswap : (C u).1.rank < (C v).1.rank ∧ (C u).2 = Opinion.B ∧ (C v).2 = Opinion.A :=
     ⟨hlt, huB, hvA⟩
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -571,7 +583,7 @@ theorem transitionPEM_at_misordered_u_lower_median_even
   have hN2 : ¬ (n / 2 = n / 2 + 1) := fun h => by omega
   have hN3 : ¬ (n / 2 = n) := fun h => by omega  -- needs n ≥ 4
   have hN4 : ¬ (n / 2 + 1 = n) := fun h => by omega  -- needs n ≥ 4
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -644,7 +656,7 @@ theorem transitionPEM_at_misordered_u_median_odd_v_not_max
     have : (C u).1.rank.val < (C v).1.rank.val := hlt; omega
   have h_no_inner_A : ¬ ((C u).1.rank.val + 1 = n) := by
     have hvlt : (C v).1.rank.val < n := (C v).1.rank.isLt; omega
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -700,7 +712,7 @@ theorem transitionPEM_at_misordered_u_median_odd_v_max
   -- Re-state hb0_no_med after substituting (C v).1.rank.val + 1 → n (via hv_max).
   have hN_ne_ceil : ¬ (n = ceilHalf n) := by
     have hcl : (C u).1.rank.val < (C v).1.rank.val := hlt; omega
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

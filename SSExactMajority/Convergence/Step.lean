@@ -105,6 +105,30 @@ theorem nBOf_step_eq {trank Rmax : ℕ}
   unfold nBOf
   exact congrArg Finset.card (agentsWithInput_step_eq _ C u v Opinion.B)
 
+/-- `nAOf` is invariant along an `execution` (inputs are immutable). -/
+theorem nAOf_execution_eq {trank Rmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    (C : Config (AgentState n) Opinion n) (γ : DetScheduler n) (t : ℕ) :
+    nAOf (execution (protocolPEM n trank Rmax rankDelta) C γ t) = nAOf C := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    show nAOf ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step
+        (protocolPEM n trank Rmax rankDelta) (γ t).1 (γ t).2) = _
+    rw [nAOf_step_eq]; exact ih
+
+/-- `nBOf` is invariant along an `execution` (inputs are immutable). -/
+theorem nBOf_execution_eq {trank Rmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    (C : Config (AgentState n) Opinion n) (γ : DetScheduler n) (t : ℕ) :
+    nBOf (execution (protocolPEM n trank Rmax rankDelta) C γ t) = nBOf C := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    show nBOf ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step
+        (protocolPEM n trank Rmax rankDelta) (γ t).1 (γ t).2) = _
+    rw [nBOf_step_eq]; exact ih
+
 /-- `majorityAnswer` is invariant under `Config.step`. -/
 theorem majorityAnswer_step_eq {trank Rmax : ℕ}
     {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}

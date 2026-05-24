@@ -37,7 +37,7 @@ theorem transitionPEM_consensus_pair_role_rank
   have ha0 := hpair.answer₀
   have ha1 := hpair.answer₁
   have hswap := hpair.swap_fails
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hs0, hs1, hswap, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

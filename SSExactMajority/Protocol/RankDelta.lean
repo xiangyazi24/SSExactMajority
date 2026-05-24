@@ -45,18 +45,74 @@ def resetOSSR (Emax : ℕ) (hn : 0 < n) (s : AgentState n) : AgentState n :=
 
 /-! ### Protocol 2: PROPAGATE-RESET -/
 
-/-- Protocol 2 from Burman et al.: epidemic-style reset propagation.
+/-- Process a dormant agent: decrement delaytimer or trigger resetOSSR.
+Extracted from propagateReset Phase 3 for composability. -/
+def processAgent (Emax Dmax : ℕ) (hn : 0 < n)
+    (s : AgentState n) (oldRc : ℕ) (partnerResetting : Bool) : AgentState n :=
+  if s.role = .Resetting ∧ s.resetcount = 0 then
+    let s :=
+      if 0 < oldRc then
+        { s with delaytimer := Dmax }
+      else
+        { s with delaytimer := s.delaytimer - 1 }
+    if s.delaytimer = 0 ∨ !partnerResetting then
+      resetOSSR Emax hn s
+    else s
+  else s
 
-Called when at least one of `a`, `b` has `role = Resetting`.
+theorem processAgent_rc_ne_zero {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} (hrc : s.resetcount ≠ 0) (oldRc : ℕ) (pr : Bool) :
+    processAgent Emax Dmax hn s oldRc pr = s := by
+  unfold processAgent; simp [hrc]
 
-Phase 1 (lines 1-2): If `a` is propagating (resetcount > 0) and `b`
-  is not yet Resetting, recruit `b` into Resetting role.
-Phase 2 (line 3-4): If both are Resetting, synchronize resetcounts
-  via `max(a.resetcount - 1, b.resetcount - 1, 0)`.
-Phase 3 (lines 5-11): For each dormant agent (resetcount = 0):
-  - If resetcount just became 0: initialize delaytimer
-  - Otherwise: decrement delaytimer
-  - If delaytimer = 0 or partner is not Resetting: execute RESET -/
+theorem processAgent_not_resetting {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} (hrs : s.role ≠ .Resetting) (oldRc : ℕ) (pr : Bool) :
+    processAgent Emax Dmax hn s oldRc pr = s := by
+  unfold processAgent; simp [hrs]
+
+theorem processAgent_dormant_fresh_stays {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} {oldRc : ℕ} {partnerResetting : Bool}
+    (hs : s.role = .Resetting) (hrc : s.resetcount = 0)
+    (holdRc : 0 < oldRc) (hDmax : 0 < Dmax) (hPartner : partnerResetting = true) :
+    (processAgent Emax Dmax hn s oldRc partnerResetting).role = .Resetting := by
+  unfold processAgent
+  simp only [hs, hrc, and_self, ite_true, holdRc, show ¬(Dmax = 0) from by omega,
+    false_or, hPartner, Bool.not_true, Bool.false_eq_true, ite_false]
+
+/-- Dormant agent with `oldRc = 0` (i.e. agent had rc=0 going into this step) but
+sufficient delaytimer (≥ 2) and a Resetting partner: stays Resetting.
+Used by `propagateReset_recruits` for the post-recruit agent (whose oldRc was 0). -/
+theorem processAgent_oldRc_zero_partner_true_delay_gt_one_stays
+    {Emax Dmax : ℕ} {hn : 0 < n} {s : AgentState n}
+    (hs : s.role = .Resetting) (hrc : s.resetcount = 0)
+    (hdt : 1 < s.delaytimer) :
+    (processAgent Emax Dmax hn s 0 true).role = .Resetting := by
+  unfold processAgent
+  have hdt_ne : s.delaytimer - 1 ≠ 0 := by omega
+  simp [hs, hrc, hdt_ne]
+
+/-- When `processAgent` fires the fresh-dormant branch (rc=0 with oldRc > 0,
+partner Resetting, Dmax > 0), it preserves `resetcount` (only `delaytimer`
+gets reset to Dmax). -/
+theorem processAgent_dormant_fresh_keeps_rc {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} {oldRc : ℕ} {partnerResetting : Bool}
+    (hs : s.role = .Resetting) (hrc : s.resetcount = 0)
+    (holdRc : 0 < oldRc) (hDmax : 0 < Dmax) (hPartner : partnerResetting = true) :
+    (processAgent Emax Dmax hn s oldRc partnerResetting).resetcount = 0 := by
+  unfold processAgent
+  simp only [hs, hrc, and_self, ite_true, holdRc, show ¬(Dmax = 0) from by omega,
+    false_or, hPartner, Bool.not_true, Bool.false_eq_true, ite_false]
+
+/-- Symmetric to `_keeps_rc`: leader is preserved. -/
+theorem processAgent_dormant_fresh_keeps_leader {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} {oldRc : ℕ} {partnerResetting : Bool}
+    (hs : s.role = .Resetting) (hrc : s.resetcount = 0)
+    (holdRc : 0 < oldRc) (hDmax : 0 < Dmax) (hPartner : partnerResetting = true) :
+    (processAgent Emax Dmax hn s oldRc partnerResetting).leader = s.leader := by
+  unfold processAgent
+  simp only [hs, hrc, and_self, ite_true, holdRc, show ¬(Dmax = 0) from by omega,
+    false_or, hPartner, Bool.not_true, Bool.false_eq_true, ite_false]
+
 def propagateReset (Emax Dmax : ℕ) (hn : 0 < n)
     (a b : AgentState n) : AgentState n × AgentState n :=
   -- Phase 1: recruitment (line 1-2)
@@ -76,20 +132,44 @@ def propagateReset (Emax Dmax : ℕ) (hn : 0 < n)
       ({ a with resetcount := newRc }, { b with resetcount := newRc })
     else (a, b)
   -- Phase 3: dormant agent processing (lines 5-11)
-  let processAgent (s : AgentState n) (oldRc : ℕ) (partnerResetting : Bool) :=
-    if s.role = .Resetting ∧ s.resetcount = 0 then
-      let s :=
-        if 0 < oldRc then
-          { s with delaytimer := Dmax }
-        else
-          { s with delaytimer := s.delaytimer - 1 }
-      if s.delaytimer = 0 ∨ !partnerResetting then
-        resetOSSR Emax hn s
-      else s
-    else s
   let aRes := b.role == .Resetting
   let bRes := a.role == .Resetting
-  (processAgent a oldRcA aRes, processAgent b oldRcB bRes)
+  (processAgent Emax Dmax hn a oldRcA aRes, processAgent Emax Dmax hn b oldRcB bRes)
+
+/-! ### Answer preservation for RESET / PROPAGATE-RESET -/
+
+theorem resetOSSR_answer_preserved {Emax : ℕ} {hn : 0 < n} (s : AgentState n) :
+    (resetOSSR Emax hn s).answer = s.answer := by
+  unfold resetOSSR
+  cases s.leader <;> rfl
+
+theorem processAgent_answer_preserved {Emax Dmax : ℕ} {hn : 0 < n}
+    (s : AgentState n) (oldRc : ℕ) (pr : Bool) :
+    (processAgent Emax Dmax hn s oldRc pr).answer = s.answer := by
+  unfold processAgent
+  by_cases h1 : s.role = .Resetting ∧ s.resetcount = 0
+  · rw [if_pos h1]
+    by_cases h2 : 0 < oldRc
+    · rw [if_pos h2]
+      simp only []
+      by_cases h3 : (Dmax = 0 ∨ (!pr) = true)
+      · rw [if_pos h3, resetOSSR_answer_preserved]
+      · rw [if_neg h3]
+    · rw [if_neg h2]
+      simp only []
+      by_cases h3 : (s.delaytimer - 1 = 0 ∨ (!pr) = true)
+      · rw [if_pos h3, resetOSSR_answer_preserved]
+      · rw [if_neg h3]
+  · rw [if_neg h1]
+
+theorem propagateReset_answer_preserved {Emax Dmax : ℕ} {hn : 0 < n}
+    (a b : AgentState n) :
+    (propagateReset Emax Dmax hn a b).1.answer = a.answer ∧
+    (propagateReset Emax Dmax hn a b).2.answer = b.answer := by
+  unfold propagateReset
+  constructor <;>
+    simp only [processAgent_answer_preserved] <;>
+    split_ifs <;> rfl
 
 /-! ### Protocol 3: OPTIMAL-SILENT-SSR -/
 
@@ -190,6 +270,17 @@ theorem rankDeltaOSSR_settled_distinct_ranks
     intro h; cases h with
     | inl h => exact hsr h.1
     | inr h => exact htr h.1)]
+
+/-! ### Key property: rerank preserves answers -/
+
+theorem rankDeltaOSSR_answer_preserved
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (s t : AgentState n) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.answer = s.answer ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.answer = t.answer := by
+  unfold rankDeltaOSSR
+  dsimp only []
+  split_ifs <;>
+    simp_all [propagateReset_answer_preserved]
 
 /-! ### Stabilized wrapper satisfying `RankDeltaSettledFix`
 

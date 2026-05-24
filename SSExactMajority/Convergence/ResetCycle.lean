@@ -79,7 +79,7 @@ theorem reset_fires_at_misorder_median_v_max_odd_timer_zero
     intro h_eq
     rw [← hvA] at h_eq
     exact h_answers h_eq.symm
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

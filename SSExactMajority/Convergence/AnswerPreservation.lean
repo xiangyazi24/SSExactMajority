@@ -267,7 +267,7 @@ theorem transitionPEM_consensus_pair_answer_eq
   have ha0 := hpair.answer₀
   have ha1 := hpair.answer₁
   have hswap := hpair.swap_fails
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   -- Collapse Phases 1-3 + Phase-4 entry + swap.
   simp only [hRD, hs0, hs1, hswap, ne_eq,
     role_settled_ne_resetting,

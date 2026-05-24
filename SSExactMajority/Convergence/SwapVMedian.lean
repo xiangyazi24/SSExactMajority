@@ -75,7 +75,7 @@ theorem transitionPEM_at_misordered_v_median_odd
   have h_u_not_med : ¬ ((C u).1.rank.val + 1 = ceilHalf n) := by omega
   -- b₀ at median = ceilHalf n - 1 (rank.val + 1 = ceilHalf n).
   -- For propagation first branch (b₀ at median), this fires.
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -167,7 +167,7 @@ theorem transitionPEM_at_misordered_v_lower_median_even
   have hN1 : ¬ (n / 2 = n / 2 + 1) := by omega
   -- Inner timer-dec: b₁.rank.val + 1 = n? b₁ at u.rank ≤ n/2 - 2, so + 1 ≤ n/2 - 1 < n.
   have h_no_inner_B : ¬ ((C u).1.rank.val + 1 = n) := by omega
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -317,7 +317,7 @@ theorem transitionPEM_at_misordered_u_lower_median_even_v_above
   have h_no_inner_B : ¬ ((C v).1.rank.val + 1 = n) := hv_no_max
   -- u.rank ≠ max:
   have h_u_no_max : ¬ ((C u).1.rank.val + 1 = n) := by omega
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -421,7 +421,7 @@ theorem transitionPEM_at_misordered_u_lower_median_even_v_max
   -- Block decision input-equality branch as well.
   have hxBA : ¬ (Opinion.B = Opinion.A) := by intro h; cases h
   have hxAB : ¬ (Opinion.A = Opinion.B) := by intro h; cases h
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,

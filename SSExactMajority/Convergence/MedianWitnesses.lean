@@ -336,7 +336,7 @@ as parameters.
 
 This bypasses the 4-way `P_EM_solves_SSEM_full_odd_modulo_burman` and
 directly composes 8-way swap reachability with the existing decision
-reachability via the unified phase-composition.  -/
+reachability via the unified phase-composition. -/
 theorem P_EM_solves_SSEM_fully_discharged_odd_modulo_burman
     [Inhabited (Fin n × Fin n)]
     {trank Rmax : ℕ}

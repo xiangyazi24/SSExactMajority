@@ -48,7 +48,7 @@ theorem transitionPEM_at_misordered_non_median
     hRank (C u).1 (C v).1 hsu hsv (ne_of_lt hlt)
   have hswap : (C u).1.rank < (C v).1.rank ∧ (C u).2 = Opinion.B ∧ (C v).2 = Opinion.A :=
     ⟨hlt, huB, hvA⟩
-  unfold transitionPEM
+  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate
   simp only [hRD, hsu, hsv, ne_eq,
     role_settled_ne_resetting,
     not_true_eq_false, not_false_eq_true,
@@ -357,7 +357,7 @@ theorem misorder_at_median_only_with_v_not_max_unchanged_timer
 /-- Corollary: `P_EM` solves SSEM modulo (i) Burman's ranking
 convergence and (ii) the non-median misorder existence hypothesis,
 provided every Srank configuration is already in `Sout` (so the
-decision phase is trivially complete).  -/
+decision phase is trivially complete). -/
 theorem P_EM_solves_SSEM_via_non_median_swap_and_trivial_decision
     [Inhabited (Fin n × Fin n)]
     {trank Rmax : ℕ}

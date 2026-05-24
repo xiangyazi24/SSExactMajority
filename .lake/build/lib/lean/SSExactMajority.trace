@@ -38,7 +38,7 @@
          "3c0c7dcb8576019c"],
         ["SSExactMajority.LowerBound.Space:importAllArts", "1aea94edd484738b"],
         ["SSExactMajority.LowerBound.Time transitive imports (legacy)",
-         "bfd1628082868a31"],
+         "44876e791ad05f73"],
         ["SSExactMajority.LowerBound.Time:importAllArts", "797bc258e66bd1b7"],
         ["SSExactMajority.Protocol.State transitive imports (legacy)",
          "89987bf5fd90de70"],
@@ -162,4 +162,4 @@
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
     ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "d96b5a228f0c57e3"}
+ "depHash": "9149856422c77519"}

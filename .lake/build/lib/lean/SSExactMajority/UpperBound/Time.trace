@@ -1,8 +1,8 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["1090cd8d77b4f3f3.olean"],
-  "i": "0f65060934d5ce94.ilean",
+ {"o": ["910416b026b5a173.olean"],
+  "i": "1b3d5f1bedea77e9.ilean",
   "c": "2d41e4a223309ae1.c"},
  "log":
  [{"message":
@@ -666,112 +666,133 @@
    "SSExactMajority/UpperBound/Time.lean:9168:0: `PEM_expected_parallel_time_from_global_expected_phase_bounds` has the hypotheses:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n  • [DecidablePred InSrank] (#7)\n  • [DecidablePred InSswap] (#8)\n  • [DecidablePred IsConsensusConfig] (#9)\nwhich are not used in the remainder of the type.\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9317:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "SSExactMajority/UpperBound/Time.lean:9310:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9339:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time.lean:9332:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9363:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time.lean:9356:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9334:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "SSExactMajority/UpperBound/Time.lean:9327:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9358:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "SSExactMajority/UpperBound/Time.lean:9351:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9517:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil, hjR_no_lower, hjR_no_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9506:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9518:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hjR_no_lower, hjR_no_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9507:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, hN_ne1, h̵N̵_̵n̵e̵2̵,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵h̵ν̵R̵_̵c̵e̵i̵l̵]̵h̲N̲_̲n̲e̲2̲]̲\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9560:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_no_med, hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9549:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_no_med, hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9560:20: This simp argument is unused:\n  hiR_no_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9549:20: This simp argument is unused:\n  hiR_no_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9560:32: This simp argument is unused:\n  hiR_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵h̵i̵R̵_̵n̵o̵_̵m̵a̵x̵]̵h̲i̲R̲_̲n̲o̲_̲m̲e̲d̲]̲\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9549:32: This simp argument is unused:\n  hiR_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵h̵i̵R̵_̵n̵o̵_̵m̵a̵x̵]̵h̲i̲R̲_̲n̲o̲_̲m̲e̲d̲]̲\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9586:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil, hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9558:21: This simp argument is unused:\n  hxeq\n\nHint: Omit it from the simp argument list.\n  simp only [h̵x̵e̵q̵,̵ ̵show ¬((D ν).2 = (D i).2) from Ne.symm hxeq, if_false]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9587:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9574:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil, hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9384:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "SSExactMajority/UpperBound/Time.lean:9575:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9403:15: 'simp [Config.step]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "SSExactMajority/UpperBound/Time.lean:9377:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9403:35: 'exact hM ν hν_pre' uses '⊢'!",
+   "SSExactMajority/UpperBound/Time.lean:9396:15: 'simp [Config.step]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9396:35: 'exact hM ν hν_pre' uses '⊢'!",
    "level": "info"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9463:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "SSExactMajority/UpperBound/Time.lean:9508:55: 'sorry' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9538:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "SSExactMajority/UpperBound/Time.lean:9576:44: 'simp_all' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9642:8: declaration uses 'sorry'",
+   "SSExactMajority/UpperBound/Time.lean:9576:55: 'sorry' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9730:70: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9456:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9742:72: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9527:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9763:21: This simp argument is unused:\n  Fin.val_mk\n\nHint: Omit it from the simp argument list.\n  simp only [̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵ ̵at h\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time.lean:9508:55: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9641:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "SSExactMajority/UpperBound/Time.lean:9576:44: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9806:48: 'omega' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "SSExactMajority/UpperBound/Time.lean:9576:55: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9641:0: `PEM_expected_timer_drain` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time.lean:9630:8: declaration uses 'sorry'",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9718:70: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9730:72: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9751:21: This simp argument is unused:\n  Fin.val_mk\n\nHint: Omit it from the simp argument list.\n  simp only [̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵ ̵at h\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9629:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9802:48: 'omega' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9629:0: `PEM_expected_timer_drain` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time.lean:9712:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
    "SSExactMajority/UpperBound/Time.lean:9724:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9736:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time.lean:9783:14: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9787:14: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "SSExactMajority/UpperBound/Time.lean:9802:48: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9806:48: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "SSExactMajority/UpperBound/Time.lean:9828:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9832:8: declaration uses 'sorry'",
+   "SSExactMajority/UpperBound/Time.lean:9828:0: `PEM_expected_reset_trigger` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9832:0: `PEM_expected_reset_trigger` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time.lean:9875:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9881:8: declaration uses 'sorry'",
+   "SSExactMajority/UpperBound/Time.lean:9875:0: `PEM_expected_epidemic_to_consensus` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9881:0: `PEM_expected_epidemic_to_consensus` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time.lean:9889:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9895:8: declaration uses 'sorry'",
+   "SSExactMajority/UpperBound/Time.lean:9889:0: `PEM_expected_median_correct_to_consensus` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9895:0: `PEM_expected_median_correct_to_consensus` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time.lean:9990:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time.lean:9996:8: declaration uses 'sorry'",
-   "level": "warning"},
-  {"message":
-   "SSExactMajority/UpperBound/Time.lean:9996:0: `PEM_hConsensusBound_from_bridge` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time.lean:9990:0: `PEM_hConsensusBound_from_bridge` has the hypothesis:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\nwhich is not used in the remainder of the type.\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"}],
  "inputs":
  [["SSExactMajority.UpperBound.Time:deps",
@@ -798,10 +819,10 @@
   ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
    "9a2be90fd35343e5"],
   ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time.lean",
-   "57270b0e33fe7aff"],
+   "a9bbd2459030e45a"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
     ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "e52738ac161c8b8a"}
+ "depHash": "45568ba9642c0a3e"}
