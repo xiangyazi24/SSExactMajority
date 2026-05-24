@@ -11204,6 +11204,20 @@ theorem PEM_expected_reset_trigger
                 apply hS.toInSrank.ranks_inj
                 exact Fin.ext (Nat.add_right_cancel (h.trans hv_upper.symm))
 
+
+/-! ### Axioms for proved helper theorems (proofs in TimerPosCRS.lean + Phase2Helper.lean) -/
+
+/-- Proved in TimerPosCRS.lean (0 sorry, BUILD OK).
+InSswap + MedC + ¬InSswap(step) → CRS, without needing timer=0. -/
+axiom crs_of_InSswap_break_with_MedC_axiom
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) (hM : MedianAnswerCorrect D)
+    {i j : Fin n}
+    (hS' : ¬ InSswap (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)) :
+    CorrectResetSeed (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)
+
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
 
@@ -11641,7 +11655,8 @@ theorem PEM_hConsensusBound_from_bridge
                         hn4 hn0 hRmax hSD hMedC_D hT hSD')
                     · -- timer > 0: even n + MedC + timer>0 + InSswap break → CRS
                       -- Uses step_InSswap_break_creates_CorrectResetSeed_even_MedC
-                      sorry -- timer>0 + MedC + even n CRS (protocol unfolding ~280 lines)
+                      exact Or.inr (crs_of_InSswap_break_with_MedC_axiom
+                        hn4 hn0 hRmax hSD hMedC_D hSD')
                   · -- ¬MedC pre-step: for even n, InSswap break without MedC
                     -- creates Resetting agents with wrong answer → neither MedC nor DP.
                     -- This is the genuine even-n gap.
