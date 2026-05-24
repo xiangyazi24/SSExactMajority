@@ -11630,25 +11630,16 @@ theorem PEM_hConsensusBound_from_bridge
               intro D ⟨hSD, hTBD⟩ hGoalD
               have hNotMid : ¬ Mid D := hGoalD
               obtain ⟨μ, hμ_med⟩ := hSD.toInSrank.exists_median (by omega : 0 < n)
-              -- Pick v based on parity: upper-median for even n, any for odd n
-              have hn_ge : 1 < Fintype.card (Fin n) := by rw [Fintype.card_fin]; omega
-              obtain ⟨v, hv_ne⟩ := Fintype.exists_ne_of_one_lt_card hn_ge μ
-              -- Step at (μ, v): either MedC (if InSswap preserved) or DP (if InSswap breaks)
-              have hMidStep : Mid (D.step P μ v) := by
-                by_cases hSD' : InSswap (D.step P μ v)
-                · -- InSswap preserved → MedC ∧ InSswap ∧ timerBounded → Mid
-                  left
-                  refine ⟨?_, hSD', ?_⟩
-                  · -- MedC at step
-                    by_cases hpar : n % 2 = 0
-                    · -- Even n: need v = upper-median for phase4_decide to fire
-                      sorry -- Even n MedC at step
-                    · -- Odd n: phase4_decide fires for any step involving median.
-                      -- The median μ is agent i in the step (μ, v).
-                      -- For odd n, step_median_answer_of_InSswap_both's proof
-                      -- for ν = i uses opinionToAnswer_median_eq_majorityAnswer_odd
-                      -- without needing pre-step MedC.
-                      -- Since ν (the unique median post-step) = μ = i, it's involved.
+              by_cases hpar : n % 2 = 0
+              · -- Even n: pick upper-median, phase4_decide fires at (n/2, n/2+1)
+                sorry -- Even n hwin: pick upper-median ξ, step → MedC or DP
+              · -- Odd n: any v works, phase4_decide fires for any median step
+                have hn_ge : 1 < Fintype.card (Fin n) := by rw [Fintype.card_fin]; omega
+                obtain ⟨v, hv_ne⟩ := Fintype.exists_ne_of_one_lt_card hn_ge μ
+                have hMidStep : Mid (D.step P μ v) := by
+                  by_cases hSD' : InSswap (D.step P μ v)
+                  · left; refine ⟨?_, hSD', ?_⟩
+                    · -- MedC at step: odd n, protocol unfolding
                       intro ν hν
                       rw [show majorityAnswer (D.step P μ v) = majorityAnswer D from by
                         simpa [P, PEMProtocolCoupled, PEMProtocol] using
@@ -11658,17 +11649,14 @@ theorem PEM_hConsensusBound_from_bridge
                         rwa [← show (D.step P μ v ν).1.rank.val = (D ν).1.rank.val from
                           congrArg Fin.val (step_rank_preserved_of_InSswap
                             (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hSD ν)]
-                      -- ν must be μ (unique median in InSswap)
                       have hνμ : ν = μ := hSD.toInSrank.ranks_inj (Fin.ext (by omega))
                       subst hνμ
-                      -- μ = i in (μ, v) step. Use step_fst_state + protocol unfold.
                       rw [show (D.step P μ v μ).1.answer =
                           (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
                             (D μ, D v)).1.answer from
                         congrArg AgentState.answer (Config.step_fst_state P D
                           (by intro h; exact hv_ne.symm (hSD.toInSrank.ranks_inj
-                            (Fin.ext (show (D μ).1.rank.val = (D v).1.rank.val by
-                              rw [h])))))]
+                            (Fin.ext (show (D μ).1.rank.val = (D v).1.rank.val by rw [h])))))]
                       have hsi := hSD.toInSrank.allSettled μ
                       have hsv := hSD.toInSrank.allSettled v
                       have hrij : (D μ).1.rank ≠ (D v).1.rank := by
@@ -11684,20 +11672,17 @@ theorem PEM_hConsensusBound_from_bridge
                         not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
                         and_self, if_true, h_no_swap, hpar, hμ_med, hvR_no_med]
                       exact opinionToAnswer_median_eq_majorityAnswer_odd hSD hμ_med hpar
-                  · intro w
-                    calc (D.step P μ v w).1.timer
-                        ≤ (D w).1.timer :=
-                          step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
-                            (Dmax := Dmax) hn0 hSD w
-                      _ ≤ 7 * (Rmax + 4) := hTBD w
-                · -- InSswap broke → DP → Mid
-                  right
-                  by_cases hpar : n % 2 = 0
-                  · sorry -- Even n InSswap break in hwin
-                  · exact Or.inr (step_InSswap_break_creates_CorrectResetSeed_odd
+                    · intro w
+                      calc (D.step P μ v w).1.timer
+                          ≤ (D w).1.timer :=
+                            step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
+                              (Dmax := Dmax) hn0 hSD w
+                        _ ≤ 7 * (Rmax + 4) := hTBD w
+                  · right
+                    exact Or.inr (step_InSswap_break_creates_CorrectResetSeed_odd
                       hn4 hn0 hRmax hSD hpar hSD')
-              exact Probability.ProbHitWithin_one_lower_bound_of_step P hn2 D Mid
-                hNotMid hv_ne.symm hMidStep)).trans
+                exact Probability.ProbHitWithin_one_lower_bound_of_step P hn2 D Mid
+                  hNotMid hv_ne.symm hMidStep)).trans
           (by rw [inv_inv])
       -- Phase B: E[T to DP from Mid] ≤ n(n-1)
       have hPhaseB : ∀ D : Config (AgentState n) Opinion n, Mid D →
