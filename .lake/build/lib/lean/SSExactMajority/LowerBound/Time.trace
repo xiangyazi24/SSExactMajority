@@ -1,0 +1,158 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["279587b70ae61c1d.olean"],
+  "i": "8b333e08c02a3d75.ilean",
+  "c": "05427d026759f3ad.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Time.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Time.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Time.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Time.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Time.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: 'simp [hgt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:97:4: 'intro w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: 'simp [hgt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:98:4: 'rw [hStable γ t w]' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: 'simp [hgt] at hSafe' ⊢' is a flexible tactic modifying 'hSafe''. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:99:4: 'exact hSafe' w' uses 'hSafe''!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: 'simp [hgt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:99:4: 'exact hSafe' w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:103:6: 'intro w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:104:6: 'rw [hStable γ t w]' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:105:6: 'exact hSafe' w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying 'hSafe''. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:105:6: 'exact hSafe' w' uses 'hSafe''!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:107:6: 'intro w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:108:6: 'rw [hStable γ t w]' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:109:6: 'exact hSafe' w' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: 'simp [hgt, hlt] at hSafe' ⊢' is a flexible tactic modifying 'hSafe''. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:109:6: 'exact hSafe' w' uses 'hSafe''!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:145:22: This simp argument is unused:\n  gt_iff_lt\n\nHint: Omit it from the simp argument list.\n  simp only [hnpos, g̵t̵_̵i̵f̵f̵_̵l̵t̵,̵ ̵↓reduceIte] at hSafeAllA\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:196:5: unused variable `hRandom`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:197:5: unused variable `hSilent`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:187:0: `time_lower_bound_omega_n_expected` has the hypothesis:\n  • [Fintype Q] (#2)\nwhich is not used in the remainder of the type.\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.LowerBound.Time:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b264f78d4e355404"],
+        ["SSExactMajority.Defs.Execution:importAllArts", "07f7b0fcfa0a60db"],
+        ["SSExactMajority.LowerBound.Space transitive imports (legacy)",
+         "3c0c7dcb8576019c"],
+        ["SSExactMajority.LowerBound.Space:importAllArts", "1aea94edd484738b"],
+        ["SSExactMajority.Probability.ExpectedTime transitive imports (legacy)",
+         "723600b7ed5833a2"],
+        ["SSExactMajority.Probability.ExpectedTime:importAllArts",
+         "e035e0c0cbf31bf3"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
+   "9a2be90fd35343e5"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Time.lean",
+   "79df4bb90c61e6f2"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "e4fd664801ef90bd"}

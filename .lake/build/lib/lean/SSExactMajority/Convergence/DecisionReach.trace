@@ -1,0 +1,163 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["9e2e0885e8b601f6.olean"],
+  "i": "8b0298a9f1c8e94b.ilean",
+  "c": "d2a022277e28ac8a.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/DecisionReach.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/DecisionReach.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/DecisionReach.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/DecisionReach.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/DecisionReach.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:298:29: This simp argument is unused:\n  h_no_swap\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpa̵r̵a̲r̲, h_no_swap,̵ ̵h̵_̵n̵o̵_̵s̵w̵a̵p̵', h_xv_BA,\n  ̵  ̵ ̵ ̵h_inputs_agree,\n  ̲  ̲ ̲ ̲hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:298:40: This simp argument is unused:\n  h_no_swap'\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_n̵o̵_̵s̵w̵a̵p̵'̵,̵ ̵h̵_̵xv_BA,\n  ̵  ̵ ̵ ̵h_inputs_agree,\n  ̲  ̲ ̲ ̲hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:4: This simp argument is unused:\n  hu_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu̵_̵m̵e̵d̵,̵ ̵h̵v_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:12: This simp argument is unused:\n  hv_upper\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv̵_̵u̵p̵p̵e̵r̵,̵ ̵h̵N1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:37: This simp argument is unused:\n  hu_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu̵_̵m̵e̵d̵_̵c̵e̵i̵l̵,̵\n  ̵ ̵ ̵ ̵ ̵h̵v_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:301:4: This simp argument is unused:\n  hv_no_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_me̵d̵_̵c̵e̵i̵l̵,̵ ̵h̵v̵_̵n̵o̵_̵m̵ax, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:301:20: This simp argument is unused:\n  hv_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv̵_̵n̵o̵_̵m̵a̵x̵,̵ ̵h̵ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:247:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:293:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:324:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:332:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:17: 'simp' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:23: 'exact h_correct' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:4: 'simp [hvu]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:4: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:16: 'exact h_correct' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:429:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:449:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:457:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:488:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:496:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:504:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:462:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:573:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:605:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:643:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:700:28: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:653:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:691:17: 'simp' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:691:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:692:4: 'exact opinionToAnswer_median_eq_majorityAnswer_odd hC hμ_med hpar' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:723:0: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:690:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:696:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:733:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:773:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:783:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:793:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:738:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.DecisionReach:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.PotentialReach transitive imports (legacy)",
+         "87bbdff062c22996"],
+        ["SSExactMajority.Convergence.PotentialReach:importAllArts",
+         "122725ffeec6e1d8"],
+        ["SSExactMajority.Convergence.SwapPhase transitive imports (legacy)",
+         "0a7e211eedab1dd0"],
+        ["SSExactMajority.Convergence.SwapPhase:importAllArts",
+         "1f13a6c5f333881a"],
+        ["SSExactMajority.Convergence.RankPreservation transitive imports (legacy)",
+         "1b3328a0f723cd1a"],
+        ["SSExactMajority.Convergence.RankPreservation:importAllArts",
+         "fed1c78f7143032b"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
+   "9a2be90fd35343e5"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/DecisionReach.lean",
+   "0d14f51095ebdf06"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "e46bbf6c94ca4f92"}

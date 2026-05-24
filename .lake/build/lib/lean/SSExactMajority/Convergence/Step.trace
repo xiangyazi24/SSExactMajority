@@ -1,0 +1,111 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["ab4d121382e9e163.olean"],
+  "i": "81c1f289e4283117.ilean",
+  "c": "6118b79e73fda384.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Step.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Step.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Step.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Step.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Step.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:17: 'simp [protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:37: 'exact h1' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:19: 'simp [hwu, protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:44: 'exact h2' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:17: 'simp [protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:37: 'exact h1' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:19: 'simp [hwu, protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:44: 'exact h2' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:17: 'simp [protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:37: 'exact h1' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:19: 'simp [hwu, protocolPEM]' is a flexible tactic modifying '⊢'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:44: 'exact h2' uses '⊢'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:116:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:128:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:147:39: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [Config.step,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:168:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:192:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:204:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Step:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.AnswerPreservation transitive imports (legacy)",
+         "03955497b2e17172"],
+        ["SSExactMajority.Convergence.AnswerPreservation:importAllArts",
+         "9bb1d55e436b269c"],
+        ["SSExactMajority.Convergence.StatePreservation transitive imports (legacy)",
+         "b0cea256c4a2fdae"],
+        ["SSExactMajority.Convergence.StatePreservation:importAllArts",
+         "4dd214a67cea7c59"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
+   "9a2be90fd35343e5"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Step.lean",
+   "6a8ad90dab0de777"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "ba65f9051f857e10"}

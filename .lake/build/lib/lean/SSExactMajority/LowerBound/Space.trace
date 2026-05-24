@@ -1,0 +1,92 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["02fde06bec5a0de0.olean"],
+  "i": "bd7c8cea07745034.ilean",
+  "c": "a3826b4a402a86a3.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Space.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Space.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Space.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Space.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Space.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:28:8: automatically included section variable(s) unused in theorem `_private.SSExactMajority.LowerBound.Space.0.SSEM.execution_of_silent`:\n  [Fintype Q]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [Fintype Q] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:28:0: `execution_of_silent` has the hypothesis:\n  • [Fintype Q] (#4)\nwhich is not used in the remainder of the type.\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: Add `import Mathlib.Data.Fintype.EquivFin` to make `Fintype.ofFinite` available.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:67:47: This simp argument is unused:\n  Prod.fst\n\nHint: Omit it from the simp argument list.\n  simp only [̵P̵r̵o̵d̵.̵f̵s̵t̵]̵ ̵at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:104:27: This simp argument is unused:\n  Config.allOutput\n\nHint: Omit it from the simp argument list.\n  simp [Config.outputOf, Co̵n̵f̵i̵g̵.̵a̵l̵l̵O̵u̵t̵p̵u̵t̵,̵ ̵C̵'_def] at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:104:4: 'simp [Config.outputOf, Config.allOutput, C'_def] at this' is a flexible tactic modifying 'this'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:105:4: 'exact this' uses 'this'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:38:0: `silent_config_A_agents_distinct` has the hypothesis:\n  • [Fintype Q] (#4)\nwhich is not used in the remainder of the type.\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: Add `import Mathlib.Data.Fintype.EquivFin` to make `Fintype.ofFinite` available.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:152:47: This simp argument is unused:\n  Prod.fst\n\nHint: Omit it from the simp argument list.\n  simp only [̵P̵r̵o̵d̵.̵f̵s̵t̵]̵ ̵at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:183:4: 'simp [Config.outputOf, C'_def] at this' is a flexible tactic modifying 'this'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:184:4: 'exact this' uses 'this'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:125:0: `silent_config_B_agents_distinct` has the hypothesis:\n  • [Fintype Q] (#4)\nwhich is not used in the remainder of the type.\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: Add `import Mathlib.Data.Fintype.EquivFin` to make `Fintype.ofFinite` available.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:230:47: This simp argument is unused:\n  Prod.fst\n\nHint: Omit it from the simp argument list.\n  simp only [̵P̵r̵o̵d̵.̵f̵s̵t̵]̵ ̵at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:261:4: 'simp [Config.outputOf, C'_def] at this' is a flexible tactic modifying 'this'. Try 'simp?' and use the suggested 'simp only [...]'. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:262:4: 'exact this' uses 'this'!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Space.lean:201:0: `silent_config_AB_distinct` has the hypothesis:\n  • [Fintype Q] (#4)\nwhich is not used in the remainder of the type.\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: Add `import Mathlib.Data.Fintype.EquivFin` to make `Fintype.ofFinite` available.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.LowerBound.Space:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.ExactMajority transitive imports (legacy)",
+         "3080c1fe889eb007"],
+        ["SSExactMajority.Defs.ExactMajority:importAllArts",
+         "77fcf123c85f37f6"],
+        ["SSExactMajority.Embed transitive imports (legacy)",
+         "568669f76f1cead8"],
+        ["SSExactMajority.Embed:importAllArts", "d7860c03d5b330d9"],
+        ["Mathlib.Data.Fintype.Card transitive imports (legacy)",
+         "cb29bcc909f6d15d"],
+        ["Mathlib.Data.Fintype.Card:importAllArts", "56ca565ee446728b"],
+        ["Mathlib.Tactic.FinCases transitive imports (legacy)",
+         "5791c101791d28ed"],
+        ["Mathlib.Tactic.FinCases:importAllArts", "caa172cdccb7c21f"],
+        ["Mathlib.Tactic.NormNum transitive imports (legacy)",
+         "6df721e1f0739293"],
+        ["Mathlib.Tactic.NormNum:importAllArts", "e1c90a5fc203e03e"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
+   "9a2be90fd35343e5"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Space.lean",
+   "46d9c66f513f81c6"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "1b7259517d06a8ae"}
