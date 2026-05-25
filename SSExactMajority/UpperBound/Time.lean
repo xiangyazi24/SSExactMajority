@@ -11230,6 +11230,32 @@ axiom allR_to_consensus_bound_axiom
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
       ((2 * Rmax * n * n : ℕ) : ENNReal)
 
+/-- Proof in RecoveryBound.lean (sorry placeholder).
+From a wrong-restart state (some Resetting agents with full rc) back to
+InSswap+timer or consensus. Bound: 8·Rmax·n². -/
+axiom wrong_restart_recovery_axiom
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax)
+    (hDmax_le_Rmax : Dmax ≤ 2 * Rmax)
+    (D : Config (AgentState n) Opinion n)
+    (hBounded : IsBoundedConfig (max Rmax (max Dmax (7 * (Rmax + 4)))) D)
+    (hAllRcFull :
+      ∀ w : Fin n,
+        (D w).1.role = .Resetting →
+          (D w).1.resetcount = Rmax ∧ (D w).1.leader = .L)
+    (hSomeR : ∃ r : Fin n, (D r).1.role = .Resetting) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) D
+      (fun C =>
+        IsConsensusConfig C ∨
+          (InSswap C ∧
+            MedianTimerAtLeast 1 C ∧
+            IsTimerBoundedConfig (7 * (Rmax + 4)) C)) ≤
+      ((8 * Rmax * n * n : ℕ) : ENNReal)
+
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
 
