@@ -45,11 +45,11 @@ theorem wrong_restart_to_InSswap_timer_bound
     (D : Config (AgentState n) Opinion n)
     (hBounded :
       RecoveryBoundedConfig (max Rmax (max Dmax (7 * (Rmax + 4)))) D)
-    (hSeed :
-      ∃ r : Fin n,
-        (D r).1.role = .Resetting ∧
-          (D r).1.resetcount = Rmax ∧
-          (D r).1.leader = .L) :
+    (hAllRcFull :
+      ∀ w : Fin n,
+        (D w).1.role = .Resetting →
+          (D w).1.resetcount = Rmax ∧ (D w).1.leader = .L)
+    (hSomeR : ∃ r : Fin n, (D r).1.role = .Resetting) :
     Probability.expectedHittingTime
       (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0))
       (by exact Nat.le_trans (by decide : 2 ≤ 4) hn4 : 2 ≤ n) D
