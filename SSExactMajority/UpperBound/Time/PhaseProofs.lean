@@ -270,14 +270,29 @@ theorem PEM_expected_reset_trigger
 
 /-- Proved in TimerPosCRS.lean.
 InSswap + MedC + ¬InSswap(step) → CRS, without needing timer=0. -/
-axiom crs_of_InSswap_break_with_MedC_axiom
+theorem crs_of_InSswap_break_with_MedC
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
     {D : Config (AgentState n) Opinion n}
     (hS : InSswap D) (hM : MedianAnswerCorrect D)
     {i j : Fin n}
-    (hS' : ¬ InSswap (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)) :
-    CorrectResetSeed (D.step (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)) i j)
+    (hS' : ¬ InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)) :
+    CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
+  by_cases hpar : n % 2 = 0
+  · obtain ⟨μ, hμ_med⟩ := hS.toInSrank.exists_median (by omega : 0 < n)
+    by_cases hT0 : (D μ).1.timer = 0
+    · have hT : ∀ μ'' : Fin n, (D μ'').1.rank.val + 1 = ceilHalf n → (D μ'').1.timer = 0 := by
+        intro μ'' hμ''_med
+        have := hS.toInSrank.ranks_inj (Fin.ext (by omega))
+        subst this; exact hT0
+      exact step_InSswap_break_creates_CorrectResetSeed hn4 hn0 hRmax hS hM hT hS'
+    · have hT_le : MedianTimerAtLeast 1 D := by
+        intro μ'' hμ''_med
+        have := hS.toInSrank.ranks_inj (Fin.ext (by omega))
+        subst this; omega
+      exact step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
+        hn4 hn0 hRmax hS hM hpar hT_le hS'
+  · exact step_InSswap_break_creates_CorrectResetSeed_odd hn4 hn0 hRmax hS hpar hS'
 
 axiom allR_to_consensus_bound_axiom
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
