@@ -1,0 +1,296 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["fcd8c1e7e2ced1dd.olean"],
+  "m": false,
+  "i": "84fc72d9e4d9fa47.ilean",
+  "c": "079a5804123d2c17.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Defs/Protocol.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Defs/Protocol.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Defs/Protocol.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Defs/Protocol.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Defs/Protocol.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A population protocol over finite types. -/\nstructure Protocol (Q X Y : Type*) where\n  δ : (Q × X) × (Q × X) → Q × Q\n  π_out : Q × X → Y`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- An agent is identified by its index in Fin n. -/\nabbrev Agent (n : ℕ) :=\n  Fin n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The two possible input opinions. -/\ninductive Opinion\n  | A\n  | B\n  deriving DecidableEq, Repr, Inhabited`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `instance : Fintype Opinion\n    where\n  elems := {.A, .B}\n  complete s := by cases s <;> simp`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The three possible output values. -/\ninductive Output\n  | A\n  | B\n  | T\n  deriving DecidableEq, Repr, Inhabited`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `instance : Fintype Output\n    where\n  elems := {.A, .B, .T}\n  complete s := by cases s <;> simp`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace Opinion`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `def toString : Opinion → String\n  | .A => \"A\"\n  | .B => \"B\"`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `instance : ToString Opinion :=\n  ⟨toString⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end Opinion`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace Output`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `def toString : Output → String\n  | .A => \"A\"\n  | .B => \"B\"\n  | .T => \"T\"`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `instance : ToString Output :=\n  ⟨toString⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end Output`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Population Protocol — General Definition\n\nA protocol P = (Q, X, Y, δ, π_out) following Section 2.1 of\nKanaya–Eguchi–Sasada–Ooshita–Inoue (2025).\n\n- Q : agent states\n- X : input symbols\n- Y : output symbols\n- δ : (Q × X) × (Q × X) → Q × Q   (transition, keyed on state+input)\n- π_out : Q × X → Y                 (output function)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:4:0: * '\n# Popula':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:13:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/Protocol.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Defs.Protocol:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["Mathlib.Data.Fintype.Basic transitive imports (legacy)",
+         "759046ca4bbb0c46"],
+        ["Mathlib.Data.Fintype.Basic:importAllArts", "e86ae50007fde6e6"],
+        ["Mathlib.Data.Finset.Basic transitive imports (legacy)",
+         "e9643a503ae66ac4"],
+        ["Mathlib.Data.Finset.Basic:importAllArts", "0edbe396133a046c"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Defs/Protocol.lean",
+   "62bcf704227b66f6"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Defs.Protocol", "4b47341b6abd182b"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "0804a3d5db2cc033"}

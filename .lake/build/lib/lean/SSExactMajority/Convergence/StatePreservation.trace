@@ -1,0 +1,157 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["411a8df4010b6bce.olean"],
+  "m": false,
+  "i": "3917b3aa74fa7114.ilean",
+  "c": "429f4d8d59d69093.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/StatePreservation.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/StatePreservation.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/StatePreservation.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/StatePreservation.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/StatePreservation.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-Field Preservation through `transitionPEM`\n\n`.role` and `.rank` are preserved by `transitionPEM` at a consensus\npair: every Phase-4 sub-case in which the propagation reset branch\nwould fire has `b₀.answer = b₁.answer` post-decision (by record\nprojection), so the reset trigger `b₀.answer ≠ b₁.answer` is `rfl`-false\nand `split_ifs` can discharge those branches.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:7: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-Field Preservation through `transitionPEM`\n\n`.role` and `.rank` are preserved by `transitionPEM` at a consensus\npair: every Phase-4 sub-case in which the propagation reset branch\nwould fire has `b₀.answer = b₁.answer` post-decision (by record\nprojection), so the reset trigger `b₀.answer ≠ b₁.answer` is `rfl`-false\nand `split_ifs` can discharge those branches.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:7: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-Field Preservation through `transitionPEM`\n\n`.role` and `.rank` are preserved by `transitionPEM` at a consensus\npair: every Phase-4 sub-case in which the propagation reset branch\nwould fire has `b₀.answer = b₁.answer` post-decision (by record\nprojection), so the reset trigger `b₀.answer ≠ b₁.answer` is `rfl`-false\nand `split_ifs` can discharge those branches.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:7: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `.role` and `.rank` are preserved by `transitionPEM` at a consensus pair. -/\ntheorem transitionPEM_consensus_pair_role_rank {trank Rmax nA : ℕ} {a : Answer}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion} (hpair : ConsensusPair s₀ s₁ x₀ x₁ a nA) (hne : s₀.rank ≠ s₁.rank) :\n    (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = s₀.role ∧\n      (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).2.role = s₁.role ∧\n        (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.rank = s₀.rank ∧\n          (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).2.rank = s₁.rank :=\n  by\n  have hRD : rankDelta (s₀, s₁) = (s₀, s₁) := hRank s₀ s₁ hpair.settled₀ hpair.settled₁ hne\n  have hs0 := hpair.settled₀\n  have hs1 := hpair.settled₁\n  have ha0 := hpair.answer₀\n  have ha1 := hpair.answer₁\n  have hswap := hpair.swap_fails\n  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate\n  simp only [hRD, hs0, hs1, hswap, ne_eq, role_settled_ne_resetting, not_true_eq_false, not_false_eq_true, false_and,\n    and_false, if_false, and_self, if_true]\n    -- Closure tactic for each split_ifs leaf: success or reset-impossibility.\n    \n  by_cases hpar : n % 2 = 0\n  · simp only [hpar, if_true]\n    by_cases h_lu : s₀.rank.val + 1 = n / 2 ∧ s₁.rank.val + 1 = n / 2 + 1\n    · obtain ⟨hr0, hr1⟩ := h_lu\n      simp only [hr0, hr1, and_self, if_true]\n      by_cases hxx : x₀ = x₁\n      · simp only [hxx, if_true]\n        split_ifs <;>\n          first\n          |\n            (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                first\n                | rfl\n                | trivial)\n          | (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›; exact hne rfl)\n      · simp only [hxx, if_false]\n        split_ifs <;>\n          first\n          |\n            (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                first\n                | rfl\n                | trivial)\n          | (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›; exact hne rfl)\n    · simp only [show ¬(s₀.rank.val + 1 = n / 2 ∧ s₁.rank.val + 1 = n / 2 + 1) from h_lu, if_false]\n      by_cases h_ul : s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1\n      · obtain ⟨hr1, hr0⟩ := h_ul\n        simp only [hr1, hr0, and_self, if_true]\n        by_cases hxx : x₁ = x₀\n        · simp only [hxx, if_true]\n          split_ifs <;>\n            first\n            |\n              (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                  first\n                  | rfl\n                  | trivial)\n            | (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›; exact hne rfl)\n        · simp only [hxx, if_false]\n          split_ifs <;>\n            first\n            |\n              (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                  first\n                  | rfl\n                  | trivial)\n            | (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›; exact hne rfl)\n      · simp only [show ¬(s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1) from h_ul, if_false]\n          -- Decision is no-op: b₀ = s₀, b₁ = s₁; ha0, ha1 give answer-equality.\n          \n        have hEq : s₀.answer = s₁.answer := ha0.trans ha1.symm\n        first\n        |\n          (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n              first\n              | rfl\n              | trivial)\n        |\n          (split_ifs <;>\n              first\n              |\n                (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                    first\n                    | rfl\n                    | trivial)\n              |\n                (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n                  first\n                  | exact hne hEq\n                  | exact hne hEq.symm))\n  · simp only [hpar, if_false]\n    by_cases hb0 : s₀.rank.val + 1 = ceilHalf n\n    · by_cases hb1 : s₁.rank.val + 1 = ceilHalf n\n      · simp only [hb0, hb1, if_true]\n        have hma0 := (hpair.decision_odd_match hpar).1 hb0\n        have hma1 := (hpair.decision_odd_match hpar).2 hb1\n        have hEq : opinionToAnswer x₀ = opinionToAnswer x₁ := hma0.trans hma1.symm\n        split_ifs <;>\n          first\n          |\n            (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                first\n                | rfl\n                | trivial)\n          |\n            (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n              first\n              | exact hne hEq\n              | exact hne hEq.symm)\n      · simp only [hb0, hb1, if_true, if_false]\n        have hma0 := (hpair.decision_odd_match hpar).1 hb0\n        have hEq : opinionToAnswer x₀ = s₁.answer := hma0.trans ha1.symm\n        split_ifs <;>\n          first\n          |\n            (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                first\n                | rfl\n                | trivial)\n          |\n            (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n              first\n              | exact hne hEq\n              | exact hne hEq.symm)\n    · by_cases hb1 : s₁.rank.val + 1 = ceilHalf n\n      · simp only [hb0, hb1, if_true, if_false]\n        have hma1 := (hpair.decision_odd_match hpar).2 hb1\n        have hEq : s₀.answer = opinionToAnswer x₁ := ha0.trans hma1.symm\n        split_ifs <;>\n          first\n          |\n            (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                first\n                | rfl\n                | trivial)\n          |\n            (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n              first\n              | exact hne hEq\n              | exact hne hEq.symm)\n      · simp only [hb0, hb1, if_false]\n        have hEq : s₀.answer = s₁.answer := ha0.trans ha1.symm\n        first\n        |\n          (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n              first\n              | rfl\n              | trivial)\n        |\n          (split_ifs <;>\n              first\n              |\n                (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n                    first\n                    | rfl\n                    | trivial)\n              |\n                (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n                  first\n                  | exact hne hEq\n                  | exact hne hEq.symm))`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:20:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:84:41: 'first\n| rfl\n| trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:101:40: 'exact hne hEq.symm' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:109:40: 'exact hne hEq.symm' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:123:12: '(split_ifs <;>\n    first\n    |\n      (refine ⟨?_, ?_, ?_, ?_⟩ <;>\n          first\n          | rfl\n          | trivial)\n    |\n      (exfalso; obtain ⟨_, hne⟩ := ‹_ ∧ _›;\n        first\n        | exact hne hEq\n        | exact hne hEq.symm))' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:40:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:101:40: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:109:40: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:123:12: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-Field Preservation through `transitionPEM`\n\n`.role` and `.rank` are preserved by `transitionPEM` at a consensus\npair: every Phase-4 sub-case in which the propagation reset branch\nwould fire has `b₀.answer = b₁.answer` post-decision (by record\nprojection), so the reset trigger `b₀.answer ≠ b₁.answer` is `rfl`-false\nand `split_ifs` can discharge those branches.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:7: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-Field Preservation through `transitionPEM`\n\n`.role` and `.rank` are preserved by `transitionPEM` at a consensus\npair: every Phase-4 sub-case in which the propagation reset branch\nwould fire has `b₀.answer = b₁.answer` post-decision (by record\nprojection), so the reset trigger `b₀.answer ≠ b₁.answer` is `rfl`-false\nand `split_ifs` can discharge those branches.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:4:0: * '\n# State-':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:7: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:7:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/StatePreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.StatePreservation:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.AnswerPreservation transitive imports (legacy)",
+         "334e6a7d2ef9c4c7"],
+        ["SSExactMajority.Convergence.AnswerPreservation:importAllArts",
+         "b839c5d0bc10cb29"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/StatePreservation.lean",
+   "53e0ff5960f63a71"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.StatePreservation",
+   "e38001125a74b23f"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "ef2d3dccf9cc001b"}

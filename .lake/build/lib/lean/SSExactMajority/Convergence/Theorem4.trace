@@ -1,0 +1,144 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["9ea8bc3ab1ec5f6a.olean"],
+  "m": false,
+  "i": "722fa875f988ea8e.ilean",
+  "c": "b84bfbe3832aeefc.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Theorem4.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Theorem4.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Theorem4.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Theorem4.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Theorem4.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theorem 4 of Kanaya et al. (2025): `P_EM` Solves SSEM\n\nWe deliver the conditional theorem:\n\n  > Assume the (parameterized) ranking subprotocol fixes Settled pairs, > and assume that from every initial configuration there exists a\n  > scheduler under which the execution reaches a consensus configuration.\n  > Then `P_EM` solves self-stabilizing exact majority.\n\nThe first hypothesis (`RankDeltaSettledFix`) is satisfied by any\nwell-formed ranking subprotocol after stabilization (in particular,Burman et al.'s Optimal-Silent-SSR).  The second hypothesis is the\ndeep convergence claim — formalizing it requires the ranking\nsubprotocol's correctness theorem and a 4-phase scheduler construction;\nthat is the next milestone.\n\nOnce a consensus configuration is reached, our preservation lemmas\n(`Convergence/Silent.lean`, `Convergence/Step.lean`) give us:\n  * the configuration is output-stable, and\n  * its outputs match the input majority.\n\nHence `SolvesSSEM` follows.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:10:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:5:27: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theorem 4 of Kanaya et al. (2025): `P_EM` Solves SSEM\n\nWe deliver the conditional theorem:\n\n  > Assume the (parameterized) ranking subprotocol fixes Settled pairs, > and assume that from every initial configuration there exists a\n  > scheduler under which the execution reaches a consensus configuration.\n  > Then `P_EM` solves self-stabilizing exact majority.\n\nThe first hypothesis (`RankDeltaSettledFix`) is satisfied by any\nwell-formed ranking subprotocol after stabilization (in particular,Burman et al.'s Optimal-Silent-SSR).  The second hypothesis is the\ndeep convergence claim — formalizing it requires the ranking\nsubprotocol's correctness theorem and a 4-phase scheduler construction;\nthat is the next milestone.\n\nOnce a consensus configuration is reached, our preservation lemmas\n(`Convergence/Silent.lean`, `Convergence/Step.lean`) give us:\n  * the configuration is output-stable, and\n  * its outputs match the input majority.\n\nHence `SolvesSSEM` follows.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:10:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:5:27: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theorem 4 of Kanaya et al. (2025): `P_EM` Solves SSEM\n\nWe deliver the conditional theorem:\n\n  > Assume the (parameterized) ranking subprotocol fixes Settled pairs, > and assume that from every initial configuration there exists a\n  > scheduler under which the execution reaches a consensus configuration.\n  > Then `P_EM` solves self-stabilizing exact majority.\n\nThe first hypothesis (`RankDeltaSettledFix`) is satisfied by any\nwell-formed ranking subprotocol after stabilization (in particular,Burman et al.'s Optimal-Silent-SSR).  The second hypothesis is the\ndeep convergence claim — formalizing it requires the ranking\nsubprotocol's correctness theorem and a 4-phase scheduler construction;\nthat is the next milestone.\n\nOnce a consensus configuration is reached, our preservation lemmas\n(`Convergence/Silent.lean`, `Convergence/Step.lean`) give us:\n  * the configuration is output-stable, and\n  * its outputs match the input majority.\n\nHence `SolvesSSEM` follows.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:10:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:5:27: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The conditional Theorem 4: `P_EM` solves self-stabilizing exact majority,\nassuming every initial configuration can be driven to a consensus\nconfiguration by some scheduler. -/\ntheorem P_EM_solves_SSEM_of_consensus_reachable {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    (hReach :\n      ∀ C₀ : Config (AgentState n) Opinion n,\n        ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t)) :\n    SolvesSSEM (protocolPEM n trank Rmax rankDelta) n :=\n  by\n  intro C₀\n  obtain ⟨γ, t, hCons⟩ := hReach C₀\n  refine ⟨γ, t, ?_, ?_⟩\n  · -- isOutputStable at the reached consensus configuration.\n    exact hCons.isOutputStable hRank\n  · -- ExactMajoritySafe' at the reached consensus configuration.\n        -- The input multiset of the reached configuration equals C₀'s, since\n        -- inputs are immutable through execution. So `ExactMajoritySafe'` of\n        -- the reached config implies the same for C₀'s input counts.\n        -- Note: the SolvesSSEM definition uses the agentsWithInput cards of\n        -- the ENDED-AT config, which is what `exactMajoritySafe` provides.\n    exact hCons.exactMajoritySafe`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theorem 4 of Kanaya et al. (2025): `P_EM` Solves SSEM\n\nWe deliver the conditional theorem:\n\n  > Assume the (parameterized) ranking subprotocol fixes Settled pairs, > and assume that from every initial configuration there exists a\n  > scheduler under which the execution reaches a consensus configuration.\n  > Then `P_EM` solves self-stabilizing exact majority.\n\nThe first hypothesis (`RankDeltaSettledFix`) is satisfied by any\nwell-formed ranking subprotocol after stabilization (in particular,Burman et al.'s Optimal-Silent-SSR).  The second hypothesis is the\ndeep convergence claim — formalizing it requires the ranking\nsubprotocol's correctness theorem and a 4-phase scheduler construction;\nthat is the next milestone.\n\nOnce a consensus configuration is reached, our preservation lemmas\n(`Convergence/Silent.lean`, `Convergence/Step.lean`) give us:\n  * the configuration is output-stable, and\n  * its outputs match the input majority.\n\nHence `SolvesSSEM` follows.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:10:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:5:27: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theorem 4 of Kanaya et al. (2025): `P_EM` Solves SSEM\n\nWe deliver the conditional theorem:\n\n  > Assume the (parameterized) ranking subprotocol fixes Settled pairs, > and assume that from every initial configuration there exists a\n  > scheduler under which the execution reaches a consensus configuration.\n  > Then `P_EM` solves self-stabilizing exact majority.\n\nThe first hypothesis (`RankDeltaSettledFix`) is satisfied by any\nwell-formed ranking subprotocol after stabilization (in particular,Burman et al.'s Optimal-Silent-SSR).  The second hypothesis is the\ndeep convergence claim — formalizing it requires the ranking\nsubprotocol's correctness theorem and a 4-phase scheduler construction;\nthat is the next milestone.\n\nOnce a consensus configuration is reached, our preservation lemmas\n(`Convergence/Silent.lean`, `Convergence/Step.lean`) give us:\n  * the configuration is output-stable, and\n  * its outputs match the input majority.\n\nHence `SolvesSSEM` follows.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:10:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:5:27: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Theorem4.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Theorem4:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.Step transitive imports (legacy)",
+         "1d54eb5092d8e89b"],
+        ["SSExactMajority.Convergence.Step:importAllArts",
+         "5265502baba02b33"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Theorem4.lean",
+   "b779afac3f1c2656"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.Theorem4", "e022569309b743d0"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "43de750ce024b00a"}

@@ -1,0 +1,195 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["72be50e8aed06b03.olean"],
+  "m": false,
+  "i": "2191af048b783771.ilean",
+  "c": "de4ae8b6b77b58b8.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Schedule.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Schedule.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Schedule.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Schedule.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Schedule.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {Q X Y : Type*} {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- If two schedulers agree on the first `k` steps, their `k`-step\nexecutions from the same configuration are identical. -/\ntheorem execution_eq_of_scheduler_eq (P : Protocol Q X Y) (C : Config Q X n) (γ₁ γ₂ : DetScheduler n) (k : ℕ)\n    (h : ∀ i, i < k → γ₁ i = γ₂ i) : execution P C γ₁ k = execution P C γ₂ k := by\n  induction k with\n  | zero => rfl\n  | succ k\n    ih =>\n    show (execution P C γ₁ k).step P (γ₁ k).1 (γ₁ k).2 = (execution P C γ₂ k).step P (γ₂ k).1 (γ₂ k).2\n    rw [ih (fun i hi => h i (Nat.lt_succ_of_lt hi))]\n    rw [h k (Nat.lt_succ_self k)]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:28:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Concatenate two schedulers at step boundary `k`. -/\ndef concatScheduler (γ₁ : DetScheduler n) (k : ℕ) (γ₂ : DetScheduler n) : DetScheduler n := fun t =>\n  if t < k then γ₁ t else γ₂ (t - k)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Running the concatenated scheduler for `k + t` steps from `C` is the same\nas running `γ₁` for `k` steps from `C`, then `γ₂` for `t` steps from the\nresult. -/\ntheorem execution_concat (P : Protocol Q X Y) (C : Config Q X n) (γ₁ γ₂ : DetScheduler n) (k t : ℕ) :\n    execution P C (concatScheduler γ₁ k γ₂) (k + t) = execution P (execution P C γ₁ k) γ₂ t := by\n  -- First: the concat scheduler matches γ₁ on the first k steps.\n  \n  have hagree : ∀ i, i < k → concatScheduler γ₁ k γ₂ i = γ₁ i := by intro i hi; unfold concatScheduler; simp [hi]\n  have hk : execution P C (concatScheduler γ₁ k γ₂) k = execution P C γ₁ k :=\n    execution_eq_of_scheduler_eq P C (concatScheduler γ₁ k γ₂) γ₁ k hagree\n  induction t with\n  | zero =>\n    show execution P C (concatScheduler γ₁ k γ₂) k = execution P (execution P C γ₁ k) γ₂ 0\n    rw [hk]; rfl\n  | succ t\n    ih =>\n    show\n      execution P C (concatScheduler γ₁ k γ₂) (k + (t + 1)) =\n        execution P (execution P C γ₁ k) γ₂\n          (t + 1)\n            -- Both unfold one step.\n            \n    have hkt : k + (t + 1) = (k + t) + 1 := by omega\n    rw [hkt]\n    show\n      (execution P C (concatScheduler γ₁ k γ₂) (k + t)).step P ((concatScheduler γ₁ k γ₂) (k + t)).1\n          ((concatScheduler γ₁ k γ₂) (k + t)).2 =\n        (execution P (execution P C γ₁ k) γ₂ t).step P (γ₂ t).1 (γ₂ t).2\n    rw [ih]\n      -- The scheduler at index `k + t` is γ₂ t.\n      \n    have hsched : (concatScheduler γ₁ k γ₂) (k + t) = γ₂ t :=\n      by\n      unfold concatScheduler\n      have : ¬(k + t < k) := by omega\n      simp [this]\n    rw [hsched]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:53:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:56:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:61:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- **Phase composition**: chain two reachability claims.  If from any\nconfiguration we can reach a configuration satisfying `P₁`, and from any\n`P₁`-configuration we can reach a `P₂`-configuration, then from any\nconfiguration we can reach a `P₂`-configuration. -/\ntheorem reachable_compose {P : Protocol Q X Y} {P₁ P₂ : Config Q X n → Prop}\n    (h1 : ∀ C₀, ∃ (γ : DetScheduler n) (t : ℕ), P₁ (execution P C₀ γ t))\n    (h2 : ∀ C, P₁ C → ∃ (γ : DetScheduler n) (t : ℕ), P₂ (execution P C γ t)) :\n    ∀ C₀, ∃ (γ : DetScheduler n) (t : ℕ), P₂ (execution P C₀ γ t) :=\n  by\n  intro C₀\n  obtain ⟨γ₁, t₁, hP₁⟩ := h1 C₀\n  obtain ⟨γ₂, t₂, hP₂⟩ := h2 _ hP₁\n  refine ⟨concatScheduler γ₁ t₁ γ₂, t₁ + t₂, ?_⟩\n  rw [execution_concat]\n  exact hP₂`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Scheduler Composition\n\nGlueing two schedulers γ₁, γ₂ at a step boundary `k`: the resulting\nscheduler runs γ₁ for the first `k` steps, then γ₂ thereafter.  The\ncorresponding execution lemma `execution_concat` lets us chain\nphase-existence results in sequence.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:4:0: * '\n# Schedu':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:62: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Schedule.lean:15:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Schedule:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b0e96ee57fc227eb"],
+        ["SSExactMajority.Defs.Execution:importAllArts",
+         "80edd9f14896ca67"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Schedule.lean",
+   "83a575df836e9e66"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.Schedule", "0ce74632099043de"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "7e3bc37789c099db"}

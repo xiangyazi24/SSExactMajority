@@ -80,7 +80,7 @@ theorem probReached_mono_goal
   intro C
   by_cases h1 : Goal₁ C
   · rw [if_pos h1, if_pos (h C h1)]
-  · rw [if_neg h1]; exact zero_le _
+  · rw [if_neg h1]; exact zero_le
 
 /-- `probReached` is the outer-measure mass of the target set for the
 ordinary `t`-step distribution. -/
@@ -396,7 +396,7 @@ theorem probReached_ge_of_joint_event
       (by simpa using hGoodGoal S hS)]
   · rw [Set.indicator_of_notMem (s := GoodEvent)
       (a := S) (f := hitFlagDist P hn C₀ Hit t) hS]
-    exact zero_le _
+    exact zero_le
 
 /-- Specialized form of `probReached_ge_of_joint_event` for the standard
 joint event carried by `probHitAndIn`. -/
@@ -1210,7 +1210,7 @@ private theorem toOuterMeasure_le_of_support_imp
         exact hB (h a hne hA)
       simp [hzero]
   · rw [Set.indicator_of_notMem hA]
-    exact zero_le _
+    exact zero_le
 
 /-- The non-hit tail is monotone contravariantly in the goal predicate:
 enlarging the target can only make the first hit happen earlier. -/
@@ -2518,7 +2518,7 @@ theorem probReached_one_lower_bound_of_step
     _ ≤ ((OffDiagonalPairs n).filter
           (fun p : Fin n × Fin n => Goal (C₀.step P p.1 p.2))).sum
           (fun p => uniformPair n hn p) := by
-        exact Finset.single_le_sum (fun p _ => zero_le (uniformPair n hn p)) hmem
+        exact Finset.single_le_sum (fun p _ => zero_le) hmem
 
 /-- From a non-target initial state, one-step finite-prefix hitting and
 one-step marginal reachability are the same event. -/
@@ -2669,7 +2669,7 @@ theorem ProbHitWithin_one_lower_bound_of_step
     _ ≤ ((OffDiagonalPairs n).filter
           (fun p : Fin n × Fin n => Goal (C₀.step P p.1 p.2))).sum
           (fun p => uniformPair n hn p) := by
-        exact Finset.single_le_sum (fun p _ => zero_le (uniformPair n hn p)) hmem
+        exact Finset.single_le_sum (fun p _ => zero_le) hmem
 
 /-- A whole set of one-step witnesses gives its scheduler mass as a lower
 bound for the one-step hit probability. -/
@@ -3091,7 +3091,7 @@ theorem expectedHittingTime_add_le
             _ ≤ M₂ := hGoal C hMidC
             _ ≤ truncatedExpectedHittingTime P hn C Mid (T + 1) + M₂ := by
               exact le_add_of_nonneg_left
-                (zero_le (truncatedExpectedHittingTime P hn C Mid (T + 1)))
+                (zero_le)
         · have hGoalC : ¬ Goal C := fun h => hMidC (hMidGoal C h)
           rw [truncatedExpectedHittingTime_succ_eq_of_not_goal
             P hn C Goal hGoalC T]
@@ -3232,7 +3232,7 @@ theorem expectedHittingTime_eq_zero_of_goal
       probNotHitBy P hn C₀ Goal t ≤ probNotHitBy P hn C₀ Goal 0 :=
     probNotHitBy_le_of_le P hn C₀ Goal (Nat.zero_le t)
   rw [probNotHitBy_zero_of_goal P hn C₀ Goal hGoal] at htail
-  exact le_antisymm htail (zero_le _)
+  exact le_antisymm htail (zero_le)
 
 /-- A uniform `K`-step success window gives the expected-time bound in
 geometric-series form. -/
@@ -3283,7 +3283,7 @@ theorem expectedHittingTime_le_window_mul_inv
     expectedHittingTime P hn C₀ Goal ≤ (K : ENNReal) * p⁻¹ := by
   by_cases hGoal : Goal C₀
   · rw [expectedHittingTime_eq_zero_of_goal P hn C₀ Goal hGoal]
-    exact zero_le _
+    exact zero_le
   · have hbound :=
       expectedHittingTime_le_window_mul_tsum_pow_of_not_goal
         P hn C₀ Goal K p hGoal hwin
@@ -3680,7 +3680,7 @@ theorem ProbHitWithin_add_ge_mul
     · push_neg at hEx
       have hzero : ProbHitWithin P hn C Mid t = 0 :=
         ProbHitWithin_eq_zero_of_forall_not P hn C Mid hEx t
-      have hr0 : r = 0 := le_antisymm (hr.trans (le_of_eq hzero)) (zero_le r)
+      have hr0 : r = 0 := le_antisymm (hr.trans (le_of_eq hzero)) (zero_le)
       simp [hr0]
   revert C₀ p hMid
   induction t₁ with
@@ -3696,7 +3696,7 @@ theorem ProbHitWithin_add_ge_mul
           _ = ProbHitWithin P hn C₀ Goal (0 + t₂) := by simp
       · have hzero : ProbHitWithin P hn C₀ Mid 0 = 0 := by
           rw [ProbHitWithin, probHitBy_zero_of_not_goal P hn C₀ Mid hMidC]
-        have hp0 : p = 0 := le_antisymm (hMid.trans (le_of_eq hzero)) (zero_le p)
+        have hp0 : p = 0 := le_antisymm (hMid.trans (le_of_eq hzero)) (zero_le)
         simp [hp0]
   | succ t ih =>
       intro C₀ p hMid
@@ -3962,7 +3962,7 @@ theorem expectedHittingTime_le_window_mul_inv_of_invariant
     expectedHittingTime P hn C₀ Goal ≤ (K : ENNReal) * p⁻¹ := by
   by_cases hGoal : Goal C₀
   · rw [expectedHittingTime_eq_zero_of_goal P hn C₀ Goal hGoal]
-    exact zero_le _
+    exact zero_le
   · have hbound :=
       expectedHittingTime_le_window_mul_tsum_pow_of_not_goal_of_invariant
         P hn C₀ Goal Inv K p hGoal hInv₀ hInvStep hwin
@@ -4110,7 +4110,7 @@ theorem expectedHittingTime_le_inv_of_local_one_lower_bound_until_goal
     expectedHittingTime P hn C₀ Goal ≤ p⁻¹ := by
   by_cases hGoal : Goal C₀
   · rw [expectedHittingTime_eq_zero_of_goal P hn C₀ Goal hGoal]
-    exact zero_le _
+    exact zero_le
   · have hhit_le_one : ProbHitWithin P hn C₀ Goal 1 ≤ 1 := by
       calc
         ProbHitWithin P hn C₀ Goal 1
@@ -4178,7 +4178,7 @@ theorem expectedHittingTime_le_of_potential_descent
             dsimp [Zero]
             rw [hφ, hm0]
           rw [expectedHittingTime_eq_zero_of_goal P hn C Zero hZeroC]
-          exact zero_le _
+          exact zero_le
         · let Mid : Config Q X n → Prop := fun D => φ D < m
           let Inv : Config Q X n → Prop := fun D => φ D ≤ m
           have hCpos : φ C ≠ 0 := by
@@ -4290,7 +4290,7 @@ theorem expectedHittingTime_le_of_variable_descent
             dsimp [Zero]
             rw [hφ, hm0]
           rw [expectedHittingTime_eq_zero_of_goal P hn C Zero hZeroC]
-          exact zero_le _
+          exact zero_le
         · let Mid : Config Q X n → Prop := fun D => φ D < m
           let Inv : Config Q X n → Prop := fun D => φ D ≤ m
           have hmpos : 0 < m := Nat.pos_of_ne_zero hm0
@@ -4347,7 +4347,7 @@ theorem expectedHittingTime_le_of_variable_descent
               exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
                 (by
                   intro x _hxSmall _hxLarge
-                  exact zero_le _)
+                  exact zero_le)
             exact hDrec.trans hBmono
           have hcomp :
               expectedHittingTime P hn C Zero ≤
@@ -4407,7 +4407,7 @@ theorem expectedHittingTime_le_of_variable_descent_until_goal
         intro C hInvC hφ
         by_cases hGoalC : Goal C
         · rw [expectedHittingTime_eq_zero_of_goal P hn C Goal hGoalC]
-          exact zero_le _
+          exact zero_le
         · by_cases hm0 : m = 0
           · have hGoal0 : Goal C := hZeroGoal C hInvC (by rw [hφ, hm0])
             exact False.elim (hGoalC hGoal0)
@@ -4456,7 +4456,7 @@ theorem expectedHittingTime_le_of_variable_descent_until_goal
               intro D hDmid
               rcases hDmid with hGoalD | hLower
               · rw [expectedHittingTime_eq_zero_of_goal P hn D Goal hGoalD]
-                exact zero_le _
+                exact zero_le
               · have hDrec :
                     expectedHittingTime P hn D Goal ≤ B (φ D) :=
                   ih (φ D) hLower.2 D hLower.1 rfl
@@ -4471,7 +4471,7 @@ theorem expectedHittingTime_le_of_variable_descent_until_goal
                   exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
                     (by
                       intro x _hxSmall _hxLarge
-                      exact zero_le _)
+                      exact zero_le)
                 exact hDrec.trans hBmono
             have hcomp :
                 expectedHittingTime P hn C Goal ≤

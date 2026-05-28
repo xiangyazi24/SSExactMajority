@@ -1,0 +1,169 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["374bff5a09e597bc.olean"],
+  "m": false,
+  "i": "2aef26388a936497.ilean",
+  "c": "d86c0cc520992027.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapReach.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapReach.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapReach.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapReach.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapReach.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Swap-phase reachability follows from a single-step decreasing-potential\nhypothesis.  Used to instantiate `hSwapPhase` in `Composition.lean`. -/\ntheorem swap_reaches_Sswap_of_singleStep [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (hStep :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSrank C →\n          0 < misorderedCount C →\n            ∃ u v : Fin n,\n              InSrank (C.step (protocolPEM n trank Rmax rankDelta) u v) ∧\n                misorderedCount (C.step (protocolPEM n trank Rmax rankDelta) u v) < misorderedCount C) :\n    ∀ C : Config (AgentState n) Opinion n,\n      InSrank C → ∃ (γ : DetScheduler n) (t : ℕ), InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  by\n  intro C hC\n  obtain ⟨γ, t, hC_t, h0_t⟩ :=\n    reach_zero_potential (P := protocolPEM n trank Rmax rankDelta) (Pinv := InSrank) (φ := misorderedCount) hStep C hC\n  exact ⟨γ, t, InSswap_of_InSrank_of_count_zero hC_t h0_t⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Swap-phase reachability via the **macro-step** variant: the\nhypothesis can take any finite number of base steps, admitting reset\ncycles or other multi-step transitions. -/\ntheorem swap_reaches_Sswap_of_macroStep [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (hMacro :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSrank C →\n          0 < misorderedCount C →\n            ∃ (γ : DetScheduler n) (k : ℕ),\n              InSrank (execution (protocolPEM n trank Rmax rankDelta) C γ k) ∧\n                misorderedCount (execution (protocolPEM n trank Rmax rankDelta) C γ k) < misorderedCount C) :\n    ∀ C : Config (AgentState n) Opinion n,\n      InSrank C → ∃ (γ : DetScheduler n) (t : ℕ), InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  by\n  intro C hC\n  obtain ⟨γ, t, hC_t, h0_t⟩ :=\n    reach_zero_potential_macro (P := protocolPEM n trank Rmax rankDelta) (Pinv := InSrank) (φ := misorderedCount) hMacro\n      C hC\n  exact ⟨γ, t, InSswap_of_InSrank_of_count_zero hC_t h0_t⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-Phase Reachability via Single-Step Reduction\n\n`hSwapPhase` reduced to a single local hypothesis: from any\n`InSrank` configuration with positive misordered count, there exists\nan interaction `(u, v)` such that the resulting configuration is still\n`InSrank` and has strictly smaller misordered count.\n\nThis converts the global existence of a scheduler into a purely local\none-step argument, which is the natural attack point.  Discharging the\nlocal hypothesis requires showing that — for some choice of `(u, v)` —\nthe propagation reset does not fire (the protocol's median-agent\ntimer doesn't reach 0 with answer mismatch).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:13:53: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:9: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:10:51: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapReach.lean:22:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.SwapReach:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.PotentialReach transitive imports (legacy)",
+         "3246214c89dffae4"],
+        ["SSExactMajority.Convergence.PotentialReach:importAllArts",
+         "94474cff360dbb8d"],
+        ["SSExactMajority.Convergence.SwapPhase transitive imports (legacy)",
+         "e8878a3cafc175b8"],
+        ["SSExactMajority.Convergence.SwapPhase:importAllArts",
+         "32bb05d1567f62d8"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapReach.lean",
+   "73a08c1269216e7a"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.SwapReach", "2bd8f6dc3ba386fe"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "92c8c9496d51fdb7"}

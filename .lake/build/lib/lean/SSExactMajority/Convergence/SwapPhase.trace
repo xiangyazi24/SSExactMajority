@@ -1,0 +1,278 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["530204068443cc61.olean"],
+  "m": false,
+  "i": "040dc295beddc5e5.ilean",
+  "c": "188460387bd62602.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapPhase.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapPhase.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapPhase.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapPhase.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapPhase.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- An ordered pair of agents `(u, v)` is *misordered* in `C` iff\n`(C u).2 = .B`, `(C v).2 = .A`, and the rank of `u` is strictly less\nthan the rank of `v`. The protocol's swap rule (Algorithm 1, lines\n10–11) fires precisely on misordered pairs. -/\ndef MisorderedPair (C : Config (AgentState n) Opinion n) (uv : Fin n × Fin n) : Prop :=\n  (C uv.1).2 = Opinion.B ∧ (C uv.2).2 = Opinion.A ∧ (C uv.1).1.rank < (C uv.2).1.rank`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `instance (C : Config (AgentState n) Opinion n) (uv : Fin n × Fin n) :\n    Decidable (MisorderedPair C uv) := by\n  unfold MisorderedPair\n  exact instDecidableAnd`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The set of misordered pairs in `C`. -/\ndef misorderedSet (C : Config (AgentState n) Opinion n) : Finset (Fin n × Fin n) :=\n  Finset.univ.filter (MisorderedPair C)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The count of misordered pairs — a decidable potential function. -/\ndef misorderedCount (C : Config (AgentState n) Opinion n) : ℕ :=\n  (misorderedSet C).card`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `theorem mem_misorderedSet {C : Config (AgentState n) Opinion n}\n    {uv : Fin n × Fin n} : uv ∈ misorderedSet C ↔ MisorderedPair C uv :=\n  by\n  unfold misorderedSet\n  rw [Finset.mem_filter]\n  exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ _, h⟩⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The count is zero iff there are no misordered pairs. -/\ntheorem misorderedCount_eq_zero_iff (C : Config (AgentState n) Opinion n) :\n    misorderedCount C = 0 ↔ ∀ u v, ¬MisorderedPair C (u, v) :=\n  by\n  unfold misorderedCount\n  rw [Finset.card_eq_zero]\n  constructor\n  · intro h u v hM\n    have hmem : (u, v) ∈ misorderedSet C := mem_misorderedSet.mpr hM\n    rw [h] at hmem\n    exact (by simp : (u, v) ∉ (∅ : Finset (Fin n × Fin n))) hmem\n  · intro h\n    apply Finset.ext\n    intro uv\n    constructor\n    · intro hmem\n      exact (h uv.1 uv.2 (mem_misorderedSet.mp hmem)).elim\n    · intro hmem\n      exact (Finset.notMem_empty _ hmem).elim`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- If the misordered count is positive, then a misordered pair exists. -/\ntheorem exists_misordered_of_pos_count {C : Config (AgentState n) Opinion n} (h : 0 < misorderedCount C) :\n    ∃ u v : Fin n, MisorderedPair C (u, v) := by\n  unfold misorderedCount at h\n  obtain ⟨⟨u, v⟩, huv⟩ := Finset.card_pos.mp h\n  exact ⟨u, v, mem_misorderedSet.mp huv⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:101:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Contrapositive: under `Sswap` (which we'll establish from no-misorder\nunder `Srank` separately), the misordered count is zero. -/\ntheorem misorderedCount_eq_zero_of_InSswap {C : Config (AgentState n) Opinion n} (hSwap : InSswap C) :\n    misorderedCount C = 0 := by\n  rw [misorderedCount_eq_zero_iff]\n  intro u v hM\n  obtain ⟨huB, hvA, hlt⟩ := hM\n  have huRank : nAOf C ≤ (C u).1.rank.val := by\n    by_contra hlt'\n    push_neg at hlt'\n    have : (C u).2 = Opinion.A := (hSwap.input_rank u).mpr hlt'\n    rw [this] at huB; cases huB\n  have hvRank : (C v).1.rank.val < nAOf C := (hSwap.input_rank v).mp hvA\n  have : (C u).1.rank.val < (C v).1.rank.val := hlt\n  omega`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap Phase: Misordered-Pair Potential\n\nIn an `Srank` configuration (all agents Settled, ranks bijective), the\n\"swap\" phase of P_EM rearranges agent states so that A-input agents\nhave lower ranks than B-input agents — i.e., the configuration enters\n`Sswap`.\n\nWe measure progress by the count of *misordered pairs*:\n\n  > A pair `(u, v)` is misordered iff\n  > `(C u).2 = .B ∧ (C v).2 = .A ∧ (C u).1.rank < (C v).1.rank`.\n\nThis file establishes the foundational potential function:\n\n  * `MisorderedPair` — the predicate on agent pairs.\n  * `misorderedSet`, `misorderedCount` — the witness Finset and its\n    cardinality (a decidable potential).\n  * `mem_misorderedSet`, `misorderedCount_eq_zero_iff` — basic\n    rewriting lemmas.\n  * `exists_misordered_of_pos_count` — extracting an explicit witness\n    when the count is positive.\n\nThe `Srank ∧ no-misorder ⟹ Sswap` characterization and the deterministic\nscheduler driving the potential to zero are layered on top of these.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:4:0: * '\n# Swap P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:20:59: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:9:40: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Cardinality lemmas for the no-misorder ⟹ Sswap direction\n\nWe need that under the bijective rank function, the count of agents with\nrank value below a threshold `k ≤ n` is exactly `k`.  The proof uses an\nexplicit `Fin k ↪ Fin n` embedding combined with the rank bijection.\n-/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapPhase.lean:193:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.SwapPhase:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.Sets transitive imports (legacy)",
+         "f6c932db1220d157"],
+        ["SSExactMajority.Convergence.Sets:importAllArts", "82ddc208743c96bc"],
+        ["Mathlib.Data.Fintype.Prod transitive imports (legacy)",
+         "21baab543726a69e"],
+        ["Mathlib.Data.Fintype.Prod:importAllArts", "c7eaf0684dc73149"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapPhase.lean",
+   "53b3af51891308e8"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.SwapPhase", "871812098ac1689c"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "112c455c6b0db8e7"}

@@ -1,0 +1,240 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["1fe24bbfe914a3bb.olean"],
+  "m": false,
+  "i": "8ef0c8e56297190e.ilean",
+  "c": "42bbf81dbc562ddb.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Silent.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Silent.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Silent.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Silent.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Silent.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The number of agents with input `.A`. -/\ndef nAOf (C : Config (AgentState n) Opinion n) : ℕ :=\n  (C.agentsWithInput Opinion.A).card`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The number of agents with input `.B`. -/\ndef nBOf (C : Config (AgentState n) Opinion n) : ℕ :=\n  (C.agentsWithInput Opinion.B).card`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The \"correct\" majority answer for a configuration, computed from input\ncounts: `.outA` if A's strictly outnumber B's, `.outB` if B's outnumber\nA's, `.outT` (tie) otherwise. -/\ndef majorityAnswer (C : Config (AgentState n) Opinion n) : Answer :=\n  if nAOf C > nBOf C then .outA else if nBOf C > nAOf C then .outB else .outT`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Inputs partition agents by `.A` / `.B`. -/\ntheorem nAOf_add_nBOf (C : Config (AgentState n) Opinion n) : nAOf C + nBOf C = n := by\n  classical\n  unfold nAOf nBOf Config.agentsWithInput\n  set sA := (Finset.univ : Finset (Fin n)).filter (fun v => C.inputOf v = Opinion.A)\n  set sB := (Finset.univ : Finset (Fin n)).filter (fun v => C.inputOf v = Opinion.B)\n  have hdisj : Disjoint sA sB := by\n    refine Finset.disjoint_filter.mpr ?_\n    intro v _ hA hB\n    rw [hA] at hB; cases hB\n  have hunion : sA ∪ sB = (Finset.univ : Finset (Fin n)) :=\n    by\n    ext v\n    simp only [sA, sB, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]\n    refine ⟨fun _ => trivial, fun _ => ?_⟩\n    cases h : (C v).2 with\n    | A => exact Or.inl (by simp [Config.inputOf, h])\n    | B => exact Or.inr (by simp [Config.inputOf, h])\n  have hcard := Finset.card_union_of_disjoint hdisj\n  have huniv : (Finset.univ : Finset (Fin n)).card = n := Fintype.card_fin n\n  rw [hunion, huniv] at hcard\n  omega`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A **consensus configuration** of P_EM. -/\nstructure IsConsensusConfig (C : Config (AgentState n) Opinion n) : Prop where\n  /-- Every agent is in the Settled role. -/\n  allSettled : ∀ v, (C v).1.role = .Settled\n  /-- The `rank` field is injective; together with `Fintype` this gives a\n    bijection `Fin n → Fin n`. -/\n  ranks_inj : Function.Injective (fun v => (C v).1.rank)\n  /-- Inputs are sorted by rank: `(C v).2 = .A` iff `rank v < n_A`. -/\n  input_rank : ∀ v, ((C v).2 = Opinion.A ↔ ((C v).1.rank.val < nAOf C))\n  /-- Every agent's `answer` field equals the correct majority answer. -/\n  allAnswerCorrect : ∀ v, (C v).1.answer = majorityAnswer C`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Hypothesis on the (parameterized) ranking subprotocol: applied to two\nalready-Settled agents, it returns them unchanged. Any well-formed ranking\nsubprotocol (in particular Burman et al.'s Optimal-Silent-SSR after\nstabilization) satisfies this. -/\ndef RankDeltaSettledFix (rankDelta : AgentState n × AgentState n → AgentState n × AgentState n) : Prop :=\n  ∀ s t : AgentState n, s.role = .Settled → t.role = .Settled → s.rank ≠ t.rank → rankDelta (s, t) = (s, t)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent / Output-Stable Configurations of P_EM\n\nA *consensus configuration* of P_EM is one in which:\n\n  1. every agent has `role = .Settled`;\n  2. the `rank` field is a bijection `Fin n → Fin n`;\n  3. inputs are sorted by rank — agents with input `.A` occupy ranks\n     `0, …, n_A − 1`, agents with input `.B` occupy ranks `n_A, …, n − 1`;\n  4. every agent's `answer` already matches the correct majority output.\n\nThis file builds the structural foundation: the `IsConsensusConfig`\npredicate, the `majorityAnswer` function, and the immediate consequences\nthat an arbitrary consensus configuration outputs the correct majority\nopinion uniformly.  The deeper claim — that `transitionPEM` preserves\nthis configuration through every step (and hence consensus is\noutput-stable) — is broken into the more granular pair-level case\nanalysis carried out in `Convergence.AnswerPreservation` (next\nmilestone).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:4:0: * '\n# Silent':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:16:41: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:9:3: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:30:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Helper lemmas about input distribution under sorted-rank consensus -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Silent.lean:108:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Silent:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Protocol.Correctness transitive imports (legacy)",
+         "61644906a9f72658"],
+        ["SSExactMajority.Protocol.Correctness:importAllArts",
+         "8e1473817ad2eab7"],
+        ["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b0e96ee57fc227eb"],
+        ["SSExactMajority.Defs.Execution:importAllArts", "80edd9f14896ca67"],
+        ["Mathlib.Data.Finset.Card transitive imports (legacy)",
+         "551b6d8032556119"],
+        ["Mathlib.Data.Finset.Card:importAllArts", "fee2edb7b2615788"],
+        ["Mathlib.Data.Fintype.Card transitive imports (legacy)",
+         "cc7ed9d55362a60b"],
+        ["Mathlib.Data.Fintype.Card:importAllArts", "eb322543cf4e4361"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Silent.lean",
+   "50214067a4aa8730"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.Silent", "c8e327bc63a824d6"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "95f05d727068d3b9"}

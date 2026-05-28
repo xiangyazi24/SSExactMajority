@@ -1,0 +1,203 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["b5fd55986b0b2547.olean"],
+  "m": false,
+  "i": "0887ca4f8296dafb.ilean",
+  "c": "de9a1e082cdc7e4c.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapStep.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapStep.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapStep.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapStep.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapStep.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single-Step Swap Lemma (Non-Median Case)\n\nWhen a misordered pair `(u, v)` has neither agent at the median rank\n(`rank.val + 1 ≠ ceilHalf n`), `transitionPEM` is precisely the swap\nstep:\n\n  * Phase 1 (rank delta) is identity at Settled.\n  * Phase 2–3 collapse at Settled.\n  * Phase 4 swap fires (misordered pair).\n  * Phase 4 decision doesn't fire (neither post-swap rank is at the\n    median pattern).\n  * Phase 4 propagation doesn't fire (neither post-swap rank is the\n    median rank).\n\nThe result is `((C v).1, (C u).1)` — the states swapped between the\ntwo positions.  This is the structural foundation for the swap-step\nsingle-step decreasing-potential lemma.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:8:6: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:28:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single-Step Swap Lemma (Non-Median Case)\n\nWhen a misordered pair `(u, v)` has neither agent at the median rank\n(`rank.val + 1 ≠ ceilHalf n`), `transitionPEM` is precisely the swap\nstep:\n\n  * Phase 1 (rank delta) is identity at Settled.\n  * Phase 2–3 collapse at Settled.\n  * Phase 4 swap fires (misordered pair).\n  * Phase 4 decision doesn't fire (neither post-swap rank is at the\n    median pattern).\n  * Phase 4 propagation doesn't fire (neither post-swap rank is the\n    median rank).\n\nThe result is `((C v).1, (C u).1)` — the states swapped between the\ntwo positions.  This is the structural foundation for the swap-step\nsingle-step decreasing-potential lemma.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:8:6: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:28:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:67:39: This simp argument is unused:\n  and_self\n\nHint: Omit it from the simp argument list.\n  simp only [hsub1, hsub2, if_false,̵ ̵a̵n̵d̵_̵s̵e̵l̵f̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single-Step Swap Lemma (Non-Median Case)\n\nWhen a misordered pair `(u, v)` has neither agent at the median rank\n(`rank.val + 1 ≠ ceilHalf n`), `transitionPEM` is precisely the swap\nstep:\n\n  * Phase 1 (rank delta) is identity at Settled.\n  * Phase 2–3 collapse at Settled.\n  * Phase 4 swap fires (misordered pair).\n  * Phase 4 decision doesn't fire (neither post-swap rank is at the\n    median pattern).\n  * Phase 4 propagation doesn't fire (neither post-swap rank is the\n    median rank).\n\nThe result is `((C v).1, (C u).1)` — the states swapped between the\ntwo positions.  This is the structural foundation for the swap-step\nsingle-step decreasing-potential lemma.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:8:6: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:28:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- At a misordered pair where neither agent is at the median rank,\n`transitionPEM` returns the state-swap. -/\ntheorem transitionPEM_at_misordered_non_median {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {C : Config (AgentState n) Opinion n} (hC : InSrank C) {u v : Fin n} (hMis : MisorderedPair C (u, v))\n    (hu_no_med : (C u).1.rank.val + 1 ≠ ceilHalf n) (hv_no_med : (C v).1.rank.val + 1 ≠ ceilHalf n) :\n    transitionPEM n trank Rmax rankDelta (C u, C v) = ((C v).1, (C u).1) :=\n  by\n  obtain ⟨huB, hvA, hlt⟩ := hMis\n  have hsu : (C u).1.role = .Settled := hC.allSettled u\n  have hsv : (C v).1.role = .Settled := hC.allSettled v\n  have hRD : rankDelta ((C u).1, (C v).1) = ((C u).1, (C v).1) := hRank (C u).1 (C v).1 hsu hsv (ne_of_lt hlt)\n  have hswap : (C u).1.rank < (C v).1.rank ∧ (C u).2 = Opinion.B ∧ (C v).2 = Opinion.A := ⟨hlt, huB, hvA⟩\n  unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4 phase4_swap phase4_decide phase4_propagate\n  simp only [hRD, hsu, hsv, ne_eq, role_settled_ne_resetting, not_true_eq_false, not_false_eq_true, false_and,\n    and_false, if_false, and_self, if_true, hswap]\n    -- After swap: (b₀, b₁) = ((C v).1, (C u).1).\n    \n  by_cases hpar : n % 2 = 0\n  · simp only [hpar, if_true]\n    have hceil_even : ceilHalf n = n / 2 := by unfold ceilHalf; omega\n    have hsub1 : ¬((C v).1.rank.val + 1 = n / 2 ∧ (C u).1.rank.val + 1 = n / 2 + 1) := by rintro ⟨h1, h2⟩;\n      have : (C u).1.rank.val < (C v).1.rank.val := hlt; omega\n    have hsub2 : ¬((C u).1.rank.val + 1 = n / 2 ∧ (C v).1.rank.val + 1 = n / 2 + 1) :=\n      by\n      rintro ⟨h1, _⟩\n      have hu_med : (C u).1.rank.val + 1 = ceilHalf n := by rw [hceil_even]; exact h1\n      exact hu_no_med hu_med\n    simp only [hsub1, hsub2, if_false, and_self]\n    have hA : ¬((C v).1.rank.val + 1 = ceilHalf n) := hv_no_med\n    have hB : ¬((C u).1.rank.val + 1 = ceilHalf n) := hu_no_med\n    simp only [hA, hB, if_false]\n  · simp only [hpar, if_false]\n    have hb0 : ¬((C v).1.rank.val + 1 = ceilHalf n) := hv_no_med\n    have hb1 : ¬((C u).1.rank.val + 1 = ceilHalf n) := hu_no_med\n    simp only [hb0, hb1, if_false]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:32:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:51:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:98:27: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:106:27: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg hvu,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single-Step Swap Lemma (Non-Median Case)\n\nWhen a misordered pair `(u, v)` has neither agent at the median rank\n(`rank.val + 1 ≠ ceilHalf n`), `transitionPEM` is precisely the swap\nstep:\n\n  * Phase 1 (rank delta) is identity at Settled.\n  * Phase 2–3 collapse at Settled.\n  * Phase 4 swap fires (misordered pair).\n  * Phase 4 decision doesn't fire (neither post-swap rank is at the\n    median pattern).\n  * Phase 4 propagation doesn't fire (neither post-swap rank is the\n    median rank).\n\nThe result is `((C v).1, (C u).1)` — the states swapped between the\ntwo positions.  This is the structural foundation for the swap-step\nsingle-step decreasing-potential lemma.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:8:6: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:28:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Wrapper: at a non-median misordered pair, `Config.step` swaps the agent\nstates at positions `u` and `v`. -/\ntheorem step_at_misordered_non_median {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {C : Config (AgentState n) Opinion n} (hC : InSrank C) {u v : Fin n} (hMis : MisorderedPair C (u, v))\n    (hu_no_med : (C u).1.rank.val + 1 ≠ ceilHalf n) (hv_no_med : (C v).1.rank.val + 1 ≠ ceilHalf n) :\n    let C' := C.step (protocolPEM n trank Rmax rankDelta) u v\n    (C' u).1 = (C v).1 ∧ (C' v).1 = (C u).1 ∧ (∀ w, w ≠ u → w ≠ v → (C' w).1 = (C w).1) ∧ (∀ w, (C' w).2 = (C w).2) :=\n  by\n  have huv : u ≠ v := by intro heq; obtain ⟨_, _, hlt⟩ := hMis; rw [heq] at hlt; exact absurd hlt (lt_irrefl _)\n  have htr := transitionPEM_at_misordered_non_median (trank := trank) (Rmax := Rmax) hRank hC hMis hu_no_med hv_no_med\n  refine ⟨?_, ?_, ?_, ?_⟩\n  · -- (C' u).1 = (C v).1\n    \n    show (((C.step (protocolPEM n trank Rmax rankDelta) u v) u)).1 = (C v).1\n    unfold Config.step\n    simp only [if_neg huv, if_pos rfl]\n    show (transitionPEM n trank Rmax rankDelta (C u, C v)).1 = (C v).1\n    rw [htr]\n  · -- (C' v).1 = (C u).1\n    \n    show (((C.step (protocolPEM n trank Rmax rankDelta) u v) v)).1 = (C u).1\n    unfold Config.step\n    simp only [if_neg huv]\n    have hvu : v ≠ u := huv.symm\n    simp only [if_neg hvu, if_pos rfl]\n    show (transitionPEM n trank Rmax rankDelta (C u, C v)).2 = (C u).1\n    rw [htr]\n  · -- Other positions unchanged.\n    \n    intro w hwu hwv\n    show (((C.step (protocolPEM n trank Rmax rankDelta) u v) w)).1 = (C w).1\n    unfold Config.step\n    simp only [if_neg huv]\n    simp [hwu, hwv]\n  · -- Inputs preserved everywhere.\n    \n    intro w\n    show (((C.step (protocolPEM n trank Rmax rankDelta) u v) w)).2 = (C w).2\n    unfold Config.step\n    simp only [if_neg huv]\n    by_cases hwu : w = u\n    · rw [hwu]; simp\n    · by_cases hwv : w = v\n      · have hvu : v ≠ u := huv.symm\n        rw [hwv]; simp [hvu]\n      · simp [hwu, hwv]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:99:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:107:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single-Step Swap Lemma (Non-Median Case)\n\nWhen a misordered pair `(u, v)` has neither agent at the median rank\n(`rank.val + 1 ≠ ceilHalf n`), `transitionPEM` is precisely the swap\nstep:\n\n  * Phase 1 (rank delta) is identity at Settled.\n  * Phase 2–3 collapse at Settled.\n  * Phase 4 swap fires (misordered pair).\n  * Phase 4 decision doesn't fire (neither post-swap rank is at the\n    median pattern).\n  * Phase 4 propagation doesn't fire (neither post-swap rank is the\n    median rank).\n\nThe result is `((C v).1, (C u).1)` — the states swapped between the\ntwo positions.  This is the structural foundation for the swap-step\nsingle-step decreasing-potential lemma.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:4:0: * '\n# Single':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:8:6: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:28:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Combinatorial: at a non-median misordered swap, count strictly decreases -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:186:8: `simp [hp1u, hp2v] at h3val` is a flexible tactic modifying `h3val`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:188:8: `exact h3val` uses `h3val`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:175:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:180:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:184:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:187:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:241:24: This simp argument is unused:\n  hwu\n\nHint: Omit it from the simp argument list.\n  simp [τ, hwv,̵ ̵h̵w̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:255:19: This simp argument is unused:\n  hwu\n\nHint: Omit it from the simp argument list.\n  simp [τ, hwu̵,̵ ̵h̵w̵v, show (v : Fin n) ≠ u from huv.symm]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:255:24: This simp argument is unused:\n  hwv\n\nHint: Omit it from the simp argument list.\n  simp [τ, hwu, h̵w̵v̵,̵ ̵show (v : Fin n) ≠ u from huv.symm]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:321:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:323:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:325:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:327:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:337:19: unused variable `hMis`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapStep.lean:348:19: unused variable `hMis`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.SwapStep:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.SwapPhase transitive imports (legacy)",
+         "e8878a3cafc175b8"],
+        ["SSExactMajority.Convergence.SwapPhase:importAllArts",
+         "32bb05d1567f62d8"],
+        ["SSExactMajority.Convergence.SwapReach transitive imports (legacy)",
+         "72caf2ea6c94176e"],
+        ["SSExactMajority.Convergence.SwapReach:importAllArts",
+         "95ef2b482cc79878"],
+        ["SSExactMajority.Convergence.Composition transitive imports (legacy)",
+         "8c8abd82050aa99f"],
+        ["SSExactMajority.Convergence.Composition:importAllArts",
+         "87dba61516ebf82c"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapStep.lean",
+   "54446e22d665c01a"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.SwapStep", "078f4e288ba07064"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "fd4abb67b3a3e045"}
