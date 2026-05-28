@@ -103,6 +103,113 @@ private theorem step_bystander_eq' {P : Protocol (AgentState n) Opinion Output}
     (C.step P i j w) = C w := by
   simp [Config.step, hij, hwi, hwj]
 
+/-! ### Rank-zero of a Settled-from-Resetting agent
+
+A Resetting agent can only become Settled by firing `resetOSSR` with leader
+`.L`, which sets `rank = ⟨0, hn⟩`.  Hence any output that is Settled but whose
+input was Resetting has rank 0. -/
+
+private theorem processAgent_settled_rank_zero {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} (oldRc : ℕ) (pr : Bool)
+    (hres : s.role = .Resetting)
+    (h : (processAgent Emax Dmax hn s oldRc pr).role = .Settled) :
+    (processAgent Emax Dmax hn s oldRc pr).rank.val = 0 := by
+  unfold processAgent at h ⊢
+  by_cases h1 : s.role = .Resetting ∧ s.resetcount = 0
+  · rw [if_pos h1] at h ⊢
+    by_cases h2 : 0 < oldRc
+    · rw [if_pos h2] at h ⊢; simp only [] at h ⊢
+      by_cases h3 : ((({s with delaytimer := Dmax} : AgentState n)).delaytimer = 0 ∨ (!pr) = true)
+      · rw [if_pos h3] at h ⊢
+        cases hl : s.leader with
+        | L => simp [resetOSSR, hl]
+        | F => simp [resetOSSR, hl] at h
+      · rw [if_neg h3] at h ⊢
+        have h' : s.role = .Settled := h
+        rw [hres] at h'; exact absurd h' (by decide)
+    · rw [if_neg h2] at h ⊢; simp only [] at h ⊢
+      by_cases h3 : ((({s with delaytimer := s.delaytimer - 1} : AgentState n)).delaytimer = 0 ∨ (!pr) = true)
+      · rw [if_pos h3] at h ⊢
+        cases hl : s.leader with
+        | L => simp [resetOSSR, hl]
+        | F => simp [resetOSSR, hl] at h
+      · rw [if_neg h3] at h ⊢
+        have h' : s.role = .Settled := h
+        rw [hres] at h'; exact absurd h' (by decide)
+  · rw [if_neg h1] at h ⊢
+    rw [hres] at h; exact absurd h (by decide)
+
+private theorem propagateReset_settled_rank_zero {Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} (hs : s.role = .Resetting) (ht : t.role = .Resetting) :
+    ((propagateReset Emax Dmax hn s t).1.role = .Settled →
+       (propagateReset Emax Dmax hn s t).1.rank.val = 0) ∧
+    ((propagateReset Emax Dmax hn s t).2.role = .Settled →
+       (propagateReset Emax Dmax hn s t).2.rank.val = 0) := by
+  unfold propagateReset
+  rw [if_neg (show ¬(s.role = .Resetting ∧ 0 < s.resetcount ∧ t.role ≠ .Resetting) from
+        fun ⟨_, _, h⟩ => h ht),
+      if_neg (show ¬(t.role = .Resetting ∧ 0 < t.resetcount ∧ s.role ≠ .Resetting) from
+        fun ⟨_, _, h⟩ => h hs)]
+  simp only [hs, ht, and_self, if_true]
+  -- The two endpoints are now `processAgent {s with rc:=M} s.rc _` and
+  -- `processAgent {t with rc:=M} t.rc _`, each with input role `.Resetting`.
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · exact processAgent_settled_rank_zero _ _ (by simpa using hs) h
+  · exact processAgent_settled_rank_zero _ _ (by simpa using ht) h
+
+private theorem rd_settled_rank_zero
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} {s t : AgentState n}
+    (hs : s.role = .Resetting) (ht : t.role = .Resetting) :
+    ((rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Settled →
+       (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.rank.val = 0) ∧
+    ((rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Settled →
+       (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.rank.val = 0) := by
+  have hpa := propagateReset_settled_rank_zero (Emax := Emax) (Dmax := Dmax) (hn := hn) hs ht
+  unfold rankDeltaOSSR
+  simp only [hs, true_or, if_true]
+  -- rd.1 = (propagateReset s t).1; rd.2 only differs in `leader` from
+  -- (propagateReset s t).2, so role and rank are inherited.
+  set pa := propagateReset Emax Dmax hn s t with hpadef
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · exact hpa.1 h
+  · -- the dedup `{pa.2 with leader := .F}` preserves role and rank
+    split_ifs at h ⊢ with hd
+    · exact hpa.2 h
+    · exact hpa.2 h
+
+/-- For `n ≥ 3`, a both-Settled rank-0 pair stays Settled through Phase 4:
+the rank-0 agents are never the median (`ceilHalf n ≥ 2`), so
+`phase4_propagate` is the identity on roles. -/
+private theorem phase4_rank_zero_settled_stays
+    {Rmax : ℕ} (hn3 : 3 ≤ n) {a₀ a₁ : AgentState n} {x₀ x₁ : Opinion}
+    (h0 : a₀.role = .Settled) (h1 : a₁.role = .Settled)
+    (hr0 : a₀.rank.val = 0) (hr1 : a₁.rank.val = 0) :
+    (transitionPEM_phase4 n Rmax (a₀, a₁) x₀ x₁).1.role = .Settled ∧
+    (transitionPEM_phase4 n Rmax (a₀, a₁) x₀ x₁).2.role = .Settled := by
+  have hceil : ceilHalf n ≠ 1 := by unfold ceilHalf; omega
+  unfold transitionPEM_phase4
+  simp only [h0, h1, and_self, if_true]
+  -- No swap: ranks are equal (both val 0).
+  have hnoswap : phase4_swap a₀ a₁ x₀ x₁ = (a₀, a₁) := by
+    unfold phase4_swap
+    rw [if_neg]
+    rintro ⟨hlt, _, _⟩
+    rw [Fin.lt_def, hr0, hr1] at hlt; exact absurd hlt (by omega)
+  rw [hnoswap]
+  -- Decide preserves both roles and both ranks.
+  have hdec : (phase4_decide n a₀ a₁ x₀ x₁).1.role = .Settled ∧
+      (phase4_decide n a₀ a₁ x₀ x₁).1.rank.val = 0 ∧
+      (phase4_decide n a₀ a₁ x₀ x₁).2.role = .Settled ∧
+      (phase4_decide n a₀ a₁ x₀ x₁).2.rank.val = 0 := by
+    unfold phase4_decide
+    split_ifs <;> refine ⟨?_, ?_, ?_, ?_⟩ <;> simp_all
+  set c := phase4_decide n a₀ a₁ x₀ x₁ with hc
+  -- Propagate is the identity on roles since neither agent is the median.
+  unfold phase4_propagate
+  rw [if_neg (show ¬(c.1.rank.val + 1 = ceilHalf n) from by rw [hdec.2.1]; simpa using fun h => hceil h.symm),
+      if_neg (show ¬(c.2.rank.val + 1 = ceilHalf n) from by rw [hdec.2.2.2]; simpa using fun h => hceil h.symm)]
+  exact ⟨hdec.1, hdec.2.2.1⟩
+
 /-- Under StrongRecoveryInv, if the step output at position i is Resetting,
 then rankDeltaOSSR did NOT produce both Settled.
 Proof: if rd both Settled, prePhase4 both Settled (structural), Phase 4 fires.
@@ -114,7 +221,7 @@ on rank-0 pairs (no median condition fires). So answers stay uniform.
 And phase4_propagate on rank-0 pair either doesn't match ceilHalf condition
 (n ≥ 3) or has freshly-initialized timer > 0 (n = 2). Either way, no reset. -/
 private theorem rd_not_both_settled_of_step_resetting
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
     {i j : Fin n} (hij : i ≠ j)
     (hInv : StrongRecoveryInv Rmax C)
@@ -127,23 +234,33 @@ private theorem rd_not_both_settled_of_step_resetting
     (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
     (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
   intro ⟨hrd_s0, hrd_s1⟩
+  -- both rd outputs Settled, but inputs are both Resetting → both have rank 0.
+  have hrank := rd_settled_rank_zero (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+    (hInv.allResetting i) (hInv.allResetting j)
+  have hr0 : rd.1.rank.val = 0 := hrank.1 hrd_s0
+  have hr1 : rd.2.rank.val = 0 := hrank.2 hrd_s1
   set pre := transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
       (C i).1 (C j).1 (C i).2 (C j).2
   have h_pre_s0 : pre.1.role = .Settled := by rw [h_struct.1]; exact hrd_s0
   have h_pre_s1 : pre.2.role = .Settled := by rw [h_struct.2.2.2.2.2.2.1]; exact hrd_s1
-  have h_phase4 := transitionPEM_phase4_settled_pair (n := n) (Rmax := Rmax)
-    (a₀ := pre.1) (a₁ := pre.2) (x₀ := (C i).2) (x₁ := (C j).2) h_pre_s0 h_pre_s1
+  have h_pre_r0 : pre.1.rank.val = 0 := by
+    have h : pre.1.rank = rd.1.rank := h_struct.2.2.1; rw [h]; exact hr0
+  have h_pre_r1 : pre.2.rank.val = 0 := by
+    have h : pre.2.rank = rd.2.rank := h_struct.2.2.2.2.2.2.2.2.1; rw [h]; exact hr1
+  -- For n ≥ 3 the rank-0 pair stays Settled through Phase 4: contradiction.
+  have hphase_settled :
+      (transitionPEM_phase4 n Rmax pre (C i).2 (C j).2).1.role = .Settled :=
+    (phase4_rank_zero_settled_stays (n := n) (Rmax := Rmax) hn3
+      (x₀ := (C i).2) (x₁ := (C j).2) h_pre_s0 h_pre_s1 h_pre_r0 h_pre_r1).1
   have h_step_i : (C.step P i j i).1 = (P.δ (C i, C j)).1 :=
     Config.step_fst_state P C hij
   have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax pre (C i).2 (C j).2 := rfl
-  rw [h_step_i, h_delta_eq] at hi_res'
-  rcases h_phase4 with ⟨hno_res_0, _⟩ | ⟨⟨_, _, _⟩, _⟩
-  · exact hno_res_0 hi_res'
-  · sorry -- Case 2 impossible: Phase 4 propagate-reset can't fire on rank-0 pair
+  rw [h_step_i, h_delta_eq, hphase_settled] at hi_res'
+  exact absurd hi_res' (by decide)
 
 -- Same as above but for position j (symmetric)
 private theorem rd_not_both_settled_of_step_resetting_snd
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
     {i j : Fin n} (hij : i ≠ j)
     (hInv : StrongRecoveryInv Rmax C)
@@ -156,25 +273,33 @@ private theorem rd_not_both_settled_of_step_resetting_snd
     (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
     (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
   intro ⟨hrd_s0, hrd_s1⟩
+  have hrank := rd_settled_rank_zero (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+    (hInv.allResetting i) (hInv.allResetting j)
+  have hr0 : rd.1.rank.val = 0 := hrank.1 hrd_s0
+  have hr1 : rd.2.rank.val = 0 := hrank.2 hrd_s1
   set pre := transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
       (C i).1 (C j).1 (C i).2 (C j).2
   have h_pre_s0 : pre.1.role = .Settled := by rw [h_struct.1]; exact hrd_s0
   have h_pre_s1 : pre.2.role = .Settled := by rw [h_struct.2.2.2.2.2.2.1]; exact hrd_s1
-  have h_phase4 := transitionPEM_phase4_settled_pair (n := n) (Rmax := Rmax)
-    (a₀ := pre.1) (a₁ := pre.2) (x₀ := (C i).2) (x₁ := (C j).2) h_pre_s0 h_pre_s1
+  have h_pre_r0 : pre.1.rank.val = 0 := by
+    have h : pre.1.rank = rd.1.rank := h_struct.2.2.1; rw [h]; exact hr0
+  have h_pre_r1 : pre.2.rank.val = 0 := by
+    have h : pre.2.rank = rd.2.rank := h_struct.2.2.2.2.2.2.2.2.1; rw [h]; exact hr1
+  have hphase_settled :
+      (transitionPEM_phase4 n Rmax pre (C i).2 (C j).2).2.role = .Settled :=
+    (phase4_rank_zero_settled_stays (n := n) (Rmax := Rmax) hn3
+      (x₀ := (C i).2) (x₁ := (C j).2) h_pre_s0 h_pre_s1 h_pre_r0 h_pre_r1).2
   have h_step_j : (C.step P i j j).1 = (P.δ (C i, C j)).2 :=
     Config.step_snd_state P C hij (Ne.symm hij)
   have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax pre (C i).2 (C j).2 := rfl
-  rw [h_step_j, h_delta_eq] at hj_res'
-  rcases h_phase4 with ⟨_, hno_res_1⟩ | ⟨_, ⟨_, _, _⟩⟩
-  · exact hno_res_1 hj_res'
-  · sorry -- Same Phase 4 trace argument as above
+  rw [h_step_j, h_delta_eq, hphase_settled] at hj_res'
+  exact absurd hj_res' (by decide)
 
 /-! ### Main theorems -/
 
 set_option maxHeartbeats 1600000 in
 theorem strongRecoveryInv_step
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
     (hInv : StrongRecoveryInv Rmax C) (i j : Fin n) :
     StrongRecoveryInv Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ∨
@@ -190,7 +315,7 @@ theorem strongRecoveryInv_step
       have hi_res := hInv.allResetting i
       have hj_res := hInv.allResetting j
       have h_not_both_settled_rd :=
-        rd_not_both_settled_of_step_resetting hij hInv (h_all_res i)
+        rd_not_both_settled_of_step_resetting hn3 hij hInv (h_all_res i)
       have h_struct := transitionPEM_prePhase4_structural
         (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
         (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
@@ -318,7 +443,7 @@ theorem allR_to_consensus_bound
     have hDescent := Probability.expectedHittingTime_le_of_deterministic_descent
       P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) maxRC hInv0
       (fun C hInv hphi => Or.inr (Or.inl ⟨hInv, hphi⟩))
-      (fun C hInv _ i j => strongRecoveryInv_step C hInv i j)
+      (fun C hInv _ i j => strongRecoveryInv_step (by omega) C hInv i j)
       (fun C hInv _ i j => maxRC_step_le_strong C hInv i j)
       (fun C hInv hGoal hpos => maxRC_descent_strong hn4 C hInv hGoal hpos)
     calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax)
