@@ -25,10 +25,10 @@ as a target proposition until the phase-window stochastic proof is closed,
 and the file lives outside the root import graph until then.  See
 `docs/TIME_BOUND_PLAN.md` for the full plan.
 -/
-
 import SSExactMajority.Convergence.BurmanConvergenceFinal
 import SSExactMajority.Probability.ExpectedTime
 import Mathlib.Analysis.PSeries
+
 
 namespace SSEM
 
@@ -2177,7 +2177,7 @@ theorem PEM_phase3_geometric_live_or_exit_lower_bound
     exact Nat.mul_le_mul_left (4 * n) (Nat.sub_le n 1)
   have hfail :
       q ^ (4 * n * n) ≤ (3 : ENNReal) * (8 : ENNReal)⁻¹ := by
-    exact (pow_le_pow_of_le_one (zero_le q) hq_le_one htime).trans
+    exact (pow_le_pow_of_le_one (zero_le) hq_le_one htime).trans
       (hq4m.trans ennreal_inv_two_pow_four_le_three_inv_eight)
   have hsum :
       ((2 : ENNReal)⁻¹ + (8 : ENNReal)⁻¹) + q ^ (4 * n * n) ≤ 1 := by
@@ -2416,7 +2416,7 @@ theorem PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le_live
         (InSswap D ∧ MedianAnswerCorrect D) ∨
           ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
       (Or.inl ⟨hC, h_dec⟩)]
-    exact zero_le _
+    exact zero_le
   · exact PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le
       (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
       hn2 hn0 hn4 hC h_med_timer h_dec
@@ -5980,7 +5980,7 @@ theorem PEM_heapPrefix_recruit_step_or_exit_expected_le_level
   by_cases hNextC : Next C
   · rw [Probability.expectedHittingTime_eq_zero_of_goal
         P hn2 C (fun D => Next D ∨ ¬ Region D) (Or.inl hNextC)]
-    exact zero_le _
+    exact zero_le
   · apply Probability.expectedHittingTime_le_inv_of_local_one_lower_bound
       (P := P) (hn := hn2) (C₀ := C)
       (Region := Region) (Goal := Next)
@@ -6036,7 +6036,7 @@ theorem PEM_heapPrefix_recruit_step_or_exit_expected_le
   by_cases hNextC : Next C
   · rw [Probability.expectedHittingTime_eq_zero_of_goal
         P hn2 C (fun D => Next D ∨ ¬ Region D) (Or.inl hNextC)]
-    exact zero_le _
+    exact zero_le
   · have hraw :
         Probability.expectedHittingTime P hn2 C
           (fun D => Next D ∨ ¬ Region D) ≤
@@ -6110,7 +6110,7 @@ theorem PEM_heapPrefix_expected_until_rankingEndpoint_or_exit_from_level_le
         intro j C hfuel hk₀j hj_pos hj_le hHeap hTimer
         by_cases hG_C : G C
         · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C G hG_C]
-          exact zero_le _
+          exact zero_le
         · by_cases hj_eq : j = n
           · subst j
             have hEndpoint : RankingEndpoint C :=
@@ -6141,7 +6141,7 @@ theorem PEM_heapPrefix_expected_until_rankingEndpoint_or_exit_from_level_le
                       (by simpa [Next] using hNextC.2.1)
                   rw [Probability.expectedHittingTime_eq_zero_of_goal
                     P hn2 C G (Or.inl hEndpoint)]
-                  exact zero_le _
+                  exact zero_le
                 · have hj_next_lt : j + 1 < n := by omega
                   exact ih (n - (j + 1)) (by omega) (j + 1) C
                     (by omega) (by omega) (by omega) (by omega)
@@ -6199,16 +6199,16 @@ theorem PEM_heapPrefix_expected_until_rankingEndpoint_or_exit_from_level_le
                           (by simpa [Next] using hNext.2.1)
                       rw [Probability.expectedHittingTime_eq_zero_of_goal
                         P hn2 D G (Or.inl hEndpoint)]
-                      exact zero_le _
+                      exact zero_le
                     · have hj_next_lt : j + 1 < n := by omega
                       exact ih (n - (j + 1)) (by omega) (j + 1) D
                         (by omega) (by omega) (by omega) (by omega)
                         hNext.1 (hNext.2.2 hj_next_lt)
                   · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D G hG]
-                    exact zero_le _
+                    exact zero_le
                 · have hG : G D := Or.inr ⟨j, hk₀j, hj_lt, hExit⟩
                   rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D G hG]
-                  exact zero_le _
+                  exact zero_le
               have hComp :
                   Probability.expectedHittingTime P hn2 C G ≤
                     (den : ENNReal) + (((n - (j + 1)) * den : ℕ) : ENNReal) :=
@@ -9736,7 +9736,7 @@ theorem PEM_expected_timer_drain
                 rw [show (D.step P i j μ).1.rank = (D μ).1.rank from
                   congrArg (fun x => x.1.rank) hbyst] at hμ_med
                 exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
-        · exact Nat.zero_le _)
+        · exact Nat.zero_le)
     (by -- hDescent: ∃ (median,max) pair that decrements timer
         intro D ⟨hS, hM, hT⟩ hG hφ
         have hn_pos : 0 < n := by omega
@@ -9808,7 +9808,7 @@ theorem PEM_expected_timer_drain
     intro μ _
     split_ifs with h
     · exact hTimerHi μ
-    · exact Nat.zero_le _
+    · exact Nat.zero_le
   calc Probability.expectedHittingTime P (by omega) C Goal
       ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
     _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
@@ -9928,9 +9928,9 @@ theorem PEM_expected_median_correct_to_consensus
       intro D hD
       rcases hD with hCons | hSeed | hExit
       · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D Mid (Or.inl hCons)]
-        exact zero_le _
+        exact zero_le
       · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D Mid (Or.inr hSeed)]
-        exact zero_le _
+        exact zero_le
       · -- ¬(InSswap ∧ timer≥1) case: need to reach Mid via reset trigger
         -- This requires InSswap D, MedianCorrect D, wrongAnswer>0, timer=0
         sorry
@@ -9950,7 +9950,7 @@ theorem PEM_expected_median_correct_to_consensus
     intro D hD
     rcases hD with hCons | hSeed
     · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
-      exact zero_le _
+      exact zero_le
     · exact PEM_expected_epidemic_to_consensus hn4 hn0 hRmax D hSeed
   have hCompose := Probability.expectedHittingTime_add_le P hn2 C Mid IsConsensusConfig
     ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal)
@@ -9987,6 +9987,7 @@ theorem PEM_expected_median_correct_to_consensus
 /-! Phase C assembly: compose median-wrong descent + median-correct via
 strong Markov to get the full hConsensusBound. -/
 
+set_option linter.unusedDecidableInType false in
 theorem PEM_hConsensusBound_from_bridge
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
