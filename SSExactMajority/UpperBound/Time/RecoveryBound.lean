@@ -215,13 +215,27 @@ theorem strongRecoveryInv_step
           hm hij (hInv.allCorrect) h_no_entry_fst h_no_entry_snd h_not_both_settled_rd
       have h_rd_rc := rankDeltaOSSR_rc_of_both_resetting hi_res hj_res
         (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      -- Phase 4 is identity since the prePhase4 output is not both-Settled, so
+      -- the step result equals the prePhase4 output.
+      have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax
+          (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+            (C i).1 (C j).1 (C i).2 (C j).2) (C i).2 (C j).2 := rfl
+      have h_phase4_id := transitionPEM_phase4_of_not_both_settled (n := n) (Rmax := Rmax)
+        (a := transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+          (C i).1 (C j).1 (C i).2 (C j).2)
+        (x₀ := (C i).2) (x₁ := (C j).2) h_not_both_settled_pre
+      have hbound : Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) ≤ Rmax :=
+        le_trans (rc_max_sub_le_max _ _) (max_le (hInv.rcBounded i) (hInv.rcBounded j))
       constructor
       · exact h_all_res
       · rw [show majorityAnswer C' = majorityAnswer C from majorityAnswer_step_eq C i j]
         exact h_ans_all
       · intro w
         by_cases hwi : w = i
-        · subst hwi; sorry
+        · subst hwi
+          have hstep : (C' w).1 = (P.δ (C w, C j)).1 := Config.step_fst_state P C hij
+          rw [hstep, h_delta_eq, h_phase4_id, h_struct.2.2.2.2.1, h_rd_rc.1]
+          exact hbound
 
 
 
@@ -230,7 +244,12 @@ theorem strongRecoveryInv_step
 
 
         · by_cases hwj : w = j
-          · subst hwj; sorry
+          · subst hwj
+            have hstep : (C' w).1 = (P.δ (C i, C w)).2 :=
+              Config.step_snd_state P C hij (Ne.symm hij)
+            rw [hstep, h_delta_eq, h_phase4_id,
+              h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
+            exact hbound
 
 
 
