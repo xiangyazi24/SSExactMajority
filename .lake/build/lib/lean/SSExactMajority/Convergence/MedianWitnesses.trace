@@ -1,0 +1,161 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["aee350b7ae83bbca.olean"],
+  "m": false,
+  "i": "52880bc097ad9395.ilean",
+  "c": "7772fa862a68d0b2.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/MedianWitnesses.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/MedianWitnesses.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/MedianWitnesses.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/MedianWitnesses.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/MedianWitnesses.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median-Wrong Witnesses\n\nDischarges the `hOddCase` / `hEvenCase` hypotheses of\n`P_EM_solves_SSEM_full_modulo_burman` by constructing concrete witness\npairs `(μ, v)` whenever the median is wrong.\n\nFor odd `n ≥ 3` and InSswap C with the median wrong: pick `μ` at\nmedian rank, `v` at rank 0 (exists via the rank bijection).  Then\nall the structural conditions (v non-median, v non-max, rank_v < rank_μ,μ ≠ v) are satisfied; timer ≥ 1 is taken as an external assumption.\n\nEven-n case is structurally similar — median pair (lower at n/2, upper\nat n/2 + 1) — needs both medians to exist and an inputs-agree witness.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:12:59: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:11:15: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:9:43: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:24:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median-Wrong Witnesses\n\nDischarges the `hOddCase` / `hEvenCase` hypotheses of\n`P_EM_solves_SSEM_full_modulo_burman` by constructing concrete witness\npairs `(μ, v)` whenever the median is wrong.\n\nFor odd `n ≥ 3` and InSswap C with the median wrong: pick `μ` at\nmedian rank, `v` at rank 0 (exists via the rank bijection).  Then\nall the structural conditions (v non-median, v non-max, rank_v < rank_μ,μ ≠ v) are satisfied; timer ≥ 1 is taken as an external assumption.\n\nEven-n case is structurally similar — median pair (lower at n/2, upper\nat n/2 + 1) — needs both medians to exist and an inputs-agree witness.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:12:59: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:11:15: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:9:43: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:24:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median-Wrong Witnesses\n\nDischarges the `hOddCase` / `hEvenCase` hypotheses of\n`P_EM_solves_SSEM_full_modulo_burman` by constructing concrete witness\npairs `(μ, v)` whenever the median is wrong.\n\nFor odd `n ≥ 3` and InSswap C with the median wrong: pick `μ` at\nmedian rank, `v` at rank 0 (exists via the rank bijection).  Then\nall the structural conditions (v non-median, v non-max, rank_v < rank_μ,μ ≠ v) are satisfied; timer ≥ 1 is taken as an external assumption.\n\nEven-n case is structurally similar — median pair (lower at n/2, upper\nat n/2 + 1) — needs both medians to exist and an inputs-agree witness.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:4:0: * '\n# Median':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:12:59: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:11:15: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:9:43: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:24:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Existence of an agent at any specific rank in InSrank -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:33:22: unused variable `hn`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:46:5: unused variable `hpar`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:165:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:185:43: unused variable `hC`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:186:5: unused variable `hpar`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:186:26: unused variable `hn3`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:230:43: unused variable `hC`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:372:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:402:10: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:431:10: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:396:12: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:399:12: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:425:12: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:428:12: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:485:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:477:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MedianWitnesses.lean:481:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.MedianWitnesses:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.MasterModuloBurman transitive imports (legacy)",
+         "2c7b7d4e7fe7b24f"],
+        ["SSExactMajority.Convergence.MasterModuloBurman:importAllArts",
+         "1aa300b26aaa8548"],
+        ["SSExactMajority.Convergence.SwapVMedian transitive imports (legacy)",
+         "c44fe8256383555b"],
+        ["SSExactMajority.Convergence.SwapVMedian:importAllArts",
+         "54a7cbc6e0458a03"],
+        ["Mathlib.Data.Fintype.EquivFin transitive imports (legacy)",
+         "247bf752e1fde573"],
+        ["Mathlib.Data.Fintype.EquivFin:importAllArts", "0277d7039bd6fc1c"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/MedianWitnesses.lean",
+   "8464820327f03b9f"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.MedianWitnesses",
+   "9677fbc48eb2e908"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "3ddd19583d1a154c"}

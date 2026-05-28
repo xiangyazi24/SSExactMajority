@@ -1,0 +1,263 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["5176df82b19cdbbd.olean"],
+  "m": false,
+  "i": "c40d8a1aded6bd3e.ilean",
+  "c": "ecc1d18e00f77237.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Protocol/State.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Protocol/State.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Protocol/State.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Protocol/State.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Protocol/State.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The role of an agent in the ranking subprotocol. -/\ninductive Role\n  | Resetting\n  | Settled\n  | Unsettled\n  deriving DecidableEq, Repr`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The leader status. -/\ninductive Leader\n  | L\n  | F\n  deriving DecidableEq, Repr`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The answer variable: φ (undecided), or an output opinion. -/\ninductive Answer\n  | phi\n  | outT\n  | outA\n  | outB\n  deriving DecidableEq, Repr`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace Answer`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `def toOutput : Answer → Output\n  | .phi => .T\n  | .outT => .T\n  | .outA => .A\n  | .outB => .B`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end Answer`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The full state of an agent in P_EM, parametric in n.\nIncludes fields from Optimal-Silent-SSR (Burman et al. PODC 2021):\n  * `children` — number of children recruited in the binary-tree ranking (0, 1, or 2)\n  * `errorcount` — error counter for Unsettled agents (triggers reset when 0)\n  * `delaytimer` — delay timer for Resetting agents (ensures dormancy before wake) -/\nstructure AgentState (n : ℕ) where\n  role : Role\n  rank : Fin n\n  leader : Leader\n  resetcount : ℕ\n  answer : Answer\n  timer : ℕ\n  children : ℕ := 0\n  errorcount : ℕ := 0\n  delaytimer : ℕ := 0\n  deriving DecidableEq, Repr`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.role_with_answer (s : AgentState n) (a : Answer) :\n    ({ s with answer := a } : AgentState n).role = s.role :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.role_with_timer (s : AgentState n) (t : ℕ) : ({ s with timer := t } : AgentState n).role = s.role :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.errorcount_with_answer (s : AgentState n) (a : Answer) :\n    ({ s with answer := a } : AgentState n).errorcount = s.errorcount :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.errorcount_with_timer (s : AgentState n) (t : ℕ) :\n    ({ s with timer := t } : AgentState n).errorcount = s.errorcount :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The output function: if answer = φ, output T; otherwise output answer. -/\ndef agentOutput (s : AgentState n) : Output :=\n  s.answer.toOutput`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent State for Protocol P_EM\n\nEach agent in P_EM has:\n  - input ∈ {A, B}  (read-only)\n  - Variables from Optimal-Silent-SSR (ranking protocol):\n    · role ∈ {Resetting, Settled, Unsettled}\n    · rank ∈ [1, n]\n    · leader ∈ {L, F}\n    · resetcount ∈ [0, R_max]   where R_max = 60 log n\n  - answer ∈ {φ, T, A, B}   (φ = undecided)\n  - timer ∈ [0, 7(t_rank + 4)]  where t_rank ≤ t_rank · n, t_rank = O(1)':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:4:0: * '\n# Agent ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:8:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/State.lean:20:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Protocol.State:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Protocol transitive imports (legacy)",
+         "be6d7fab06f03652"],
+        ["SSExactMajority.Defs.Protocol:importAllArts", "ec5aed2877432207"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Protocol/State.lean",
+   "fe3dee097ca6e161"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Protocol.State", "20564a51b4043968"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "3064b807230442f0"}

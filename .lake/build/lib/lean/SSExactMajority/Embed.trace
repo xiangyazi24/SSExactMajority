@@ -1,0 +1,94 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["2290010844fe2f18.olean"],
+  "m": false,
+  "i": "3a7d533e8a25f64a.ilean",
+  "c": "8b589011802e2a38.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Embed.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Embed.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Embed.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Embed.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Embed.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Embed.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execution Embedding Lemma\n\nCore infrastructure for the impossibility proof (Theorem 1).\n\nIf e : Fin m → Fin n is injective, initial configs agree on e's image,and schedulers correspond via e, then the execution on m agents matches\nthe execution on n agents restricted through e.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execut':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:7:59: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execution Embedding Lemma\n\nCore infrastructure for the impossibility proof (Theorem 1).\n\nIf e : Fin m → Fin n is injective, initial configs agree on e's image,and schedulers correspond via e, then the execution on m agents matches\nthe execution on n agents restricted through e.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execut':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:7:59: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {Q X Y : Type*} {m n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execution Embedding Lemma\n\nCore infrastructure for the impossibility proof (Theorem 1).\n\nIf e : Fin m → Fin n is injective, initial configs agree on e's image,and schedulers correspond via e, then the execution on m agents matches\nthe execution on n agents restricted through e.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:4:0: * '\n# Execut':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:7:59: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!## Input preservation -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:66:15: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Embed.lean:66:15: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message": "SSExactMajority/Embed.lean:66:21: `exact hAgree i` uses `⊢`!",
+   "level": "info"}],
+ "inputs":
+ [["SSExactMajority.Embed:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b0e96ee57fc227eb"],
+        ["SSExactMajority.Defs.Execution:importAllArts", "80edd9f14896ca67"],
+        ["Mathlib.Logic.Function.Basic transitive imports (legacy)",
+         "2a0769da728ea23a"],
+        ["Mathlib.Logic.Function.Basic:importAllArts", "6db00dd504550001"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Embed.lean",
+   "a8fa328d97f1974d"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Embed", "728e272efa5d827f"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "6d8a53308c138329"}
