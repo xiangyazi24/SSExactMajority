@@ -309,29 +309,6 @@ axiom allR_to_consensus_bound_axiom
 /-- Proof in RecoveryBound.lean (sorry placeholder).
 From a wrong-restart state (some Resetting agents with full rc) back to
 InSswap+timer or consensus. Bound: 8·Rmax·n². -/
-axiom wrong_restart_recovery_axiom
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax)
-    (hDmax_le_Rmax : Dmax ≤ 2 * Rmax)
-    (D : Config (AgentState n) Opinion n)
-    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D)
-    (hAllRcFull :
-      ∀ w : Fin n,
-        (D w).1.role = .Resetting →
-          (D w).1.resetcount = Rmax ∧ (D w).1.leader = .L)
-    (hSomeR : ∃ r : Fin n, (D r).1.role = .Resetting) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) D
-      (fun C =>
-        IsConsensusConfig C ∨
-          (InSswap C ∧
-            MedianTimerAtLeast 1 C ∧
-            IsTimerBoundedConfig (7 * (Rmax + 4)) C)) ≤
-      ((8 * Rmax * n * n : ℕ) : ENNReal)
-
 /-- Epidemic exit recovery: from any config, E[T to AllR] is bounded.
 AllR = IsConsensusConfig ∨ (all Resetting ∧ all correct answer).
 This covers the D2 (¬CRS) and D3 (nrc-increase) exit cases in the
@@ -340,21 +317,6 @@ ergodicity: any state eventually reaches consensus. -/
 /-- Healthy epidemic bound: from CRS with all answers correct,
 nonResettingCount descent reaches AllR in n^2(n-1) expected time.
 Proved via expectedHittingTime_le_of_deterministic_descent. -/
-axiom healthy_epidemic_to_AllR_axiom
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmaxN : n ≤ Dmax)
-    (D : Config (AgentState n) Opinion n)
-    (hSeed : CorrectResetSeed D)
-    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) D
-      (fun C => IsConsensusConfig C ∨
-        ((∀ w : Fin n, (C w).1.role = .Resetting) ∧
-         (∀ w : Fin n, (C w).1.answer = majorityAnswer C))) ≤
-      ((n * n * (n - 1) : ℕ) : ENNReal)
-
 
 axiom bounded_resetting_to_AllR_axiom
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
