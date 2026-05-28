@@ -294,7 +294,7 @@ theorem crs_of_InSswap_break_with_MedC
         hn4 hn0 hRmax hS hM hpar hT_le hS'
   · exact step_InSswap_break_creates_CorrectResetSeed_odd hn4 hn0 hRmax hS hpar hS'
 
-axiom allR_to_consensus_bound_axiom
+theorem allR_to_consensus_bound
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmaxN : n ≤ Dmax)
@@ -305,7 +305,8 @@ axiom allR_to_consensus_bound_axiom
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
-      ((2 * Rmax * n * n : ℕ) : ENNReal)
+      ((2 * Rmax * n * n : ℕ) : ENNReal) := by
+  sorry
 
 /-- Proof in RecoveryBound.lean (sorry placeholder).
 From a wrong-restart state (some Resetting agents with full rc) back to
@@ -319,7 +320,7 @@ ergodicity: any state eventually reaches consensus. -/
 nonResettingCount descent reaches AllR in n^2(n-1) expected time.
 Proved via expectedHittingTime_le_of_deterministic_descent. -/
 
-axiom bounded_resetting_to_AllR_axiom
+theorem bounded_resetting_to_AllR
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmaxN : n ≤ Dmax)
@@ -330,7 +331,8 @@ axiom bounded_resetting_to_AllR_axiom
       (fun C => IsConsensusConfig C ∨
         ((∀ w : Fin n, (C w).1.role = .Resetting) ∧
          (∀ w : Fin n, (C w).1.answer = majorityAnswer C))) ≤
-      ((8 * Rmax * n * n : ℕ) : ENNReal)
+      ((8 * Rmax * n * n : ℕ) : ENNReal) := by
+  sorry
 
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
@@ -530,9 +532,9 @@ theorem PEM_expected_epidemic_to_consensus
           · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D AllR hAllR_D]
             exact zero_le _
           · -- ¬CRS ∧ ¬AllR: genuine gap. The state has broken CRS but isn't AllR yet.
-            exact (bounded_resetting_to_AllR_axiom hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
+            exact (bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
         · -- D3: nrc increased. Some agent left Resetting.
-          exact (bounded_resetting_to_AllR_axiom hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
+          exact (bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
     have hComp := Probability.expectedHittingTime_add_le P hn2 C Goal' AllR
       ((n * n * (n - 1) : ℕ) : ENNReal)
       ((n * n * (n - 1) : ℕ) : ENNReal)
@@ -555,7 +557,7 @@ theorem PEM_expected_epidemic_to_consensus
     rcases hD with hCons | hAllRes
     · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
       exact zero_le _
-    · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2 (fun w => by sorry)
+    · exact allR_to_consensus_bound hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2 (fun w => by sorry)
   -- Compose phases
   have hComp := Probability.expectedHittingTime_add_le P hn2 C AllR IsConsensusConfig
     ((2 * n * n * (n - 1) : ℕ) : ENNReal) ((2 * Rmax * n * n : ℕ) : ENNReal)
@@ -824,7 +826,7 @@ theorem PEM_hConsensusBound_from_bridge
       -- Step 2: E[T to IsConsensus] ≤ E[T to AllR] + E[AllR → IsConsensus]
       have hAllR_bound : Probability.expectedHittingTime P hn2 C AllR ≤
           ((n * n * (n - 1) : ℕ) : ENNReal) :=
-        (bounded_resetting_to_AllR_axiom hn4 hn0 hRmax hDmax C).trans (by norm_cast; nlinarith)
+        (bounded_resetting_to_AllR hn4 hn0 hRmax hDmax C).trans (by norm_cast; nlinarith)
       have hAllR_to_cons : ∀ D, AllR D →
           Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
             ((2 * Rmax * n * n : ℕ) : ENNReal) := by
@@ -833,7 +835,7 @@ theorem PEM_hConsensusBound_from_bridge
         · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
             IsConsensusConfig hCons]
           exact zero_le _
-        · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmax D hAllRes hAllAns (fun w => by sorry)
+        · exact allR_to_consensus_bound hn4 hn0 hRmax hDmax D hAllRes hAllAns (fun w => by sorry)
       have hAllR_sub : ∀ D, IsConsensusConfig D → AllR D :=
         fun D h => Or.inl h
       have hCons_bound : Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
