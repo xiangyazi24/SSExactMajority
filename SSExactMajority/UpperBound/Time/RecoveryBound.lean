@@ -110,7 +110,8 @@ theorem allR_to_consensus_bound
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
     (D : Config (AgentState n) Opinion n)
     (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
-    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D) :
+    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
+    (hBounded : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
@@ -127,7 +128,7 @@ theorem allR_to_consensus_bound
       ((Rmax * n * n : ℕ) : ENNReal) := by
     have hInv0 : RecoveryInv Rmax D := by
       refine ⟨fun w => hAllCorrect w, fun w => ?_⟩
-      sorry -- (D w).1.resetcount <= Rmax: protocol invariant
+      exact hBounded w
     have hmaxRC_le : maxRC D ≤ Rmax :=
       maxRC_le_of_all_le (fun w _ => hInv0.2 w)
     have hDescent := Probability.expectedHittingTime_le_of_deterministic_descent
@@ -141,7 +142,13 @@ theorem allR_to_consensus_bound
         exact ⟨u, v, huv, h.imp (fun ⟨a, b⟩ => ⟨a, b⟩) (fun h => Or.inl h)⟩)
     have h_arith : ↑(maxRC D) * ((n * (n - 1) : ℕ) : ENNReal) ≤
         ((Rmax * n * n : ℕ) : ENNReal) := by
-      sorry -- maxRC D ≤ Rmax, n*(n-1) ≤ n*n, so product ≤ Rmax*n*n
+      norm_cast
+      calc maxRC D * (n * (n - 1))
+          ≤ Rmax * (n * (n - 1)) :=
+            Nat.mul_le_mul_right _ hmaxRC_le
+        _ ≤ Rmax * (n * n) :=
+            Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ (Nat.sub_le n 1))
+        _ = Rmax * n * n := by ring
     exact le_trans hDescent h_arith
   -- Phase 2
   have hPhase2 : ∀ C, Mid C →

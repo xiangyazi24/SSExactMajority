@@ -300,7 +300,8 @@ axiom allR_to_consensus_bound_axiom
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmaxN : n ≤ Dmax)
     (D : Config (AgentState n) Opinion n)
     (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
-    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D) :
+    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
+    (hBounded : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
@@ -554,7 +555,7 @@ theorem PEM_expected_epidemic_to_consensus
     rcases hD with hCons | hAllRes
     · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
       exact zero_le _
-    · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2
+    · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2 (fun w => by sorry)
   -- Compose phases
   have hComp := Probability.expectedHittingTime_add_le P hn2 C AllR IsConsensusConfig
     ((2 * n * n * (n - 1) : ℕ) : ENNReal) ((2 * Rmax * n * n : ℕ) : ENNReal)
@@ -832,7 +833,7 @@ theorem PEM_hConsensusBound_from_bridge
         · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
             IsConsensusConfig hCons]
           exact zero_le _
-        · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmax D hAllRes hAllAns
+        · exact allR_to_consensus_bound_axiom hn4 hn0 hRmax hDmax D hAllRes hAllAns (fun w => by sorry)
       have hAllR_sub : ∀ D, IsConsensusConfig D → AllR D :=
         fun D h => Or.inl h
       have hCons_bound : Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
