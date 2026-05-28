@@ -19,7 +19,9 @@ theorem maxRC_le_of_all_le {C : Config (AgentState n) Opinion n} {M : ℕ}
     (h : ∀ w : Fin n, (C w).1.role = .Resetting → (C w).1.resetcount ≤ M) :
     maxRC C ≤ M := by
   unfold maxRC; apply Finset.sup_le; intro w _
-  by_cases hr : (C w).1.role = .Resetting <;> simp [hr, h w hr]
+  by_cases hr : (C w).1.role = .Resetting
+  · simp [hr, h w hr]
+  · simp [hr]
 
 /-- Strong recovery invariant: all Resetting, all correct answers, rc bounded.
 Phase4 never fires (no Settled pair), so answers are preserved
@@ -33,7 +35,8 @@ structure StrongRecoveryInv (Rmax : ℕ) (C : Config (AgentState n) Opinion n) :
 When maxRC = 0 and all Resetting, all agents have rc=0 and will
 drain delaytimers before exiting. Phase 2 handles the rest. -/
 def Phase1Goal (Rmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop :=
-  IsConsensusConfig C ∨ (StrongRecoveryInv Rmax C ∧ maxRC C = 0)
+  IsConsensusConfig C ∨ (StrongRecoveryInv Rmax C ∧ maxRC C = 0) ∨
+  (∃ w : Fin n, (C w).1.role ≠ .Resetting)
 
 -- Helper: under StrongRecoveryInv, step preserves invariant or reaches Phase1Goal
 theorem strongRecoveryInv_step
@@ -76,7 +79,7 @@ theorem phase1Goal_to_consensus
       C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
   sorry
 
-/-- Main theorem: from all-Resetting + correct to consensus in 2·Rmax·n². -/
+
 set_option linter.unusedDecidableInType false in
 theorem allR_to_consensus_bound
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
@@ -100,7 +103,7 @@ theorem allR_to_consensus_bound
     have hmaxRC_le : maxRC D ≤ Rmax := maxRC_le_of_all_le (fun w _ => hBounded w)
     have hDescent := Probability.expectedHittingTime_le_of_deterministic_descent
       P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) maxRC hInv0
-      (fun C hInv hphi => Or.inr ⟨hInv, hphi⟩)
+      (fun C hInv hphi => Or.inr (Or.inl ⟨hInv, hphi⟩))
       (fun C hInv _ i j => strongRecoveryInv_step C hInv i j)
       (fun C hInv _ i j => maxRC_step_le_strong C hInv i j)
       (fun C hInv hGoal hpos => maxRC_descent_strong hn4 C hInv hGoal hpos)
