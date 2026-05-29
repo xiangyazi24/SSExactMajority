@@ -477,6 +477,38 @@ theorem maxRC_step_le_strong
       · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj] at hwres ⊢
         exact rc_le_maxRC hInv w
 
+/-- **FALSE AS STATED — formalization/architecture bug, not a closeable gap.**
+
+This lemma asks for a *single* pair `(u,v)` whose step strictly decreases the
+*global maximum* resetcount `maxRC` (or reaches `Phase1Goal`).  That is
+impossible whenever ≥ 2 agents share the maximum value `M`:
+
+* `propagateReset` Phase 2 sets a scheduled Resetting pair to
+  `max(rc_u-1, rc_v-1)`.  An agent at `M` paired with anyone (rc ≤ M) drops to
+  `M-1` — but a step touches only `u,v`, so any *third* agent at `M` is an
+  untouched bystander (`step_bystander_eq'`) and stays at `M`.  Hence
+  `maxRC (step) = M` for every pair.
+* Counterexample: `n = 4`, all agents Resetting with `leader = .F`,
+  `resetcount = Rmax`, large `delaytimer`, answers all correct.  Then
+  `StrongRecoveryInv` holds, `¬Phase1Goal` holds (not all-Settled ⇒ not
+  consensus; `maxRC = Rmax > 0`; all Resetting ⇒ no non-Resetting agent), yet
+  every pair leaves `maxRC = Rmax` and reaches no goal.  (Uses the proven
+  `propagateReset_rc_of_both_resetting` + `processAgent_rc_ne_zero`.)
+
+`maxRC` is therefore NOT a single-step-descent potential, so it cannot be fed
+to `expectedHittingTime_le_of_deterministic_descent` (whose `hpStep` needs a
+per-step decrease).  A *correct* single-step potential is the lexicographic
+`φ_lex = maxRC * (n+1) + #{agents at the max}` (pair two max-agents when the max
+has multiplicity ≥ 2; pair the unique max otherwise).  But `φ_lex(D)` ranges up
+to `Rmax*(n+1)`, so the deterministic-descent bound becomes `Θ(Rmax*n³)`, which
+exceeds the `Rmax*n*n` that `allR_to_consensus_bound` claims and propagates to
+the paper's stated `O(Rmax*n²)` time.  The resetcount epidemic genuinely needs
+`~n` drops per level (`Rmax*n` progress events), so `Rmax*n²` is unachievable
+via single-step deterministic descent — the intended bound needs either a
+sharper (amortized/probabilistic) hitting-time argument or a revised constant.
+
+Resolving this requires a decision on the target bound, so it is left as a
+documented `sorry` rather than faked. -/
 theorem maxRC_descent_strong
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
