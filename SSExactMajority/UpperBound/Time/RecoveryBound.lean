@@ -388,13 +388,94 @@ theorem strongRecoveryInv_step
     · right; right; right
       push_neg at h_all_res; exact h_all_res
 
+/-- When the step output at position `i` is Resetting (under StrongRecoveryInv,
+`n ≥ 3`), its resetcount is exactly `max(rc_i - 1, rc_j - 1)`. -/
+private theorem step_fst_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hi_res : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j i).1.role = .Resetting) :
+    (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j i).1.resetcount =
+      Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  have h_struct := transitionPEM_prePhase4_structural
+    (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+    (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
+  have h_nbs_rd := rd_not_both_settled_of_step_resetting hn3 hij hInv hi_res
+  have h_nbs_pre : ¬ ((transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2).1.role = .Settled ∧
+      (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2).2.role = .Settled) := by
+    rw [h_struct.1, h_struct.2.2.2.2.2.2.1]; exact h_nbs_rd
+  have h_rd_rc := rankDeltaOSSR_rc_of_both_resetting (hInv.allResetting i) (hInv.allResetting j)
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+  have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax
+      (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2) (C i).2 (C j).2 := rfl
+  have h_phase4_id := transitionPEM_phase4_of_not_both_settled (n := n) (Rmax := Rmax)
+    (a := transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+      (C i).1 (C j).1 (C i).2 (C j).2)
+    (x₀ := (C i).2) (x₁ := (C j).2) h_nbs_pre
+  rw [Config.step_fst_state P C hij, h_delta_eq, h_phase4_id, h_struct.2.2.2.2.1, h_rd_rc.1]
+
+/-- Symmetric to `step_fst_rc_eq` for position `j`. -/
+private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hj_res : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j j).1.role = .Resetting) :
+    (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j j).1.resetcount =
+      Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  have h_struct := transitionPEM_prePhase4_structural
+    (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+    (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
+  have h_nbs_rd := rd_not_both_settled_of_step_resetting_snd hn3 hij hInv hj_res
+  have h_nbs_pre : ¬ ((transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2).1.role = .Settled ∧
+      (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2).2.role = .Settled) := by
+    rw [h_struct.1, h_struct.2.2.2.2.2.2.1]; exact h_nbs_rd
+  have h_rd_rc := rankDeltaOSSR_rc_of_both_resetting (hInv.allResetting i) (hInv.allResetting j)
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+  have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax
+      (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        (C i).1 (C j).1 (C i).2 (C j).2) (C i).2 (C j).2 := rfl
+  have h_phase4_id := transitionPEM_phase4_of_not_both_settled (n := n) (Rmax := Rmax)
+    (a := transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+      (C i).1 (C j).1 (C i).2 (C j).2)
+    (x₀ := (C i).2) (x₁ := (C j).2) h_nbs_pre
+  rw [Config.step_snd_state P C hij (Ne.symm hij), h_delta_eq, h_phase4_id,
+    h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
+
+/-- Under StrongRecoveryInv, every agent's resetcount is `≤ maxRC C`. -/
+private theorem rc_le_maxRC {Rmax : ℕ} {C : Config (AgentState n) Opinion n}
+    (hInv : StrongRecoveryInv Rmax C) (w : Fin n) :
+    (C w).1.resetcount ≤ maxRC C := by
+  unfold maxRC
+  refine le_trans ?_ (Finset.le_sup (Finset.mem_univ w))
+  simp [hInv.allResetting w]
+
 set_option maxHeartbeats 1600000 in
 theorem maxRC_step_le_strong
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
     (hInv : StrongRecoveryInv Rmax C) (i j : Fin n) :
     maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤ maxRC C := by
-  sorry
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
+  set C' := C.step P i j with hC'
+  by_cases hij : i = j
+  · rw [show C' = C from by simp [C', Config.step, hij]]
+  · apply maxRC_le_of_all_le
+    intro w hwres
+    by_cases hwi : w = i
+    · subst hwi
+      rw [step_fst_rc_eq hn3 hij hInv hwres]
+      exact le_trans (rc_max_sub_le_max _ _) (max_le (rc_le_maxRC hInv w) (rc_le_maxRC hInv j))
+    · by_cases hwj : w = j
+      · subst hwj
+        rw [step_snd_rc_eq hn3 hij hInv hwres]
+        exact le_trans (rc_max_sub_le_max _ _) (max_le (rc_le_maxRC hInv i) (rc_le_maxRC hInv w))
+      · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj] at hwres ⊢
+        exact rc_le_maxRC hInv w
 
 theorem maxRC_descent_strong
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn4 : 4 ≤ n)
@@ -444,7 +525,7 @@ theorem allR_to_consensus_bound
       P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) maxRC hInv0
       (fun C hInv hphi => Or.inr (Or.inl ⟨hInv, hphi⟩))
       (fun C hInv _ i j => strongRecoveryInv_step (by omega) C hInv i j)
-      (fun C hInv _ i j => maxRC_step_le_strong C hInv i j)
+      (fun C hInv _ i j => maxRC_step_le_strong (by omega) C hInv i j)
       (fun C hInv hGoal hpos => maxRC_descent_strong hn4 C hInv hGoal hpos)
     calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax)
         ≤ ↑(maxRC D) * ((n * (n - 1) : ℕ) : ENNReal) := hDescent
