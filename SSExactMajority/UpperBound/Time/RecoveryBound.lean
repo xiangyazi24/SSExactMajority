@@ -547,10 +547,22 @@ and the stated constant `Rmax * n * n` is too small for them:
   Convergence layer currently provides only *reachability* (`∃ schedule …`,
   e.g. `all_resetting_uniform_to_InSswap_ResAns`, `fresh_start_ResAns_to_InSrank_safe`),
   not an `expectedHittingTime` bound.  That conversion is the open "re-ranking
-  bound".
+  bound" — and reachability alone can NOT yield a polynomial expected-time bound;
+  it needs a descent/drift argument (the same technique as `rc_drain_prob_bound`,
+  applied to a ranking potential).
 
-So the honest target is `≥ (re-ranking bound) + 18*Rmax*n*n`, not `Rmax*n*n`.
-Left as a documented `sorry` pending the revised constant / re-ranking bound. -/
+**Import-architecture obstruction.**  This file (`RecoveryBound`) is a *leaf*
+(nothing imports it) and imports only `BurmanConvergenceFinal` + `ExpectedTime`.
+The proven decision-phase expected-time bound
+`PEM_expected_median_correct_to_consensus` (≤ `18*Rmax*n*n`) lives *downstream* in
+`PhaseProofs.lean` and is not importable here (it also requires `hEmax : n ≤ Emax`,
+absent from this lemma's signature, and `PhaseProofs` already declares its own
+`allR_to_consensus_bound`, so importing would clash).  Hence Cases 2/3 cannot be
+discharged by composing with the existing decision machinery from this location.
+
+So the honest target is `≥ (re-ranking bound) + 18*Rmax*n*n`, not `Rmax*n*n`, and
+the lemma likely needs `hEmax` added.  Left as a documented `sorry` pending the
+revised constant + re-ranking expected-time bound. -/
 theorem phase1Goal_to_consensus
     {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
