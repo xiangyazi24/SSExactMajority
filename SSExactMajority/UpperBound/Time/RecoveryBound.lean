@@ -103,11 +103,7 @@ private theorem step_bystander_eq' {P : Protocol (AgentState n) Opinion Output}
     (C.step P i j w) = C w := by
   simp [Config.step, hij, hwi, hwj]
 
-/-! ### Rank-zero of a Settled-from-Resetting agent
-
-A Resetting agent can only become Settled by firing `resetOSSR` with leader
-`.L`, which sets `rank = ⟨0, hn⟩`.  Hence any output that is Settled but whose
-input was Resetting has rank 0. -/
+/-! ### Rank-zero of a Settled-from-Resetting agent -/
 
 private theorem processAgent_settled_rank_zero {Emax Dmax : ℕ} {hn : 0 < n}
     {s : AgentState n} (oldRc : ℕ) (pr : Bool)
@@ -151,8 +147,6 @@ private theorem propagateReset_settled_rank_zero {Emax Dmax : ℕ} {hn : 0 < n}
       if_neg (show ¬(t.role = .Resetting ∧ 0 < t.resetcount ∧ s.role ≠ .Resetting) from
         fun ⟨_, _, h⟩ => h hs)]
   simp only [hs, ht, and_self, if_true]
-  -- The two endpoints are now `processAgent {s with rc:=M} s.rc _` and
-  -- `processAgent {t with rc:=M} t.rc _`, each with input role `.Resetting`.
   refine ⟨fun h => ?_, fun h => ?_⟩
   · exact processAgent_settled_rank_zero _ _ (by simpa using hs) h
   · exact processAgent_settled_rank_zero _ _ (by simpa using ht) h
@@ -167,19 +161,13 @@ private theorem rd_settled_rank_zero
   have hpa := propagateReset_settled_rank_zero (Emax := Emax) (Dmax := Dmax) (hn := hn) hs ht
   unfold rankDeltaOSSR
   simp only [hs, true_or, if_true]
-  -- rd.1 = (propagateReset s t).1; rd.2 only differs in `leader` from
-  -- (propagateReset s t).2, so role and rank are inherited.
   set pa := propagateReset Emax Dmax hn s t with hpadef
   refine ⟨fun h => ?_, fun h => ?_⟩
   · exact hpa.1 h
-  · -- the dedup `{pa.2 with leader := .F}` preserves role and rank
-    split_ifs at h ⊢ with hd
+  · split_ifs at h ⊢ with hd
     · exact hpa.2 h
     · exact hpa.2 h
 
-/-- For `n ≥ 3`, a both-Settled rank-0 pair stays Settled through Phase 4:
-the rank-0 agents are never the median (`ceilHalf n ≥ 2`), so
-`phase4_propagate` is the identity on roles. -/
 private theorem phase4_rank_zero_settled_stays
     {Rmax : ℕ} (hn3 : 3 ≤ n) {a₀ a₁ : AgentState n} {x₀ x₁ : Opinion}
     (h0 : a₀.role = .Settled) (h1 : a₁.role = .Settled)
@@ -189,14 +177,12 @@ private theorem phase4_rank_zero_settled_stays
   have hceil : ceilHalf n ≠ 1 := by unfold ceilHalf; omega
   unfold transitionPEM_phase4
   simp only [h0, h1, and_self, if_true]
-  -- No swap: ranks are equal (both val 0).
   have hnoswap : phase4_swap a₀ a₁ x₀ x₁ = (a₀, a₁) := by
     unfold phase4_swap
     rw [if_neg]
     rintro ⟨hlt, _, _⟩
     rw [Fin.lt_def, hr0, hr1] at hlt; exact absurd hlt (by omega)
   rw [hnoswap]
-  -- Decide preserves both roles and both ranks.
   have hdec : (phase4_decide n a₀ a₁ x₀ x₁).1.role = .Settled ∧
       (phase4_decide n a₀ a₁ x₀ x₁).1.rank.val = 0 ∧
       (phase4_decide n a₀ a₁ x₀ x₁).2.role = .Settled ∧
@@ -204,22 +190,11 @@ private theorem phase4_rank_zero_settled_stays
     unfold phase4_decide
     split_ifs <;> refine ⟨?_, ?_, ?_, ?_⟩ <;> simp_all
   set c := phase4_decide n a₀ a₁ x₀ x₁ with hc
-  -- Propagate is the identity on roles since neither agent is the median.
   unfold phase4_propagate
   rw [if_neg (show ¬(c.1.rank.val + 1 = ceilHalf n) from by rw [hdec.2.1]; simpa using fun h => hceil h.symm),
       if_neg (show ¬(c.2.rank.val + 1 = ceilHalf n) from by rw [hdec.2.2.2]; simpa using fun h => hceil h.symm)]
   exact ⟨hdec.1, hdec.2.2.1⟩
 
-/-- Under StrongRecoveryInv, if the step output at position i is Resetting,
-then rankDeltaOSSR did NOT produce both Settled.
-Proof: if rd both Settled, prePhase4 both Settled (structural), Phase 4 fires.
-transitionPEM_phase4_settled_pair: output is (not-Resetting, not-Resetting) OR
-(both Resetting with rc=Rmax). Case 1 contradicts hi_res'. Case 2 requires
-phase4_propagate reset, which needs answer mismatch after decide. But for n ≥ 2
-(guaranteed by i ≠ j), resetOSSR gives rank 0, and phase4_decide is identity
-on rank-0 pairs (no median condition fires). So answers stay uniform.
-And phase4_propagate on rank-0 pair either doesn't match ceilHalf condition
-(n ≥ 3) or has freshly-initialized timer > 0 (n = 2). Either way, no reset. -/
 private theorem rd_not_both_settled_of_step_resetting
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
@@ -234,7 +209,6 @@ private theorem rd_not_both_settled_of_step_resetting
     (trank := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
     (s₀ := (C i).1) (s₁ := (C j).1) (x₀ := (C i).2) (x₁ := (C j).2)
   intro ⟨hrd_s0, hrd_s1⟩
-  -- both rd outputs Settled, but inputs are both Resetting → both have rank 0.
   have hrank := rd_settled_rank_zero (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
     (hInv.allResetting i) (hInv.allResetting j)
   have hr0 : rd.1.rank.val = 0 := hrank.1 hrd_s0
@@ -247,7 +221,6 @@ private theorem rd_not_both_settled_of_step_resetting
     have h : pre.1.rank = rd.1.rank := h_struct.2.2.1; rw [h]; exact hr0
   have h_pre_r1 : pre.2.rank.val = 0 := by
     have h : pre.2.rank = rd.2.rank := h_struct.2.2.2.2.2.2.2.2.1; rw [h]; exact hr1
-  -- For n ≥ 3 the rank-0 pair stays Settled through Phase 4: contradiction.
   have hphase_settled :
       (transitionPEM_phase4 n Rmax pre (C i).2 (C j).2).1.role = .Settled :=
     (phase4_rank_zero_settled_stays (n := n) (Rmax := Rmax) hn3
@@ -258,7 +231,6 @@ private theorem rd_not_both_settled_of_step_resetting
   rw [h_step_i, h_delta_eq, hphase_settled] at hi_res'
   exact absurd hi_res' (by decide)
 
--- Same as above but for position j (symmetric)
 private theorem rd_not_both_settled_of_step_resetting_snd
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
@@ -340,8 +312,6 @@ theorem strongRecoveryInv_step
           hm hij (hInv.allCorrect) h_no_entry_fst h_no_entry_snd h_not_both_settled_rd
       have h_rd_rc := rankDeltaOSSR_rc_of_both_resetting hi_res hj_res
         (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
-      -- Phase 4 is identity since the prePhase4 output is not both-Settled, so
-      -- the step result equals the prePhase4 output.
       have h_delta_eq : P.δ (C i, C j) = transitionPEM_phase4 n Rmax
           (transitionPEM_prePhase4 n Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
             (C i).1 (C j).1 (C i).2 (C j).2) (C i).2 (C j).2 := rfl
@@ -361,13 +331,6 @@ theorem strongRecoveryInv_step
           have hstep : (C' w).1 = (P.δ (C w, C j)).1 := Config.step_fst_state P C hij
           rw [hstep, h_delta_eq, h_phase4_id, h_struct.2.2.2.2.1, h_rd_rc.1]
           exact hbound
-
-
-
-
-
-
-
         · by_cases hwj : w = j
           · subst hwj
             have hstep : (C' w).1 = (P.δ (C i, C w)).2 :=
@@ -375,14 +338,6 @@ theorem strongRecoveryInv_step
             rw [hstep, h_delta_eq, h_phase4_id,
               h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
             exact hbound
-
-
-
-
-
-
-
-
           · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj]
             exact hInv.rcBounded w
     · right; right; right
@@ -417,7 +372,6 @@ private theorem step_fst_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ 
     (x₀ := (C i).2) (x₁ := (C j).2) h_nbs_pre
   rw [Config.step_fst_state P C hij, h_delta_eq, h_phase4_id, h_struct.2.2.2.2.1, h_rd_rc.1]
 
-/-- Symmetric to `step_fst_rc_eq` for position `j`. -/
 private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
     (hInv : StrongRecoveryInv Rmax C)
@@ -446,7 +400,6 @@ private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ 
   rw [Config.step_snd_state P C hij (Ne.symm hij), h_delta_eq, h_phase4_id,
     h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
 
-/-- Under StrongRecoveryInv, every agent's resetcount is `≤ maxRC C`. -/
 private theorem rc_le_maxRC {Rmax : ℕ} {C : Config (AgentState n) Opinion n}
     (hInv : StrongRecoveryInv Rmax C) (w : Fin n) :
     (C w).1.resetcount ≤ maxRC C := by
@@ -477,92 +430,109 @@ theorem maxRC_step_le_strong
       · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj] at hwres ⊢
         exact rc_le_maxRC hInv w
 
-/- **FALSE AS STATED — formalization/architecture bug, not a closeable gap.**
+/-! ### RC-level potential for Phase 1
 
-This lemma asks for a *single* pair `(u,v)` whose step strictly decreases the
-*global maximum* resetcount `maxRC` (or reaches `Phase1Goal`).  That is
-impossible whenever ≥ 2 agents share the maximum value `M`:
+The potential `rcLevelPotential` combines maxRC and the count of agents at the
+max level into a single natural number that strictly decreases with probability
+≥ 1/n per step. This replaces the FALSE maxRC single-step descent.
 
-* `propagateReset` Phase 2 sets a scheduled Resetting pair to
-  `max(rc_u-1, rc_v-1)`.  An agent at `M` paired with anyone (rc ≤ M) drops to
-  `M-1` — but a step touches only `u,v`, so any *third* agent at `M` is an
-  untouched bystander (`step_bystander_eq'`) and stays at `M`.  Hence
-  `maxRC (step) = M` for every pair.
-* Counterexample: `n = 4`, all agents Resetting with `leader = .F`,
-  `resetcount = Rmax`, large `delaytimer`, answers all correct.  Then
-  `StrongRecoveryInv` holds, `¬Phase1Goal` holds (not all-Settled ⇒ not
-  consensus; `maxRC = Rmax > 0`; all Resetting ⇒ no non-Resetting agent), yet
-  every pair leaves `maxRC = Rmax` and reaches no goal.  (Uses the proven
-  `propagateReset_rc_of_both_resetting` + `processAgent_rc_ne_zero`.)
+Key insight: under StrongRecoveryInv (all Resetting), if we pick any agent u at
+maxRC as initiator and any v ≠ u as responder, both get
+`rc = max(u.rc-1, v.rc-1) ≤ maxRC-1`. So the count of agents at maxRC
+decreases by at least 1. When it hits 0, maxRC drops, resetting the counter. -/
 
-`maxRC` is therefore NOT a single-step-descent potential, so it cannot be fed
-to `expectedHittingTime_le_of_deterministic_descent` (whose `hpStep` needs a
-per-step decrease).  A *correct* single-step potential is the lexicographic
-`φ_lex = maxRC * (n+1) + #{agents at the max}` (pair two max-agents when the max
-has multiplicity ≥ 2; pair the unique max otherwise).  But `φ_lex(D)` ranges up
-to `Rmax*(n+1)`, so the deterministic-descent bound becomes `Θ(Rmax*n³)`, which
-exceeds the `Rmax*n*n` that `allR_to_consensus_bound` claims and propagates to
-the paper's stated `O(Rmax*n²)` time.  The resetcount epidemic genuinely needs
-`~n` drops per level (`Rmax*n` progress events), so `Rmax*n²` is unachievable
-via single-step deterministic descent — the intended bound needs either a
-sharper (amortized/probabilistic) hitting-time argument or a revised constant.
+/-- Number of agents whose resetcount equals `maxRC C`. -/
+noncomputable def rcMaxCount (C : Config (AgentState n) Opinion n) : ℕ :=
+  (Finset.univ.filter fun w : Fin n =>
+    (C w).1.role = .Resetting ∧ (C w).1.resetcount = maxRC C).card
 
--/
-/-! ### RC drain via multiplicative potential (paper Lemma 3.3)
+/-- Combined potential: `(maxRC - 1) * n + rcMaxCount`.
+When `maxRC = 0` the potential is 0 (goal reached).
+Otherwise it is `(maxRC - 1) * n + #{agents at max level}`. -/
+noncomputable def rcLevelPotential (C : Config (AgentState n) Opinion n) : ℕ :=
+  if maxRC C = 0 then 0 else (maxRC C - 1) * n + rcMaxCount C
 
-The paper uses Phi = sum 3^{rc_w}. Each interaction (a,b) gives
-Phi(a') + Phi(b') <= 2/3 * (Phi(a) + Phi(b)), so E[Phi'] <= (1-2/(3n)) * Phi.
-After O(n * Rmax) parallel steps = O(n^2 * Rmax) sequential, Phi = 0 w.h.p.
-This replaces the FALSE maxRC single-step descent. -/
-
--- The rc drain probability bound: within K = 2*Rmax*n*(n-1) steps,
--- we reach Phase1Goal with probability >= 1/2.
-theorem rc_drain_prob_bound
-    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax)
-    (C : Config (AgentState n) Opinion n)
+/-- rcLevelPotential is bounded above by `Rmax * n`. -/
+theorem rcLevelPotential_le_Rmax_n {Rmax : ℕ}
+    {C : Config (AgentState n) Opinion n}
     (hInv : StrongRecoveryInv Rmax C) :
-    (1 : ENNReal) / 2 ≤
-      Probability.ProbHitWithin (PEMProtocolCoupled' n Rmax Emax Dmax hn)
-        (by omega : 2 ≤ n) C (Phase1Goal Rmax)
-        (2 * Rmax * n * (n - 1)) := by
+    rcLevelPotential C ≤ Rmax * n := by
+  unfold rcLevelPotential
+  split
+  · exact Nat.zero_le _
+  · next h =>
+    have hmaxRC_le : maxRC C ≤ Rmax := maxRC_le_of_all_le (fun w _ => hInv.rcBounded w)
+    have hRmax_pos : 1 ≤ Rmax := by
+      have : 0 < maxRC C := Nat.pos_of_ne_zero h
+      omega
+    have hcount_le : rcMaxCount C ≤ n := by
+      unfold rcMaxCount
+      exact le_trans (Finset.card_filter_le _ _) (by simp [Finset.card_univ])
+    calc (maxRC C - 1) * n + rcMaxCount C
+        ≤ (Rmax - 1) * n + n := by
+          apply Nat.add_le_add
+          · exact Nat.mul_le_mul_right _ (Nat.sub_le_sub_right hmaxRC_le 1)
+          · exact hcount_le
+      _ = Rmax * n := by
+          rw [show (Rmax - 1) * n + n = (Rmax - 1 + 1) * n from by ring]
+          congr 1; omega
+
+/-- Under StrongRecoveryInv with `maxRC > 0` and `n > 0`, some agent attains
+the maximum resetcount, so `rcMaxCount ≥ 1`. -/
+theorem rcMaxCount_pos_of_maxRC_pos
+    {C : Config (AgentState n) Opinion n} (hn : 0 < n)
+    (hAllR : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hmax_pos : 0 < maxRC C) :
+    0 < rcMaxCount C := by
   sorry
 
-/-- Phase 2: from Phase1Goal to consensus.
+/-- `rcLevelPotential C = 0 → Phase1Goal` under `StrongRecoveryInv`. -/
+theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
+    (C : Config (AgentState n) Opinion n)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hphi : rcLevelPotential C = 0) :
+    Phase1Goal Rmax C := by
+  unfold rcLevelPotential at hphi
+  split at hphi
+  · next h => exact Or.inr (Or.inl ⟨hInv, h⟩)
+  · next h =>
+    -- maxRC C ≠ 0 but (maxRC C - 1) * n + rcMaxCount C = 0.
+    -- This is impossible: maxRC > 0 and all Resetting implies rcMaxCount ≥ 1.
+    exfalso
+    have hmax_pos : 0 < maxRC C := Nat.pos_of_ne_zero h
+    have hcount_pos : 0 < rcMaxCount C :=
+      rcMaxCount_pos_of_maxRC_pos hn hInv.allResetting hmax_pos
+    omega
 
-**Case 1 (already consensus) is proved.**  The remaining two cases are blocked,
-and the stated constant `Rmax * n * n` is too small for them:
+/-- Under StrongRecoveryInv, `rcLevelPotential` is nonincreasing on every step. -/
+theorem rcLevelPotential_step_nonincrease
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    (C : Config (AgentState n) Opinion n)
+    (hInv : StrongRecoveryInv Rmax C) (hGoal : ¬ Phase1Goal Rmax C)
+    (i j : Fin n) :
+    rcLevelPotential (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤
+      rcLevelPotential C := by
+  sorry
 
-* Case 2 (`StrongRecoveryInv ∧ maxRC = 0`) and Case 3 (`∃ non-Resetting agent`)
-  both require driving the protocol through re-ranking → swap → median decision
-  → timer drain to reach `IsConsensusConfig`.
-* In this *coupled* regime the median timer is `7*(Rmax+4)` (linear in `Rmax`),
-  so the timer-drain sub-phase alone costs `7*(Rmax+4)*n*(n-1) ≈ 7*Rmax*n²`, and
-  the codebase's own `PEM_expected_median_correct_to_consensus`
-  (PhaseProofs.lean) already bounds just the *median-correct → consensus* leg by
-  `18 * Rmax * n * n`.  Hence `Rmax * n * n` is unachievable here — the constant
-  is off by ≳ 7–18× before counting any re-ranking time.
-* The re-ranking phase additionally needs an *expected-time* bound; the
-  Convergence layer currently provides only *reachability* (`∃ schedule …`,
-  e.g. `all_resetting_uniform_to_InSswap_ResAns`, `fresh_start_ResAns_to_InSrank_safe`),
-  not an `expectedHittingTime` bound.  That conversion is the open "re-ranking
-  bound" — and reachability alone can NOT yield a polynomial expected-time bound;
-  it needs a descent/drift argument (the same technique as `rc_drain_prob_bound`,
-  applied to a ranking potential).
+/-- Under StrongRecoveryInv with rcLevelPotential > 0, picking any agent u at
+maxRC as first coordinate and any v ≠ u guarantees rcLevelPotential strictly
+decreases (or Phase1Goal is reached). The probability of picking such a u is
+≥ 1/n (at least one of n agents is at maxRC). -/
+theorem rcLevelPotential_one_step_drop_prob
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    (k : ℕ) (hk : 0 < k)
+    (C : Config (AgentState n) Opinion n)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hphi : rcLevelPotential C = k) :
+    ((n : ℕ) : ENNReal)⁻¹ ≤
+      Probability.ProbHitWithin
+        (PEMProtocolCoupled' n Rmax Emax Dmax hn)
+        (by omega : 2 ≤ n) C
+        (fun D => Phase1Goal Rmax D ∨
+          (StrongRecoveryInv Rmax D ∧ rcLevelPotential D < k)) 1 := by
+  sorry
 
-**Import-architecture obstruction.**  This file (`RecoveryBound`) is a *leaf*
-(nothing imports it) and imports only `BurmanConvergenceFinal` + `ExpectedTime`.
-The proven decision-phase expected-time bound
-`PEM_expected_median_correct_to_consensus` (≤ `18*Rmax*n*n`) lives *downstream* in
-`PhaseProofs.lean` and is not importable here (it also requires `hEmax : n ≤ Emax`,
-absent from this lemma's signature, and `PhaseProofs` already declares its own
-`allR_to_consensus_bound`, so importing would clash).  Hence Cases 2/3 cannot be
-discharged by composing with the existing decision machinery from this location.
-
-So the honest target is `≥ (re-ranking bound) + 18*Rmax*n*n`, not `Rmax*n*n`, and
-the lemma likely needs `hEmax` added.  Left as a documented `sorry` pending the
-revised constant + re-ranking expected-time bound. -/
+/-- Phase 2: from Phase1Goal to consensus. -/
 theorem phase1Goal_to_consensus
     {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -576,12 +546,9 @@ theorem phase1Goal_to_consensus
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
   have hn2 : 2 ≤ n := by omega
   rcases hGoal with hcons | hrest
-  · -- Case 1: already a consensus config ⇒ expected hitting time is 0.
-    rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
+  · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
     exact zero_le
-  · -- Cases 2 & 3: blocked on the re-ranking expected-time bound, and the
-    -- stated constant Rmax*n*n is too small (see docstring).
-    sorry
+  · sorry
 
 
 set_option linter.unusedDecidableInType false in
@@ -600,24 +567,38 @@ theorem allR_to_consensus_bound
   classical
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
+  have hn3 : 3 ≤ n := by omega
   have hInv0 : StrongRecoveryInv Rmax D := ⟨hAllR, hAllCorrect, hBounded⟩
+  -- Phase 1: use rcLevelPotential with variable descent (pRate = 1/n).
   have hPhase1 : Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax) ≤
       ((Rmax * n * n : ℕ) : ENNReal) := by
-    have hmaxRC_le : maxRC D ≤ Rmax := maxRC_le_of_all_le (fun w _ => hBounded w)
-    have hDescent := Probability.expectedHittingTime_le_of_deterministic_descent
-      P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) maxRC hInv0
-      (fun C hInv hphi => Or.inr (Or.inl ⟨hInv, hphi⟩))
-      (fun C hInv _ i j => strongRecoveryInv_step (by omega) C hInv i j)
-      (fun C hInv _ i j => maxRC_step_le_strong (by omega) C hInv i j)
-      (fun C hInv hGoal hpos => by sorry)
+    have hBound := Probability.expectedHittingTime_le_of_variable_descent_until_goal
+      P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) rcLevelPotential
+      (fun _ => ((n : ℕ) : ENNReal)⁻¹)
+      hInv0
+      -- hZeroGoal: φ = 0 → Goal
+      (fun C hInv hphi => rcLevelPotential_zero_goal hn0 C hInv hphi)
+      -- hInvStep: invariant preserved or goal reached
+      (fun C hInv hGoal i j => strongRecoveryInv_step hn3 C hInv i j)
+      -- hNonincrease: potential nonincreasing
+      (fun C hInv hGoal i j => rcLevelPotential_step_nonincrease hn3 C hInv hGoal i j)
+      -- hp: probability bound per level
+      (fun k hk C hInv hphi =>
+        rcLevelPotential_one_step_drop_prob hn3 k hk C hInv hphi)
+    -- Now bound: sum_{k=0}^{φ(D)-1} n ≤ Rmax * n * n
     calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax)
-        ≤ ↑(maxRC D) * ((n * (n - 1) : ℕ) : ENNReal) := hDescent
-      _ ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
+        ≤ ∑ _k ∈ Finset.range (rcLevelPotential D),
+            (((n : ℕ) : ENNReal)⁻¹)⁻¹ := hBound
+      _ = ∑ _k ∈ Finset.range (rcLevelPotential D),
+            ((n : ℕ) : ENNReal) := by
+          congr 1; ext; simp [inv_inv]
+      _ = ↑(rcLevelPotential D) * ((n : ℕ) : ENNReal) := by
+          simp [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+      _ ≤ ↑(Rmax * n) * ((n : ℕ) : ENNReal) := by
+          apply mul_le_mul_right'
           norm_cast
-          calc maxRC D * (n * (n - 1))
-              ≤ Rmax * (n * (n - 1)) := Nat.mul_le_mul_right _ hmaxRC_le
-            _ ≤ Rmax * (n * n) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ (Nat.sub_le n 1))
-            _ = Rmax * n * n := by ring
+          exact rcLevelPotential_le_Rmax_n hInv0
+      _ = ((Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
   have hPhase2 : ∀ C, Phase1Goal Rmax C →
       Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
         ((Rmax * n * n : ℕ) : ENNReal) :=
