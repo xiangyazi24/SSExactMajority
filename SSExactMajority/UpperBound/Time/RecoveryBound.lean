@@ -529,7 +529,28 @@ theorem rc_drain_prob_bound
         (2 * Rmax * n * (n - 1)) := by
   sorry
 
-/-- Phase 2: from Phase1Goal to consensus. -/
+/-- Phase 2: from Phase1Goal to consensus.
+
+**Case 1 (already consensus) is proved.**  The remaining two cases are blocked,
+and the stated constant `Rmax * n * n` is too small for them:
+
+* Case 2 (`StrongRecoveryInv ∧ maxRC = 0`) and Case 3 (`∃ non-Resetting agent`)
+  both require driving the protocol through re-ranking → swap → median decision
+  → timer drain to reach `IsConsensusConfig`.
+* In this *coupled* regime the median timer is `7*(Rmax+4)` (linear in `Rmax`),
+  so the timer-drain sub-phase alone costs `7*(Rmax+4)*n*(n-1) ≈ 7*Rmax*n²`, and
+  the codebase's own `PEM_expected_median_correct_to_consensus`
+  (PhaseProofs.lean) already bounds just the *median-correct → consensus* leg by
+  `18 * Rmax * n * n`.  Hence `Rmax * n * n` is unachievable here — the constant
+  is off by ≳ 7–18× before counting any re-ranking time.
+* The re-ranking phase additionally needs an *expected-time* bound; the
+  Convergence layer currently provides only *reachability* (`∃ schedule …`,
+  e.g. `all_resetting_uniform_to_InSswap_ResAns`, `fresh_start_ResAns_to_InSrank_safe`),
+  not an `expectedHittingTime` bound.  That conversion is the open "re-ranking
+  bound".
+
+So the honest target is `≥ (re-ranking bound) + 18*Rmax*n*n`, not `Rmax*n*n`.
+Left as a documented `sorry` pending the revised constant / re-ranking bound. -/
 theorem phase1Goal_to_consensus
     {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -539,7 +560,16 @@ theorem phase1Goal_to_consensus
     Probability.expectedHittingTime
       (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
       C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
+  classical
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
+  have hn2 : 2 ≤ n := by omega
+  rcases hGoal with hcons | hrest
+  · -- Case 1: already a consensus config ⇒ expected hitting time is 0.
+    rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
+    exact zero_le
+  · -- Cases 2 & 3: blocked on the re-ranking expected-time bound, and the
+    -- stated constant Rmax*n*n is too small (see docstring).
+    sorry
 
 
 set_option linter.unusedDecidableInType false in
