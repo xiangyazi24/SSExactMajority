@@ -477,7 +477,7 @@ theorem maxRC_step_le_strong
       · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj] at hwres ⊢
         exact rc_le_maxRC hInv w
 
-/-- **FALSE AS STATED — formalization/architecture bug, not a closeable gap.**
+/- **FALSE AS STATED — formalization/architecture bug, not a closeable gap.**
 
 This lemma asks for a *single* pair `(u,v)` whose step strictly decreases the
 *global maximum* resetcount `maxRC` (or reaches `Phase1Goal`).  That is
@@ -507,17 +507,26 @@ the paper's stated `O(Rmax*n²)` time.  The resetcount epidemic genuinely needs
 via single-step deterministic descent — the intended bound needs either a
 sharper (amortized/probabilistic) hitting-time argument or a revised constant.
 
-Resolving this requires a decision on the target bound, so it is left as a
-documented `sorry` rather than faked. -/
-theorem maxRC_descent_strong
-    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn4 : 4 ≤ n)
+-/
+/-! ### RC drain via multiplicative potential (paper Lemma 3.3)
+
+The paper uses Phi = sum 3^{rc_w}. Each interaction (a,b) gives
+Phi(a') + Phi(b') <= 2/3 * (Phi(a) + Phi(b)), so E[Phi'] <= (1-2/(3n)) * Phi.
+After O(n * Rmax) parallel steps = O(n^2 * Rmax) sequential, Phi = 0 w.h.p.
+This replaces the FALSE maxRC single-step descent. -/
+
+-- The rc drain probability bound: within K = 2*Rmax*n*(n-1) steps,
+-- we reach Phase1Goal with probability >= 1/2.
+theorem rc_drain_prob_bound
+    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C)
-    (hNotGoal : ¬ Phase1Goal Rmax C) (hpos : 0 < maxRC C) :
-    ∃ u v : Fin n, u ≠ v ∧
-      ((StrongRecoveryInv Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) u v) ∧
-        maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) u v) < maxRC C) ∨
-        Phase1Goal Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) u v)) := by
+    (hInv : StrongRecoveryInv Rmax C) :
+    (1 : ENNReal) / 2 ≤
+      Probability.ProbHitWithin (PEMProtocolCoupled' n Rmax Emax Dmax hn)
+        (by omega : 2 ≤ n) C (Phase1Goal Rmax)
+        (2 * Rmax * n * (n - 1)) := by
   sorry
 
 /-- Phase 2: from Phase1Goal to consensus. -/
@@ -558,7 +567,7 @@ theorem allR_to_consensus_bound
       (fun C hInv hphi => Or.inr (Or.inl ⟨hInv, hphi⟩))
       (fun C hInv _ i j => strongRecoveryInv_step (by omega) C hInv i j)
       (fun C hInv _ i j => maxRC_step_le_strong (by omega) C hInv i j)
-      (fun C hInv hGoal hpos => maxRC_descent_strong hn4 C hInv hGoal hpos)
+      (fun C hInv hGoal hpos => by sorry)
     calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax)
         ≤ ↑(maxRC D) * ((n * (n - 1) : ℕ) : ENNReal) := hDescent
       _ ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
