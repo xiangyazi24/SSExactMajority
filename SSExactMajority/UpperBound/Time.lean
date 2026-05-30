@@ -9736,7 +9736,7 @@ theorem PEM_expected_timer_drain
                 rw [show (D.step P i j μ).1.rank = (D μ).1.rank from
                   congrArg (fun x => x.1.rank) hbyst] at hμ_med
                 exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
-        · exact Nat.zero_le)
+        · exact Nat.zero_le _)
     (by -- hDescent: ∃ (median,max) pair that decrements timer
         intro D ⟨hS, hM, hT⟩ hG hφ
         have hn_pos : 0 < n := by omega
@@ -9808,7 +9808,7 @@ theorem PEM_expected_timer_drain
     intro μ _
     split_ifs with h
     · exact hTimerHi μ
-    · exact Nat.zero_le
+    · exact Nat.zero_le _
   calc Probability.expectedHittingTime P (by omega) C Goal
       ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
     _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by

@@ -1,6 +1,7 @@
 import SSExactMajority.UpperBound.Time.HeavyProofs
 import SSExactMajority.UpperBound.Time.CRSOdd
 import SSExactMajority.UpperBound.Time.CRSEven
+import SSExactMajority.UpperBound.Time.RecoveryBound
 
 namespace SSEM
 
@@ -305,8 +306,8 @@ theorem allR_to_consensus_bound
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
-      ((2 * Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
+      ((2 * Rmax * n * n : ℕ) : ENNReal) :=
+  allR_to_consensus_bound hn4 hn0 hRmax hDmaxN D hAllR hAllCorrect hBounded
 
 /-- Proof in RecoveryBound.lean (sorry placeholder).
 From a wrong-restart state (some Resetting agents with full rc) back to

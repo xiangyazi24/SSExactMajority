@@ -18,6 +18,7 @@ theorem step_InSswap_break_creates_CorrectResetSeed
     CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hP_unfold : P = PEMProtocolCoupled n Rmax Emax Dmax hn0 := rfl
   -- Case: i = j makes step a no-op, so InSswap is preserved (contradicts hS').
   by_cases hij : i = j
   · exfalso; apply hS'; subst hij
@@ -36,17 +37,33 @@ theorem step_InSswap_break_creates_CorrectResetSeed
   -- Role of i post-step
   have h_role_i : (D.step P i j i).1.role = .Settled ∨
       (D.step P i j i).1.role = .Resetting := by
+    have hrij' : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
+    have hRD' := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+      (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij'
     rw [congrArg AgentState.role h_fst]
-    exact (transitionPEM_phase4_role_settled_or_resetting
-      (n := n) (Rmax := Rmax) (a := ((D i).1, (D j).1))
-      (x₀ := (D i).2) (x₁ := (D j).2) hsi hsj).1
+    have h_bridge : (P.δ (D i, D j)).1.role =
+        (transitionPEM_phase4 n Rmax ((D i).1, (D j).1) (D i).2 (D j).2).1.role := by
+      simp only [P, hP_unfold, PEMProtocolCoupled, PEMProtocol, protocolPEM,
+        transitionPEM, transitionPEM_prePhase4, hRD', hsi, hsj, and_self, ite_true,
+        ne_eq, role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
+        false_and, and_false, if_false, if_true, ite_self]
+    rw [h_bridge]
+    exact (transitionPEM_phase4_role_settled_or_resetting hsi hsj).1
   -- Role of j post-step
   have h_role_j : (D.step P i j j).1.role = .Settled ∨
       (D.step P i j j).1.role = .Resetting := by
+    have hrij' : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
+    have hRD' := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
+      (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij'
     rw [congrArg AgentState.role h_snd]
-    exact (transitionPEM_phase4_role_settled_or_resetting
-      (n := n) (Rmax := Rmax) (a := ((D i).1, (D j).1))
-      (x₀ := (D i).2) (x₁ := (D j).2) hsi hsj).2
+    have h_bridge : (P.δ (D i, D j)).2.role =
+        (transitionPEM_phase4 n Rmax ((D i).1, (D j).1) (D i).2 (D j).2).2.role := by
+      simp only [P, hP_unfold, PEMProtocolCoupled, PEMProtocol, protocolPEM,
+        transitionPEM, transitionPEM_prePhase4, hRD', hsi, hsj, and_self, ite_true,
+        ne_eq, role_settled_ne_resetting, not_true_eq_false, not_false_eq_true,
+        false_and, and_false, if_false, if_true, ite_self]
+    rw [h_bridge]
+    exact (transitionPEM_phase4_role_settled_or_resetting hsi hsj).2
   -- If both stay Settled → InSswap preserved
   by_cases hi_settled : (D.step P i j i).1.role = .Settled
   · by_cases hj_settled : (D.step P i j j).1.role = .Settled
@@ -64,7 +81,7 @@ theorem step_InSswap_break_creates_CorrectResetSeed
             exact hS.toInSrank.allSettled w
       · -- ranks_inj
         intro w1 w2 heq
-        simp only [step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
+        simp only [hP_unfold, step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
           (Dmax := Dmax) hn0 hS] at heq
         exact hS.toInSrank.ranks_inj heq
       · -- input_rank

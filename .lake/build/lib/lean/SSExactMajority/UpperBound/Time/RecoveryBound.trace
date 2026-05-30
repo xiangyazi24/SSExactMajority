@@ -1,9 +1,9 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["63ead99a95f2d301.olean"],
+ {"o": ["6a13f81367145b49.olean"],
   "m": false,
-  "i": "a2dd3b0909b11047.ilean",
+  "i": "955bf685381cba56.ilean",
   "c": "4bf854fe9d2829d8.c"},
  "log":
  [{"message":
@@ -31,43 +31,82 @@
    "SSExactMajority/UpperBound/Time/RecoveryBound.lean:75:66: This simp argument is unused:\n  not_true\n\nHint: Omit it from the simp argument list.\n  simp only [hs, ht,\n  ̵  ̵ ̵ ̵show ¬(t.role ≠ .Resetting) from not_not.mpr ht,\n      show ¬(s.role ≠ .Resetting) from not_not.mpr hs,\n      show ¬(s.role = .Resetting ∧ 0 < s.resetcount ∧ t.role ≠ .Resetting) from\n  ̵  ̵ ̵ ̵ ̵ ̵fun ⟨_, _, h⟩ => h ht,\n      show ¬(t.role = .Resetting ∧ 0 < t.resetcount ∧ s.role ≠ .Resetting) from\n  ̵  ̵ ̵ ̵ ̵ ̵fun ⟨_, _, h⟩ => h hs,\n      show ¬(Role.Resetting ≠ .Resetting) from not_not.mpr rfl,\n      show (Role.Resetting == Role.Resetting) = true from rfl, ̲a̲n̲d̲_̲t̲r̲u̲e̲,̲ ̲a̲n̲d̲_̲f̲a̲l̲s̲e̲,̲ ̲i̲t̲e̲_̲f̲a̲l̲s̲e̲,̲\n      and_t̵r̵u̵e̵,̵ ̵a̵n̵d̵_̵f̵a̵l̵se,̵ ̵i̵t̵e̵_̵f̵a̵ls̵e̵,̵ ̵a̵n̵d̵_̵s̵e̵l̵f, ite_true, true_and,̵ ̵n̵o̵t̵_̵t̵r̵u̵e̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:125:32: This simp argument is unused:\n  hl\n\nHint: Omit it from the simp argument list.\n  simp [resetOSSR,̵ ̵h̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:121:32: This simp argument is unused:\n  hl\n\nHint: Omit it from the simp argument list.\n  simp [resetOSSR,̵ ̵h̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:134:32: This simp argument is unused:\n  hl\n\nHint: Omit it from the simp argument list.\n  simp [resetOSSR,̵ ̵h̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:130:32: This simp argument is unused:\n  hl\n\nHint: Omit it from the simp argument list.\n  simp [resetOSSR,̵ ̵h̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:131:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:127:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:157:49: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:151:49: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:158:49: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:152:49: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:209:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:194:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:210:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:195:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:389:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:344:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:300:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:272:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:457:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:410:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:512:8: declaration uses `sorry`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:485:5: unused variable `hmax_pos`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:524:8: declaration uses `sorry`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:517:57: unused variable `hij`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:523:0: `phase1Goal_to_consensus` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:575:39: unused variable `hGoal`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:588:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:595:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:601:10: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:604:10: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:678:5: unused variable `hInv'`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:691:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:699:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:702:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:737:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:778:16: `mul_le_mul_right'` has been deprecated: Use `mul_le_mul_left` instead",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:782:8: declaration uses `sorry`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:781:0: `phase1Goal_to_consensus` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:844:16: `mul_le_mul_right'` has been deprecated: Use `mul_le_mul_left` instead",
    "level": "warning"}],
  "inputs":
  [["SSExactMajority.UpperBound.Time.RecoveryBound:deps",
@@ -91,7 +130,7 @@
   ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
    "2f4703bb19086252"],
   ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RecoveryBound.lean",
-   "b945d1654a04212a"],
+   "f91c2e60996beec4"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
@@ -101,4 +140,4 @@
    "f5c4a1aaea3799bd"],
   ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "9ab530a59886dff2"}
+ "depHash": "38fa245f1c1c5926"}
