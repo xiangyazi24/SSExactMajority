@@ -512,6 +512,63 @@ theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
     omega
 
 /-- Under StrongRecoveryInv, `rcLevelPotential` is nonincreasing on every step. -/
+private theorem pair_rc_lt_maxRC
+    {Rmax : ℕ}
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hmax_pos : 0 < maxRC C) :
+    Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) < maxRC C := by
+  have : Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) ≤ maxRC C - 1 :=
+    Nat.max_le.mpr ⟨Nat.sub_le_sub_right (rc_le_maxRC hInv i) 1,
+                     Nat.sub_le_sub_right (rc_le_maxRC hInv j) 1⟩
+  omega
+
+private theorem step_agent_rc_lt_maxRC
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j w : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hmax_pos : 0 < maxRC C)
+    (hw : w = i ∨ w = j)
+    (hwres : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j w).1.role = .Resetting) :
+    (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j w).1.resetcount < maxRC C := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  rcases hw with rfl | rfl
+  · rw [step_fst_rc_eq hn3 hij hInv hwres]
+    exact pair_rc_lt_maxRC hij hInv hmax_pos
+  · rw [step_snd_rc_eq hn3 hij hInv hwres]
+    exact pair_rc_lt_maxRC hij hInv hmax_pos
+
+private theorem rcMaxCount_step_le_of_maxRC_eq
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hMaxEq : maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) = maxRC C)
+    (hmax_pos : 0 < maxRC C) :
+    rcMaxCount (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤ rcMaxCount C := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  set C' := C.step P i j
+  unfold rcMaxCount
+  apply Finset.card_le_card
+  intro w hw
+  rw [Finset.mem_filter] at hw ⊢
+  obtain ⟨_, hwres', hwrc'⟩ := hw
+  refine ⟨Finset.mem_univ _, ?_⟩
+  by_cases hwi : w = i
+  · exfalso
+    subst hwi
+    have hfst := step_fst_rc_eq hn3 hij hInv hwres'
+    rw [hfst, hMaxEq] at hwrc'
+    exact absurd hwrc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+  · by_cases hwj : w = j
+    · exfalso
+      subst hwj
+      have hsnd := step_snd_rc_eq hn3 hij hInv hwres'
+      rw [hsnd, hMaxEq] at hwrc'
+      exact absurd hwrc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+    · rw [show C' w = C w from step_bystander_eq' hij hwi hwj] at hwres' hwrc'
+      rw [hMaxEq] at hwrc'
+      exact ⟨hwres', hwrc'⟩
+
 theorem rcLevelPotential_step_nonincrease
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
@@ -519,12 +576,145 @@ theorem rcLevelPotential_step_nonincrease
     (i j : Fin n) :
     rcLevelPotential (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤
       rcLevelPotential C := by
-  sorry
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  set C' := C.step P i j
+  by_cases hij : i = j
+  · rw [show C' = C from by simp [C', Config.step, hij]]
+  · have hmaxRC_le := maxRC_step_le_strong (Emax := Emax) (Dmax := Dmax) (hn := hn) hn3 C hInv i j
+    -- Case split on whether maxRC C = 0
+    by_cases hmax0 : maxRC C = 0
+    · -- maxRC C = 0 implies maxRC C' = 0, both potentials are 0
+      have hmax0' : maxRC C' = 0 := Nat.eq_zero_of_le_zero (hmax0 ▸ hmaxRC_le)
+      show rcLevelPotential C' ≤ rcLevelPotential C
+      unfold rcLevelPotential; rw [if_pos hmax0, if_pos hmax0']
+    · have hmax_pos : 0 < maxRC C := Nat.pos_of_ne_zero hmax0
+      -- Case split on maxRC C' = maxRC C vs strictly less
+      by_cases hMaxEq : maxRC C' = maxRC C
+      · -- maxRC unchanged
+        have hmax0' : maxRC C' ≠ 0 := hMaxEq ▸ hmax0
+        show rcLevelPotential C' ≤ rcLevelPotential C
+        unfold rcLevelPotential; rw [if_neg hmax0, if_neg hmax0', hMaxEq]
+        exact Nat.add_le_add_left (rcMaxCount_step_le_of_maxRC_eq hn3 hij hInv hMaxEq hmax_pos) _
+      · -- maxRC strictly dropped
+        have hlt : maxRC C' < maxRC C := lt_of_le_of_ne hmaxRC_le hMaxEq
+        by_cases hmax0' : maxRC C' = 0
+        · show rcLevelPotential C' ≤ rcLevelPotential C
+          unfold rcLevelPotential; rw [if_pos hmax0', if_neg hmax0]
+          exact Nat.zero_le _
+        · show rcLevelPotential C' ≤ rcLevelPotential C
+          unfold rcLevelPotential; rw [if_neg hmax0', if_neg hmax0]
+          have hle : maxRC C' ≤ maxRC C - 1 := Nat.le_sub_one_of_lt hlt
+          have hcount_le : rcMaxCount C' ≤ n := by
+            unfold rcMaxCount
+            exact le_trans (Finset.card_filter_le _ _) (by simp [Finset.card_univ])
+          have h3 : 0 < rcMaxCount C :=
+            rcMaxCount_pos_of_maxRC_pos (by omega) hInv.allResetting hmax_pos
+          calc (maxRC C' - 1) * n + rcMaxCount C'
+              ≤ (maxRC C - 1 - 1) * n + n :=
+                Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.sub_le_sub_right hle 1)) hcount_le
+            _ ≤ (maxRC C - 1) * n + rcMaxCount C := by
+                have : (maxRC C - 1 - 1) * n + n ≤ (maxRC C - 1) * n := by
+                  rw [show (maxRC C - 1 - 1) * n + n = (maxRC C - 1 - 1 + 1) * n from by ring]
+                  exact Nat.mul_le_mul_right _ (by omega)
+                omega
 
 /-- Under StrongRecoveryInv with rcLevelPotential > 0, picking any agent u at
 maxRC as first coordinate and any v ≠ u guarantees rcLevelPotential strictly
 decreases (or Phase1Goal is reached). The probability of picking such a u is
 ≥ 1/n (at least one of n agents is at maxRC). -/
+private theorem rcMaxCount_step_strict_lt_of_maxRC_eq_involving
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hMaxEq : maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) = maxRC C)
+    {u : Fin n} (hu_at_max : (C u).1.role = .Resetting ∧ (C u).1.resetcount = maxRC C)
+    (hu_involved : u = i ∨ u = j)
+    (hmax_pos : 0 < maxRC C) :
+    rcMaxCount (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) <
+      rcMaxCount C := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  set C' := C.step P i j
+  unfold rcMaxCount
+  apply Finset.card_lt_card
+  constructor
+  · -- subset: same as rcMaxCount_step_le_of_maxRC_eq
+    intro w hw
+    rw [Finset.mem_filter] at hw ⊢
+    obtain ⟨_, hwres', hwrc'⟩ := hw
+    refine ⟨Finset.mem_univ _, ?_⟩
+    by_cases hwi : w = i
+    · exfalso; subst hwi
+      have hfst := step_fst_rc_eq hn3 hij hInv hwres'
+      rw [hfst, hMaxEq] at hwrc'
+      exact absurd hwrc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+    · by_cases hwj : w = j
+      · exfalso; subst hwj
+        have hsnd := step_snd_rc_eq hn3 hij hInv hwres'
+        rw [hsnd, hMaxEq] at hwrc'
+        exact absurd hwrc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+      · rw [show C' w = C w from step_bystander_eq' hij hwi hwj] at hwres' hwrc'
+        rw [hMaxEq] at hwrc'
+        exact ⟨hwres', hwrc'⟩
+  · -- not surjective: u ∈ C-filter but u ∉ C'-filter
+    intro hsurj
+    have h_u_in_C : u ∈ Finset.univ.filter (fun w : Fin n =>
+        (C w).1.role = .Resetting ∧ (C w).1.resetcount = maxRC C) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hu_at_max⟩
+    have h_u_in_C' := hsurj h_u_in_C
+    rw [Finset.mem_filter] at h_u_in_C'
+    obtain ⟨_, hures', hurc'⟩ := h_u_in_C'
+    rcases hu_involved with rfl | rfl
+    · have hfst := step_fst_rc_eq hn3 hij hInv hures'
+      rw [hfst, hMaxEq] at hurc'
+      exact absurd hurc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+    · have hsnd := step_snd_rc_eq hn3 hij hInv hures'
+      rw [hsnd, hMaxEq] at hurc'
+      exact absurd hurc' (Nat.ne_of_lt (pair_rc_lt_maxRC hij hInv hmax_pos))
+
+private theorem rcLevelPotential_strict_drop_involving_u
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
+    {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
+    (hInv : StrongRecoveryInv Rmax C)
+    (hInv' : StrongRecoveryInv Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j))
+    {u : Fin n} (hu_at_max : (C u).1.role = .Resetting ∧ (C u).1.resetcount = maxRC C)
+    (hu_involved : u = i ∨ u = j)
+    (hmax_pos : 0 < maxRC C) :
+    rcLevelPotential (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) <
+      rcLevelPotential C := by
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  set C' := C.step P i j
+  have hmaxRC_le := maxRC_step_le_strong (Emax := Emax) (Dmax := Dmax) (hn := hn) hn3 C hInv i j
+  have hmax_ne : maxRC C ≠ 0 := Nat.pos_iff_ne_zero.mp hmax_pos
+  by_cases hMaxEq : maxRC C' = maxRC C
+  · -- maxRC unchanged → rcMaxCount strictly drops
+    have hmax_ne' : maxRC C' ≠ 0 := hMaxEq ▸ hmax_ne
+    show rcLevelPotential C' < rcLevelPotential C
+    unfold rcLevelPotential; rw [if_neg hmax_ne, if_neg hmax_ne', hMaxEq]
+    apply Nat.add_lt_add_left
+    exact rcMaxCount_step_strict_lt_of_maxRC_eq_involving hn3 hij hInv hMaxEq
+      hu_at_max hu_involved hmax_pos
+  · -- maxRC strictly dropped
+    have hlt_max : maxRC C' < maxRC C := lt_of_le_of_ne hmaxRC_le hMaxEq
+    by_cases hmax0' : maxRC C' = 0
+    · show rcLevelPotential C' < rcLevelPotential C
+      unfold rcLevelPotential; rw [if_pos hmax0', if_neg hmax_ne]
+      exact Nat.add_pos_right _ (rcMaxCount_pos_of_maxRC_pos (by omega) hInv.allResetting hmax_pos)
+    · show rcLevelPotential C' < rcLevelPotential C
+      unfold rcLevelPotential; rw [if_neg hmax0', if_neg hmax_ne]
+      have hle : maxRC C' ≤ maxRC C - 1 := Nat.le_sub_one_of_lt hlt_max
+      have hcount_le : rcMaxCount C' ≤ n := by
+        unfold rcMaxCount
+        exact le_trans (Finset.card_filter_le _ _) (by simp [Finset.card_univ])
+      have h3 : 0 < rcMaxCount C :=
+        rcMaxCount_pos_of_maxRC_pos (by omega) hInv.allResetting hmax_pos
+      calc (maxRC C' - 1) * n + rcMaxCount C'
+          ≤ (maxRC C - 1 - 1) * n + n :=
+            Nat.add_le_add (Nat.mul_le_mul_right _ (Nat.sub_le_sub_right hle 1)) hcount_le
+        _ ≤ (maxRC C - 1) * n := by
+            rw [show (maxRC C - 1 - 1) * n + n = (maxRC C - 1 - 1 + 1) * n from by ring]
+            exact Nat.mul_le_mul_right _ (by omega)
+        _ < (maxRC C - 1) * n + rcMaxCount C := Nat.lt_add_of_pos_right h3
+
 theorem rcLevelPotential_one_step_drop_prob
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (k : ℕ) (hk : 0 < k)
@@ -537,7 +727,56 @@ theorem rcLevelPotential_one_step_drop_prob
         (by omega : 2 ≤ n) C
         (fun D => Phase1Goal Rmax D ∨
           (StrongRecoveryInv Rmax D ∧ rcLevelPotential D < k)) 1 := by
-  sorry
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  set Goal := fun D : Config (AgentState n) Opinion n => Phase1Goal Rmax D ∨
+    (StrongRecoveryInv Rmax D ∧ rcLevelPotential D < k)
+  have hn2 : 2 ≤ n := by omega
+  -- k > 0 implies maxRC C > 0
+  have hmax_pos : 0 < maxRC C := by
+    by_contra h
+    push_neg at h
+    have hmz : maxRC C = 0 := Nat.eq_zero_of_le_zero (by omega)
+    unfold rcLevelPotential at hphi; rw [if_pos hmz] at hphi; omega
+  -- Find u at maxRC
+  have ⟨u, hu_res, hu_rc⟩ : ∃ u : Fin n, (C u).1.role = .Resetting ∧
+      (C u).1.resetcount = maxRC C := by
+    have hcnt := rcMaxCount_pos_of_maxRC_pos (by omega : 0 < n) hInv.allResetting hmax_pos
+    unfold rcMaxCount at hcnt; rw [Finset.card_pos] at hcnt
+    obtain ⟨w, hw⟩ := hcnt
+    rw [Finset.mem_filter] at hw
+    exact ⟨w, hw.2⟩
+  -- Check if Goal already holds at C
+  by_cases hGoalC : Goal C
+  · -- Goal already holds at C: trivially ProbHitWithin ≥ 1 ≥ 1/n
+    have h1 : (1 : ENNReal) ≤ Probability.ProbHitWithin P hn2 C Goal 1 := by
+      have h0 := Probability.probHitBy_zero_of_goal P hn2 C Goal hGoalC
+      calc (1 : ENNReal) = Probability.ProbHitWithin P hn2 C Goal 0 := h0.symm
+        _ ≤ Probability.ProbHitWithin P hn2 C Goal 1 :=
+            Probability.ProbHitWithin_mono_time P hn2 C Goal (Nat.zero_le 1)
+    calc ((n : ℕ) : ENNReal)⁻¹ ≤ 1 :=
+          ENNReal.inv_le_one.mpr (by exact_mod_cast (show 1 ≤ n by omega))
+      _ ≤ Probability.ProbHitWithin P hn2 C Goal 1 := h1
+  · -- Goal does not hold at C: use PairsInvolving
+    have hstep : ∀ p ∈ Probability.PairsInvolving n u, Goal (C.step P p.1 p.2) := by
+      intro ⟨a, b⟩ hp
+      rw [Probability.mem_PairsInvolving] at hp
+      obtain ⟨hab, ha_or_b⟩ := hp
+      rcases strongRecoveryInv_step hn3 C hInv a b with hInv' | hGoal'
+      · right
+        refine ⟨hInv', ?_⟩
+        rw [← hphi]
+        have hu_involved : u = a ∨ u = b := by
+          rcases ha_or_b with rfl | rfl <;> [left; right] <;> rfl
+        exact rcLevelPotential_strict_drop_involving_u hn3 hab hInv hInv'
+          ⟨hu_res, hu_rc⟩ hu_involved hmax_pos
+      · left; exact hGoal'
+    have h2n := Probability.ProbHitWithin_one_lower_bound_of_agent_participation
+          P hn2 C Goal hGoalC u hstep
+    calc ((n : ℕ) : ENNReal)⁻¹
+        ≤ 1 * ((n : ℕ) : ENNReal)⁻¹ := by rw [one_mul]
+      _ ≤ (2 : ENNReal) * ((n : ℕ) : ENNReal)⁻¹ := by
+          exact mul_le_mul_right' one_le_two _
+      _ ≤ Probability.ProbHitWithin P hn2 C Goal 1 := h2n
 
 /-- Phase 2: from Phase1Goal to consensus. -/
 theorem phase1Goal_to_consensus
