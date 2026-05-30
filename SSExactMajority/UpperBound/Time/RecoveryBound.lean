@@ -484,7 +484,14 @@ theorem rcMaxCount_pos_of_maxRC_pos
     (hAllR : ∀ w : Fin n, (C w).1.role = .Resetting)
     (hmax_pos : 0 < maxRC C) :
     0 < rcMaxCount C := by
-  sorry
+  unfold rcMaxCount
+  rw [Finset.card_pos]
+  unfold maxRC at hmax_pos
+  have ⟨w, _, hw⟩ := Finset.exists_mem_eq_sup (Finset.univ (α := Fin n))
+    ⟨⟨0, hn⟩, Finset.mem_univ _⟩
+    (fun w : Fin n => if (C w).1.role = .Resetting then (C w).1.resetcount else 0)
+  simp only [hAllR w, ite_true] at hw
+  exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hAllR w, hw.symm⟩⟩
 
 /-- `rcLevelPotential C = 0 → Phase1Goal` under `StrongRecoveryInv`. -/
 theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
