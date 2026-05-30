@@ -778,20 +778,6 @@ theorem rcLevelPotential_one_step_drop_prob
           exact mul_le_mul_right' one_le_two _
       _ ≤ Probability.ProbHitWithin P hn2 C Goal 1 := h2n
 
-
-/-- Helper: from a config with some non-Resetting agent, consensus is reached
-within Rmax*n^2 expected time.  Sub-case 2 of Phase 2 (sorry placeholder). -/
-theorem nonResetting_to_consensus
-    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
-    (C : Config (AgentState n) Opinion n)
-    (hw : ∃ w : Fin n, (C w).1.role ≠ .Resetting) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
-      C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
-
 /-- Phase 2: from Phase1Goal to consensus. -/
 theorem phase1Goal_to_consensus
     {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
@@ -828,7 +814,9 @@ theorem phase1Goal_to_consensus
       sorry
     · -- Sub-case 2: ∃ w, (C w).1.role ≠ .Resetting
       -- Some agent has left Resetting; re-ranking is in progress.
-      exact nonResetting_to_consensus hn4 hn hRmax hDmax C ⟨w, hw⟩
+      -- Needs: a potential tracking settled agents → consensus.
+      -- The bound Rmax·n² covers the ranking + swap + decision phases.
+      sorry
 
 
 set_option linter.unusedDecidableInType false in
