@@ -794,7 +794,29 @@ theorem phase1Goal_to_consensus
   rcases hGoal with hcons | hrest
   · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
     exact zero_le
-  · sorry
+  · -- Phase1Goal minus consensus: two sub-cases
+    rcases hrest with ⟨hInv, hrc0⟩ | ⟨w, hw⟩
+    · -- Sub-case 1: StrongRecoveryInv ∧ maxRC = 0
+      -- All agents Resetting with correct answers and rc = 0.
+      -- This is the pristine starting point for re-ranking.
+      have hAllR := hInv.allResetting   -- ∀ w, (C w).1.role = .Resetting
+      have hAllC := hInv.allCorrect     -- ∀ w, (C w).1.answer = majorityAnswer C
+      have hBdd := hInv.rcBounded       -- ∀ w, (C w).1.resetcount ≤ Rmax
+      have hAllRC0 : ∀ w : Fin n, (C w).1.resetcount = 0 := by
+        intro w
+        have h1 := hAllR w
+        have h2 : (C w).1.resetcount ≤ maxRC C := by
+          unfold maxRC
+          exact Finset.le_sup_of_le (Finset.mem_univ w) (by simp [h1])
+        omega
+      -- Needs: ranking potential descent from all-Resetting/rc=0 to
+      -- IsConsensusConfig, bound by Rmax·n².  Paper Section 4 ranking phase.
+      sorry
+    · -- Sub-case 2: ∃ w, (C w).1.role ≠ .Resetting
+      -- Some agent has left Resetting; re-ranking is in progress.
+      -- Needs: a potential tracking settled agents → consensus.
+      -- The bound Rmax·n² covers the ranking + swap + decision phases.
+      sorry
 
 
 set_option linter.unusedDecidableInType false in
