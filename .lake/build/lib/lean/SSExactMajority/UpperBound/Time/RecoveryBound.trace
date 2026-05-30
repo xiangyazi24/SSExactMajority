@@ -1,9 +1,9 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["6a13f81367145b49.olean"],
+ {"o": ["b3ccd4bc24edac13.olean"],
   "m": false,
-  "i": "955bf685381cba56.ilean",
+  "i": "fd337468fe8317c7.ilean",
   "c": "4bf854fe9d2829d8.c"},
  "log":
  [{"message":
@@ -106,7 +106,7 @@
    "SSExactMajority/UpperBound/Time/RecoveryBound.lean:781:0: `phase1Goal_to_consensus` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
    "level": "warning"},
   {"message":
-   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:844:16: `mul_le_mul_right'` has been deprecated: Use `mul_le_mul_left` instead",
+   "SSExactMajority/UpperBound/Time/RecoveryBound.lean:866:16: `mul_le_mul_right'` has been deprecated: Use `mul_le_mul_left` instead",
    "level": "warning"}],
  "inputs":
  [["SSExactMajority.UpperBound.Time.RecoveryBound:deps",
@@ -130,7 +130,7 @@
   ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
    "2f4703bb19086252"],
   ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RecoveryBound.lean",
-   "f91c2e60996beec4"],
+   "41a322017b562780"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
@@ -140,4 +140,4 @@
    "f5c4a1aaea3799bd"],
   ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "38fa245f1c1c5926"}
+ "depHash": "684934ae2dad19cd"}

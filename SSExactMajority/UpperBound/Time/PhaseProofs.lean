@@ -361,7 +361,8 @@ theorem PEM_expected_epidemic_to_consensus
   let AllR := fun D : Config (AgentState n) Opinion n =>
     IsConsensusConfig D ∨
     ((∀ w : Fin n, (D w).1.role = .Resetting) ∧
-     (∀ w : Fin n, (D w).1.answer = majorityAnswer D))
+     (∀ w : Fin n, (D w).1.answer = majorityAnswer D) ∧
+     (∀ w : Fin n, (D w).1.resetcount ≤ Rmax))
   have hAllR_sub : ∀ D, IsConsensusConfig D → AllR D := fun D h => Or.inl h
   -- Phase 1: Epidemic descent. E[T to AllR] ≤ n · n(n-1).
   -- From CorrectResetSeed: ∃ seed r with Resetting, rc ≥ nonResettingCount.
@@ -558,7 +559,7 @@ theorem PEM_expected_epidemic_to_consensus
     rcases hD with hCons | hAllRes
     · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
       exact zero_le _
-    · exact allR_to_consensus_bound hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2 (fun w => by sorry)
+    · exact allR_to_consensus_bound hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2.1 hAllRes.2.2
   -- Compose phases
   have hComp := Probability.expectedHittingTime_add_le P hn2 C AllR IsConsensusConfig
     ((2 * n * n * (n - 1) : ℕ) : ENNReal) ((2 * Rmax * n * n : ℕ) : ENNReal)
@@ -832,11 +833,11 @@ theorem PEM_hConsensusBound_from_bridge
           Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
             ((2 * Rmax * n * n : ℕ) : ENNReal) := by
         intro D hD
-        rcases hD with hCons | ⟨hAllRes, hAllAns⟩
+        rcases hD with hCons | ⟨hAllRes, hAllAns, hBdd⟩
         · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D
             IsConsensusConfig hCons]
           exact zero_le _
-        · exact allR_to_consensus_bound hn4 hn0 hRmax hDmax D hAllRes hAllAns (fun w => by sorry)
+        · exact allR_to_consensus_bound hn4 hn0 hRmax hDmax D hAllRes hAllAns hBdd
       have hAllR_sub : ∀ D, IsConsensusConfig D → AllR D :=
         fun D h => Or.inl h
       have hCons_bound : Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
