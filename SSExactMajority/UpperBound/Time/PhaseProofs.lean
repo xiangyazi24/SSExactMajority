@@ -331,7 +331,8 @@ theorem bounded_resetting_to_AllR
       (by omega : 2 ≤ n) D
       (fun C => IsConsensusConfig C ∨
         ((∀ w : Fin n, (C w).1.role = .Resetting) ∧
-         (∀ w : Fin n, (C w).1.answer = majorityAnswer C))) ≤
+         (∀ w : Fin n, (C w).1.answer = majorityAnswer C) ∧
+         (∀ w : Fin n, (C w).1.resetcount ≤ Rmax))) ≤
       ((8 * Rmax * n * n : ℕ) : ENNReal) := by
   sorry
 
@@ -347,7 +348,7 @@ theorem PEM_expected_epidemic_to_consensus
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((4 * Rmax * n * n : ℕ) : ENNReal) := by
+      ((11 * Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
@@ -369,40 +370,39 @@ theorem PEM_expected_epidemic_to_consensus
   -- propagate_reset_step_nonResettingCount_lt (BurmanProof.lean) gives
   -- deterministic descent on nonResettingCount.
   have hPhase1 : Probability.expectedHittingTime P hn2 C AllR ≤
-      ((2 * n * n * (n - 1) : ℕ) : ENNReal) := by
+      ((9 * Rmax * n * n : ℕ) : ENNReal) := by
     classical
     have hDmax : 1 < Dmax := by omega -- from hDmaxN : n ≤ Dmax and hn4 : 4 ≤ n
     -- Step 1: bound expectedHittingTime to Goal' = (CRS ∧ φ=0) ∨ ¬CRS ∨
     -- (∃ i j, φ(step) > φ) via variable_descent_until_goal with region-or-exit
     -- pattern.  The third disjunct internalises a per-config "step would
     -- increase φ" exit, so `hNonincrease` discharges by contradiction.
-    let Bounded := IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax)
     set Goal' : Config (AgentState n) Opinion n → Prop := fun E =>
-      (CorrectResetSeed E ∧ nonResettingCount E = 0) ∨ (¬ CorrectResetSeed E ∧ Bounded E) ∨
-        (∃ i j : Fin n, nonResettingCount E < nonResettingCount (E.step P i j)) ∧ Bounded E
+      (CorrectResetSeed E ∧ nonResettingCount E = 0) ∨ (¬ CorrectResetSeed E) ∨
+        (∃ i j : Fin n, nonResettingCount E < nonResettingCount (E.step P i j))
     -- Per-level p(k) = k / (n*(n-1)) from PEM_correctResetSeed_nonResetting_descent.
     have hToGoal' : Probability.expectedHittingTime P hn2 C Goal' ≤
         ∑ k ∈ Finset.range (nonResettingCount C),
           (((k + 1 : ℕ) : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹ := by
       apply Probability.expectedHittingTime_le_of_variable_descent_until_goal
-        P hn2 C Goal' (fun E => CorrectResetSeed E \u2227 Bounded E) nonResettingCount
+        P hn2 C Goal' CorrectResetSeed nonResettingCount
         (fun k => ((k : ℕ) : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹)
         hSeed
       · -- hZeroGoal: CRS E ∧ φ=0 → Goal' E
         intro E hCRS hφ0
         exact Or.inl ⟨hCRS, hφ0⟩
       · -- hInvStep: by_cases CRS(step) — trivial via region-or-exit
-        intro E \u27e8hCRS_E, hBnd_E\u27e9 _hG i j
+        intro E hCRS_E _hG i j
         by_cases hCRS_step : CorrectResetSeed (E.step P i j)
         · exact Or.inl hCRS_step
-        · exact Or.inr (Or.inl ⟨hCRS_step, PEMProtocolCoupled_preserves_bounded hn0 E hBnd_E i j⟩)
+        · exact Or.inr (Or.inl hCRS_step)
       · -- hNonincrease: discharged by contradiction via the φ(step) > φ exit
         -- disjunct of Goal'.  If nrc(step) > nrc E, then Goal' E holds via the
         -- third disjunct, contradicting `¬ Goal' E`.
-        intro E \u27e8_hCRS_E, hBnd_E\u27e9 hG i j
+        intro E _hCRS_E hG i j
         by_contra h_not_le
         push_neg at h_not_le
-        exact hG (Or.inr (Or.inr ⟨⟨i, j, h_not_le⟩, PEMProtocolCoupled_preserves_bounded hn0 E hBnd_E i j⟩))
+        exact hG (Or.inr (Or.inr ⟨i, j, h_not_le⟩))
       · -- hp: per-level prob bound using PEM_correctResetSeed_nonResetting_descent
         intro k hk E hCRS_E hφE
         have hφE_pos : 0 < nonResettingCount E := by rw [hφE]; exact hk
@@ -414,8 +414,7 @@ theorem PEM_expected_epidemic_to_consensus
             (fun D => Goal' D ∨ (CorrectResetSeed D ∧ nonResettingCount D < k)) := by
           intro F ⟨hF_CRS, hF_φ⟩
           right
-          refine ⟨hF_CRS, ?_⟩
-          rw [← hφE]; exact hF_φ
+          exact ⟨hF_CRS, by rw [← hφE]; exact hF_φ⟩
         calc ((k : ℕ) : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹
             = ((nonResettingCount E : ℕ) : ENNReal) *
                 ((n * (n - 1) : ℕ) : ENNReal)⁻¹ := by rw [hφE]
@@ -472,7 +471,7 @@ theorem PEM_expected_epidemic_to_consensus
     -- (with φ=0 → first disjunct) or is outside CRS (second disjunct).
     have h_AllR_sub : ∀ D, AllR D → Goal' D := by
       intro D hD
-      rcases hD with hCons | ⟨hAllR_role, hAllR_ans⟩
+      rcases hD with hCons | ⟨hAllR_role, hAllR_ans, _⟩
       · -- IsConsensus → all Settled → no Resetting agent → ¬CRS
         right; left
         intro hCRS_D
@@ -505,7 +504,7 @@ theorem PEM_expected_epidemic_to_consensus
     -- obligation so the open math is a single localised gap.
     have h_bridge_per_state :
         ∀ D, Goal' D → Probability.expectedHittingTime P hn2 D AllR ≤
-          ((n * n * (n - 1) : ℕ) : ENNReal) := by
+          ((8 * Rmax * n * n : ℕ) : ENNReal) := by
       intro D hD
       rcases hD with ⟨hCRS, hφ0⟩ | hExit
       · -- D1 case: CRS ∧ φ=0 → D is AllR via all-Resetting + all-correct.
@@ -524,31 +523,33 @@ theorem PEM_expected_epidemic_to_consensus
         have hAllR_ans : ∀ w : Fin n, (D w).1.answer = majorityAnswer D := by
           intro w
           exact (hCRS.2 w (hAllR_role w)).2
+        have hRcBd : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax := by
+          intro w; exact (hCRS.2 w (hAllR_role w)).1
         rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D AllR
-          (Or.inr ⟨hAllR_role, hAllR_ans⟩)]
+          (Or.inr ⟨hAllR_role, hAllR_ans, hRcBd⟩)]
         exact zero_le _
-      · -- D2 ∨ D3: exit from CRS descent (with IsBoundedConfig).
-        rcases hExit with ⟨hNotCRS, hBndD⟩ | ⟨⟨i, j, hNRC⟩, hBndD⟩
-        · -- D2: ¬CRS. Check if already AllR.
-          by_cases hAllR_D : AllR D
-          · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D AllR hAllR_D]
-            exact zero_le _
-          · -- ¬CRS ∧ ¬AllR: genuine gap. The state has broken CRS but isn't AllR yet.
-            exact (bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
-        · -- D3: nrc increased. Some agent left Resetting.
-          exact (bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D).trans (by norm_cast; nlinarith)
+      · -- D2 ∨ D3: exit from CRS descent.
+        rcases hExit with hNotCRS | ⟨i, j, hNRC⟩
+        · -- D2: ¬CRS.
+          exact bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D
+        · -- D3: nrc increased.
+          exact bounded_resetting_to_AllR hn4 hn0 hRmax hDmaxN D
     have hComp := Probability.expectedHittingTime_add_le P hn2 C Goal' AllR
       ((n * n * (n - 1) : ℕ) : ENNReal)
-      ((n * n * (n - 1) : ℕ) : ENNReal)
+      ((8 * Rmax * n * n : ℕ) : ENNReal)
       (hToGoal'.trans h_sum_le) h_bridge_per_state h_AllR_sub
     calc Probability.expectedHittingTime P hn2 C AllR
         ≤ ((n * n * (n - 1) : ℕ) : ENNReal) +
-          ((n * n * (n - 1) : ℕ) : ENNReal) := hComp
-      _ ≤ ((2 * n * n * (n - 1) : ℕ) : ENNReal) := by
-          show ((n * n * (n - 1) : ℕ) : ENNReal) + ((n * n * (n - 1) : ℕ) : ENNReal) ≤
-            ((2 * n * n * (n - 1) : ℕ) : ENNReal)
-          rw [← two_mul]
-          exact le_of_eq (by push_cast; ring)
+          ((8 * Rmax * n * n : ℕ) : ENNReal) := hComp
+      _ ≤ ((9 * Rmax * n * n : ℕ) : ENNReal) := by
+          have h_nat : n * n * (n - 1) + 8 * Rmax * n * n ≤ 9 * Rmax * n * n := by
+            have : n * n * (n - 1) ≤ Rmax * n * n := by
+              calc n * n * (n - 1) ≤ n * n * n := Nat.mul_le_mul_left _ (Nat.sub_le n 1)
+                _ = n * (n * n) := by ring
+                _ ≤ Rmax * (n * n) := Nat.mul_le_mul_right _ hRmax
+                _ = Rmax * n * n := by ring
+            linarith
+          exact_mod_cast h_nat
   -- Phase 2: From all-Resetting → IsConsensusConfig. E[T] ≤ 2·Rmax·n².
   -- After epidemic: all Resetting with correct answer (from CorrectResetSeed invariant).
   -- Re-ranking (Burman) + final phase reaches consensus.
@@ -562,19 +563,13 @@ theorem PEM_expected_epidemic_to_consensus
     · exact allR_to_consensus_bound hn4 hn0 hRmax hDmaxN D hAllRes.1 hAllRes.2.1 hAllRes.2.2
   -- Compose phases
   have hComp := Probability.expectedHittingTime_add_le P hn2 C AllR IsConsensusConfig
-    ((2 * n * n * (n - 1) : ℕ) : ENNReal) ((2 * Rmax * n * n : ℕ) : ENNReal)
+    ((9 * Rmax * n * n : ℕ) : ENNReal) ((2 * Rmax * n * n : ℕ) : ENNReal)
     hPhase1 hPhase2 hAllR_sub
   calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
-      ≤ ((2 * n * n * (n - 1) : ℕ) : ENNReal) + ((2 * Rmax * n * n : ℕ) : ENNReal) := hComp
-    _ ≤ ((4 * Rmax * n * n : ℕ) : ENNReal) := by
-        have h_nat : 2 * n * n * (n - 1) + 2 * Rmax * n * n ≤ 4 * Rmax * n * n := by
-          have : 2 * n * n * (n - 1) ≤ 2 * Rmax * n * n := by
-            calc 2 * n * n * (n - 1) ≤ 2 * n * n * n := Nat.mul_le_mul_left _ (Nat.sub_le n 1)
-              _ = 2 * n * (n * n) := by ring
-              _ ≤ 2 * Rmax * (n * n) := by nlinarith
-              _ = 2 * Rmax * n * n := by ring
-          linarith
-        exact_mod_cast h_nat
+      ≤ ((9 * Rmax * n * n : ℕ) : ENNReal) + ((2 * Rmax * n * n : ℕ) : ENNReal) := hComp
+    _ ≤ ((11 * Rmax * n * n : ℕ) : ENNReal) := by
+        have h_nat : 9 * Rmax * n * n + 2 * Rmax * n * n = 11 * Rmax * n * n := by ring
+        exact_mod_cast le_of_eq h_nat
 
 
 /-! Full median-correct → consensus via Strong Markov on stages 1-3. -/
@@ -593,7 +588,7 @@ theorem PEM_expected_median_correct_to_consensus
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((18 * Rmax * n * n : ℕ) : ENNReal) := by
+      ((30 * Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
@@ -655,7 +650,7 @@ theorem PEM_expected_median_correct_to_consensus
           norm_cast
   have hStage3 : ∀ D : Config (AgentState n) Opinion n, Mid D →
       Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
-        ((4 * Rmax * n * n : ℕ) : ENNReal) := by
+        ((11 * Rmax * n * n : ℕ) : ENNReal) := by
     intro D hD
     rcases hD with hCons | hSeed
     · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
@@ -663,16 +658,16 @@ theorem PEM_expected_median_correct_to_consensus
     · exact PEM_expected_epidemic_to_consensus hn4 hn0 hRmax hDmax D hSeed /- IsBounded for CRS state from timer drain -/
   have hCompose := Probability.expectedHittingTime_add_le P hn2 C Mid IsConsensusConfig
     ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal)
-    ((4 * Rmax * n * n : ℕ) : ENNReal)
+    ((11 * Rmax * n * n : ℕ) : ENNReal)
     hStage1 hStage3 hMidGoal
   calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
       ≤ ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) +
-        ((4 * Rmax * n * n : ℕ) : ENNReal) := hCompose
-    _ ≤ ((18 * Rmax * n * n : ℕ) : ENNReal) := by
-        -- arithmetic: 7(Rmax+4)n(n-1) + n(n-1) + 4Rmax·n² ≤ 18Rmax·n²
+        ((11 * Rmax * n * n : ℕ) : ENNReal) := hCompose
+    _ ≤ ((30 * Rmax * n * n : ℕ) : ENNReal) := by
+        -- arithmetic: 7(Rmax+4)n(n-1) + n(n-1) + 11Rmax·n² ≤ 25Rmax·n²
         -- for Rmax ≥ n ≥ 4
-        have h_nat : 7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) + 4 * Rmax * n * n
-            ≤ 18 * Rmax * n * n := by
+        have h_nat : 7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) + 11 * Rmax * n * n
+            ≤ 30 * Rmax * n * n := by
           -- Key idea: (7R+29)*n*(n-1) + 4R*n² ≤ 18R*n²
           -- Rewrite (7R+29)*n*(n-1) = (7R+29)*n² - (7R+29)*n
           -- So need: (11R+29)*n² - (7R+29)*n ≤ 18R*n²
@@ -786,7 +781,7 @@ theorem PEM_hConsensusBound_from_bridge
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((200 * Rmax * n * n : ℕ) : ENNReal) := by
+      ((210 * Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
@@ -795,10 +790,10 @@ theorem PEM_hConsensusBound_from_bridge
   by_cases hMedC : MedianAnswerCorrect C
   · -- MedC case: direct to consensus via existing bound
     calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
-        ≤ ((18 * Rmax * n * n : ℕ) : ENNReal) :=
+        ≤ ((30 * Rmax * n * n : ℕ) : ENNReal) :=
           PEM_expected_median_correct_to_consensus hn4 hn0 hRmax hEmax hDmax C
             hSswap hMedC hTimerLo hTimerHi
-      _ ≤ ((200 * Rmax * n * n : ℕ) : ENNReal) := by
+      _ ≤ ((210 * Rmax * n * n : ℕ) : ENNReal) := by
           norm_cast; nlinarith [Nat.zero_le (Rmax * n * n)]
   · -- ¬MedC case: use expectedHittingTime_add_le with Mid
     let Mid := fun D : Config (AgentState n) Opinion n =>
@@ -819,7 +814,8 @@ theorem PEM_hConsensusBound_from_bridge
       let AllR := fun D : Config (AgentState n) Opinion n =>
         IsConsensusConfig D ∨
         ((∀ w : Fin n, (D w).1.role = .Resetting) ∧
-         (∀ w : Fin n, (D w).1.answer = majorityAnswer D))
+         (∀ w : Fin n, (D w).1.answer = majorityAnswer D) ∧
+         (∀ w : Fin n, (D w).1.resetcount ≤ Rmax))
       -- Step 1: E[T to Mid] ≤ E[T to IsConsensus]
       have hMidMono : Probability.expectedHittingTime P hn2 C Mid ≤
           Probability.expectedHittingTime P hn2 C IsConsensusConfig :=
@@ -862,7 +858,7 @@ theorem PEM_hConsensusBound_from_bridge
     -- Phase 2: from Mid → consensus ≤ 18·Rmax·n²
     have hPhase2 : ∀ D, Mid D →
         Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
-          ((18 * Rmax * n * n : ℕ) : ENNReal) := by
+          ((30 * Rmax * n * n : ℕ) : ENNReal) := by
       intro D hD
       rcases hD with hCons | ⟨hSwap, hMed, hTLo, hTHi⟩
       · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hCons]
@@ -871,12 +867,12 @@ theorem PEM_hConsensusBound_from_bridge
           hSwap hMed hTLo hTHi
     -- Compose
     calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
-        ≤ ((180 * Rmax * n * n : ℕ) : ENNReal) + ((18 * Rmax * n * n : ℕ) : ENNReal) :=
+        ≤ ((180 * Rmax * n * n : ℕ) : ENNReal) + ((30 * Rmax * n * n : ℕ) : ENNReal) :=
           Probability.expectedHittingTime_add_le P hn2 C Mid IsConsensusConfig
             _ _ hPhase1 hPhase2 hMidGoal
-      _ ≤ ((200 * Rmax * n * n : ℕ) : ENNReal) := by
+      _ ≤ ((210 * Rmax * n * n : ℕ) : ENNReal) := by
           norm_cast
-          have : 180 * Rmax * n * n + 18 * Rmax * n * n = 198 * Rmax * n * n := by ring
-          linarith [Nat.zero_le (2 * Rmax * n * n)]
+          have : 180 * Rmax * n * n + 30 * Rmax * n * n = 210 * Rmax * n * n := by ring
+          linarith [Nat.zero_le (Rmax * n * n)]
 
 end SSEM

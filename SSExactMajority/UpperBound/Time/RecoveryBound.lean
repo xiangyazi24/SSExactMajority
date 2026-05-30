@@ -23,13 +23,13 @@ theorem maxRC_le_of_all_le {C : Config (AgentState n) Opinion n} {M : ℕ}
   · simp [hr, h w hr]
   · simp [hr]
 
-structure StrongRecoveryInv (Rmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop where
+structure StrongRecoveryInv (Rmax Dmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop where
   allResetting : ∀ w : Fin n, (C w).1.role = .Resetting
   allCorrect : ∀ w : Fin n, (C w).1.answer = majorityAnswer C
   rcBounded : ∀ w : Fin n, (C w).1.resetcount ≤ Rmax
 
-def Phase1Goal (Rmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop :=
-  IsConsensusConfig C ∨ (StrongRecoveryInv Rmax C ∧ maxRC C = 0) ∨
+def Phase1Goal (Rmax Dmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop :=
+  IsConsensusConfig C ∨ (StrongRecoveryInv Rmax Dmax C ∧ maxRC C = 0) ∨
   (∃ w : Fin n, (C w).1.role ≠ .Resetting)
 
 /-! ### Auxiliary lemmas -/
@@ -199,7 +199,7 @@ private theorem rd_not_both_settled_of_step_resetting
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
     {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hi_res' : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j i).1.role = .Resetting) :
     ¬ ((rankDeltaOSSR Rmax Emax Dmax hn ((C i).1, (C j).1)).1.role = .Settled ∧
        (rankDeltaOSSR Rmax Emax Dmax hn ((C i).1, (C j).1)).2.role = .Settled) := by
@@ -235,7 +235,7 @@ private theorem rd_not_both_settled_of_step_resetting_snd
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n}
     {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hj_res' : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j j).1.role = .Resetting) :
     ¬ ((rankDeltaOSSR Rmax Emax Dmax hn ((C i).1, (C j).1)).1.role = .Settled ∧
        (rankDeltaOSSR Rmax Emax Dmax hn ((C i).1, (C j).1)).2.role = .Settled) := by
@@ -267,15 +267,17 @@ private theorem rd_not_both_settled_of_step_resetting_snd
   rw [h_step_j, h_delta_eq, hphase_settled] at hj_res'
   exact absurd hj_res' (by decide)
 
+
+
 /-! ### Main theorems -/
 
 set_option maxHeartbeats 1600000 in
 theorem strongRecoveryInv_step
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C) (i j : Fin n) :
-    StrongRecoveryInv Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ∨
-    Phase1Goal Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) := by
+    (hInv : StrongRecoveryInv Rmax Dmax C) (i j : Fin n) :
+    StrongRecoveryInv Rmax Dmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ∨
+    Phase1Goal Rmax Dmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) := by
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
   set C' := C.step P i j with hC'
   by_cases hij : i = j
@@ -340,6 +342,7 @@ theorem strongRecoveryInv_step
             exact hbound
           · rw [show (C' w) = C w from step_bystander_eq' hij hwi hwj]
             exact hInv.rcBounded w
+
     · right; right; right
       push_neg at h_all_res; exact h_all_res
 
@@ -347,7 +350,7 @@ theorem strongRecoveryInv_step
 `n ≥ 3`), its resetcount is exactly `max(rc_i - 1, rc_j - 1)`. -/
 private theorem step_fst_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hi_res : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j i).1.role = .Resetting) :
     (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j i).1.resetcount =
       Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) := by
@@ -374,7 +377,7 @@ private theorem step_fst_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ 
 
 private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hj_res : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j j).1.role = .Resetting) :
     (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j j).1.resetcount =
       Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) := by
@@ -401,7 +404,7 @@ private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ 
     h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
 
 private theorem rc_le_maxRC {Rmax : ℕ} {C : Config (AgentState n) Opinion n}
-    (hInv : StrongRecoveryInv Rmax C) (w : Fin n) :
+    (hInv : StrongRecoveryInv Rmax Dmax C) (w : Fin n) :
     (C w).1.resetcount ≤ maxRC C := by
   unfold maxRC
   refine le_trans ?_ (Finset.le_sup (Finset.mem_univ w))
@@ -411,7 +414,7 @@ set_option maxHeartbeats 1600000 in
 theorem maxRC_step_le_strong
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C) (i j : Fin n) :
+    (hInv : StrongRecoveryInv Rmax Dmax C) (i j : Fin n) :
     maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤ maxRC C := by
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
   set C' := C.step P i j with hC'
@@ -455,7 +458,7 @@ noncomputable def rcLevelPotential (C : Config (AgentState n) Opinion n) : ℕ :
 /-- rcLevelPotential is bounded above by `Rmax * n`. -/
 theorem rcLevelPotential_le_Rmax_n {Rmax : ℕ}
     {C : Config (AgentState n) Opinion n}
-    (hInv : StrongRecoveryInv Rmax C) :
+    (hInv : StrongRecoveryInv Rmax Dmax C) :
     rcLevelPotential C ≤ Rmax * n := by
   unfold rcLevelPotential
   split
@@ -496,9 +499,9 @@ theorem rcMaxCount_pos_of_maxRC_pos
 /-- `rcLevelPotential C = 0 → Phase1Goal` under `StrongRecoveryInv`. -/
 theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hphi : rcLevelPotential C = 0) :
-    Phase1Goal Rmax C := by
+    Phase1Goal Rmax Dmax C := by
   unfold rcLevelPotential at hphi
   split at hphi
   · next h => exact Or.inr (Or.inl ⟨hInv, h⟩)
@@ -515,7 +518,7 @@ theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
 private theorem pair_rc_lt_maxRC
     {Rmax : ℕ}
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hmax_pos : 0 < maxRC C) :
     Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) < maxRC C := by
   have : Nat.max ((C i).1.resetcount - 1) ((C j).1.resetcount - 1) ≤ maxRC C - 1 :=
@@ -526,7 +529,7 @@ private theorem pair_rc_lt_maxRC
 private theorem step_agent_rc_lt_maxRC
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j w : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hmax_pos : 0 < maxRC C)
     (hw : w = i ∨ w = j)
     (hwres : (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j w).1.role = .Resetting) :
@@ -541,7 +544,7 @@ private theorem step_agent_rc_lt_maxRC
 private theorem rcMaxCount_step_le_of_maxRC_eq
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hMaxEq : maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) = maxRC C)
     (hmax_pos : 0 < maxRC C) :
     rcMaxCount (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤ rcMaxCount C := by
@@ -572,7 +575,7 @@ private theorem rcMaxCount_step_le_of_maxRC_eq
 theorem rcLevelPotential_step_nonincrease
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C) (hGoal : ¬ Phase1Goal Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C) (hGoal : ¬ Phase1Goal Rmax Dmax C)
     (i j : Fin n) :
     rcLevelPotential (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ≤
       rcLevelPotential C := by
@@ -625,7 +628,7 @@ decreases (or Phase1Goal is reached). The probability of picking such a u is
 private theorem rcMaxCount_step_strict_lt_of_maxRC_eq_involving
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hMaxEq : maxRC (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) = maxRC C)
     {u : Fin n} (hu_at_max : (C u).1.role = .Resetting ∧ (C u).1.resetcount = maxRC C)
     (hu_involved : u = i ∨ u = j)
@@ -674,8 +677,8 @@ private theorem rcMaxCount_step_strict_lt_of_maxRC_eq_involving
 private theorem rcLevelPotential_strict_drop_involving_u
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
-    (hInv : StrongRecoveryInv Rmax C)
-    (hInv' : StrongRecoveryInv Rmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j))
+    (hInv : StrongRecoveryInv Rmax Dmax C)
+    (hInv' : StrongRecoveryInv Rmax Dmax (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j))
     {u : Fin n} (hu_at_max : (C u).1.role = .Resetting ∧ (C u).1.resetcount = maxRC C)
     (hu_involved : u = i ∨ u = j)
     (hmax_pos : 0 < maxRC C) :
@@ -719,17 +722,17 @@ theorem rcLevelPotential_one_step_drop_prob
     {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ n)
     (k : ℕ) (hk : 0 < k)
     (C : Config (AgentState n) Opinion n)
-    (hInv : StrongRecoveryInv Rmax C)
+    (hInv : StrongRecoveryInv Rmax Dmax C)
     (hphi : rcLevelPotential C = k) :
     ((n : ℕ) : ENNReal)⁻¹ ≤
       Probability.ProbHitWithin
         (PEMProtocolCoupled' n Rmax Emax Dmax hn)
         (by omega : 2 ≤ n) C
-        (fun D => Phase1Goal Rmax D ∨
-          (StrongRecoveryInv Rmax D ∧ rcLevelPotential D < k)) 1 := by
+        (fun D => Phase1Goal Rmax Dmax D ∨
+          (StrongRecoveryInv Rmax Dmax D ∧ rcLevelPotential D < k)) 1 := by
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn
-  set Goal := fun D : Config (AgentState n) Opinion n => Phase1Goal Rmax D ∨
-    (StrongRecoveryInv Rmax D ∧ rcLevelPotential D < k)
+  set Goal := fun D : Config (AgentState n) Opinion n => Phase1Goal Rmax Dmax D ∨
+    (StrongRecoveryInv Rmax Dmax D ∧ rcLevelPotential D < k)
   have hn2 : 2 ≤ n := by omega
   -- k > 0 implies maxRC C > 0
   have hmax_pos : 0 < maxRC C := by
@@ -798,7 +801,7 @@ theorem phase1Goal_to_consensus
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
-    (hGoal : Phase1Goal Rmax C) :
+    (hGoal : Phase1Goal Rmax Dmax C) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
       C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
@@ -839,7 +842,8 @@ theorem allR_to_consensus_bound
     (D : Config (AgentState n) Opinion n)
     (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
     (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
-    (hBounded : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax) :
+    (hBounded : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax)
+:
     Probability.expectedHittingTime
       (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) D IsConsensusConfig ≤
@@ -848,12 +852,12 @@ theorem allR_to_consensus_bound
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
   have hn3 : 3 ≤ n := by omega
-  have hInv0 : StrongRecoveryInv Rmax D := ⟨hAllR, hAllCorrect, hBounded⟩
+  have hInv0 : StrongRecoveryInv Rmax Dmax D := ⟨hAllR, hAllCorrect, hBounded⟩
   -- Phase 1: use rcLevelPotential with variable descent (pRate = 1/n).
-  have hPhase1 : Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax) ≤
+  have hPhase1 : Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax Dmax) ≤
       ((Rmax * n * n : ℕ) : ENNReal) := by
     have hBound := Probability.expectedHittingTime_le_of_variable_descent_until_goal
-      P hn2 D (Phase1Goal Rmax) (StrongRecoveryInv Rmax) rcLevelPotential
+      P hn2 D (Phase1Goal Rmax Dmax) (StrongRecoveryInv Rmax Dmax) rcLevelPotential
       (fun _ => ((n : ℕ) : ENNReal)⁻¹)
       hInv0
       -- hZeroGoal: φ = 0 → Goal
@@ -866,7 +870,7 @@ theorem allR_to_consensus_bound
       (fun k hk C hInv hphi =>
         rcLevelPotential_one_step_drop_prob hn3 k hk C hInv hphi)
     -- Now bound: sum_{k=0}^{φ(D)-1} n ≤ Rmax * n * n
-    calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax)
+    calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax Dmax)
         ≤ ∑ _k ∈ Finset.range (rcLevelPotential D),
             (((n : ℕ) : ENNReal)⁻¹)⁻¹ := hBound
       _ = ∑ _k ∈ Finset.range (rcLevelPotential D),
@@ -879,13 +883,13 @@ theorem allR_to_consensus_bound
           norm_cast
           exact rcLevelPotential_le_Rmax_n hInv0
       _ = ((Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
-  have hPhase2 : ∀ C, Phase1Goal Rmax C →
+  have hPhase2 : ∀ C, Phase1Goal Rmax Dmax C →
       Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
         ((Rmax * n * n : ℕ) : ENNReal) :=
     fun C hC => phase1Goal_to_consensus hn4 hn0 hRmax hDmax C hC
   calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
       ≤ ((Rmax * n * n : ℕ) : ENNReal) + ((Rmax * n * n : ℕ) : ENNReal) :=
-        Probability.expectedHittingTime_add_le P hn2 D (Phase1Goal Rmax) IsConsensusConfig
+        Probability.expectedHittingTime_add_le P hn2 D (Phase1Goal Rmax Dmax) IsConsensusConfig
           _ _ hPhase1 hPhase2 (fun C h => Or.inl h)
     _ = ((2 * Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
 
