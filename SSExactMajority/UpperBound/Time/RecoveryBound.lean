@@ -269,6 +269,58 @@ private theorem rd_not_both_settled_of_step_resetting_snd
 
 
 
+/-! ### Delaytimer bound lemmas (infrastructure for sub-case 1) -/
+
+private theorem resetOSSR_dt_eq {Emax : ℕ} {hn : 0 < n} (s : AgentState n) :
+    (resetOSSR Emax hn s).delaytimer = s.delaytimer := by
+  unfold resetOSSR; cases s.leader <;> rfl
+
+private theorem processAgent_dt_le {Emax Dmax : ℕ} {hn : 0 < n}
+    (s : AgentState n) (oldRc : ℕ) (pr : Bool) (hdt : s.delaytimer ≤ Dmax) :
+    (processAgent Emax Dmax hn s oldRc pr).delaytimer ≤ Dmax := by
+  unfold processAgent
+  by_cases h1 : s.role = .Resetting ∧ s.resetcount = 0
+  · rw [if_pos h1]
+    by_cases h2 : 0 < oldRc
+    · rw [if_pos h2]; simp only []
+      by_cases h3 : (Dmax = 0 ∨ (!pr) = true)
+      · rw [if_pos h3, resetOSSR_dt_eq]
+      · rw [if_neg h3]
+    · rw [if_neg h2]; simp only []
+      by_cases h3 : (s.delaytimer - 1 = 0 ∨ (!pr) = true)
+      · rw [if_pos h3, resetOSSR_dt_eq]; exact le_trans (Nat.sub_le _ _) hdt
+      · rw [if_neg h3]; exact le_trans (Nat.sub_le _ _) hdt
+  · rw [if_neg h1]; exact hdt
+
+private theorem propagateReset_dt_bounded {Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} (hs : s.role = .Resetting) (ht : t.role = .Resetting)
+    (hds : s.delaytimer ≤ Dmax) (hdt : t.delaytimer ≤ Dmax) :
+    (propagateReset Emax Dmax hn s t).1.delaytimer ≤ Dmax ∧
+    (propagateReset Emax Dmax hn s t).2.delaytimer ≤ Dmax := by
+  unfold propagateReset
+  rw [if_neg (show ¬(s.role = .Resetting ∧ 0 < s.resetcount ∧ t.role ≠ .Resetting) from
+        fun ⟨_, _, h⟩ => h ht),
+      if_neg (show ¬(t.role = .Resetting ∧ 0 < t.resetcount ∧ s.role ≠ .Resetting) from
+        fun ⟨_, _, h⟩ => h hs)]
+  simp only [hs, ht, and_self, if_true]
+  exact ⟨processAgent_dt_le _ _ _ hds, processAgent_dt_le _ _ _ hdt⟩
+
+private theorem rankDeltaOSSR_dt_bounded {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} (hs : s.role = .Resetting) (ht : t.role = .Resetting)
+    (hds : s.delaytimer ≤ Dmax) (hdt : t.delaytimer ≤ Dmax) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.delaytimer ≤ Dmax := by
+  unfold rankDeltaOSSR
+  simp only [hs, true_or, ite_true]
+  exact (propagateReset_dt_bounded hs ht hds hdt).1
+
+private theorem rankDeltaOSSR_dt_bounded_snd {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} (hs : s.role = .Resetting) (ht : t.role = .Resetting)
+    (hds : s.delaytimer ≤ Dmax) (hdt : t.delaytimer ≤ Dmax) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.delaytimer ≤ Dmax := by
+  unfold rankDeltaOSSR
+  simp only [hs, true_or, ite_true]
+  split_ifs <;> exact (propagateReset_dt_bounded hs ht hds hdt).2
+
 /-! ### Main theorems -/
 
 set_option maxHeartbeats 1600000 in
