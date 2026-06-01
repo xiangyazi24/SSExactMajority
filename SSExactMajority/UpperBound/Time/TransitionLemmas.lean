@@ -686,4 +686,115 @@ theorem propagation_reset_fires_even_no_swap_responder_median_trace
   unfold transitionPEM transitionPEM_prePhase4 transitionPEM_phase4
   simp [hRD, hi_settled, hj_settled, role_settled_ne_resetting, hswap, hdec, hprop]
 
+
+/-! ## Responder-median necessary conditions (even parity, s₁ at median) -/
+
+set_option maxRecDepth 8192 in
+set_option maxHeartbeats 800000000 in
+/-- s₁ median (even) + s₀ NOT max + Resetting → s₁.timer = 0. -/
+theorem transitionPEM_fst_resetting_s1_med_no_max_even_timer_zero
+    {n Rmax trank : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hFix : RankDeltaSettledFix rankDelta)
+    (hs₀ : s₀.role = .Settled) (hs₁ : s₁.role = .Settled)
+    (hne : s₀.rank ≠ s₁.rank)
+    (h_no_swap : ¬(s₀.rank < s₁.rank ∧ x₀ = Opinion.B ∧ x₁ = Opinion.A))
+    (hpar : n % 2 = 0)
+    (h_s0_no_med : s₀.rank.val + 1 ≠ ceilHalf n)
+    (h_s1_med : s₁.rank.val + 1 = ceilHalf n)
+    (h_s0_no_max : s₀.rank.val + 1 ≠ n)
+    (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
+    s₁.timer = 0 := by
+  sorry
+
+set_option maxRecDepth 8192 in
+set_option maxHeartbeats 800000000 in
+/-- s₁ median (even) + s₀ max + n ≥ 4, Resetting → s₁.timer ≤ 1. -/
+theorem transitionPEM_fst_resetting_s1_med_max_even_timer_le_one
+    {n Rmax trank : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hFix : RankDeltaSettledFix rankDelta)
+    (hs₀ : s₀.role = .Settled) (hs₁ : s₁.role = .Settled)
+    (hne : s₀.rank ≠ s₁.rank)
+    (h_no_swap : ¬(s₀.rank < s₁.rank ∧ x₀ = Opinion.B ∧ x₁ = Opinion.A))
+    (hpar : n % 2 = 0)
+    (hn4 : 4 ≤ n)
+    (h_s0_no_med : s₀.rank.val + 1 ≠ ceilHalf n)
+    (h_s1_med : s₁.rank.val + 1 = ceilHalf n)
+    (h_s0_max : s₀.rank.val + 1 = n)
+    (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
+    s₁.timer ≤ 1 := by
+  sorry
+
+set_option maxRecDepth 8192 in
+set_option maxHeartbeats 800000000 in
+/-- s₁ median (even) + Resetting → s₁.answer ≠ s₀.answer. -/
+theorem transitionPEM_fst_resetting_s1_med_even_answer_diff
+    {n Rmax trank : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hFix : RankDeltaSettledFix rankDelta)
+    (hs₀ : s₀.role = .Settled) (hs₁ : s₁.role = .Settled)
+    (hne : s₀.rank ≠ s₁.rank)
+    (h_no_swap : ¬(s₀.rank < s₁.rank ∧ x₀ = Opinion.B ∧ x₁ = Opinion.A))
+    (hpar : n % 2 = 0)
+    (hn4 : 4 ≤ n)
+    (h_s0_no_med : s₀.rank.val + 1 ≠ ceilHalf n)
+    (h_s1_med : s₁.rank.val + 1 = ceilHalf n)
+    (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
+    s₁.answer ≠ s₀.answer := by
+  sorry
+
+set_option maxRecDepth 4096 in
+set_option maxHeartbeats 800000000 in
+theorem propagation_reset_fires_even_no_swap_responder_median_max_timer_one_trace
+    {trank Rmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    (hRank : RankDeltaSettledFix rankDelta)
+    {C : Config (AgentState n) Opinion n} (hC : InSrank C)
+    (hn4 : 4 ≤ n)
+    {i j : Fin n} (hij : i ≠ j)
+    (hpar : n % 2 = 0)
+    (hj_lower : (C j).1.rank.val + 1 = n / 2)
+    (hi_max : (C i).1.rank.val + 1 = n)
+    (h_timer : (C j).1.timer = 1)
+    (h_no_swap : ¬((C i).1.rank < (C j).1.rank ∧ (C i).2 = Opinion.B ∧ (C j).2 = Opinion.A))
+    (h_post_diff : (C j).1.answer ≠ (C i).1.answer) :
+    transitionPEM n trank Rmax rankDelta (C i, C j) =
+      ({ (C i).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                       answer := (C j).1.answer },
+       { (C j).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                       timer := 0 }) := by
+  have hi_settled : (C i).1.role = .Settled := hC.allSettled i
+  have hj_settled : (C j).1.role = .Settled := hC.allSettled j
+  have h_rank_ne : (C i).1.rank ≠ (C j).1.rank := by
+    intro hEq; exact hij (hC.ranks_inj hEq)
+  have hRD : rankDelta ((C i).1, (C j).1) = ((C i).1, (C j).1) :=
+    hRank (C i).1 (C j).1 hi_settled hj_settled h_rank_ne
+  have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
+  have hj_ceil : (C j).1.rank.val + 1 = ceilHalf n := by rw [hceil]; exact hj_lower
+  have hi_no_ceil : (C i).1.rank.val + 1 ≠ ceilHalf n := by rw [hceil]; omega
+  have hi_no_lower : (C i).1.rank.val + 1 ≠ n / 2 := by omega
+  have hi_not_upper : (C i).1.rank.val + 1 ≠ n / 2 + 1 := by omega
+  have h_dec1a : ¬ ((C i).1.rank.val + 1 = n / 2 ∧ (C j).1.rank.val = n / 2) := by
+    intro h; exact hi_no_lower h.1
+  have h_dec2a : ¬ ((C j).1.rank.val + 1 = n / 2 ∧ (C i).1.rank.val = n / 2) := by
+    intro h; exact hi_not_upper (by omega)
+  have hswap : phase4_swap (C i).1 (C j).1 (C i).2 (C j).2 = ((C i).1, (C j).1) := by
+    unfold phase4_swap; simp [h_no_swap]
+  have hdec : phase4_decide n (C i).1 (C j).1 (C i).2 (C j).2 = ((C i).1, (C j).1) := by
+    unfold phase4_decide; simp [hpar, h_dec1a, h_dec2a]
+  have hprop : phase4_propagate n Rmax (C i).1 (C j).1 =
+      ({ (C i).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                       answer := (C j).1.answer },
+       { (C j).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                       timer := 0 }) := by
+    unfold phase4_propagate
+    simp only [hi_no_ceil, ite_false, hj_ceil]
+    simp [hi_max, h_timer, h_post_diff]
+  unfold transitionPEM transitionPEM_prePhase4 transitionPEM_phase4
+  simp [hRD, hi_settled, hj_settled, role_settled_ne_resetting, hswap, hdec, hprop]
+
 end SSEM

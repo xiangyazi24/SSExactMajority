@@ -349,6 +349,120 @@ theorem step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
         have h_timer_ge_1 := hT i h_i_med
         omega
     · -- j is the median agent: needs symmetric trace (same gap as CRSOdd)
-      sorry
+      -- j is the median agent (responder), even parity
+      have hi_no_med : (D i).1.rank.val + 1 ≠ ceilHalf n :=
+        fun h => hrij (Fin.ext (Nat.add_right_cancel (h.trans h_j_med.symm)))
+      -- Case split on whether i is at max rank
+      by_cases hi_max : (D i).1.rank.val + 1 = n
+      · -- i at max rank: timer ≤ 1, answer diff, build CRS from trace
+        have h_tl := transitionPEM_fst_resetting_s1_med_max_even_timer_le_one
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar hn4 hi_no_med h_j_med hi_max h_i_res'
+        have h_ans_diff := transitionPEM_fst_resetting_s1_med_even_answer_diff
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar hn4 hi_no_med h_j_med h_i_res'
+        -- MedianAnswerCorrect gives j has correct answer
+        have hj_correct : (D j).1.answer = majorityAnswer D := hM j h_j_med
+        -- i has wrong answer
+        have hi_wrong : (D i).1.answer ≠ majorityAnswer D := by
+          intro heq; exact h_ans_diff (by rw [hj_correct, heq])
+        -- Even parity: ceilHalf n = n/2
+        have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
+        have hj_lower : (D j).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact h_j_med
+        by_cases hTimer0 : (D j).1.timer = 0
+        · -- timer = 0: use existing responder-median even trace
+          have hi_no_lower : (D i).1.rank.val + 1 ≠ n / 2 := by rw [← hceil]; exact hi_no_med
+          have hi_not_upper : (D i).1.rank.val + 1 ≠ n / 2 + 1 := by omega
+          have htr := propagation_reset_fires_even_no_swap_responder_median_trace
+            (trank := Rmax) (Rmax := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            rankDeltaOSSR_satisfies_fix hS.toInSrank hij hPar hj_lower hi_no_lower
+            hi_not_upper hTimer0 h_no_swap (h_ans_diff)
+          have h_post_i : (D.step P i j i).1 =
+              { (D i).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                             answer := (D j).1.answer } := by
+            rw [h_fst]; show (transitionPEM _ _ _ _ _).1 = _; rw [htr]
+          have h_post_j : (D.step P i j j).1 =
+              { (D j).1 with role := .Resetting, leader := .L, resetcount := Rmax } := by
+            rw [h_snd]; show (transitionPEM _ _ _ _ _).2 = _; rw [htr]
+          have h_post_others : ∀ w, w ≠ i → w ≠ j → (D.step P i j w) = D w := by
+            intro w hw hwv; unfold Config.step; simp [hij, hw, hwv]
+          have h_maj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+            simpa [P, PEMProtocolCoupled, PEMProtocol] using
+              majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+                (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+          have h_nrc : nonResettingCount (D.step P i j) ≤ n - 2 := by
+            classical
+            unfold nonResettingCount
+            set S := Finset.univ.filter (fun w : Fin n => (D.step P i j w).1.role ≠ .Resetting)
+            have hi_not : i ∉ S := by simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [h_post_i]
+            have hj_not : j ∉ S := by simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [h_post_j]
+            have hS_sub : S ⊆ (Finset.univ \ {i, j}) := by
+              intro w hw; simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton, not_or]
+              exact ⟨fun h => hi_not (h ▸ hw), fun h => hj_not (h ▸ hw)⟩
+            calc S.card ≤ (Finset.univ \ ({i, j} : Finset (Fin n))).card := Finset.card_le_card hS_sub
+              _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hij]
+          refine ⟨⟨i, ?_, ?_, ?_, ?_⟩, ?_⟩
+          · rw [h_post_i]
+          · rw [h_post_i]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
+          · rw [h_post_i]
+          · rw [h_post_i]; simp [h_maj, hj_correct]
+          · intro w hw_res
+            by_cases hwi : w = i
+            · subst hwi; rw [h_post_i]; exact ⟨by simp; omega, by simp [h_maj, hj_correct]⟩
+            · by_cases hwj : w = j
+              · subst hwj; rw [h_post_j]; exact ⟨by simp; omega, by simp [h_maj, hj_correct]⟩
+              · exfalso; rw [show (D.step P i j w).1 = (D w).1 from congrArg Prod.fst (h_post_others w hwi hwj)] at hw_res
+                rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
+        · -- timer = 1: use new responder-median even max timer_one trace
+          have hTimer1 : (D j).1.timer = 1 := by omega
+          have htr := propagation_reset_fires_even_no_swap_responder_median_max_timer_one_trace
+            (trank := Rmax) (Rmax := Rmax) (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            rankDeltaOSSR_satisfies_fix hS.toInSrank hn4 hij hPar hj_lower hi_max
+            hTimer1 h_no_swap (h_ans_diff)
+          have h_post_i : (D.step P i j i).1 =
+              { (D i).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                             answer := (D j).1.answer } := by
+            rw [h_fst]; show (transitionPEM _ _ _ _ _).1 = _; rw [htr]
+          have h_post_j : (D.step P i j j).1 =
+              { (D j).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                             timer := 0 } := by
+            rw [h_snd]; show (transitionPEM _ _ _ _ _).2 = _; rw [htr]
+          have h_post_others : ∀ w, w ≠ i → w ≠ j → (D.step P i j w) = D w := by
+            intro w hw hwv; unfold Config.step; simp [hij, hw, hwv]
+          have h_maj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+            simpa [P, PEMProtocolCoupled, PEMProtocol] using
+              majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+                (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+          have h_nrc : nonResettingCount (D.step P i j) ≤ n - 2 := by
+            classical
+            unfold nonResettingCount
+            set S := Finset.univ.filter (fun w : Fin n => (D.step P i j w).1.role ≠ .Resetting)
+            have hi_not : i ∉ S := by simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [h_post_i]
+            have hj_not : j ∉ S := by simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [h_post_j]
+            have hS_sub : S ⊆ (Finset.univ \ {i, j}) := by
+              intro w hw; simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton, not_or]
+              exact ⟨fun h => hi_not (h ▸ hw), fun h => hj_not (h ▸ hw)⟩
+            calc S.card ≤ (Finset.univ \ ({i, j} : Finset (Fin n))).card := Finset.card_le_card hS_sub
+              _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hij]
+          refine ⟨⟨i, ?_, ?_, ?_, ?_⟩, ?_⟩
+          · rw [h_post_i]
+          · rw [h_post_i]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
+          · rw [h_post_i]
+          · rw [h_post_i]; simp [h_maj, hj_correct]
+          · intro w hw_res
+            by_cases hwi : w = i
+            · subst hwi; rw [h_post_i]; exact ⟨by simp; omega, by simp [h_maj, hj_correct]⟩
+            · by_cases hwj : w = j
+              · subst hwj; rw [h_post_j]; exact ⟨by simp; omega, by simp [h_maj, hj_correct]⟩
+              · exfalso; rw [show (D.step P i j w).1 = (D w).1 from congrArg Prod.fst (h_post_others w hwi hwj)] at hw_res
+                rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
+      · -- i NOT at max rank → timer must be 0, contradicting timer ≥ 1
+        exfalso
+        have h_timer_zero := transitionPEM_fst_resetting_s1_med_no_max_even_timer_zero
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar hi_no_med h_j_med hi_max h_i_res'
+        -- MedianTimerAtLeast 1 says timer ≥ 1 for the median agent
+        have h_timer_ge_1 := hT j h_j_med
+        omega
 
 end SSEM
