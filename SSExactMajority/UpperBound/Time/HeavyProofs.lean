@@ -6,32 +6,6 @@ namespace SSEM
 
 open scoped ENNReal
 
-/-! ### Phase bound proofs (Lemma 6 + Lemma 9+11)
-
-The end-to-end composition is conditional on two phase E[T] bounds:
-- hRankBound (Lemma 6): E[T to InSrank ∧ timer≥35 ∧ timer-bounded] ≤ Rmax·n²
-- hConsensusBound (Lemma 9+11): E[T to consensus from InSswap+timer] ≤ 10·Rmax·n²
-
-Strategy for hConsensusBound (ChatGPT "exit = progress" design):
-Define DecisionProgressFull := MedianAnswerCorrect ∨ CorrectResetSeed.
-The exit from LiveSwap is absorbed as progress (not failure).
-Chain: InSswap → DecisionProgressFull → CorrectSeed → Epidemic → Consensus.
-
-For odd n: exit is deterministically good progress (phase4_decide sets
-median answer at the same step as the potential reset).
-For even n: requires the (lower-median, upper-median) decision interaction
-to happen before timer exhaustion (probabilistic, high probability). -/
-
-/-- Strengthened DecisionProgressFull: carries enough invariants so the downstream
-median-correct-to-consensus stage can directly apply.  The three disjuncts:
-* `IsConsensusConfig` (terminal goal),
-* `CorrectResetSeed` (reset epidemic ready),
-* Full Sdec phase package: InSswap + MedCorrect + live timer + timer-bounded. -/
-def DecisionProgressFull (Rmax : ℕ) (C : Config (AgentState n) Opinion n) : Prop :=
-  IsConsensusConfig C ∨ CorrectResetSeed C ∨
-  (InSswap C ∧ MedianAnswerCorrect C ∧ MedianTimerAtLeast 1 C ∧
-    IsTimerBoundedConfig (7 * (Rmax + 4)) C)
-
 /-! Strategy sketch for hConsensusBound using the bridge lemma:
 
 Step 1: E[T from InSswap to DecisionProgressFull] ≤ n(n-1)
@@ -307,30 +281,6 @@ Total: O(Rmax · n²). -/
 
 /-! φ for timer drain: max timer across all median-rank agents.
 In InSswap there is exactly one, but we define it for all configs. -/
-noncomputable def maxMedianTimerFull (C : Config (AgentState n) Opinion n) : ℕ :=
-  Finset.sup Finset.univ
-    (fun μ : Fin n => if (C μ).1.rank.val + 1 = ceilHalf n then (C μ).1.timer else 0)
-
-set_option maxRecDepth 65536 in
-set_option maxHeartbeats 800000000 in
-theorem PEM_expected_timer_drain_v2
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
-    (C : Config (AgentState n) Opinion n)
-    (hSswap : InSswap C)
-    (hMedCorrect : MedianAnswerCorrect C)
-    (hTimerLo : MedianTimerAtLeast 1 C)
-    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) C
-      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
-        (InSswap D ∧ MedianAnswerCorrect D ∧ ¬ MedianTimerAtLeast 1 D)) ≤
-      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
-  -- TODO: Lean 4.30 constructor syntax + simp overflow.
-  sorry
-
 set_option maxHeartbeats 800000000 in
 theorem step_timer_zero_median_wrong_nonupper_creates_CorrectResetSeed
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]

@@ -294,23 +294,6 @@ theorem crs_of_InSswap_break_with_MedC
       exact step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
         hn4 hn0 hRmax hS hM hpar hT_le hS'
   · exact step_InSswap_break_creates_CorrectResetSeed_odd hn4 hn0 hRmax hS hpar hS'
-
-theorem allR_to_consensus_bound
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax)
-    (D : Config (AgentState n) Opinion n)
-    (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
-    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
-    (hBounded : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) D IsConsensusConfig ≤
-      ((9 * Rmax * n * n : ℕ) : ENNReal) :=
-  sorry
--- bounded_resetting_to_AllR is defined in RecoveryBound.lean
--- (with IsBoundedConfig hypothesis). Callers use that version.
-
 /-! Stage 3: Epidemic propagation. From CorrectResetSeed:
 E[T to consensus] via nonResettingCount descent + re-ranking. -/
 
