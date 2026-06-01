@@ -124,6 +124,89 @@ private theorem CRS_from_odd_trace
           congrArg Prod.fst (h_post_others w hwi hwj)] at hw_res
         rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
 
+
+/-! ### Helper: apply trace to get CRS when j (responder) is median (odd case)
+
+Same as CRS_from_odd_trace but with j at median rank.
+Both output answers equal opinionToAnswer (D j).2 (median's opinion). -/
+
+set_option maxRecDepth 65536 in
+set_option maxHeartbeats 800000000 in
+private theorem CRS_from_odd_trace_responder_median
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D)
+    {i j : Fin n} (hij : i ≠ j)
+    (h_j_med : (D j).1.rank.val + 1 = ceilHalf n)
+    (hOdd : n % 2 ≠ 0)
+    {out₁ out₂ : AgentState n}
+    (htr : transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j) = (out₁, out₂))
+    (h_out1_role : out₁.role = .Resetting)
+    (h_out1_rc : out₁.resetcount = Rmax)
+    (h_out1_leader : out₁.leader = .L)
+    (h_out1_ans : out₁.answer = opinionToAnswer (D j).2)
+    (h_out2_role : out₂.role = .Resetting)
+    (h_out2_rc : out₂.resetcount = Rmax)
+    (h_out2_ans : out₂.answer = opinionToAnswer (D j).2) :
+    CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have h_fst := Config.step_fst_state P D hij
+  have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
+  have h_step_i : (D.step P i j i).1 = out₁ := by
+    rw [h_fst]
+    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1 = out₁
+    rw [htr]
+  have h_step_j : (D.step P i j j).1 = out₂ := by
+    rw [h_snd]
+    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2 = out₂
+    rw [htr]
+  have h_maj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+    simpa [P, PEMProtocolCoupled, PEMProtocol] using
+      majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+        (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+  have hμ_majority : opinionToAnswer (D j).2 = majorityAnswer D :=
+    opinionToAnswer_median_eq_majorityAnswer_odd hS h_j_med hOdd
+  have h_post_others : ∀ w, w ≠ i → w ≠ j → (D.step P i j w) = D w := by
+    intro w hw hwv; unfold Config.step; simp [hij, hw, hwv]
+  have h_nrc : nonResettingCount (D.step P i j) ≤ n - 2 := by
+    unfold nonResettingCount
+    set S := Finset.univ.filter (fun w : Fin n => (D.step P i j w).1.role ≠ .Resetting)
+    have hi_not : i ∉ S := by
+      simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]
+      rw [h_step_i]; exact h_out1_role
+    have hj_not : j ∉ S := by
+      simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]
+      rw [h_step_j]; exact h_out2_role
+    have hS_sub : S ⊆ (Finset.univ \ {i, j}) := by
+      intro w hw
+      simp only [Finset.mem_sdiff, Finset.mem_univ, true_and,
+        Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨fun h => hi_not (h ▸ hw), fun h => hj_not (h ▸ hw)⟩
+    calc S.card ≤ (Finset.univ \ ({i, j} : Finset (Fin n))).card :=
+          Finset.card_le_card hS_sub
+      _ = n - 2 := by
+          rw [Finset.card_sdiff_of_subset (Finset.subset_univ _),
+            Finset.card_univ, Fintype.card_fin, Finset.card_pair hij]
+  refine ⟨⟨i, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · rw [h_step_i]; exact h_out1_role
+  · rw [h_step_i, h_out1_rc]
+    exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
+  · rw [h_step_i]; exact h_out1_leader
+  · rw [h_step_i, h_out1_ans, hμ_majority, h_maj]
+  · intro w hw_res
+    by_cases hwi : w = i
+    · subst hwi
+      exact ⟨by rw [h_step_i, h_out1_rc]; omega, by rw [h_step_i, h_out1_ans, hμ_majority, h_maj]⟩
+    · by_cases hwj : w = j
+      · subst hwj
+        exact ⟨by rw [h_step_j, h_out2_rc]; omega, by rw [h_step_j, h_out2_ans, hμ_majority, h_maj]⟩
+      · exfalso
+        rw [show (D.step P i j w).1 = (D w).1 from
+          congrArg Prod.fst (h_post_others w hwi hwj)] at hw_res
+        rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
+
 /-! ### CRS from both-Resetting step outputs (odd case) -/
 
 set_option maxRecDepth 65536 in
@@ -187,8 +270,35 @@ private theorem CRS_of_both_resetting_odd
         (propagation_reset_fires_no_swap_trace hFix hS.toInSrank hij h_i_med hv_no_med
           hTimer0 h_no_swap hOdd h_ans_diff)
         (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl)
-  · -- j is the median agent: needs symmetric trace lemmas
-    sorry
+  · -- j is the median agent: symmetric trace lemmas (responder at median)
+    have hi_no_med : (D i).1.rank.val + 1 ≠ ceilHalf n :=
+      fun h => hrij (Fin.ext (Nat.add_right_cancel (h.trans h_j_med.symm)))
+    have h_ans_diff := transitionPEM_fst_resetting_s1_med_odd_answer_diff
+      (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+      hFix hsi hsj hrij h_no_swap hOdd hi_no_med h_j_med h_i_res_raw
+    by_cases hi_max : (D i).1.rank.val + 1 = n
+    · -- i max rank: timer ≤ 1
+      have h_tl := transitionPEM_fst_resetting_s1_med_max_odd_timer_le_one
+        (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+        hFix hsi hsj hrij h_no_swap hOdd hi_no_med h_j_med hi_max h_i_res_raw
+      by_cases hTimer0 : (D j).1.timer = 0
+      · exact CRS_from_odd_trace_responder_median hn0 hRmax hS hij h_j_med hOdd
+          (propagation_reset_fires_no_swap_responder_median_trace hFix hS.toInSrank hij h_j_med hi_no_med
+            hTimer0 h_no_swap hOdd h_ans_diff)
+          (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl)
+      · have hTimer1 : (D j).1.timer = 1 := by omega
+        exact CRS_from_odd_trace_responder_median hn0 hRmax hS hij h_j_med hOdd
+          (propagation_reset_fires_no_swap_responder_median_max_timer_one_trace hFix hS.toInSrank hn4 hij h_j_med
+            hi_max hTimer1 h_no_swap hOdd h_ans_diff)
+          (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl)
+    · -- i NOT max rank: timer = 0
+      have hTimer0 := transitionPEM_fst_resetting_s1_med_no_max_odd_timer_zero
+        (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+        hFix hsi hsj hrij h_no_swap hOdd hi_no_med h_j_med hi_max h_i_res_raw
+      exact CRS_from_odd_trace_responder_median hn0 hRmax hS hij h_j_med hOdd
+        (propagation_reset_fires_no_swap_responder_median_trace hFix hS.toInSrank hij h_j_med hi_no_med
+          hTimer0 h_no_swap hOdd h_ans_diff)
+        (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl)
 
 /-! ### Main theorem: odd InSswap break → CorrectResetSeed -/
 

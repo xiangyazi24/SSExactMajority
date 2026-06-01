@@ -1,4 +1,5 @@
 import SSExactMajority.UpperBound.Time.Bridge
+import SSExactMajority.UpperBound.Time.TransitionLemmas
 
 namespace SSEM
 
@@ -210,6 +211,39 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           · exfalso; rw [show (D.step P μ v w).1 = (D w).1 from congrArg Prod.fst (h_post_others w hwμ hwv)] at hw_res
             rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
 
+/-! ### Both-Settled → InSswap preserved (even) -/
+
+private theorem InSswap_preserved_of_output_settled_even_tp
+    {n Rmax Emax Dmax : ℕ} (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n} (hS : InSswap D)
+    {i j : Fin n} (hij : i ≠ j)
+    (hri : (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j i).1.role = .Settled)
+    (hrj : (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j j).1.role = .Settled) :
+    InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have h_rank_w : ∀ w, (D.step P i j w).1.rank = (D w).1.rank :=
+    fun w => step_rank_preserved_of_InSswap hn0 hS w
+  have h_input_w := fun w => step_input_preserved P D i j w
+  have h_nA : nAOf (D.step P i j) = nAOf D := by
+    simp only [P, PEMProtocolCoupled, PEMProtocol]
+    exact nAOf_step_eq (trank := Rmax) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · intro w
+    by_cases hwi : w = i
+    · exact hwi ▸ hri
+    · by_cases hwj : w = j
+      · exact hwj ▸ hrj
+      · have : D.step P i j w = D w := by unfold Config.step; simp [hij, hwi, hwj]
+        rw [this]; exact hS.allSettled w
+  · intro w₁ w₂ heq
+    have : (D w₁).1.rank = (D w₂).1.rank := by
+      rw [← h_rank_w w₁, ← h_rank_w w₂]; exact heq
+    exact hS.ranks_inj this
+  · intro w; rw [h_input_w, h_rank_w, h_nA]; exact hS.input_rank w
+
+/-! ### Main theorem: even InSswap break with MedianAnswerCorrect + timer ≥ 1 → CRS -/
+
 set_option maxRecDepth 65536 in
 set_option maxHeartbeats 800000000 in
 theorem step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
@@ -223,11 +257,98 @@ theorem step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
     {i j : Fin n}
     (hS' : ¬ InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)) :
     CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
-  -- TODO: This theorem needs a responder-median variant of
-  -- step_timer_le_one_median_max_creates_CorrectResetSeed.
-  -- The brute-force unfold+simp approach overflows maxRecDepth/maxHeartbeats
-  -- in Lean 4.30. The first theorem (initiator-median) compiles fine.
-  -- See: step argument order asymmetry (D.step P i j vs D.step P j i).
-  sorry
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  -- Step 1: i = j → contradiction
+  by_cases hij : i = j
+  · exfalso; apply hS'; subst hij; simp [Config.step]; exact hS
+  -- Step 2: basic setup
+  have hsi : (D i).1.role = .Settled := hS.toInSrank.allSettled i
+  have hsj : (D j).1.role = .Settled := hS.toInSrank.allSettled j
+  have hrij : (D i).1.rank ≠ (D j).1.rank :=
+    fun h => hij (hS.toInSrank.ranks_inj h)
+  have hFix : RankDeltaSettledFix (rankDeltaOSSR Rmax Emax Dmax hn0) :=
+    rankDeltaOSSR_satisfies_fix
+  have hP_δ : ∀ p, P.δ p = transitionPEM n Rmax Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn0) p := fun _ => rfl
+  have h_fst := Config.step_fst_state P D hij
+  have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
+  have h_no_swap := hS.swap_condition_false i j
+  -- Step 3: role disjunction
+  have hRoles := transitionPEM_role_settled_or_resetting_of_InSswap
+    (trank := Rmax) (Rmax := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+    hFix hsi hsj hrij
+  have h_role_i : (D.step P i j i).1.role = .Settled ∨
+      (D.step P i j i).1.role = .Resetting := by
+    rw [congrArg AgentState.role h_fst, hP_δ]; exact hRoles.1
+  have h_role_j : (D.step P i j j).1.role = .Settled ∨
+      (D.step P i j j).1.role = .Resetting := by
+    rw [congrArg AgentState.role h_snd, hP_δ]; exact hRoles.2
+  -- Step 4: case analysis on output roles
+  rcases h_role_i with h_i_set | h_i_res
+  · -- i stays Settled
+    rcases h_role_j with h_j_set | h_j_res
+    · -- Both Settled → InSswap preserved → contradiction
+      exfalso; apply hS'
+      exact InSswap_preserved_of_output_settled_even_tp hn0 hS hij h_i_set h_j_set
+    · -- i Settled, j Resetting → fst must also be Resetting → contradiction
+      exfalso
+      have h_snd_res : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+          (D i, D j)).2.role = .Resetting := by
+        rw [← hP_δ, ← congrArg AgentState.role h_snd]; exact h_j_res
+      have h_fst_res := transitionPEM_snd_resetting_implies_fst_of_InSswap
+        (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+        hFix hsi hsj hrij h_snd_res
+      have h_i_set' : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+          (D i, D j)).1.role = .Settled := by
+        rw [← hP_δ, ← congrArg AgentState.role h_fst]; exact h_i_set
+      rw [h_fst_res] at h_i_set'; exact Role.noConfusion h_i_set'
+  · -- i becomes Resetting → j must also be Resetting
+    have h_i_res' : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        (D i, D j)).1.role = .Resetting := by
+      rw [← hP_δ, ← congrArg AgentState.role h_fst]; exact h_i_res
+    have h_snd_res := transitionPEM_fst_resetting_implies_snd_of_InSswap
+      (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+      hFix hsi hsj hrij h_i_res'
+    have h_j_res : (D.step P i j j).1.role = .Resetting := by
+      rw [congrArg AgentState.role h_snd, hP_δ]; exact h_snd_res
+    -- Step 5: both Resetting → determine who is median
+    have h_med := transitionPEM_fst_resetting_implies_some_median_even
+      (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+      hFix hsi hsj hrij h_no_swap hPar h_i_res'
+    rcases h_med with h_i_med | h_j_med
+    · -- i is the median agent
+      have hv_no_med : (D j).1.rank.val + 1 ≠ ceilHalf n :=
+        fun h => hrij (Fin.ext (Nat.add_right_cancel (h_i_med.trans h.symm)))
+      -- Determine that j must be at max rank
+      -- (otherwise timer = 0, contradicting timer ≥ 1)
+      by_cases hv_max : (D j).1.rank.val + 1 = n
+      · -- j at max rank: use the first theorem
+        -- Get timer ≤ 1
+        have h_tl := transitionPEM_fst_resetting_s0_med_max_even_timer_le_one
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar hn4 h_i_med hv_no_med hv_max h_i_res'
+        -- Get answer diff (at answer level, not opinionToAnswer)
+        have h_ans_diff := transitionPEM_fst_resetting_s0_med_max_even_answer_diff
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar hn4 h_i_med hv_no_med hv_max h_i_res'
+        -- MedianAnswerCorrect gives i has correct answer
+        have hμ_correct : (D i).1.answer = majorityAnswer D := hM i h_i_med
+        -- j has wrong answer
+        have hv_wrong : (D j).1.answer ≠ majorityAnswer D := by
+          intro heq; exact h_ans_diff (by rw [hμ_correct, heq])
+        -- Delegate to the first theorem
+        exact step_timer_le_one_median_max_creates_CorrectResetSeed
+          hn4 hn0 hRmax hS hij h_i_med h_tl hv_max hμ_correct hv_wrong
+      · -- j NOT at max rank → timer must be 0, contradicting timer ≥ 1
+        exfalso
+        have h_timer_zero := transitionPEM_fst_resetting_s0_med_no_max_even_timer_zero
+          (trank := Rmax) (x₀ := (D i).2) (x₁ := (D j).2)
+          hFix hsi hsj hrij h_no_swap hPar h_i_med hv_no_med hv_max h_i_res'
+        -- MedianTimerAtLeast 1 says timer ≥ 1 for the median agent
+        have h_timer_ge_1 := hT i h_i_med
+        omega
+    · -- j is the median agent: needs symmetric trace (same gap as CRSOdd)
+      sorry
 
 end SSEM

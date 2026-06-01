@@ -191,8 +191,73 @@ private theorem CRS_of_both_resetting_even
         (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl) (by rfl)
   · by_cases hjm : (D j).1.rank.val + 1 = ceilHalf n
     · -- j is ceilHalf median (snd position)
-      -- Sorry for now: needs symmetric trace or manual construction
-      sorry
+      have hinm : (D i).1.rank.val + 1 ≠ ceilHalf n := him
+      have hjl : (D j).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hjm
+      have hinl : (D i).1.rank.val + 1 ≠ n / 2 := by rw [← hceil]; exact hinm
+      have htj := hT j hjm
+      by_cases hiu : (D i).1.rank.val + 1 = n / 2 + 1
+      · -- i at upper median → phase4_decide equalizes answers → propagate doesn't fire → contradiction
+        exfalso
+        simp only [transitionPEM] at hirr
+        rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hsi hsj hrij] at hirr
+        unfold transitionPEM_phase4 at hirr; simp only [hsi, hsj, and_self, ite_true] at hirr
+        unfold phase4_swap at hirr; simp only [hns, ite_false] at hirr
+        unfold phase4_decide at hirr
+        have hm : (D j).1.rank.val + 1 = n / 2 ∧ (D i).1.rank.val + 1 = n / 2 + 1 := ⟨hjl, hiu⟩
+        simp only [hpar, ite_true, hinl, ite_false, hm, ite_true] at hirr
+        exact ans_eq_contra (by simp [phase4_decide, hpar]; split_ifs <;> simp_all) (by simp [phase4_decide, hpar]; split_ifs <;> simp_all) hirr
+      · -- i NOT at upper → use responder-median trace lemma
+        have hdiff : (D j).1.answer ≠ (D i).1.answer := by
+          -- Equal answers + no median pair match → phase4 identity → stays Settled → contradiction
+          sorry
+        have htr := propagation_reset_fires_even_no_swap_responder_median_trace (trank := Rmax) (Rmax := Rmax)
+          hFix hS.toInSrank hij hpar hjl hinl hiu htj hns hdiff
+        -- Construct CRS from trace
+        have hf := Config.step_fst_state P D hij
+        have hs := Config.step_snd_state P D hij (Ne.symm hij)
+        have hmaj : majorityAnswer (D.step P i j) = majorityAnswer D := by
+          simpa [P, PEMProtocolCoupled, PEMProtocol] using
+            majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
+              (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
+        have hcor : (D j).1.answer = majorityAnswer D := hM j hjm
+        have hsi_out : (D.step P i j i).1 =
+            { (D i).1 with role := .Resetting, leader := .L, resetcount := Rmax,
+                           answer := (D j).1.answer } := by
+          rw [hf]; show (transitionPEM _ _ _ _ _).1 = _; rw [htr]
+        have hsj_out : (D.step P i j j).1 =
+            { (D j).1 with role := .Resetting, leader := .L, resetcount := Rmax } := by
+          rw [hs]; show (transitionPEM _ _ _ _ _).2 = _; rw [htr]
+        have hoth : ∀ w, w ≠ i → w ≠ j → (D.step P i j w) = D w := by
+          intro w hw hwv; unfold Config.step; simp [hij, hw, hwv]
+        have hnrc : nonResettingCount (D.step P i j) ≤ n - 2 := by
+          unfold nonResettingCount
+          set S := Finset.univ.filter (fun w : Fin n => (D.step P i j w).1.role ≠ .Resetting)
+          have hi_not : i ∉ S := by
+            simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [hsi_out]
+          have hj_not : j ∉ S := by
+            simp only [S, Finset.mem_filter, Finset.mem_univ, true_and, not_not]; rw [hsj_out]
+          have hS_sub : S ⊆ Finset.univ \ {i, j} := by
+            intro w hw; simp only [Finset.mem_sdiff, Finset.mem_univ, true_and,
+              Finset.mem_insert, Finset.mem_singleton, not_or]
+            exact ⟨fun h => hi_not (h ▸ hw), fun h => hj_not (h ▸ hw)⟩
+          calc S.card ≤ (Finset.univ \ ({i, j} : Finset (Fin n))).card := Finset.card_le_card hS_sub
+            _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _),
+                              Finset.card_univ, Fintype.card_fin, Finset.card_pair hij]
+        refine ⟨⟨j, ?_, ?_, ?_, ?_⟩, ?_⟩
+        · rw [hsj_out]
+        · rw [hsj_out]; simp; exact lt_of_le_of_lt hnrc (lt_of_lt_of_le (by omega) hRmax)
+        · rw [hsj_out]
+        · rw [hsj_out, hmaj]; simp [hcor]
+        · intro w hw_res
+          by_cases hwi : w = i
+          · subst hwi; rw [hsi_out] at hw_res ⊢
+            exact ⟨by simp; omega, by simp [hmaj, hcor]⟩
+          · by_cases hwj : w = j
+            · subst hwj; rw [hsj_out] at hw_res ⊢
+              exact ⟨by simp; omega, by simp [hmaj, hcor]⟩
+            · exfalso; rw [show (D.step P i j w).1 = (D w).1 from
+                congrArg Prod.fst (hoth w hwi hwj)] at hw_res
+              rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
     · -- Neither is median → contradiction
       exfalso
       -- Neither agent is ceilHalf → phase4_propagate is identity → stays Settled
