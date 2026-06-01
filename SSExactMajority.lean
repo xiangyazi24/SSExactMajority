@@ -36,3 +36,7 @@ import SSExactMajority.Convergence.SwapVMedian
 import SSExactMajority.Convergence.SwapFromRanking
 -- Note: AxiomCheck.lean intentionally NOT imported into the root
 -- so that #print axioms outputs don't pollute the build log.
+import SSExactMajority.UpperBound.Time.PhaseProofs
+import SSExactMajority.UpperBound.Time.RecoveryBound
+import SSExactMajority.UpperBound.Time.RecoveryBridge
+import SSExactMajority.UpperBound.Time.RankingBound

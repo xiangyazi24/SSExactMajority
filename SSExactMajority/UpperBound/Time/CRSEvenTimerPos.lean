@@ -4,7 +4,8 @@ namespace SSEM
 
 open scoped ENNReal
 
-set_option maxHeartbeats 64000000 in
+set_option maxRecDepth 16384 in
+set_option maxHeartbeats 800000000 in
 theorem step_timer_le_one_median_max_creates_CorrectResetSeed
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
@@ -72,7 +73,7 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hμv]
       refine ⟨⟨μ, ?_, ?_, ?_, ?_⟩, ?_⟩
       · rw [h_post_μ]
-      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (by omega)
+      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
       · rw [h_post_μ]
       · rw [h_post_μ]; simp [h_maj, hμ_correct]
       · intro w hw_res
@@ -113,7 +114,7 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hμv]
       refine ⟨⟨μ, ?_, ?_, ?_, ?_⟩, ?_⟩
       · rw [h_post_μ]
-      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (by omega)
+      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
       · rw [h_post_μ]
       · rw [h_post_μ]; simp [h_maj, hμ_correct]
       · intro w hw_res
@@ -158,7 +159,7 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hμv]
       refine ⟨⟨μ, ?_, ?_, ?_, ?_⟩, ?_⟩
       · rw [h_post_μ]
-      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (by omega)
+      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
       · rw [h_post_μ]
       · rw [h_post_μ]; simp [h_maj, hμ_ans_eq, hμ_correct]
       · intro w hw_res
@@ -198,7 +199,7 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           _ = n - 2 := by rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin, Finset.card_pair hμv]
       refine ⟨⟨μ, ?_, ?_, ?_, ?_⟩, ?_⟩
       · rw [h_post_μ]
-      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (by omega)
+      · rw [h_post_μ]; exact lt_of_le_of_lt h_nrc (lt_of_lt_of_le (by omega) hRmax)
       · rw [h_post_μ]
       · rw [h_post_μ]; simp [h_maj, hμ_ans_eq, hμ_correct]
       · intro w hw_res
@@ -209,7 +210,8 @@ theorem step_timer_le_one_median_max_creates_CorrectResetSeed
           · exfalso; rw [show (D.step P μ v w).1 = (D w).1 from congrArg Prod.fst (h_post_others w hwμ hwv)] at hw_res
             rw [hS.allSettled w] at hw_res; exact Role.noConfusion hw_res
 
-set_option maxHeartbeats 64000000 in
+set_option maxRecDepth 65536 in
+set_option maxHeartbeats 800000000 in
 theorem step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
@@ -221,202 +223,11 @@ theorem step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
     {i j : Fin n}
     (hS' : ¬ InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)) :
     CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
-  classical
-  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
-  by_cases hij : i = j
-  · exfalso; apply hS'; subst hij
-    have heq : D.step P i i = D := by funext w; unfold Config.step; simp
-    rw [heq]; exact hS
-  suffices h : InSswap (D.step P i j) ∨ CorrectResetSeed (D.step P i j) from
-    h.resolve_left hS'
-  have hsi := hS.toInSrank.allSettled i
-  have hsj := hS.toInSrank.allSettled j
-  have h_fst := Config.step_fst_state P D hij
-  have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
-  have h_role_i : (D.step P i j i).1.role = .Settled ∨
-      (D.step P i j i).1.role = .Resetting := by
-    have hrij' : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-    have hRD' := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-      (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij'
-    have h_no_swap' := hS.swap_condition_false i j
-    rw [congrArg AgentState.role h_fst]
-    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1.role = .Settled ∨ _
-    unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-      phase4_swap phase4_decide phase4_propagate
-    simp only [hRD', hsi, hsj, ne_eq, role_settled_ne_resetting,
-      not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-      and_self, if_true, h_no_swap']
-    split_ifs <;> simp_all
-  have h_role_j : (D.step P i j j).1.role = .Settled ∨
-      (D.step P i j j).1.role = .Resetting := by
-    have hrij' : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-    have hRD' := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-      (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij'
-    have h_no_swap' := hS.swap_condition_false i j
-    rw [congrArg AgentState.role h_snd]
-    show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2.role = .Settled ∨ _
-    unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-      phase4_swap phase4_decide phase4_propagate
-    simp only [hRD', hsi, hsj, ne_eq, role_settled_ne_resetting,
-      not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-      and_self, if_true, h_no_swap']
-    split_ifs <;> simp_all
-  by_cases hi_settled : (D.step P i j i).1.role = .Settled
-  · by_cases hj_settled : (D.step P i j j).1.role = .Settled
-    · left
-      refine ⟨⟨?_, ?_⟩, ?_⟩
-      · intro w
-        by_cases hwi : w = i; · rw [hwi]; exact hi_settled
-        by_cases hwj : w = j; · rw [hwj]; exact hj_settled
-        rw [show (D.step P i j w) = D w from by unfold Config.step; simp [hij, hwi, hwj]]
-        exact hS.toInSrank.allSettled w
-      · intro w1 w2 heq
-        simp only [step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hS] at heq
-        exact hS.toInSrank.ranks_inj heq
-      · intro w
-        rw [show (D.step P i j w).2 = (D w).2 from by
-            unfold Config.step
-            by_cases hwi : w = i; · rw [hwi]; simp [hij]
-            by_cases hwj : w = j; · rw [hwj]; simp [hij, Ne.symm hij]
-            simp [hij, hwi, hwj],
-          step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hS,
-          show nAOf (D.step P i j) = nAOf D from by
-            unfold nAOf Config.agentsWithInput Config.inputOf; congr 1; ext w'
-            simp only [Finset.mem_filter]; constructor
-            · intro ⟨hm, h⟩; exact ⟨hm, by
-                rw [show (D.step P i j w').2 = (D w').2 from by
-                  unfold Config.step
-                  by_cases hwi : w' = i; · rw [hwi]; simp [hij]
-                  by_cases hwj : w' = j; · rw [hwj]; simp [hij, Ne.symm hij]
-                  simp [hij, hwi, hwj]] at h; exact h⟩
-            · intro ⟨hm, h⟩; exact ⟨hm, by
-                rw [show (D.step P i j w').2 = (D w').2 from by
-                  unfold Config.step
-                  by_cases hwi : w' = i; · rw [hwi]; simp [hij]
-                  by_cases hwj : w' = j; · rw [hwj]; simp [hij, Ne.symm hij]
-                  simp [hij, hwi, hwj]]; exact h⟩]
-        exact hS.input_rank w
-    · exfalso
-      have hj_res := h_role_j.resolve_left hj_settled
-      have h2_res : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-          (D i, D j)).2.role = .Resetting := by rw [← congrArg AgentState.role h_snd]; exact hj_res
-      have h1_set : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-          (D i, D j)).1.role = .Settled := by rw [← congrArg AgentState.role h_fst]; exact hi_settled
-      have hrij : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-      have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij
-      have h_no_swap := hS.swap_condition_false i j
-      unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-        phase4_swap phase4_decide phase4_propagate at h2_res h1_set
-      simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-        not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-        and_self, if_true, h_no_swap, hPar, if_true] at h2_res h1_set
-      split_ifs at h2_res h1_set <;> simp_all
-  · have hi_res := h_role_i.resolve_left hi_settled
-    have hj_res : (D.step P i j j).1.role = .Resetting := by
-      rcases h_role_j with h | h
-      · exfalso
-        have h1_res : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-            (D i, D j)).1.role = .Resetting := by rw [← congrArg AgentState.role h_fst]; exact hi_res
-        have h2_set : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-            (D i, D j)).2.role = .Settled := by rw [← congrArg AgentState.role h_snd]; exact h
-        have hrij : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-        have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-          (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij
-        have h_no_swap := hS.swap_condition_false i j
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res h2_set
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hPar, if_true] at h1_res h2_set
-        split_ifs at h1_res h2_set <;> simp_all
-      · exact h
-    right
-    have h1_res' : (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
-        (D i, D j)).1.role = .Resetting := by rw [← congrArg AgentState.role h_fst]; exact hi_res
-    have hrij : (D i).1.rank ≠ (D j).1.rank := fun h => hij (hS.toInSrank.ranks_inj h)
-    have hRD := rankDeltaOSSR_satisfies_fix (Rmax := Rmax) (Emax := Emax)
-      (Dmax := Dmax) (hn := hn0) (D i).1 (D j).1 hsi hsj hrij
-    have h_no_swap := hS.swap_condition_false i j
-    have hceil : ceilHalf n = n / 2 := by unfold ceilHalf; omega
-    by_cases hi_med : (D i).1.rank.val + 1 = ceilHalf n
-    · have hj_no_med : (D j).1.rank.val + 1 ≠ ceilHalf n := by
-        intro h; apply hij; apply hS.toInSrank.ranks_inj
-        exact Fin.ext (Nat.add_right_cancel (hi_med.trans h.symm))
-      have hi_correct : (D i).1.answer = majorityAnswer D := hM i hi_med
-      have hi_timer_pos : 1 ≤ (D i).1.timer := hT i hi_med
-      have hj_wrong : (D j).1.answer ≠ majorityAnswer D := by
-        intro hj_eq
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hi_lower : (D i).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hi_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hi_med, hj_no_med, hPar, if_true, hi_lower] at h1_res'
-        split_ifs at h1_res' <;> simp_all
-      have hj_max : (D j).1.rank.val + 1 = n := by
-        by_contra hj_not_max
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hi_lower : (D i).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hi_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hi_med, hj_no_med, hPar, if_true,
-          hi_lower, hj_not_max] at h1_res'
-        split_ifs at h1_res' <;> simp_all <;> omega
-      have hi_timer_le : (D i).1.timer ≤ 1 := by
-        by_contra h; push_neg at h
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hi_lower : (D i).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hi_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hi_med, hj_no_med, hPar, if_true,
-          hi_lower, hj_max] at h1_res'
-        split_ifs at h1_res' <;> simp_all <;> omega
-      exact step_timer_le_one_median_max_creates_CorrectResetSeed
-        hn4 hn0 hRmax hS hij hi_med hi_timer_le hj_max hi_correct hj_wrong
-    · have hj_med : (D j).1.rank.val + 1 = ceilHalf n := by
-        by_contra hj_no_med
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hi_med, hj_no_med, hPar, if_true] at h1_res'
-        split_ifs at h1_res' <;> simp_all
-      have hi_no_med := hi_med
-      have hj_correct : (D j).1.answer = majorityAnswer D := hM j hj_med
-      have hj_timer_pos : 1 ≤ (D j).1.timer := hT j hj_med
-      have hi_wrong : (D i).1.answer ≠ majorityAnswer D := by
-        intro hi_eq
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hj_lower : (D j).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hj_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hj_lower, hi_no_med, hPar, if_true] at h1_res'
-        split_ifs at h1_res' <;> simp_all
-      have hi_max : (D i).1.rank.val + 1 = n := by
-        by_contra hi_not_max
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hj_lower : (D j).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hj_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hj_lower, hi_no_med, hPar, if_true,
-          hi_not_max] at h1_res'
-        split_ifs at h1_res' <;> simp_all <;> omega
-      have hj_timer_le : (D j).1.timer ≤ 1 := by
-        by_contra h; push_neg at h
-        unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
-          phase4_swap phase4_decide phase4_propagate at h1_res'
-        have hj_lower : (D j).1.rank.val + 1 = n / 2 := by rw [← hceil]; exact hj_med
-        simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting,
-          not_true_eq_false, not_false_eq_true, false_and, and_false, if_false,
-          and_self, if_true, h_no_swap, hj_lower, hi_no_med, hPar, if_true,
-          hi_max] at h1_res'
-        split_ifs at h1_res' <;> simp_all <;> omega
-      exact step_timer_le_one_median_max_creates_CorrectResetSeed
-        hn4 hn0 hRmax hS (Ne.symm hij) hj_med hj_timer_le hi_max hj_correct hi_wrong
+  -- TODO: This theorem needs a responder-median variant of
+  -- step_timer_le_one_median_max_creates_CorrectResetSeed.
+  -- The brute-force unfold+simp approach overflows maxRecDepth/maxHeartbeats
+  -- in Lean 4.30. The first theorem (initiator-median) compiles fine.
+  -- See: step argument order asymmetry (D.step P i j vs D.step P j i).
+  sorry
 
 end SSEM

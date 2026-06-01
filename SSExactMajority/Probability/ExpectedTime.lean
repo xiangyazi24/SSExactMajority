@@ -4603,5 +4603,81 @@ theorem expectedHittingTime_le_of_deterministic_descent
     _ = ↑(φ C₀) * ((n * (n - 1) : ℕ) : ENNReal) := by
         simp only [pUnif, inv_inv, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
 
+
+/-! ### Bridging lemma: deterministic schedule to probabilistic bound.
+
+If a deterministic schedule of length t with distinct pairs reaches
+Goal, then probReached t C Goal >= (1/(n(n-1)))^t. Combined with
+expectedHittingTime_le_window_mul_inv this converts deterministic
+convergence proofs into expected-time bounds. -/
+
+/-- Lower bound on probReached from a deterministic schedule with distinct
+pairs reaching Goal. -/
+theorem probReached_ge_inv_pow_of_execution
+    [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C : Config Q X n) (Goal : Config Q X n → Prop)
+    [DecidablePred Goal]
+    (γ : DetScheduler n) (t : ℕ)
+    (hDistinct : ∀ k, k < t → (γ k).1 ≠ (γ k).2)
+    (hGoal : Goal (execution P C γ t)) :
+    ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t ≤
+      probReached P hn C Goal t := by
+  induction t generalizing C γ with
+  | zero =>
+    simp only [pow_zero]
+    exact le_of_eq (probReached_zero_of_goal P hn C Goal hGoal).symm
+  | succ t ih =>
+    set C' := C.step P (γ 0).1 (γ 0).2
+    have hDistinct0 : (γ 0).1 ≠ (γ 0).2 := hDistinct 0 (by omega)
+    set γ' : DetScheduler n := fun k => γ (k + 1)
+    have hExec : ∀ s, execution P C' γ' s = execution P C γ (s + 1) := by
+      intro s; induction s with
+      | zero => simp [execution, C']
+      | succ s ih' =>
+        simp only [execution, γ'] at ih' ⊢
+        rw [ih']
+    have hGoal' : Goal (execution P C' γ' t) := by
+      rw [hExec]; exact hGoal
+    have hDistinct' : ∀ k, k < t → (γ' k).1 ≠ (γ' k).2 := by
+      intro k hk; exact hDistinct (k + 1) (by omega)
+    have hIH : ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t ≤
+        probReached P hn C' Goal t :=
+      ih C' γ' hDistinct' hGoal'
+    have hStep : ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ≤
+        probReached P hn C (fun D => D = C') 1 :=
+      probReached_one_lower_bound_of_step P hn C (fun D => D = C')
+        hDistinct0 rfl
+    have hTarget : ∀ D : Config Q X n, D = C' →
+        ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t ≤
+          probReached P hn D Goal t := by
+      intro D hD; subst hD; exact hIH
+    have hComp := probReached_add_ge_mul P hn C (fun D => D = C') Goal
+      1 t
+      (((n * (n - 1) : ℕ) : ENNReal)⁻¹)
+      (((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t)
+      hStep hTarget
+    calc ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ (t + 1)
+        = ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t *
+          ((n * (n - 1) : ℕ) : ENNReal)⁻¹ := pow_succ _ t
+      _ = ((n * (n - 1) : ℕ) : ENNReal)⁻¹ *
+          ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t := mul_comm _ _
+      _ ≤ probReached P hn C Goal (1 + t) := hComp
+      _ = probReached P hn C Goal (t + 1) := by ring_nf
+/-- ProbHitWithin version of the schedule bridging lemma. -/
+theorem ProbHitWithin_ge_inv_pow_of_execution
+    [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C : Config Q X n) (Goal : Config Q X n → Prop)
+    [DecidablePred Goal]
+    (γ : DetScheduler n) (t : ℕ)
+    (hDistinct : ∀ k, k < t → (γ k).1 ≠ (γ k).2)
+    (hGoal : Goal (execution P C γ t)) :
+    ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t ≤
+      ProbHitWithin P hn C Goal t :=
+  (probReached_ge_inv_pow_of_execution P hn C Goal γ t hDistinct hGoal).trans
+    (probReached_le_ProbHitWithin P hn C Goal t)
+
+
 end Probability
 end SSEM

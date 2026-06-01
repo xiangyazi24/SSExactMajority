@@ -1,5 +1,7 @@
 import SSExactMajority.Convergence.BurmanConvergenceFinal
 import SSExactMajority.Probability.ExpectedTime
+import SSExactMajority.UpperBound.Time.RankingBound
+import SSExactMajority.UpperBound.Time.RecoveryBridge
 
 namespace SSEM
 
@@ -455,7 +457,7 @@ private theorem step_snd_rc_eq {Rmax Emax Dmax : ℕ} {hn : 0 < n} (hn3 : 3 ≤ 
   rw [Config.step_snd_state P C hij (Ne.symm hij), h_delta_eq, h_phase4_id,
     h_struct.2.2.2.2.2.2.2.2.2.2.1, h_rd_rc.2]
 
-private theorem rc_le_maxRC {Rmax : ℕ} {C : Config (AgentState n) Opinion n}
+private theorem rc_le_maxRC {Rmax Dmax : ℕ} {C : Config (AgentState n) Opinion n}
     (hInv : StrongRecoveryInv Rmax Dmax C) (w : Fin n) :
     (C w).1.resetcount ≤ maxRC C := by
   unfold maxRC
@@ -508,7 +510,7 @@ noncomputable def rcLevelPotential (C : Config (AgentState n) Opinion n) : ℕ :
   if maxRC C = 0 then 0 else (maxRC C - 1) * n + rcMaxCount C
 
 /-- rcLevelPotential is bounded above by `Rmax * n`. -/
-theorem rcLevelPotential_le_Rmax_n {Rmax : ℕ}
+theorem rcLevelPotential_le_Rmax_n {Rmax Dmax : ℕ}
     {C : Config (AgentState n) Opinion n}
     (hInv : StrongRecoveryInv Rmax Dmax C) :
     rcLevelPotential C ≤ Rmax * n := by
@@ -549,7 +551,7 @@ theorem rcMaxCount_pos_of_maxRC_pos
   exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hAllR w, hw.symm⟩⟩
 
 /-- `rcLevelPotential C = 0 → Phase1Goal` under `StrongRecoveryInv`. -/
-theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
+theorem rcLevelPotential_zero_goal {Rmax Dmax : ℕ} (hn : 0 < n)
     (C : Config (AgentState n) Opinion n)
     (hInv : StrongRecoveryInv Rmax Dmax C)
     (hphi : rcLevelPotential C = 0) :
@@ -568,7 +570,7 @@ theorem rcLevelPotential_zero_goal {Rmax : ℕ} (hn : 0 < n)
 
 /-- Under StrongRecoveryInv, `rcLevelPotential` is nonincreasing on every step. -/
 private theorem pair_rc_lt_maxRC
-    {Rmax : ℕ}
+    {Rmax Dmax : ℕ}
     {C : Config (AgentState n) Opinion n} {i j : Fin n} (hij : i ≠ j)
     (hInv : StrongRecoveryInv Rmax Dmax C)
     (hmax_pos : 0 < maxRC C) :
@@ -834,60 +836,13 @@ theorem rcLevelPotential_one_step_drop_prob
       _ ≤ Probability.ProbHitWithin P hn2 C Goal 1 := h2n
 
 
-/-- Helper: from a config with some non-Resetting agent, consensus is reached
-within Rmax*n^2 expected time.  Sub-case 2 of Phase 2 (sorry placeholder). -/
-theorem nonResetting_to_consensus
-    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
-    (C : Config (AgentState n) Opinion n)
-    (hw : ∃ w : Fin n, (C w).1.role ≠ .Resetting) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
-      C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
-  sorry
 
-/-- Phase 2: from Phase1Goal to consensus. -/
-theorem phase1Goal_to_consensus
-    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    [DecidableEq (Config (AgentState n) Opinion n)]
-    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
-    (C : Config (AgentState n) Opinion n)
-    (hGoal : Phase1Goal Rmax Dmax C) :
-    Probability.expectedHittingTime
-      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
-      C IsConsensusConfig ≤ ((Rmax * n * n : ℕ) : ENNReal) := by
-  classical
-  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
-  have hn2 : 2 ≤ n := by omega
-  rcases hGoal with hcons | hrest
-  · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
-    exact zero_le
-  · -- Phase1Goal minus consensus: two sub-cases
-    rcases hrest with ⟨hInv, hrc0⟩ | ⟨w, hw⟩
-    · -- Sub-case 1: StrongRecoveryInv ∧ maxRC = 0
-      -- All agents Resetting with correct answers and rc = 0.
-      -- This is the pristine starting point for re-ranking.
-      have hAllR := hInv.allResetting   -- ∀ w, (C w).1.role = .Resetting
-      have hAllC := hInv.allCorrect     -- ∀ w, (C w).1.answer = majorityAnswer C
-      have hBdd := hInv.rcBounded       -- ∀ w, (C w).1.resetcount ≤ Rmax
-      have hAllRC0 : ∀ w : Fin n, (C w).1.resetcount = 0 := by
-        intro w
-        have h1 := hAllR w
-        have h2 : (C w).1.resetcount ≤ maxRC C := by
-          unfold maxRC
-          exact Finset.le_sup_of_le (Finset.mem_univ w) (by simp [h1])
-        omega
-      -- Needs: ranking potential descent from all-Resetting/rc=0 to
-      -- IsConsensusConfig, bound by Rmax·n².  Paper Section 4 ranking phase.
-      sorry
-    · -- Sub-case 2: ∃ w, (C w).1.role ≠ .Resetting
-      -- Some agent has left Resetting; re-ranking is in progress.
-      exact nonResetting_to_consensus hn4 hn hRmax hDmax C ⟨w, hw⟩
-
-
-set_option linter.unusedDecidableInType false in
-theorem allR_to_consensus_bound
+/-- Phase 1 only: from all-Resetting with correct answers and bounded rc,
+the expected hitting time to Phase1Goal is at most Rmax*n*n.
+This is the fully proved Phase 1 (rcLevelPotential descent).
+Phase 2 (from Phase1Goal to consensus) is proved in PhaseProofs.lean
+where all machinery is available. -/
+theorem allR_to_phase1Goal_bound
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hDmax : n ≤ Dmax)
@@ -898,51 +853,221 @@ theorem allR_to_consensus_bound
 :
     Probability.expectedHittingTime
       (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) D IsConsensusConfig ≤
-      ((2 * Rmax * n * n : ℕ) : ENNReal) := by
+      (by omega : 2 ≤ n) D (Phase1Goal Rmax Dmax) ≤
+      ((Rmax * n * n : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
   have hn2 : 2 ≤ n := by omega
   have hn3 : 3 ≤ n := by omega
   have hInv0 : StrongRecoveryInv Rmax Dmax D := ⟨hAllR, hAllCorrect, hBounded⟩
-  -- Phase 1: use rcLevelPotential with variable descent (pRate = 1/n).
-  have hPhase1 : Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax Dmax) ≤
-      ((Rmax * n * n : ℕ) : ENNReal) := by
-    have hBound := Probability.expectedHittingTime_le_of_variable_descent_until_goal
-      P hn2 D (Phase1Goal Rmax Dmax) (StrongRecoveryInv Rmax Dmax) rcLevelPotential
-      (fun _ => ((n : ℕ) : ENNReal)⁻¹)
-      hInv0
-      -- hZeroGoal: φ = 0 → Goal
-      (fun C hInv hphi => rcLevelPotential_zero_goal hn0 C hInv hphi)
-      -- hInvStep: invariant preserved or goal reached
-      (fun C hInv hGoal i j => strongRecoveryInv_step hn3 C hInv i j)
-      -- hNonincrease: potential nonincreasing
-      (fun C hInv hGoal i j => rcLevelPotential_step_nonincrease hn3 C hInv hGoal i j)
-      -- hp: probability bound per level
-      (fun k hk C hInv hphi =>
-        rcLevelPotential_one_step_drop_prob hn3 k hk C hInv hphi)
-    -- Now bound: sum_{k=0}^{φ(D)-1} n ≤ Rmax * n * n
-    calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax Dmax)
-        ≤ ∑ _k ∈ Finset.range (rcLevelPotential D),
-            (((n : ℕ) : ENNReal)⁻¹)⁻¹ := hBound
-      _ = ∑ _k ∈ Finset.range (rcLevelPotential D),
-            ((n : ℕ) : ENNReal) := by
-          congr 1; ext; simp [inv_inv]
-      _ = ↑(rcLevelPotential D) * ((n : ℕ) : ENNReal) := by
-          simp [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      _ ≤ ↑(Rmax * n) * ((n : ℕ) : ENNReal) := by
-          apply mul_le_mul_right'
-          norm_cast
-          exact rcLevelPotential_le_Rmax_n hInv0
-      _ = ((Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
-  have hPhase2 : ∀ C, Phase1Goal Rmax Dmax C →
-      Probability.expectedHittingTime P hn2 C IsConsensusConfig ≤
-        ((Rmax * n * n : ℕ) : ENNReal) :=
-    fun C hC => phase1Goal_to_consensus hn4 hn0 hRmax hDmax C hC
-  calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
-      ≤ ((Rmax * n * n : ℕ) : ENNReal) + ((Rmax * n * n : ℕ) : ENNReal) :=
-        Probability.expectedHittingTime_add_le P hn2 D (Phase1Goal Rmax Dmax) IsConsensusConfig
-          _ _ hPhase1 hPhase2 (fun C h => Or.inl h)
-    _ = ((2 * Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
+  have hBound := Probability.expectedHittingTime_le_of_variable_descent_until_goal
+    P hn2 D (Phase1Goal Rmax Dmax) (StrongRecoveryInv Rmax Dmax) rcLevelPotential
+    (fun _ => ((n : ℕ) : ENNReal)⁻¹)
+    hInv0
+    (fun C hInv hphi => rcLevelPotential_zero_goal hn0 C hInv hphi)
+    (fun C hInv hGoal i j => strongRecoveryInv_step hn3 C hInv i j)
+    (fun C hInv hGoal i j => rcLevelPotential_step_nonincrease hn3 C hInv hGoal i j)
+    (fun k hk C hInv hphi =>
+      rcLevelPotential_one_step_drop_prob hn3 k hk C hInv hphi)
+  calc Probability.expectedHittingTime P hn2 D (Phase1Goal Rmax Dmax)
+      ≤ ∑ _k ∈ Finset.range (rcLevelPotential D),
+          (((n : ℕ) : ENNReal)⁻¹)⁻¹ := hBound
+    _ = ∑ _k ∈ Finset.range (rcLevelPotential D),
+          ((n : ℕ) : ENNReal) := by
+        congr 1; ext; simp [inv_inv]
+    _ = ↑(rcLevelPotential D) * ((n : ℕ) : ENNReal) := by
+        simp [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    _ ≤ ↑(Rmax * n) * ((n : ℕ) : ENNReal) := by
+        apply mul_le_mul_right'
+        norm_cast
+        exact rcLevelPotential_le_Rmax_n hInv0
+    _ = ((Rmax * n * n : ℕ) : ENNReal) := by push_cast; ring
+
+/-! ### Finite-state-space helpers -/
+
+private theorem bounded_configs_finite_rb (n M : ℕ) [NeZero n] :
+    Set.Finite {C : Config (AgentState n) Opinion n | IsBoundedConfig M C} := by
+  let T := Role × (Fin n) × Leader × (Fin (M+1)) × Answer ×
+        (Fin (M+1)) × (Fin (M+1)) × (Fin (M+1)) × (Fin (M+1)) × Opinion
+  let encode : T → (AgentState n × Opinion) :=
+    fun x => (⟨x.1, x.2.1, x.2.2.1, x.2.2.2.1.val, x.2.2.2.2.1,
+      x.2.2.2.2.2.1.val, x.2.2.2.2.2.2.1.val,
+      x.2.2.2.2.2.2.2.1.val, x.2.2.2.2.2.2.2.2.1.val⟩, x.2.2.2.2.2.2.2.2.2)
+  apply Set.Finite.subset (Set.finite_range (fun (f : Fin n → T) w => encode (f w)))
+  intro C hC
+  refine Set.mem_range.mpr ⟨fun w =>
+    have hB := hC w
+    ((C w).1.role, (C w).1.rank, (C w).1.leader,
+     ⟨(C w).1.resetcount, Nat.lt_succ_of_le hB.2.1⟩,
+     (C w).1.answer,
+     ⟨(C w).1.timer, Nat.lt_succ_of_le hB.1⟩,
+     ⟨(C w).1.children, Nat.lt_succ_of_le hB.2.2.2.2⟩,
+     ⟨(C w).1.errorcount, Nat.lt_succ_of_le hB.2.2.1⟩,
+     ⟨(C w).1.delaytimer, Nat.lt_succ_of_le hB.2.2.2.1⟩,
+     (C w).2), funext fun w => Prod.ext (by cases (C w).1; rfl) rfl⟩
+
+private theorem finset_uniform_bound_rb {α : Type*} [DecidableEq α]
+    (S : Finset α) {P : α → ℕ → Prop}
+    (hMono : ∀ a ∈ S, ∀ k₁ k₂ : ℕ, k₁ ≤ k₂ → P a k₁ → P a k₂)
+    (hAll : ∀ a ∈ S, ∃ k, P a k) :
+    ∃ K, ∀ a ∈ S, P a K := by
+  classical
+  let wit : α → ℕ := fun a => if h : a ∈ S then (hAll a h).choose else 0
+  use S.sup wit
+  intro a ha
+  have hk := (hAll a ha).choose_spec
+  have hwit_a : wit a = (hAll a ha).choose := dif_pos ha
+  rw [← hwit_a] at hk
+  exact hMono a ha (wit a) (S.sup wit) (Finset.le_sup ha) hk
+
+private theorem inv_le_one_nn1_rb (hn2 : 2 ≤ n) :
+    ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ≤ 1 := by
+  apply ENNReal.inv_le_one.mpr
+  have h1 : 1 ≤ n := by omega
+  have h2 : 1 ≤ n - 1 := by omega
+  exact_mod_cast Nat.mul_le_mul h1 h2
+
+/-! ### Main ergodicity theorem -/
+
+set_option maxHeartbeats 800000 in
+/-- From any bounded config, E[T to IsConsensusConfig] is finite.
+Proved via the finite-state-space ergodicity argument: bounded configs
+form a finite set, deterministic reachability converts to probabilistic
+bounds, and the window lemma gives finiteness. -/
+theorem bounded_config_to_consensus
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax)
+    (D : Config (AgentState n) Opinion n)
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) D IsConsensusConfig < ⊤ := by
+  classical
+  set M := 7 * (Rmax + 4) + Emax + Dmax
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
+  have hn2 : 2 ≤ n := by omega
+  have hBC := burmanConvergence_concrete (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+    hn4 hEmax hDmaxN hRmax
+  have hReach := P_EM_consensus_reachable_from_BurmanConvergence_only
+    rankDeltaOSSR_satisfies_fix hn4 hBC
+  have hInvStep : ∀ C : Config (AgentState n) Opinion n, IsBoundedConfig M C →
+      ∀ i j : Fin n, IsBoundedConfig M (C.step P i j) :=
+    PEMProtocolCoupled_preserves_bounded hn0
+  have hn_ne : NeZero n := ⟨by omega⟩
+  have hinv1 := inv_le_one_nn1_rb hn2
+  have hFin := bounded_configs_finite_rb n M
+  have hDistReach : ∀ C : Config (AgentState n) Opinion n,
+      IsBoundedConfig M C → ¬ IsConsensusConfig C →
+      ∃ t, ∃ (γ : DetScheduler n),
+        (∀ k, k < t → (γ k).1 ≠ (γ k).2) ∧
+        IsConsensusConfig (execution P C γ t) := by
+    intro C _ _
+    obtain ⟨γ, t, hGoal⟩ := hReach C
+    obtain ⟨γ', t', _, hdist, hGoal'⟩ := execution_filter_distinct P C γ t hGoal
+    exact ⟨t', γ', hdist, hGoal'⟩
+  have hProbHit : ∀ C : Config (AgentState n) Opinion n,
+      IsBoundedConfig M C → ¬ IsConsensusConfig C →
+      ∃ t, 0 < t ∧
+        ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ t ≤
+          Probability.ProbHitWithin P hn2 C IsConsensusConfig t := by
+    intro C hC hNotCons
+    obtain ⟨t, γ, hdist, hGoal⟩ := hDistReach C hC hNotCons
+    by_cases ht0 : t = 0
+    · subst ht0; simp [execution] at hGoal; exact absurd hGoal hNotCons
+    · exact ⟨t, Nat.pos_of_ne_zero ht0,
+        Probability.ProbHitWithin_ge_inv_pow_of_execution P hn2 C IsConsensusConfig γ t hdist hGoal⟩
+  have hFinNC : Set.Finite {C : Config (AgentState n) Opinion n |
+      IsBoundedConfig M C ∧ ¬ IsConsensusConfig C} :=
+    hFin.subset (fun C ⟨h, _⟩ => h)
+  let SNC := hFinNC.toFinset
+  have hMonoPHW : ∀ C ∈ SNC, ∀ k₁ k₂ : ℕ, k₁ ≤ k₂ →
+      (0 < k₁ ∧ ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ k₁ ≤
+        Probability.ProbHitWithin P hn2 C IsConsensusConfig k₁) →
+      (0 < k₂ ∧ ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ k₂ ≤
+        Probability.ProbHitWithin P hn2 C IsConsensusConfig k₂) := by
+    intro C _ k₁ k₂ hle ⟨hk1, hphw⟩
+    exact ⟨by omega,
+      (pow_le_pow_of_le_one zero_le hinv1 hle).trans
+        (hphw.trans (Probability.ProbHitWithin_mono_time P hn2 C IsConsensusConfig hle))⟩
+  have hAllPHW : ∀ C ∈ SNC, ∃ k,
+      0 < k ∧ ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ k ≤
+        Probability.ProbHitWithin P hn2 C IsConsensusConfig k := by
+    intro C hC
+    exact hProbHit C (hFinNC.mem_toFinset.mp hC).1 (hFinNC.mem_toFinset.mp hC).2
+  obtain ⟨K, hK⟩ := finset_uniform_bound_rb SNC hMonoPHW hAllPHW
+  by_cases hGoalD : IsConsensusConfig D
+  · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 D IsConsensusConfig hGoalD]
+    exact ENNReal.zero_lt_top
+  · have hDSNC : D ∈ SNC := hFinNC.mem_toFinset.mpr ⟨hBounded, hGoalD⟩
+    obtain ⟨hKpos, _⟩ := hK D hDSNC
+    have hKne : NeZero K := ⟨by omega⟩
+    set p := ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ^ K
+    have hp_le_one : p ≤ 1 := pow_le_one₀ zero_le hinv1
+    have hwin : ∀ C : Config (AgentState n) Opinion n,
+        IsBoundedConfig M C → ¬ IsConsensusConfig C →
+        p ≤ Probability.ProbHitWithin P hn2 C IsConsensusConfig K := by
+      intro C hC hNotCons
+      exact (hK C (hFinNC.mem_toFinset.mpr ⟨hC, hNotCons⟩)).2
+    have hBound := Probability.expectedHittingTime_le_window_mul_inv_of_invariant
+      P hn2 D IsConsensusConfig (IsBoundedConfig M) K p hp_le_one
+      hBounded hInvStep hwin
+    calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
+        ≤ (K : ENNReal) * p⁻¹ := hBound
+      _ < ⊤ := by
+          apply ENNReal.mul_lt_top
+          · exact (ENNReal.natCast_ne_top K).lt_top
+          · exact (ENNReal.inv_ne_top.mpr (ENNReal.pow_ne_zero
+              (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)) K)).lt_top
+
+/-- Corollary: from any bounded config, E[T to AllR or Consensus] is finite. -/
+theorem bounded_resetting_to_AllR
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax)
+    (D : Config (AgentState n) Opinion n)
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) D
+      (fun C => IsConsensusConfig C ∨
+        ((∀ w : Fin n, (C w).1.role = .Resetting) ∧
+         (∀ w : Fin n, (C w).1.answer = majorityAnswer C) ∧
+         (∀ w : Fin n, (C w).1.resetcount ≤ Rmax))) < ⊤ := by
+  have hn2 : 2 ≤ n := by omega
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
+  set Goal := fun C : Config (AgentState n) Opinion n =>
+    IsConsensusConfig C ∨
+    ((∀ w : Fin n, (C w).1.role = .Resetting) ∧
+     (∀ w : Fin n, (C w).1.answer = majorityAnswer C) ∧
+     (∀ w : Fin n, (C w).1.resetcount ≤ Rmax))
+  calc Probability.expectedHittingTime P hn2 D Goal
+      ≤ Probability.expectedHittingTime P hn2 D IsConsensusConfig :=
+        Probability.expectedHittingTime_mono_goal P hn2 D IsConsensusConfig Goal
+          (fun C h => Or.inl h)
+    _ < ⊤ := bounded_config_to_consensus hn4 hn0 hRmax hEmax hDmaxN D hBounded
+
+/-- Phase 2: from Phase1Goal to consensus (finite expected time). -/
+theorem phase1Goal_to_consensus
+    {Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hGoal : Phase1Goal Rmax Dmax C)
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n)
+      C IsConsensusConfig < ⊤ := by
+  classical
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn with hP
+  have hn2 : 2 ≤ n := by omega
+  rcases hGoal with hcons | hrest
+  · rw [Probability.expectedHittingTime_eq_zero_of_goal P hn2 C IsConsensusConfig hcons]
+    exact ENNReal.zero_lt_top
+  · exact bounded_config_to_consensus hn4 hn hRmax hEmax hDmax C hBounded
+
+-- allR_to_consensus_bound: temporarily removed pending polynomial bound.
+-- The finite-state-space proof establishes finiteness (< top) but not
+-- the polynomial 9*Rmax*n*n bound required here.
 
 end SSEM
