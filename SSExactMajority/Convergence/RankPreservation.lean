@@ -17,11 +17,7 @@ namespace SSEM
 
 variable {n : ℕ}
 
-@[simp] theorem AgentState.rank_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).rank = s.rank := rfl
 
-@[simp] theorem AgentState.rank_with_timer (s : AgentState n) (t : ℕ) :
-    ({s with timer := t}).rank = s.rank := rfl
 
 @[simp] theorem AgentState.rank_with_role (s : AgentState n) (r : Role) :
     ({s with role := r}).rank = s.rank := rfl
@@ -34,20 +30,8 @@ variable {n : ℕ}
 
 -- Struct update projection lemmas: answer/timer changes preserve all structural fields
 -- role_with_answer and role_with_timer are now in Protocol/State.lean
-@[simp] theorem AgentState.leader_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).leader = s.leader := rfl
-@[simp] theorem AgentState.children_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).children = s.children := rfl
-@[simp] theorem AgentState.resetcount_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).resetcount = s.resetcount := rfl
-@[simp] theorem AgentState.delaytimer_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).delaytimer = s.delaytimer := rfl
-@[simp] theorem AgentState.leader_with_timer (s : AgentState n) (t : ℕ) :
-    ({s with timer := t}).leader = s.leader := rfl
 @[simp] theorem AgentState.children_with_timer (s : AgentState n) (t : ℕ) :
     ({s with timer := t}).children = s.children := rfl
-@[simp] theorem AgentState.resetcount_with_timer (s : AgentState n) (t : ℕ) :
-    ({s with timer := t}).resetcount = s.resetcount := rfl
 @[simp] theorem AgentState.delaytimer_with_timer (s : AgentState n) (t : ℕ) :
     ({s with timer := t}).delaytimer = s.delaytimer := rfl
 /-! ### Propagation rank preservation -/
@@ -230,11 +214,7 @@ theorem propagation_role_preserved_no_reset (Rmax : ℕ) (b₀ b₁ : AgentState
     · simp only [hB, if_false]
       refine ⟨?_, ?_⟩ <;> first | rfl | trivial
 
-theorem AgentState.timer_with_answer (s : AgentState n) (a : Answer) :
-    ({s with answer := a}).timer = s.timer := rfl
 
-theorem AgentState.timer_with_timer (s : AgentState n) (t : ℕ) :
-    ({s with timer := t}).timer = t := rfl
 
 theorem AgentState.role_with_answer' (s : AgentState n) (a : Answer) :
     ({s with answer := a}).role = s.role := rfl

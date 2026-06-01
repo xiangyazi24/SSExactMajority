@@ -76,6 +76,34 @@ structure AgentState (n : ℕ) where
 @[simp] theorem AgentState.errorcount_with_timer (s : AgentState n) (t : ℕ) :
     ({ s with timer := t } : AgentState n).errorcount = s.errorcount := rfl
 
+-- Field projections through { s with answer := a }
+@[simp] theorem AgentState.rank_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).rank = s.rank := rfl
+@[simp] theorem AgentState.timer_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).timer = s.timer := rfl
+@[simp] theorem AgentState.leader_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).leader = s.leader := rfl
+@[simp] theorem AgentState.resetcount_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).resetcount = s.resetcount := rfl
+@[simp] theorem AgentState.answer_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).answer = a := rfl
+@[simp] theorem AgentState.children_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).children = s.children := rfl
+@[simp] theorem AgentState.delaytimer_with_answer (s : AgentState n) (a : Answer) :
+    ({ s with answer := a } : AgentState n).delaytimer = s.delaytimer := rfl
+
+-- Field projections through { s with timer := t }
+@[simp] theorem AgentState.rank_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).rank = s.rank := rfl
+@[simp] theorem AgentState.answer_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).answer = s.answer := rfl
+@[simp] theorem AgentState.leader_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).leader = s.leader := rfl
+@[simp] theorem AgentState.resetcount_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).resetcount = s.resetcount := rfl
+@[simp] theorem AgentState.timer_with_timer (s : AgentState n) (t : ℕ) :
+    ({ s with timer := t } : AgentState n).timer = t := rfl
+
 /-- The output function: if answer = φ, output T; otherwise output answer. -/
 def agentOutput (s : AgentState n) : Output :=
   s.answer.toOutput

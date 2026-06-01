@@ -2,6 +2,14 @@ import SSExactMajority.UpperBound.Time.Bridge
 
 namespace SSEM
 
+/-- phase4_propagate preserves Settled when answers agree. -/
+private lemma phase4_propagate_fst_settled_of_eq_answer'
+    {n Rmax : ℕ} {b₀ b₁ : AgentState n}
+    (hs₀ : b₀.role = .Settled) (heq : b₀.answer = b₁.answer) :
+    (phase4_propagate n Rmax b₀ b₁).1.role = .Settled := by
+  simp only [phase4_propagate]; split_ifs <;> simp_all
+
+
 /-! ## transitionPEM role preservation for InSswap (Settled) agents -/
 
 theorem transitionPEM_prePhase4_eq_of_settled_distinct
@@ -706,7 +714,55 @@ theorem transitionPEM_fst_resetting_s1_med_no_max_even_timer_zero
     (h_s0_no_max : s₀.rank.val + 1 ≠ n)
     (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
     s₁.timer = 0 := by
-  sorry
+  have hceil : ceilHalf n = n / 2 := ceilHalf_eq_half_of_even hpar
+  have h_s1_lower : s₁.rank.val + 1 = n / 2 := by rw [← hceil]; exact h_s1_med
+  have h_s0_no_lower : s₀.rank.val + 1 ≠ n / 2 := by rw [← hceil]; exact h_s0_no_med
+  have h_not_dec1 : ¬(s₀.rank.val + 1 = n / 2 ∧ s₁.rank.val + 1 = n / 2 + 1) :=
+    fun ⟨h1, _⟩ => h_s0_no_lower h1
+  simp only [transitionPEM] at h
+  rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hs₀ hs₁ hne] at h
+  unfold transitionPEM_phase4 at h
+  simp only [hs₀, hs₁, and_self, ite_true] at h
+  unfold phase4_swap at h; simp only [h_no_swap, ite_false] at h
+  by_cases h_s0_upper : s₀.rank.val + 1 = n / 2 + 1
+  · exfalso
+    have h_dec2 : s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1 :=
+      ⟨h_s1_lower, h_s0_upper⟩
+    have hd : phase4_decide n s₀ s₁ x₀ x₁ =
+      if x₁ = x₀ then
+        ({ s₀ with answer := opinionToAnswer x₁ }, { s₁ with answer := opinionToAnswer x₁ })
+      else
+        ({ s₀ with answer := .outT }, { s₁ with answer := .outT }) := by
+      simp only [phase4_decide, hpar, ite_true]
+      have : ¬(↑s₀.rank + 1 = n / 2 ∧ ↑s₁.rank = n / 2) :=
+        fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+      simp [this, h_s1_lower, show ↑s₀.rank = n / 2 from by omega]
+    rw [hd] at h; split_ifs at h
+    · exact absurd
+        (phase4_propagate_fst_settled_of_eq_answer' (n := n) (Rmax := Rmax)
+          (b₀ := { s₀ with answer := opinionToAnswer x₁ })
+          (b₁ := { s₁ with answer := opinionToAnswer x₁ }) hs₀ rfl)
+        (by rw [h]; exact Role.noConfusion)
+    · exact absurd
+        (phase4_propagate_fst_settled_of_eq_answer' (n := n) (Rmax := Rmax)
+          (b₀ := { s₀ with answer := .outT })
+          (b₁ := { s₁ with answer := .outT }) hs₀ rfl)
+        (by rw [h]; exact Role.noConfusion)
+  · have h_not_dec2 : ¬(s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1) :=
+      fun ⟨_, h2⟩ => h_s0_upper h2
+    have hd : phase4_decide n s₀ s₁ x₀ x₁ = (s₀, s₁) := by
+      simp only [phase4_decide, hpar, ite_true]
+      have h_nd1 : ¬(↑s₀.rank + 1 = n / 2 ∧ ↑s₁.rank = n / 2) :=
+        fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+      have h_nd2 : ¬(↑s₁.rank + 1 = n / 2 ∧ ↑s₀.rank = n / 2) :=
+        fun ⟨ha, hb⟩ => h_not_dec2 ⟨ha, by omega⟩
+      simp [h_nd1, h_nd2]
+    rw [hd] at h; simp only [Prod.fst, Prod.snd] at h
+    unfold phase4_propagate at h
+    simp only [h_s0_no_med, ite_false, h_s1_med, ite_true, h_s0_no_max, ite_false] at h
+    split_ifs at h with hguard
+    · exact hguard.1
+    · rw [hs₀] at h; exact Role.noConfusion h
 
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 800000000 in
@@ -726,7 +782,31 @@ theorem transitionPEM_fst_resetting_s1_med_max_even_timer_le_one
     (h_s0_max : s₀.rank.val + 1 = n)
     (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
     s₁.timer ≤ 1 := by
-  sorry
+  have hceil : ceilHalf n = n / 2 := ceilHalf_eq_half_of_even hpar
+  have h_s0_no_lower : s₀.rank.val + 1 ≠ n / 2 := by rw [← hceil]; exact h_s0_no_med
+  have h_s0_not_upper : s₀.rank.val + 1 ≠ n / 2 + 1 := by omega
+  have h_not_dec1 : ¬(s₀.rank.val + 1 = n / 2 ∧ s₁.rank.val + 1 = n / 2 + 1) :=
+    fun ⟨h1, _⟩ => h_s0_no_lower h1
+  have h_not_dec2 : ¬(s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1) :=
+    fun ⟨_, h2⟩ => h_s0_not_upper h2
+  simp only [transitionPEM] at h
+  rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hs₀ hs₁ hne] at h
+  unfold transitionPEM_phase4 at h; simp only [hs₀, hs₁, and_self, ite_true] at h
+  unfold phase4_swap at h; simp only [h_no_swap, ite_false] at h
+  have hd : phase4_decide n s₀ s₁ x₀ x₁ = (s₀, s₁) := by
+    simp only [phase4_decide, hpar, ite_true]
+    have h_nd1 : ¬(↑s₀.rank + 1 = n / 2 ∧ ↑s₁.rank = n / 2) :=
+      fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+    have h_nd2 : ¬(↑s₁.rank + 1 = n / 2 ∧ ↑s₀.rank = n / 2) :=
+      fun ⟨ha, hb⟩ => h_not_dec2 ⟨ha, by omega⟩
+    simp [h_nd1, h_nd2]
+  rw [hd] at h; simp only [Prod.fst, Prod.snd] at h
+  have h_n_ne_ceil : n ≠ ceilHalf n := by omega
+  unfold phase4_propagate at h
+  simp only [h_s0_no_med, h_n_ne_ceil, ite_false, h_s1_med, ite_true, h_s0_max, ite_true] at h
+  split_ifs at h with hguard
+  · omega
+  · exact absurd h (by simp [hs₀])
 
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 800000000 in
@@ -745,7 +825,63 @@ theorem transitionPEM_fst_resetting_s1_med_even_answer_diff
     (h_s1_med : s₁.rank.val + 1 = ceilHalf n)
     (h : (transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))).1.role = .Resetting) :
     s₁.answer ≠ s₀.answer := by
-  sorry
+  have hceil : ceilHalf n = n / 2 := ceilHalf_eq_half_of_even hpar
+  have h_s1_lower : s₁.rank.val + 1 = n / 2 := by rw [← hceil]; exact h_s1_med
+  have h_s0_no_lower : s₀.rank.val + 1 ≠ n / 2 := by rw [← hceil]; exact h_s0_no_med
+  have h_not_dec1 : ¬(s₀.rank.val + 1 = n / 2 ∧ s₁.rank.val + 1 = n / 2 + 1) :=
+    fun ⟨h1, _⟩ => h_s0_no_lower h1
+  simp only [transitionPEM] at h
+  rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hs₀ hs₁ hne] at h
+  unfold transitionPEM_phase4 at h
+  simp only [hs₀, hs₁, and_self, ite_true] at h
+  unfold phase4_swap at h; simp only [h_no_swap, ite_false] at h
+  by_cases h_s0_upper : s₀.rank.val + 1 = n / 2 + 1
+  · exfalso
+    have h_dec2 : s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1 :=
+      ⟨h_s1_lower, h_s0_upper⟩
+    have hd : phase4_decide n s₀ s₁ x₀ x₁ =
+      if x₁ = x₀ then
+        ({ s₀ with answer := opinionToAnswer x₁ }, { s₁ with answer := opinionToAnswer x₁ })
+      else
+        ({ s₀ with answer := .outT }, { s₁ with answer := .outT }) := by
+      simp only [phase4_decide, hpar, ite_true]
+      have : ¬(↑s₀.rank + 1 = n / 2 ∧ ↑s₁.rank = n / 2) :=
+        fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+      simp [this, h_s1_lower, show ↑s₀.rank = n / 2 from by omega]
+    rw [hd] at h; split_ifs at h
+    · exact absurd
+        (phase4_propagate_fst_settled_of_eq_answer' (n := n) (Rmax := Rmax)
+          (b₀ := { s₀ with answer := opinionToAnswer x₁ })
+          (b₁ := { s₁ with answer := opinionToAnswer x₁ }) hs₀ rfl)
+        (by rw [h]; exact Role.noConfusion)
+    · exact absurd
+        (phase4_propagate_fst_settled_of_eq_answer' (n := n) (Rmax := Rmax)
+          (b₀ := { s₀ with answer := .outT })
+          (b₁ := { s₁ with answer := .outT }) hs₀ rfl)
+        (by rw [h]; exact Role.noConfusion)
+  · have h_not_dec2 : ¬(s₁.rank.val + 1 = n / 2 ∧ s₀.rank.val + 1 = n / 2 + 1) :=
+      fun ⟨_, h2⟩ => h_s0_upper h2
+    have hd : phase4_decide n s₀ s₁ x₀ x₁ = (s₀, s₁) := by
+      simp only [phase4_decide, hpar, ite_true]
+      have h_nd1 : ¬(↑s₀.rank + 1 = n / 2 ∧ ↑s₁.rank = n / 2) :=
+        fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+      have h_nd2 : ¬(↑s₁.rank + 1 = n / 2 ∧ ↑s₀.rank = n / 2) :=
+        fun ⟨ha, hb⟩ => h_not_dec2 ⟨ha, by omega⟩
+      simp [h_nd1, h_nd2]
+    rw [hd] at h; simp only [Prod.fst, Prod.snd] at h
+    unfold phase4_propagate at h
+    simp only [h_s0_no_med, ite_false, h_s1_med, ite_true] at h
+    by_cases h_s0_max : s₀.rank.val + 1 = n
+    · simp only [h_s0_max, ite_true] at h
+      split_ifs at h with hguard
+      · exact hguard.2
+      · rw [hs₀] at h; exact Role.noConfusion h
+    · simp only [h_s0_max, ite_false] at h
+      split_ifs at h with hguard
+      · exact hguard.2
+      · rw [hs₀] at h; exact Role.noConfusion h
+
+/-! ## Responder-median trace lemma (even parity, timer=1, initiator at max) -/
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 800000000 in

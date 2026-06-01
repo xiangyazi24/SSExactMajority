@@ -162,16 +162,28 @@ private theorem CRS_of_both_resetting_even
       rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hsi hsj hrij] at hirr
       unfold transitionPEM_phase4 at hirr; simp only [hsi, hsj, and_self, ite_true] at hirr
       unfold phase4_swap at hirr; simp only [hns, ite_false] at hirr
-      unfold phase4_decide at hirr
-      have hm : (D i).1.rank.val + 1 = n / 2 ∧ (D j).1.rank.val = n / 2 := ⟨hil, by omega⟩
-      simp only [hpar, ite_true, hm, ite_true] at hirr
-      -- After decide, both have same answer regardless of input agreement.
-      -- phase4_propagate doesn't fire → stays Settled → contradiction.
-      -- Upper-median pair: phase4_decide sets both answers equal, so propagate doesn't fire.
-      -- Both branches (x₀=x₁ or x₀≠x₁) give same answer → propagate_fst_settled_of_eq_answer applies.
-      -- The proof is blocked by Lean 4.30 struct-update unfolding: simp expands struct fields
-      -- and phase4_propagate_fst_settled_of_eq_answer can't match the expanded form.
-      sorry
+      -- phase4_decide produces equal answers → propagate stays Settled → contradiction
+      have hd : phase4_decide n (D i).1 (D j).1 (D i).2 (D j).2 =
+        if (D i).2 = (D j).2 then
+          ({ (D i).1 with answer := opinionToAnswer (D i).2 },
+           { (D j).1 with answer := opinionToAnswer (D i).2 })
+        else
+          ({ (D i).1 with answer := .outT }, { (D j).1 with answer := .outT }) := by
+        simp only [phase4_decide, hpar, ite_true]
+        simp [hil, show ↑(D j).1.rank = n / 2 from by omega]
+      rw [hd] at hirr; split_ifs at hirr
+      · exact absurd
+          (phase4_propagate_fst_settled_of_eq_answer (Rmax := Rmax)
+            (b₀ := { (D i).1 with answer := opinionToAnswer (D i).2 })
+            (b₁ := { (D j).1 with answer := opinionToAnswer (D i).2 })
+            hsi rfl)
+          (by rw [hirr]; exact Role.noConfusion)
+      · exact absurd
+          (phase4_propagate_fst_settled_of_eq_answer (Rmax := Rmax)
+            (b₀ := { (D i).1 with answer := .outT })
+            (b₁ := { (D j).1 with answer := .outT })
+            hsi rfl)
+          (by rw [hirr]; exact Role.noConfusion)
     · -- j NOT upper-median → answers must differ → use trace lemma
       have hdiff : (D i).1.answer ≠ (D j).1.answer := by
         by_contra heq
@@ -208,8 +220,25 @@ private theorem CRS_of_both_resetting_even
         exact ans_eq_contra (by simp [phase4_decide, hpar]; split_ifs <;> simp_all) (by simp [phase4_decide, hpar]; split_ifs <;> simp_all) hirr
       · -- i NOT at upper → use responder-median trace lemma
         have hdiff : (D j).1.answer ≠ (D i).1.answer := by
-          -- Equal answers + no median pair match → phase4 identity → stays Settled → contradiction
-          sorry
+          by_contra heq
+          -- Neither median pair condition matches → phase4_decide is identity
+          have h_not_dec1 : ¬((D i).1.rank.val + 1 = n / 2 ∧ (D j).1.rank.val + 1 = n / 2 + 1) :=
+            fun ⟨ha, _⟩ => hinl ha
+          have h_not_dec2 : ¬((D j).1.rank.val + 1 = n / 2 ∧ (D i).1.rank.val + 1 = n / 2 + 1) :=
+            fun ⟨_, hb⟩ => hiu hb
+          simp only [transitionPEM] at hirr
+          rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hsi hsj hrij] at hirr
+          unfold transitionPEM_phase4 at hirr; simp only [hsi, hsj, and_self, ite_true] at hirr
+          unfold phase4_swap at hirr; simp only [hns, ite_false] at hirr
+          have hd : phase4_decide n (D i).1 (D j).1 (D i).2 (D j).2 = ((D i).1, (D j).1) := by
+            simp only [phase4_decide, hpar, ite_true]
+            have h_nd1 : ¬(↑(D i).1.rank + 1 = n / 2 ∧ ↑(D j).1.rank = n / 2) :=
+              fun ⟨ha, _⟩ => h_not_dec1 ⟨ha, by omega⟩
+            have h_nd2 : ¬(↑(D j).1.rank + 1 = n / 2 ∧ ↑(D i).1.rank = n / 2) :=
+              fun ⟨ha, hb⟩ => h_not_dec2 ⟨ha, by omega⟩
+            simp [h_nd1, h_nd2]
+          rw [hd] at hirr; simp only [Prod.fst, Prod.snd] at hirr
+          exact ans_eq_contra hsi heq.symm hirr
         have htr := propagation_reset_fires_even_no_swap_responder_median_trace (trank := Rmax) (Rmax := Rmax)
           hFix hS.toInSrank hij hpar hjl hinl hiu htj hns hdiff
         -- Construct CRS from trace
