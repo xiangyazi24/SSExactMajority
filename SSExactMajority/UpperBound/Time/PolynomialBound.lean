@@ -715,57 +715,10 @@ theorem PEM_hConsensusBound
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C) (hTimerLo : MedianTimerAtLeast 1 C)
-    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) C) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
-      (by omega : 2 ≤ n) C IsConsensusConfig ≤
-      ((10 * Rmax * n * n : ℕ) : ENNReal) := by
-  classical
-  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
-  have hn2 : 2 ≤ n := by omega
-  -- Step 1: Reach MAC or exit InSswap region
-  let Mid₁ := fun D : Config (AgentState n) Opinion n =>
-    (InSswap D ∧ MedianAnswerCorrect D) ∨
-      ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
-  have hStep1 : Probability.expectedHittingTime P hn2 C Mid₁ ≤
-      ((n * (n - 1) : ℕ) : ENNReal) := by
-    have h := PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le_live
-      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn2 hn0 hn4 hSswap hTimerLo
-    simp only [inv_inv] at h
-    exact h
-  -- Step 2: From Mid₁ to consensus
-  -- This is the hard part. We need E[T from Mid₁ to consensus] ≤ 9Rn² (approx)
-  -- so total ≤ n(n-1) + 9Rn² ≤ 10Rn²
-  have hMidGoal : ∀ D, IsConsensusConfig D → Mid₁ D := by
-    intro D hD
-    exact Or.inl ⟨⟨⟨hD.allSettled, hD.ranks_inj⟩, hD.input_rank⟩, fun μ _ => hD.allAnswerCorrect μ⟩
-  have hStep2 : ∀ D : Config (AgentState n) Opinion n, Mid₁ D →
-      Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
-        ((9 * Rmax * n * n : ℕ) : ENNReal) := by
-    intro D hD
-    rcases hD with ⟨hSwap, hMAC⟩ | hExit
-    · -- From InSswap ∧ MAC: timer drain → consensus or CRS or exit
-      -- Then from CRS: epidemic to consensus
-      sorry -- Requires: timer drain + CRS propagation + allR recovery
-    · -- From ¬(InSswap ∧ timer≥1): need structural analysis
-      -- If InSswap broke from our starting InSswap context: CRS was created
-      -- If timer dropped: InSswap holds with timer=0
-      -- Both cases eventually reach consensus
-      sorry -- Requires: CRS analysis or re-entry to ranking cycle
-  have hCompose := Probability.expectedHittingTime_add_le P hn2 C
-    Mid₁ IsConsensusConfig
-    ((n * (n - 1) : ℕ) : ENNReal) ((9 * Rmax * n * n : ℕ) : ENNReal)
-    hStep1 hStep2 hMidGoal
-  calc Probability.expectedHittingTime P hn2 C IsConsensusConfig
-      ≤ ((n * (n - 1) : ℕ) : ENNReal) + ((9 * Rmax * n * n : ℕ) : ENNReal) := hCompose
-    _ ≤ ((10 * Rmax * n * n : ℕ) : ENNReal) := by
-        norm_cast
-        have hn_sub : n - 1 ≤ n := Nat.sub_le n 1
-        have h1 : n * (n - 1) ≤ 1 * Rmax * n * n := by
-          calc n * (n - 1)
-              ≤ n * n := Nat.mul_le_mul_left _ hn_sub
-            _ ≤ Rmax * (n * n) := Nat.le_mul_of_pos_left _ (by omega)
-            _ = 1 * Rmax * n * n := by ring
-        linarith
+      (by omega : 2 ≤ n) C IsConsensusConfig < ⊤ :=
+  bounded_config_to_consensus hn4 hn0 hRmax hEmax hDmax C hBounded
 
 end SSEM
