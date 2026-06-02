@@ -863,4 +863,71 @@ theorem allR_to_consensus_bound
     _ ≤ ((Rmax * n * n : ℕ) : ENNReal) + B := hCompose
 
 
+
+
+set_option linter.unusedDecidableInType false in
+/-- From allR with correct answers and bounded config,
+    E[T to consensus] < ⊤ (without existential bound).
+
+    This strengthens `allR_to_consensus_bound` by eliminating the
+    existential B. Since Phase 1 gives Rmax*n^2 < ⊤ and Phase 2
+    gives B < ⊤, the sum is finite. -/
+theorem allR_to_consensus_finite
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (D : Config (AgentState n) Opinion n)
+    (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
+    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
+    (hBounded_rc : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax)
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) D IsConsensusConfig < ⊤ := by
+  obtain ⟨B, hB_lt, hB_le⟩ := allR_to_consensus_bound hn4 hn0 hRmax hEmax hDmax
+    D hAllR hAllCorrect hBounded_rc hBounded
+  exact lt_of_le_of_lt hB_le (ENNReal.add_lt_top.mpr
+    ⟨ENNReal.natCast_ne_top (Rmax * n * n) |>.lt_top, hB_lt⟩)
+
+
+set_option linter.unusedDecidableInType false in
+/-- From any initial configuration (IsBoundedConfig 0),
+    E[parallel time to consensus] < ⊤.
+
+    Composes `PEM_expected_time_finite` (E[sequential time] < ⊤)
+    with the parallel-time conversion (division by n). -/
+theorem PEM_expected_parallel_time_finite
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C₀ : Config (AgentState n) Opinion n)
+    (hInit : IsBoundedConfig 0 C₀) :
+    Probability.expectedParallelTimeToConsensus
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C₀ < ⊤ := by
+  have hSeq := PEM_expected_time_finite hn4 hn0 hRmax hEmax hDmax C₀ hInit
+  unfold Probability.expectedParallelTimeToConsensus
+    Probability.expectedParallelTime Probability.parallelTime
+  exact ENNReal.div_lt_top hSeq.ne (by positivity)
+
+
+set_option linter.unusedDecidableInType false in
+/-- From any initial configuration satisfying `IsInitialConfig`,
+    E[parallel time to consensus] < ⊤.
+
+    User-facing form: `IsInitialConfig` implies `IsBoundedConfig 0`. -/
+theorem PEM_expected_parallel_time_finite_of_initial
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C₀ : Config (AgentState n) Opinion n)
+    (hInit : IsInitialConfig C₀) :
+    Probability.expectedParallelTimeToConsensus
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C₀ < ⊤ :=
+  PEM_expected_parallel_time_finite hn4 hn0 hRmax hEmax hDmax C₀ hInit.isBounded
+
+
 end SSEM
