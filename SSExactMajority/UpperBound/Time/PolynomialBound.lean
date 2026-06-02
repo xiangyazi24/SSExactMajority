@@ -610,49 +610,49 @@ theorem PEM_CRS_to_allR_or_break
         · exact Or.inl hCRS
         · exact Or.inr (Or.inr hCRS))
     (by -- hNonincrease: CRS ∧ ¬Goal → nRC(step) ≤ nRC
-        intro D hInv _hNotGoal i j
+        intro D hInv _hNotGoal ii jj
         -- nonResettingCount_nonincrease_of_CRS
-        by_cases hij : i = j
+        by_cases hij : ii = jj
         · simp [Config.step, hij]
-        · -- i ≠ j: show the non-Resetting filter can only shrink
+        · -- ii ≠ jj: show the non-Resetting filter can only shrink
           unfold nonResettingCount
           apply Finset.card_le_card
           intro w hw
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hw ⊢
-          -- hw : (D.step P i j w).1.role ≠ .Resetting
+          -- hw : (D.step P ii jj w).1.role ≠ .Resetting
           -- Goal: (D w).1.role ≠ .Resetting
-          by_cases hwi : w = i <;> by_cases hwj : w = j
+          by_cases hwi : w = ii <;> by_cases hwj : w = jj
           · subst hwi; subst hwj; exact absurd rfl hij
-          · -- w = i: use Config.step_fst_state
+          · -- w = ii: use Config.step_fst_state
             subst hwi
             intro h_res
             apply hw
             have h_fst := Config.step_fst_state P D hij
             rw [congrArg AgentState.role h_fst]
             have hDmax_gt : 1 < Dmax := by omega
-            have h_rc := (hInv.2 i h_res).1
-            have htr := (transitionPEM_resetting_preserved_of_CRS hn0 hDmax_gt
-              (fun h => (hInv.2 i h).1)
-              (fun h => (hInv.2 j h).1)
-              (s₀ := (D i).1) (s₁ := (D j).1)
-              (x₀ := (D i).2) (x₁ := (D j).2)).1 h_res
+            have h_rc := (hInv.2 w h_res).1
+            have htr := (transitionPEM_resetting_preserved_of_CRS (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hDmax_gt
+              (fun h => (hInv.2 w h).1)
+              (fun h => (hInv.2 jj h).1)
+              (s₀ := (D w).1) (s₁ := (D jj).1)
+              (x₀ := (D w).2) (x₁ := (D jj).2)).1 h_res
             exact htr
-          · -- w = j: use Config.step_snd_state
+          · -- w = jj: use Config.step_snd_state
             subst hwj
             intro h_res
             apply hw
             have h_snd := Config.step_snd_state P D hij (Ne.symm hij)
             rw [congrArg AgentState.role h_snd]
             have hDmax_gt : 1 < Dmax := by omega
-            have h_rc := (hInv.2 j h_res).1
-            have htr := (transitionPEM_resetting_preserved_of_CRS hn0 hDmax_gt
-              (fun h => (hInv.2 i h).1)
-              (fun h => (hInv.2 j h).1)
-              (s₀ := (D i).1) (s₁ := (D j).1)
-              (x₀ := (D i).2) (x₁ := (D j).2)).2 h_res
+            have h_rc := (hInv.2 w h_res).1
+            have htr := (transitionPEM_resetting_preserved_of_CRS (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hDmax_gt
+              (fun h => (hInv.2 ii h).1)
+              (fun h => (hInv.2 w h).1)
+              (s₀ := (D ii).1) (s₁ := (D w).1)
+              (x₀ := (D ii).2) (x₁ := (D w).2)).2 h_res
             exact htr
           · -- bystander: unchanged
-            have h_bystander : D.step P i j w = D w := by
+            have h_bystander : D.step P ii jj w = D w := by
               simp [Config.step, hij, hwi, hwj]
             rw [h_bystander] at hw; exact hw
         )
@@ -674,7 +674,7 @@ theorem PEM_CRS_to_allR_or_break
         left
         exact CRS_propagation_step_CRS_and_nRC_drop hn0
           (by omega : 1 < Dmax)
-          hInv hrv hr_role (by omega) hr_count hr_leader hr_answer hv_not hAll)
+          ⟨⟨r, hr_role, hr_count, hr_leader, hr_answer⟩, hAll⟩ hrv hr_role (by omega) hr_count hr_leader hr_answer hv_not hAll)
   have hNRC_le_n : nonResettingCount C ≤ n := by
     unfold nonResettingCount
     calc (Finset.univ.filter fun w : Fin n => (C w).1.role ≠ .Resetting).card
