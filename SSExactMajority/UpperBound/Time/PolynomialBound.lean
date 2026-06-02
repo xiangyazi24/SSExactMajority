@@ -721,4 +721,146 @@ theorem PEM_hConsensusBound
       (by omega : 2 ≤ n) C IsConsensusConfig < ⊤ :=
   bounded_config_to_consensus hn4 hn0 hRmax hEmax hDmax C hBounded
 
+
+/-- End-to-end finite expected time: from any initial configuration,
+    the expected time to consensus is finite.
+
+    This is weaker than the paper's O(n) parallel time claim (Theorem 4),
+    which requires the epidemic quantitative bound (Lemma 1 of Burman et al.).
+    The O(n) bound needs hPropagationLive (Time.lean:6381) which in turn
+    requires a polynomial bound for allResetting → consensus. -/
+theorem PEM_expected_time_finite
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C₀ : Config (AgentState n) Opinion n)
+    (hInit : IsBoundedConfig 0 C₀) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C₀ IsConsensusConfig < ⊤ := by
+  have hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) C₀ := by
+    intro w; have h := hInit w
+    exact ⟨by omega, by omega, by omega, by omega, by omega⟩
+  exact bounded_config_to_consensus hn4 hn0 hRmax hEmax hDmax C₀ hBounded
+
+
+set_option maxHeartbeats 800000 in
+theorem expectedHittingTime_eq_goal_and_inv_of_invariant
+    {n : ℕ} {Q X Y : Type*} [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C₀ : Config Q X n)
+    (Goal Inv : Config Q X n → Prop)
+    [DecidablePred Goal] [DecidablePred Inv]
+    [DecidablePred (fun C => Goal C ∧ Inv C)]
+    (hInv₀ : Inv C₀)
+    (hInvStep : ∀ C : Config Q X n, Inv C →
+      ∀ i j : Fin n, Inv (C.step P i j)) :
+    Probability.expectedHittingTime P hn C₀ (fun C => Goal C ∧ Inv C) =
+      Probability.expectedHittingTime P hn C₀ Goal := by
+  unfold Probability.expectedHittingTime
+  congr 1; ext t
+  have hPHW := Probability.ProbHitWithin_eq_and_inv_of_invariant
+    P hn C₀ Goal Inv hInv₀ hInvStep t
+  change Probability.probHitBy P hn C₀ (fun C => Goal C ∧ Inv C) t =
+    Probability.probHitBy P hn C₀ Goal t at hPHW
+  have h1 := Probability.probHitBy_add_probNotHitBy P hn C₀
+    (fun C => Goal C ∧ Inv C) t
+  have h2 := Probability.probHitBy_add_probNotHitBy P hn C₀ Goal t
+  have hne : Probability.probHitBy P hn C₀ (fun C => Goal C ∧ Inv C) t ≠ ⊤ :=
+    ne_top_of_le_ne_top ENNReal.one_ne_top (by rw [← h1]; exact le_add_right le_rfl)
+  rw [add_comm] at h1
+  rw [add_comm, ← hPHW] at h2
+  exact WithTop.add_right_cancel hne (h1.trans h2.symm)
+
+
+set_option maxHeartbeats 1600000 in
+theorem bounded_config_consensus_uniform_le
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmaxN : n ≤ Dmax) :
+    ∃ B : ENNReal, B < ⊤ ∧
+      ∀ D : Config (AgentState n) Opinion n,
+        IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D →
+        Probability.expectedHittingTime
+          (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+          (by omega : 2 ≤ n) D IsConsensusConfig ≤ B := by
+  classical
+  set M := 7 * (Rmax + 4) + Emax + Dmax
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
+  have hn2 : 2 ≤ n := by omega
+  have hn_ne : NeZero n := ⟨by omega⟩
+  have hFin : Set.Finite {C : Config (AgentState n) Opinion n | IsBoundedConfig M C} :=
+    bounded_configs_finite_rb n M
+  let S := hFin.toFinset
+  let B := S.sup (fun D => Probability.expectedHittingTime P hn2 D IsConsensusConfig)
+  refine ⟨B, ?_, ?_⟩
+  · rw [Finset.sup_lt_iff ENNReal.zero_lt_top]
+    intro D hD
+    exact bounded_config_to_consensus hn4 hn0 hRmax hEmax hDmaxN D
+      (hFin.mem_toFinset.mp hD)
+  · intro D hD
+    exact Finset.le_sup (f := fun D => Probability.expectedHittingTime P hn2 D IsConsensusConfig)
+      (hFin.mem_toFinset.mpr hD)
+
+
+set_option maxHeartbeats 6400000 in
+theorem allR_to_consensus_bound
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (D : Config (AgentState n) Opinion n)
+    (hAllR : ∀ w : Fin n, (D w).1.role = .Resetting)
+    (hAllCorrect : ∀ w : Fin n, (D w).1.answer = majorityAnswer D)
+    (hBounded_rc : ∀ w : Fin n, (D w).1.resetcount ≤ Rmax)
+    (hBounded : IsBoundedConfig (7 * (Rmax + 4) + Emax + Dmax) D) :
+    ∃ B : ENNReal, B < ⊤ ∧
+      Probability.expectedHittingTime
+        (PEMProtocolCoupled' n Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) D IsConsensusConfig ≤
+        ((Rmax * n * n : ℕ) : ENNReal) + B := by
+  classical
+  set M := 7 * (Rmax + 4) + Emax + Dmax
+  set P := PEMProtocolCoupled' n Rmax Emax Dmax hn0
+  have hn2 : 2 ≤ n := by omega
+  obtain ⟨B, hB_lt, hB_le⟩ := bounded_config_consensus_uniform_le hn4 hn0 hRmax hEmax hDmax
+  refine ⟨B, hB_lt, ?_⟩
+  have hInvStep : ∀ C : Config (AgentState n) Opinion n, IsBoundedConfig M C →
+      ∀ i j : Fin n, IsBoundedConfig M (C.step P i j) :=
+    PEMProtocolCoupled_preserves_bounded hn0
+  have hPhase1 : Probability.expectedHittingTime P hn2 D
+      (Phase1Goal Rmax Dmax) ≤ ((Rmax * n * n : ℕ) : ENNReal) :=
+    allR_to_phase1Goal_bound hn4 hn0 hRmax hDmax D hAllR hAllCorrect hBounded_rc
+  have hPhase1Bounded : Probability.expectedHittingTime P hn2 D
+      (fun C => Phase1Goal Rmax Dmax C ∧ IsBoundedConfig M C) ≤
+      ((Rmax * n * n : ℕ) : ENNReal) := by
+    rw [expectedHittingTime_eq_goal_and_inv_of_invariant P hn2 D
+      (Phase1Goal Rmax Dmax) (IsBoundedConfig M) hBounded hInvStep]
+    exact hPhase1
+  have hPhase2 : ∀ C : Config (AgentState n) Opinion n,
+      (Phase1Goal Rmax Dmax C ∧ IsBoundedConfig M C) →
+      Probability.expectedHittingTime P hn2 C
+        (fun C' => IsConsensusConfig C' ∧ IsBoundedConfig M C') ≤ B := by
+    intro C ⟨_, hBC⟩
+    rw [expectedHittingTime_eq_goal_and_inv_of_invariant P hn2 C
+      IsConsensusConfig (IsBoundedConfig M) hBC hInvStep]
+    exact hB_le C hBC
+  have hMidGoal : ∀ C : Config (AgentState n) Opinion n,
+      (IsConsensusConfig C ∧ IsBoundedConfig M C) →
+      (Phase1Goal Rmax Dmax C ∧ IsBoundedConfig M C) := by
+    intro C ⟨hCons, hBnd⟩
+    exact ⟨Or.inl hCons, hBnd⟩
+  have hCompose := Probability.expectedHittingTime_add_le P hn2 D
+    (fun C => Phase1Goal Rmax Dmax C ∧ IsBoundedConfig M C)
+    (fun C => IsConsensusConfig C ∧ IsBoundedConfig M C)
+    ((Rmax * n * n : ℕ) : ENNReal) B
+    hPhase1Bounded hPhase2 hMidGoal
+  calc Probability.expectedHittingTime P hn2 D IsConsensusConfig
+      = Probability.expectedHittingTime P hn2 D
+          (fun C => IsConsensusConfig C ∧ IsBoundedConfig M C) := by
+        rw [expectedHittingTime_eq_goal_and_inv_of_invariant P hn2 D
+          IsConsensusConfig (IsBoundedConfig M) hBounded hInvStep]
+    _ ≤ ((Rmax * n * n : ℕ) : ENNReal) + B := hCompose
+
+
 end SSEM

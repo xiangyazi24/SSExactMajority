@@ -885,7 +885,7 @@ theorem allR_to_phase1Goal_bound
 
 /-! ### Finite-state-space helpers -/
 
-private theorem bounded_configs_finite_rb (n M : ℕ) [NeZero n] :
+theorem bounded_configs_finite_rb (n M : ℕ) [NeZero n] :
     Set.Finite {C : Config (AgentState n) Opinion n | IsBoundedConfig M C} := by
   let T := Role × (Fin n) × Leader × (Fin (M+1)) × Answer ×
         (Fin (M+1)) × (Fin (M+1)) × (Fin (M+1)) × (Fin (M+1)) × Opinion
@@ -1066,8 +1066,8 @@ theorem phase1Goal_to_consensus
     exact ENNReal.zero_lt_top
   · exact bounded_config_to_consensus hn4 hn hRmax hEmax hDmax C hBounded
 
--- allR_to_consensus_bound: temporarily removed pending polynomial bound.
--- The finite-state-space proof establishes finiteness (< top) but not
--- the polynomial 9*Rmax*n*n bound required here.
+-- allR_to_consensus_bound: moved to PolynomialBound.lean.
+-- Composes Phase 1 (rcLevelPotential descent, polynomial) +
+-- Phase 2 (ergodicity, finite) via expectedHittingTime_add_le.
 
 end SSEM
