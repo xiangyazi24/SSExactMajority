@@ -22,6 +22,10 @@ namespace SSEM
 
 open scoped ENNReal
 
+noncomputable def maxMedianTimer (C : Config (AgentState n) Opinion n) : ℕ :=
+  Finset.sup Finset.univ
+    (fun μ : Fin n => if (C μ).1.rank.val + 1 = ceilHalf n then (C μ).1.timer else 0)
+
 /-! ## Timer drain: close the timer≥2 sorry
 
 From InSswap + MedianCorrect + timer≥1 + timer bounded:
@@ -420,7 +424,7 @@ private theorem transitionPEM_resetting_preserved_of_CRS
       have hpr := propagateReset_both_rc_pos_stay
         (Emax := Emax) (Dmax := Dmax) (hn := hn0)
         hs₀_res hs₁_res hs₀_rc hs₁_rc (by omega)
-      have h_not_both := rankDeltaOSSR_both_resetting_pos_not_both_settled
+      have h_not_both := rankDeltaOSSR_both_resetting_pos_not_both_settled (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
         hs₀_res hs₁_res hs₀_rc hs₁_rc (by omega : 0 < Dmax)
       have h_pass := transitionPEM_structural_passthrough
         (trank := Rmax) (Rmax := Rmax)
@@ -433,7 +437,7 @@ private theorem transitionPEM_resetting_preserved_of_CRS
       rw [h_pass.1]; exact h_rd_role
     · -- s0 Resetting, s1 not Resetting
       have h_rd :=
-        (rankDeltaOSSR_propagate_reset_spreader hs₀_res hs₀_rc hs₁_res hDmax_ge).1
+        (rankDeltaOSSR_propagate_reset_spreader_rc (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0) hs₀_res hs₀_rc hs₁_res hDmax_ge).1
       have h_not_both : ¬((rankDeltaOSSR Rmax Emax Dmax hn0 (s₀, s₁)).1.role = .Settled ∧
           (rankDeltaOSSR Rmax Emax Dmax hn0 (s₀, s₁)).2.role = .Settled) := by
         intro ⟨h1, _⟩; rw [h_rd] at h1; exact Role.noConfusion h1
@@ -450,7 +454,7 @@ private theorem transitionPEM_resetting_preserved_of_CRS
       have hpr := propagateReset_both_rc_pos_stay
         (Emax := Emax) (Dmax := Dmax) (hn := hn0)
         hs₀_res hs₁_res hs₀_rc hs₁_rc (by omega)
-      have h_not_both := rankDeltaOSSR_both_resetting_pos_not_both_settled
+      have h_not_both := rankDeltaOSSR_both_resetting_pos_not_both_settled (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
         hs₀_res hs₁_res hs₀_rc hs₁_rc (by omega : 0 < Dmax)
       have h_pass := transitionPEM_structural_passthrough
         (trank := Rmax) (Rmax := Rmax)
@@ -462,7 +466,7 @@ private theorem transitionPEM_resetting_preserved_of_CRS
         split_ifs <;> exact hpr.2
       rw [h_pass.2.2.2.2.2.2.1]; exact h_rd_role
     · -- s1 Resetting, s0 not Resetting
-      have h_rd := rankDeltaOSSR_snd_stays_resetting
+      have h_rd := rankDeltaOSSR_snd_stays_resetting (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
         hs₀_res hs₁_res hs₁_rc hDmax_ge
       have h_not_both : ¬((rankDeltaOSSR Rmax Emax Dmax hn0 (s₀, s₁)).1.role = .Settled ∧
           (rankDeltaOSSR Rmax Emax Dmax hn0 (s₀, s₁)).2.role = .Settled) := by
@@ -578,17 +582,8 @@ theorem CRS_propagation_step_CRS_and_nRC_drop
             exact hw_old.2
   · exact hdrop_count
 
-/-- CRS descent: E[T to (nonResettingCount = 0 ∨ ¬CRS)] ≤ n · n(n-1).
-
-Uses `expectedHittingTime_le_of_deterministic_descent` with:
-- Inv = CorrectResetSeed
-- Goal = (nonResettingCount = 0) ∨ ¬CorrrectResetSeed
-- φ = nonResettingCount
-
-hInvStep is trivially true: CRS(step) ∨ ¬CRS(step).
-hNonincrease requires showing no re-settling under CRS.
-hDescent uses the (seed, non-Resetting) propagation step. -/
 set_option maxHeartbeats 800000 in
+/-- CRS descent: E[T to (nRC = 0 or not CRS)] via deterministic descent. -/
 theorem PEM_CRS_to_allR_or_break
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
@@ -671,7 +666,7 @@ theorem PEM_CRS_to_allR_or_break
           have : nonResettingCount D = 0 := by
             unfold nonResettingCount
             rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-            intro v _; exact (hall v)
+            intro v _; exact not_not.mpr (hall v)
           omega
         obtain ⟨v, hv_not⟩ := hNR
         have hrv : r ≠ v := by intro h; subst h; exact hv_not hr_role
@@ -743,7 +738,7 @@ theorem PEM_hConsensusBound
   -- so total ≤ n(n-1) + 9Rn² ≤ 10Rn²
   have hMidGoal : ∀ D, IsConsensusConfig D → Mid₁ D := by
     intro D hD
-    exact Or.inl ⟨⟨⟨hD.allSettled, hD.ranks_inj⟩, hD.input_rank⟩, hD.allAnswerCorrect⟩
+    exact Or.inl ⟨⟨⟨hD.allSettled, hD.ranks_inj⟩, hD.input_rank⟩, fun μ _ => hD.allAnswerCorrect μ⟩
   have hStep2 : ∀ D : Config (AgentState n) Opinion n, Mid₁ D →
       Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
         ((9 * Rmax * n * n : ℕ) : ENNReal) := by
