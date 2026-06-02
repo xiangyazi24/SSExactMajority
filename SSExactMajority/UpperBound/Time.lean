@@ -9620,6 +9620,6 @@ Total: O(Rmax · n²). -/
 /-! Stage 1: Timer drain. Inv = InSswap ∧ MedianCorrect ∧ timer≥1,
 φ = medianTimer. Each (median,max) step decreases timer. -/
 
-/-! φ for timer drain: max timer across all median-rank agents.
+/-! φ for timer drain (moved to PolynomialBound.lean). -/
 
 end SSEM
