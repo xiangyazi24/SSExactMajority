@@ -9505,7 +9505,7 @@ theorem step_median_answer_of_InSswap_both
           false_and, and_false, if_false,
           and_self, if_true, h_no_swap, hpar, hνR, hjR, hN_ne1, hN_ne2,
           hνR_ceil]
-        split_ifs <;> (first | exact hM_ν | simp_all | sorry)
+        split_ifs <;> (first | exact hM_ν | simp_all)
     · have hjR_no_med : ¬ ((D j).1.rank.val + 1 = ceilHalf n) := by
         intro h; apply hrank_νj
         have : (D ν).1.rank.val + 1 = (D j).1.rank.val + 1 := by rw [hν_pre, h]
@@ -9573,7 +9573,7 @@ theorem step_median_answer_of_InSswap_both
           false_and, and_false, if_false,
           and_self, if_true, h_no_swap, hpar, hνR, hiR, hN_ne1, hN_ne2,
           hνR_ceil, hiR_ne_med, hiR_ne_med_ceil]
-        split_ifs <;> (first | exact hM_ν | simp_all | sorry)
+        split_ifs <;> (first | exact hM_ν | simp_all)
     · have hiR_no_med : ¬ ((D i).1.rank.val + 1 = ceilHalf n) := by
         intro h; apply hrank_iν
         have : (D i).1.rank.val + 1 = (D ν).1.rank.val + 1 := by rw [h, hν_pre]
