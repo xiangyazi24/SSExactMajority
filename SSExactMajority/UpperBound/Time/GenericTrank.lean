@@ -601,6 +601,32 @@ theorem generic_step_timer_le_of_InSswap
     step_timer_le_of_InSswap
       (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hS w
 
+theorem generic_step_median_answer_of_InSswap_both
+    [Inhabited (Fin n × Fin n)]
+    (hn0 : 0 < n) (hn4 : 4 ≤ n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (hS' :
+      InSswap
+        (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j))
+    (hM : MedianAnswerCorrect D) :
+    MedianAnswerCorrect
+      (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j) := by
+  let P := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hEq : D.step P i j = D.step Pc i j :=
+    generic_step_eq_coupled_of_InSrank
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hS.toInSrank i j
+  have hS'_coupled : InSswap (D.step Pc i j) := by
+    simpa [P, Pc, hEq] using hS'
+  have hCoupled :
+      MedianAnswerCorrect (D.step Pc i j) :=
+    step_median_answer_of_InSswap_both
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hn4 hS hS'_coupled hM
+  simpa [P, Pc, hEq] using hCoupled
+
 theorem generic_crs_of_InSswap_break_with_MedC
     [Inhabited (Fin n × Fin n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
@@ -1583,6 +1609,261 @@ theorem generic_timer_drain_window
       (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
       hn4 hn0 hRmax T_timer C hC hMAC hTLo hTHi)
     (by omega)
+
+set_option maxHeartbeats 16000000 in
+theorem generic_timer_drain_to_zero_productive
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
+    Probability.expectedHittingTime
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) ≤
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  set P := PEMProtocol n trank Rmax Emax Dmax hn0
+  set Goal := fun D : Config (AgentState n) Opinion n =>
+    IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)
+  set Inv := fun D : Config (AgentState n) Opinion n =>
+    InSswap D ∧ MedianAnswerCorrect D ∧ MedianTimerAtLeast 1 D
+  have hmax_zero_of_not_live :
+      ∀ D : Config (AgentState n) Opinion n, InSswap D →
+        ¬ MedianTimerAtLeast 1 D → maxMedianTimer D = 0 := by
+    intro D hSD hnl
+    rw [MedianTimerAtLeast] at hnl
+    push_neg at hnl
+    obtain ⟨ν, hν_med, hν_lt⟩ := hnl
+    have hν0 : (D ν).1.timer = 0 := by omega
+    unfold maxMedianTimer
+    apply Nat.le_zero.mp
+    apply Finset.sup_le
+    intro μ _
+    split_ifs with hμ_med
+    · have hrank_eq : (D μ).1.rank = (D ν).1.rank := by
+        apply Fin.ext
+        have h1 : (D μ).1.rank.val + 1 = ceilHalf n := hμ_med
+        have h2 : (D ν).1.rank.val + 1 = ceilHalf n := hν_med
+        omega
+      have hμν : μ = ν := hSD.toInSrank.ranks_inj hrank_eq
+      rw [hμν, hν0]
+    · exact Nat.zero_le 0
+  have hBridge :
+      Probability.expectedHittingTime P (by omega : 2 ≤ n) C Goal ≤
+        ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := by
+    refine Probability.expectedHittingTime_le_of_deterministic_descent
+      P (by omega : 2 ≤ n) C Goal Inv maxMedianTimer
+      ⟨hSswap, hMedCorrect, hTimerLo⟩ ?_ ?_ ?_ ?_
+    ·
+        intro D ⟨hSwap_D, hM_D, _hT_D⟩ h0
+        exact Or.inr (Or.inr ⟨hSwap_D, hM_D, h0⟩)
+    ·
+        intro D ⟨hS, hM, hT⟩ _hG i j
+        by_cases hS' : InSswap (D.step P i j)
+        · have hM' : MedianAnswerCorrect (D.step P i j) :=
+            generic_step_median_answer_of_InSswap_both
+              (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              hn0 hn4 hS hS' hM
+          by_cases hT' : MedianTimerAtLeast 1 (D.step P i j)
+          · exact Or.inl ⟨hS', hM', hT'⟩
+          · exact Or.inr (Or.inr (Or.inr ⟨hS', hM', hmax_zero_of_not_live _ hS' hT'⟩))
+        · exact Or.inr (Or.inr (Or.inl
+            (generic_crs_of_InSswap_break_with_MedC
+              (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              hn4 hn0 hRmax hS hM hS')))
+    ·
+        intro D ⟨hS, _hM, _hT⟩ _hG i j
+        unfold maxMedianTimer
+        apply Finset.sup_le
+        intro μ _
+        split_ifs with hμ_med
+        · by_cases hij : i = j
+          · subst hij
+            simp only [Config.step, ite_true] at hμ_med ⊢
+            exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
+          · by_cases hμi : μ = i
+            · rw [hμi]
+              have hrank : (D.step P i j i).1.rank = (D i).1.rank :=
+                generic_step_rank_preserved_of_InSswap
+                  (trank := trank) (Rmax := Rmax) (Emax := Emax)
+                  (Dmax := Dmax) hn0 hS i
+              have hμ_pre : (D i).1.rank.val + 1 = ceilHalf n := by
+                rw [← hrank]; rwa [hμi] at hμ_med
+              calc (D.step P i j i).1.timer
+                  ≤ (D i).1.timer :=
+                    generic_step_timer_le_of_InSswap
+                      (trank := trank) (Rmax := Rmax) (Emax := Emax)
+                      (Dmax := Dmax) hn0 hS i
+                _ ≤ maxMedianTimer D :=
+                    Finset.le_sup_of_le (Finset.mem_univ i) (by simp [maxMedianTimer, hμ_pre])
+            · by_cases hμj : μ = j
+              · rw [hμj]
+                have hrank : (D.step P i j j).1.rank = (D j).1.rank :=
+                  generic_step_rank_preserved_of_InSswap
+                    (trank := trank) (Rmax := Rmax) (Emax := Emax)
+                    (Dmax := Dmax) hn0 hS j
+                have hμ_pre : (D j).1.rank.val + 1 = ceilHalf n := by
+                  rw [← hrank]; rwa [hμj] at hμ_med
+                calc (D.step P i j j).1.timer
+                    ≤ (D j).1.timer :=
+                      generic_step_timer_le_of_InSswap
+                        (trank := trank) (Rmax := Rmax) (Emax := Emax)
+                        (Dmax := Dmax) hn0 hS j
+                  _ ≤ maxMedianTimer D :=
+                      Finset.le_sup_of_le (Finset.mem_univ j) (by simp [maxMedianTimer, hμ_pre])
+              · have hbyst : D.step P i j μ = D μ := by
+                  unfold Config.step
+                  simp [P, hij, hμi, hμj]
+                rw [show (D.step P i j μ).1.timer = (D μ).1.timer from
+                  congrArg (fun x => x.1.timer) hbyst]
+                rw [show (D.step P i j μ).1.rank = (D μ).1.rank from
+                  congrArg (fun x => x.1.rank) hbyst] at hμ_med
+                exact Finset.le_sup_of_le (Finset.mem_univ μ) (by simp [hμ_med])
+        · exact Nat.zero_le _
+    ·
+        intro D ⟨hS, hM, hT⟩ _hG _hφ
+        have hn_pos : 0 < n := by omega
+        obtain ⟨μ, hμ_med⟩ := hS.toInSrank.exists_median hn_pos
+        have hsurj : Function.Surjective (fun v => (D v).1.rank) :=
+          Finite.injective_iff_surjective.mp hS.toInSrank.ranks_inj
+        have hn_bound : n - 1 < n := by omega
+        obtain ⟨v, hv_eq⟩ := hsurj ⟨n - 1, hn_bound⟩
+        have hv_max : (D v).1.rank.val + 1 = n := by
+          have h := congrArg Fin.val hv_eq
+          simp only [Fin.val_mk] at h
+          omega
+        have huv : μ ≠ v := by
+          intro h
+          subst h
+          have : ceilHalf n = n := by omega
+          have : ceilHalf n ≤ (n + 1) / 2 := by
+            unfold ceilHalf
+            omega
+          omega
+        refine ⟨μ, v, huv, ?_⟩
+        have hTimerPos : 1 ≤ (D μ).1.timer := hT μ hμ_med
+        by_cases hTimer2 : 2 ≤ (D μ).1.timer
+        · have hstep := generic_timer_ge_two_descent_step
+            (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            hn4 hn0 hRmax hS hM hT hμ_med hv_max huv hTimer2
+          simp only [] at hstep
+          rcases hstep with hleft | hright
+          · exact Or.inl hleft
+          · rcases hright with hc | hcrs | hnl
+            · exact Or.inr (Or.inl hc)
+            · exact Or.inr (Or.inr (Or.inl hcrs))
+            · by_cases hS' : InSswap (D.step P μ v)
+              · have hM' : MedianAnswerCorrect (D.step P μ v) :=
+                  generic_step_median_answer_of_InSswap_both
+                    (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                    hn0 hn4 hS hS' hM
+                have hnt : ¬ MedianTimerAtLeast 1 (D.step P μ v) := fun ht => hnl ⟨hS', ht⟩
+                exact Or.inr (Or.inr (Or.inr ⟨hS', hM', hmax_zero_of_not_live _ hS' hnt⟩))
+              · exact Or.inr (Or.inr (Or.inl
+                  (generic_crs_of_InSswap_break_with_MedC
+                    (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                    hn4 hn0 hRmax hS hM hS')))
+        · have hTimer1 : (D μ).1.timer = 1 := by omega
+          by_cases hv_wrong : (D v).1.answer ≠ majorityAnswer D
+          · let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+            have hSeedCoupled : CorrectResetSeed (D.step Pc μ v) := by
+              simpa [Pc] using
+                step_timer_le_one_median_max_creates_CorrectResetSeed
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                  hn4 hn0 hRmax hS huv hμ_med (by omega) hv_max
+                  (hM μ hμ_med) hv_wrong
+            have hEqStep : D.step P μ v = D.step Pc μ v := by
+              simpa [P, Pc] using
+                generic_step_eq_coupled_of_InSrank
+                  (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                  hn0 hS.toInSrank μ v
+            exact Or.inr (Or.inr (Or.inl (by rw [hEqStep]; exact hSeedCoupled)))
+          · have hv_correct : (D v).1.answer = majorityAnswer D := by
+              by_contra h
+              exact hv_wrong h
+            by_cases hpar : n % 2 = 0
+            · have hceil : ceilHalf n = n / 2 := by
+                unfold ceilHalf
+                omega
+              have hμ_lower : (D μ).1.rank.val + 1 = n / 2 := by
+                rw [← hceil]
+                exact hμ_med
+              have h_post_same : (D μ).1.answer = (D v).1.answer := by
+                rw [hM μ hμ_med, hv_correct]
+              let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+              have hclean := insswap_drain_median_timer_one_step
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+                hS hn4 huv hpar hμ_lower hv_max hTimer1
+                (hS.swap_condition_false μ v) h_post_same
+              have hEqStep : D.step P μ v = D.step Pc μ v := by
+                simpa [P, Pc] using
+                  generic_step_eq_coupled_of_InSrank
+                    (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                    hn0 hS.toInSrank μ v
+              have hS' : InSswap (D.step P μ v) := by
+                rw [hEqStep]
+                simpa [Pc, PEMProtocolCoupled, PEMProtocol] using hclean.1
+              have hM' : MedianAnswerCorrect (D.step P μ v) :=
+                generic_step_median_answer_of_InSswap_both
+                  (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                  hn0 hn4 hS hS' hM
+              have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
+                rw [hEqStep]
+                simpa [Pc, PEMProtocolCoupled, PEMProtocol] using hclean.2.1
+              have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
+                rw [hEqStep, hceil]
+                simpa [Pc, PEMProtocolCoupled, PEMProtocol] using hclean.2.2.2
+              refine Or.inr (Or.inr (Or.inr ⟨hS', hM', ?_⟩))
+              apply hmax_zero_of_not_live _ hS'
+              rw [MedianTimerAtLeast]
+              push_neg
+              exact ⟨μ, hμ_rank_post, by rw [hμ_timer_post]; norm_num⟩
+            · have h_no_swap := hS.swap_condition_false μ v
+              have h_post_same : opinionToAnswer (D μ).2 = (D v).1.answer := by
+                rw [opinionToAnswer_median_eq_majorityAnswer_odd hS hμ_med hpar,
+                  hv_correct]
+              have hclean := step_at_median_max_timer_one_no_reset_explicit
+                (trank := trank) (Rmax := Rmax)
+                (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+                rankDeltaOSSR_satisfies_fix hS hn4 huv hμ_med hv_max hpar
+                h_no_swap hTimer1 h_post_same
+              have hS' : InSswap (D.step P μ v) := by
+                simpa [P, PEMProtocol] using hclean.1
+              have hM' : MedianAnswerCorrect (D.step P μ v) :=
+                generic_step_median_answer_of_InSswap_both
+                  (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                  hn0 hn4 hS hS' hM
+              have hμ_timer_post : (D.step P μ v μ).1.timer = 0 := by
+                simpa [P, PEMProtocol] using hclean.2.1
+              have hμ_rank_post : (D.step P μ v μ).1.rank.val + 1 = ceilHalf n := by
+                simpa [P, PEMProtocol] using hclean.2.2.2.1
+              refine Or.inr (Or.inr (Or.inr ⟨hS', hM', ?_⟩))
+              apply hmax_zero_of_not_live _ hS'
+              rw [MedianTimerAtLeast]
+              push_neg
+              exact ⟨μ, hμ_rank_post, by rw [hμ_timer_post]; norm_num⟩
+  have hMaxTimer : maxMedianTimer C ≤ T_timer := by
+    unfold maxMedianTimer
+    apply Finset.sup_le
+    intro μ _
+    split_ifs with h
+    · exact hTimerHi μ
+    · exact Nat.zero_le _
+  calc Probability.expectedHittingTime P (by omega) C Goal
+      ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
+    _ ≤ ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
+        norm_cast
+        calc maxMedianTimer C * (n * (n - 1))
+            ≤ T_timer * (n * (n - 1)) :=
+              Nat.mul_le_mul_right _ hMaxTimer
+          _ = T_timer * n * (n - 1) := by ring
 
 end GenericTimerDrain
 

@@ -67,6 +67,26 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank productive timer-drain checkpoint
+
+Ported the productive drain endpoint over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_step_median_answer_of_InSswap_both`
+- `generic_timer_drain_to_zero_productive`
+
+The proof follows the coupled deterministic-descent structure.  The
+`timer = 1` branch is handled with existing local transition lemmas for the
+wrong-max reset case and the clean even/odd timer-drain cases, avoiding a
+fresh generic unfold of `transitionPEM`.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
+
 ## 2026-06-04 codex generic-trank timer-drain window checkpoint
 
 Ported the timer-drain expected-time/window layer over
