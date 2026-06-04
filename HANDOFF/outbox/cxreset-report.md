@@ -1,147 +1,158 @@
-# Faithful reset re-architecture report
+# Generic reset O(n) integration report
 
-## Scope
+## Verdict
 
-Step 3 is completed in `SSExactMajority/UpperBound/Time/OptimalWindows.lean`.
-`GenericTrank.lean` was not touched.
+No blocker.  The generic reset integration and the `trank = 1` instantiation
+give the intended clean `O(n)` parallel-time form, conditional on the same
+satisfiable cited windows:
 
-The old reset-duration contract is no longer a keystone hypothesis.  The reset
-branch now consumes `CRSResetCompletion12`, whose reset entry is a cited
-`ProbHitWithin` reachability statement from `CorrectResetSeed` to
-`ResetCompletionTarget12`/`EpidemicRegion`, with a quadratic sequential window
-and positive constant probability.
+- generic faithful reset completion with `K_reset <= C_reset*n*n` and constant
+  `p_reset > 0`;
+- generic initial ranking/reranking windows of `O(n^2)` sequential interactions;
+- generic post-epidemic rank window of `O(n^2)` sequential interactions.
 
-## Old vs new
+There is no old deterministic `CorrectResetSeed -> EpidemicRegion` invariant in
+the new keystone.  The reset branch is the faithful probabilistic
+reach-then-within chain.
 
-Old path:
+## Files
 
-```text
-CorrectResetSeed
-  -- deterministic resetInv -->
-EpidemicRegion
-  -- cubic resetWindow / coupon bound -->
-EpidemicPhiGoal
-  -- ranking -->
-silence / consensus
-```
+- Added `SSExactMajority/UpperBound/Time/GenericKeystone.lean`.
+- Added root import:
+  `SSExactMajority.lean:43`.
+- Did not edit `SSExactMajority/UpperBound/Time/GenericTrank.lean`.
+- Did not edit `SSExactMajority/UpperBound/Time/OptimalWindows.lean`.
 
-That path was vacuous/too strong because the deterministic
-`CorrectResetSeed -> EpidemicRegion` invariant was not a [12] reset-completion
-fact, and because the old reset window forced a cubic sequential contribution.
+## Generic reset contract
 
-New path:
+`CRSResetCompletion12Generic` is stated directly for
+`PEMProtocol n trank Rmax Emax Dmax`, so the reset contract no longer depends
+on the coupled median-timer scale:
 
-```text
-CorrectResetSeed
-  -- CRSResetCompletion12.resetReach, ProbHitWithin, K_reset <= C_reset*n*n -->
-ResetCompletionTarget12 (majorityAnswer C) = EpidemicRegion (majorityAnswer C)
-  -- resetCompletion_to_phiGoal_window, ProbHitWithin, 2*n*n -->
-EpidemicPhiGoal (majorityAnswer C)
-  -- h12rank -->
-OW_silenceEndpoint / IsConsensusConfig
-```
+- contract header:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:31`;
+- `resetReach` is the faithful `CorrectResetSeed -> ProbHitWithin ->
+  ResetCompletionTarget12` reset window:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:37`;
+- the reset window is quadratic:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:36`;
+- the post-reset epidemic mechanics are generic protocol obligations consumed
+  by the coupon/window lemma, not a false forall-invariant:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:45`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:53`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:59`.
 
-Evidence:
+This is a cited-hypothesis genericization, not a transfer proof from the old
+coupled contract.  That is the faithful shape here: the reset-completion window
+is a probabilistic [12] reset fact and is satisfiable as a `ProbHitWithin`
+assumption for the actual generic protocol.
 
-- `OW_answerEpidemicWindow n = 2*n*n`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:58`.
-- The live/reset contribution is now
-  `K_reset + OW_answerEpidemicWindow n + T_rank`, not the old cubic reset
-  window: `SSExactMajority/UpperBound/Time/OptimalWindows.lean:64-65`.
-- `OW_globalWindow` uses ranking plus this live/reset window:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:73-75`.
-- The sharper epidemic coupon bound is now
-  `epidemic_coupon_sum_le_nsq`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:224`.
-- `CRSResetCompletion12` carries `0 < p_reset`, `p_reset <= 1`,
-  `K_reset <= C_reset*n*n`, and the cited reset `ProbHitWithin` field:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:353-390`.
-- `resetCompletion_to_phiGoal_window` proves the post-reset answer epidemic
-  window with probability at least `1/2` in `2*n*n` interactions:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:395-453`.
-
-## Composition verdict
+## Composition
 
 The reach-then-within composition lemma exists and composes cleanly:
 `Probability.ProbHitWithin_add_ge_mul`.
 
-It is used for the reset branch as:
+Evidence:
 
-- `CorrectResetSeed -> ResetCompletionTarget12 -> EpidemicPhiGoal`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:507-512`.
-- `EpidemicPhiGoal -> OW_silenceEndpoint`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:529-534`.
+- reset completion to answer epidemic:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:73`;
+- `CorrectResetSeed -> ResetCompletionTarget12 -> EpidemicPhiGoal` composition:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:155`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:160`;
+- `EpidemicPhiGoal -> OW_silenceEndpoint` composition:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:181`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:182`;
+- consensus wrapper over the same reset branch:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:190`.
 
-Downstream uses also compose cleanly:
+## Generic keystone
 
-- decision/MAC/reset-to-consensus in `OW_consensusBound`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:1102-1117`.
-- rerank/live-to-consensus in `OW_consensusBound`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:1179-1181`.
-- decision/MAC/reset-to-consensus in `PEM_expectedParallelTime_optimal`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:1419-1434`.
-- initial ranking/rerank/live-to-consensus in
-  `PEM_expectedParallelTime_optimal`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:1500-1515`.
+`PEM_expectedParallelTime_optimal_generic` is assembled over
+`PEMProtocol n trank Rmax Emax Dmax`:
 
-## Keystone verdict
+- theorem header:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:235`;
+- free timer cap `T_timer` and its step preservation hypothesis:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:237`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:239`;
+- generic ranking target preserves both `7*(trank+4)` and `T_timer`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:243`;
+- generic reset completion hypothesis:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:254`;
+- generic post-epidemic ranking and reranking hypotheses:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:258`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:266`;
+- final expected parallel-time bound has global window divided by `n`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:279`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:282`.
 
-The keystone is now non-vacuous relative to the cited hypotheses.
+The proof consumes the generic timer preservation/window lemmas from
+`GenericTrank`.  The timer-drain contribution is carried through
+`OW_macLiveWindow n T_timer` inside the generic MAClive window, so the generic
+keystone keeps `T_timer` free instead of baking in the coupled timer scale.
 
-- `CRS_to_silence_faithful_product` consumes `CRSResetCompletion12`, not the
-  old deterministic reset-duration package:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:459-534`.
-- `CRS_to_silence_faithful` is the caller-chosen probability wrapper over that
-  product theorem:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:538-566`.
-- The consensus wrappers consume the same faithful reset completion contract:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:571-659`.
-- `OW_consensusBound` takes `CRSResetCompletion12` as its reset hypothesis and
-  has renewal success `p_reset * 64^-1`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:906-1198`.
-- `PEM_expectedParallelTime_optimal` takes `CRSResetCompletion12` as its reset
-  hypothesis and has global success `p_reset * 128^-1`:
-  `SSExactMajority/UpperBound/Time/OptimalWindows.lean:1204-1531`.
+## `trank = 1` instantiation
 
-The remaining [12]-style hypotheses are all satisfiable-shaped cited
-probability/expectation windows: initial ranking, rerank entry, reset
-completion, and post-epidemic ranking.  The false forall-invariant reset entry
-is gone, so the theorem is no longer vacuous for that reason.  With
-`K_reset <= C_reset*n*n` and `OW_answerEpidemicWindow n = 2*n*n`, the reset
-branch contributes `O(n^2)` sequential interactions, hence `O(n)` parallel
-time after division by `n`.
+The constant-timer instantiation is explicit:
 
-## Removed old contract from the keystone
+- `PEM_trank1_timer = 35`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:566`;
+- `PEM_expectedParallelTime_On` specializes the generic keystone at
+  `trank = 1`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:569`;
+- timer preservation is discharged by `generic_timer_preservation` with
+  `7*(1+4) <= 35`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:612`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:618`;
+- the instantiated theorem returns the same renewal bound with
+  `OW_globalWindow n C_rank 35 K_reset T_rank T_rerank / n`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:603`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:608`.
 
-The following names/patterns are absent from
-`SSExactMajority/UpperBound/Time/OptimalWindows.lean` after the rewrite:
+The sequential window is proved quadratic for the `trank = 1` constants:
 
-- `CRSResetDuration12`
-- `resetInv`
-- the old cubic `2 * (n * n * (n - 1))` reset window
-- `OW_consensusExpectedSteps`
-- `crs_to_allR_or_break_window`
-- `hResetInv`
-- `CRS_to_silence_of_rank12`
+- `OW_globalWindow_trank1_quadratic`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:640`;
+- assumptions `K_reset`, `T_rank`, and `T_rerank` are all `O(n^2)`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:641`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:642`,
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:643`;
+- conclusion:
+  `OW_globalWindow <= (2*C_rank + C_reset + C_T_rank + C_T_rerank + 76)*n*n`:
+  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:645`.
+
+With constant `p_reset` and constant `C_rank`, the bound in
+`PEM_expectedParallelTime_On` is therefore `O(n^2)/n = O(n)` parallel time.
+
+## Non-vacuity
+
+The keystone hypotheses are satisfiable-shaped and faithful:
+
+- reset entry is a probabilistic `ProbHitWithin` completion window, not a
+  deterministic invariant;
+- timer assumptions are generic boundedness/preservation hypotheses over the
+  actual `PEMProtocol n trank Rmax`;
+- ranking, reranking, and post-epidemic rank windows are cited
+  probability/expectation windows with explicit finite time bounds.
+
+No hypothesis asserts the previously false global invariant
+`CorrectResetSeed -> EpidemicRegion` for every step.
 
 ## Verification
 
 Commands run:
 
 ```bash
-bash -lc 'exec -a lake /data/home/xhuan5/.elan/bin/elan env lean SSExactMajority/UpperBound/Time/OptimalWindows.lean'
-bash -lc 'exec -a lake /data/home/xhuan5/.elan/bin/elan build SSExactMajority.UpperBound.Time.OptimalWindows'
+exec -a lake /data/home/xhuan5/.elan/bin/elan env lean SSExactMajority/UpperBound/Time/GenericKeystone.lean
+exec -a lake /data/home/xhuan5/.elan/bin/elan build
 ```
 
-Both passed.  The module build ended with:
+Results:
 
 ```text
-Built SSExactMajority.UpperBound.Time.OptimalWindows
-Build completed successfully (3251 jobs).
+GenericKeystone single-file Lean check: passed with no output.
+Full lake build: Build completed successfully (3266 jobs).
 ```
 
-The target build replays existing dependency warnings.  For
-`OptimalWindows.lean` itself, the remaining warnings are unused decidability or
-section-variable linter warnings.  A token scan of `OptimalWindows.lean` found
-no forbidden proof placeholders, unchecked-declaration shortcuts, or native
-decision shortcuts.
+A token scan of `GenericKeystone.lean` found no forbidden proof placeholders,
+unchecked-declaration shortcuts, or native decision shortcuts.
