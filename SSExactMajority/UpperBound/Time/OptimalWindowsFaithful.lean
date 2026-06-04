@@ -18,7 +18,14 @@ def FreshResetSeedTarget {n : ℕ} (Dmax : ℕ) (m : Answer)
 
 The cited reset window delivers a fresh epidemic-region reset seed. It does
 not cite the PEM-specific answer-epidemic completion; that completion is
-proved separately by `answer_epidemic_bridge_from_fresh_resetting`. -/
+proved separately by `answer_epidemic_bridge_from_fresh_resetting`.
+
+The fresh target is the simultaneous stopping event delivered by the [12]
+reset mechanics for PEM: `processAgent` sets `delaytimer := Dmax` in the
+resetting `oldRc > 0` branch, and reset recruitment assigns
+`delaytimer := Dmax` to agents newly recruited into `Resetting`. Thus when the
+reset epidemic has completed, every agent is freshly in role `Resetting` with
+delay timer `Dmax`; this is the [12]-cited fresh-seed stopping time used here. -/
 structure CRSReset12Faithful {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
     (p_reset : ENNReal) (C_reset K_reset : ℕ) : Prop where
   resetProb_pos : 0 < p_reset
@@ -27,7 +34,7 @@ structure CRSReset12Faithful {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
   resetWindow_quadratic : K_reset ≤ C_reset * n * n
   freshSeedReach :
     ∀ (hn2 : 2 ≤ n) (C : Config (AgentState n) Opinion n),
-      IsTimerBoundedConfig (7 * (1 + 4)) C →
+      WellFormed 1 Rmax Emax Dmax C →
       CorrectResetSeed C →
         p_reset ≤
           Probability.ProbHitWithin
@@ -48,7 +55,7 @@ theorem faithful_reset_to_phiGoal
         n Rmax Emax Dmax K_bridge hn hn2 pE)
     (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2) :
     ∀ C : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig (7 * (1 + 4)) C →
+      WellFormed 1 Rmax Emax Dmax C →
       CorrectResetSeed C →
         p_reset * (pE / 2) ≤
           Probability.ProbHitWithin
@@ -57,7 +64,7 @@ theorem faithful_reset_to_phiGoal
               AllAgentsResetting D)
             (K_reset + K_bridge) := by
   classical
-  intro C hTimer hSeed
+  intro C hWF hSeed
   let P : Protocol (AgentState n) Opinion Output :=
     PEMProtocol n 1 Rmax Emax Dmax hn
   let Mid : Config (AgentState n) Opinion n → Prop :=
@@ -67,7 +74,7 @@ theorem faithful_reset_to_phiGoal
   have hDmax_pos : 0 < Dmax := Nat.lt_of_lt_of_le hn hDmax
   have hFreshSeed :
       p_reset ≤ Probability.ProbHitWithin P hn2 C Mid K_reset := by
-    simpa [P, Mid] using h12reset.freshSeedReach hn2 C hTimer hSeed
+    simpa [P, Mid] using h12reset.freshSeedReach hn2 C hWF hSeed
   have hBridge :
       ∀ D : Config (AgentState n) Opinion n, Mid D →
         pE / 2 ≤ Probability.ProbHitWithin P hn2 D Goal K_bridge := by
@@ -147,7 +154,7 @@ theorem crsReset12Faithful_to_generic
         (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
         (K_reset := K_reset) (K_bridge := K_bridge)
         (C_reset := C_reset) hn hn2' hDmax h12reset epidemicFast'
-        hTail C hWF.1 hSeed
+        hTail C hWF hSeed
     exact hFaithful.trans
       (Probability.ProbHitWithin_mono_goal
         (PEMProtocol n 1 Rmax Emax Dmax hn) hn2' C

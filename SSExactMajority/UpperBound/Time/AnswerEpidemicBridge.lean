@@ -78,7 +78,7 @@ def StandardEpidemicFastHypothesisPEM
       pE ≤
         Probability.ProbHitWithin
           (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C
-          (EpidemicPhiGoal m) K
+          (fun D => EpidemicPhiGoal m D ∨ SomeAgentAwake D) K
 
 private theorem ProbHitWithin_left_ge_of_or_ge_add_and_right_le
     {Q X Y : Type*} {n : ℕ}
@@ -144,22 +144,28 @@ theorem answer_epidemic_bridge_from_fresh_resetting
   have hBad : Probability.ProbHitWithin P hn2 C₀ Bad K ≤ pE / 2 :=
     hDrain.trans hTail
   have hEpidemic :
-      pE ≤ Probability.ProbHitWithin P hn2 C₀ (EpidemicPhiGoal m) K := by
-    simpa [P] using epidemicFast hRegion₀
-  have hGoalToTargetOrBad :
+      pE ≤
+        Probability.ProbHitWithin P hn2 C₀
+          (fun D => EpidemicPhiGoal m D ∨ Bad D) K := by
+    simpa [P, Bad] using epidemicFast hRegion₀
+  have hGoalOrBadToTargetOrBad :
       ∀ D : Config (AgentState n) Opinion n,
-        EpidemicPhiGoal m D → Target D ∨ Bad D := by
-    intro D hGoal
-    by_cases hAwake : Bad D
+        EpidemicPhiGoal m D ∨ Bad D → Target D ∨ Bad D := by
+    intro D hGoalOrBad
+    rcases hGoalOrBad with hGoal | hAwake
+    · by_cases hAwake : Bad D
+      · exact Or.inr hAwake
+      · exact Or.inl
+          ⟨hGoal, (not_someAgentAwake_iff_allAgentsResetting D).mp hAwake⟩
     · exact Or.inr hAwake
-    · exact Or.inl
-        ⟨hGoal, (not_someAgentAwake_iff_allAgentsResetting D).mp hAwake⟩
   have hGoalLeOr :
-      Probability.ProbHitWithin P hn2 C₀ (EpidemicPhiGoal m) K ≤
+      Probability.ProbHitWithin P hn2 C₀
+          (fun D => EpidemicPhiGoal m D ∨ Bad D) K ≤
         Probability.ProbHitWithin P hn2 C₀ (fun D => Target D ∨ Bad D) K :=
     Probability.ProbHitWithin_mono_goal P hn2 C₀
-      (EpidemicPhiGoal m) (fun D => Target D ∨ Bad D)
-      hGoalToTargetOrBad K
+      (fun D => EpidemicPhiGoal m D ∨ Bad D)
+      (fun D => Target D ∨ Bad D)
+      hGoalOrBadToTargetOrBad K
   have hsplit : pE / 2 + pE / 2 = pE := by
     simp
   have hor :
@@ -169,7 +175,8 @@ theorem answer_epidemic_bridge_from_fresh_resetting
     exact hEpidemic.trans hGoalLeOr
   have hpE_le_one : pE ≤ 1 :=
     hEpidemic.trans
-      (Probability.ProbHitWithin_le_one P hn2 C₀ (EpidemicPhiGoal m) K)
+      (Probability.ProbHitWithin_le_one P hn2 C₀
+        (fun D => EpidemicPhiGoal m D ∨ Bad D) K)
   have hhalf_le_one : pE / 2 ≤ 1 := by
     have hhalf_le_pE : pE / 2 ≤ pE := by
       calc

@@ -93,3 +93,47 @@ Result: build completed successfully.
 Asymptotic-to-zero status: not included as a separate topological eventual
 theorem. The delivered corollary is the spec-minimum closed form:
 when `Dmax >= n`, `drainNoWakeTail n K Dmax <= n * (1/2)^n`.
+
+## Epidemic Rephrase Result
+
+- Updated `SSEM.StandardEpidemicFastHypothesisPEM` to use the faithful target
+  `fun D => EpidemicPhiGoal m D OR SomeAgentAwake D`.
+- Re-derived `SSEM.answer_epidemic_bridge_from_fresh_resetting` with a
+  top-level split on that disjunction. Its conclusion is unchanged:
+  `pE / 2 <= ProbHitWithin (EpidemicPhiGoal m AND AllAgentsResetting) K`.
+- Strengthened `SSEM.CRSReset12Faithful.freshSeedReach` to require
+  `WellFormed 1 Rmax Emax Dmax C`.
+- Threaded the strengthened precondition through
+  `faithful_reset_to_phiGoal`, `crsReset12Faithful_to_generic`, and
+  `PEM_expectedParallelTime_On_faithful`.
+- Added the [12] fresh-seed doc-comment explaining the simultaneous
+  all-Resetting, `delaytimer = Dmax` stopping event.
+- No `sorry`, `axiom`, or `native_decide` in the two touched files.
+
+## Epidemic Rephrase Theorems
+
+- `SSEM.StandardEpidemicFastHypothesisPEM`:
+  `SSExactMajority/UpperBound/Time/AnswerEpidemicBridge.lean:73`
+- `SSEM.answer_epidemic_bridge_from_fresh_resetting`:
+  `SSExactMajority/UpperBound/Time/AnswerEpidemicBridge.lean:115`
+- `SSEM.CRSReset12Faithful`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:29`
+- `SSEM.faithful_reset_to_phiGoal`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:46`
+- `SSEM.crsReset12Faithful_to_generic`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:94`
+- `SSEM.PEM_expectedParallelTime_On_faithful`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:169`
+
+## Epidemic Rephrase Verification
+
+```bash
+/data/home/xhuan5/.elan/bin/elan run leanprover/lean4:v4.30.0 lake build SSExactMajority.UpperBound.Time.OptimalWindowsFaithful
+```
+
+Result: build completed successfully.
+
+Keystone conclusion status: unchanged. The theorem
+`SSEM.PEM_expectedParallelTime_On_faithful` still concludes the same bound
+with reset probability `p_reset * (pE / 2)` and the same global window
+`OW_globalWindow n C_rank PEM_trank1_timer (K_reset + K_bridge) T_rank T_rerank`.
