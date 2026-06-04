@@ -42,3 +42,12 @@ Surface to Xiang with the concrete per-avenue terminal verdicts (NOT "feels hard
 ## Collaboration
 ChatGPT Pro (R3+ via bridge) for the canonical disruption-free-phase technique; Codex (tmux) for the
 Lean proof-grind of each phase ProbHitWithin + the composition. No effort caps in briefs.
+
+## R3 ARCHITECTURE (ChatGPT Pro, canonical — avenue (a) confirmed)
+3 generic lemmas: (1) stopped_descent E[τ_{G∪D}]≤B (cxr2: awakening relaxed-goal); (2) disruption
+tail via LOAD CERTIFICATE not (1-q)^K: Pr[τ_D≤K] ≤ n·Pr[Bin(K,2/n)≥Emax], Emax=Θ(n)⟹safe K=O(n²);
+(3) RACE: E[τ_{G∪D}]≤B ∧ Pr[τ_D≤K]≤δ ∧ B/K≤η ⟹ Pr[G before D ≤K]≥1−η−δ (K=4B,δ≤1/4→≥1/2). Absorbing
+wrapper (live/good/bad) for Lean. CORRECTION: sharpen awakening per-step 1/n²→k/n² (coupon O(n²log n));
+but fit Emax=Θ(n) window ⟹ aim awakening goal EARLY (heap-prefix≥2, O(n²)), not wake-all. Compose
+const phases → product const → window_mul_inv; disruption = failed attempt, strong-Markov restart,
+geometric ≤1/p.
