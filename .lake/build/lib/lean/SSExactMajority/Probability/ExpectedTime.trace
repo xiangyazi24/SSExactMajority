@@ -1,0 +1,124 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["f31dfc53a901c7ba.olean"],
+  "m": false,
+  "i": "6799aea9bf8d4a6b.ilean",
+  "c": "0d304fbd8e5f99a4.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/ExpectedTime.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/ExpectedTime.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/ExpectedTime.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/ExpectedTime.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/ExpectedTime.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1051:4: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1056:4: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1046:36: This simp argument is unused:\n  Set.mem_preimage\n\nHint: Omit it from the simp argument list.\n  simp [S̵e̵t̵.̵m̵e̵m̵_̵p̵r̵e̵i̵m̵a̵g̵e̵,̵ ̵Bool.or_eq_true]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1030:0: `ProbHitWithin_union_le` does not use the following hypotheses in its type:\n  • [DecidablePred A] (#10)\n  • [DecidablePred B] (#11)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1120:0: `hitEventCountDist_marginal_hitFlag` does not use the following hypothesis in its type:\n  • [DecidablePred Goal] (#10)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1158:0: `hitEventCountDist_marginal_eventCount` does not use the following hypothesis in its type:\n  • [DecidablePred Goal] (#10)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1230:4: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1236:4: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1250:0: `ProbHitWithin_le_eventCountDist_tail_of_support_imp` does not use the following hypothesis in its type:\n  • [DecidablePred Goal] (#10)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:1293:0: `hitEventCountDist_support_inv` does not use the following hypothesis in its type:\n  • [DecidablePred Goal] (#10)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:2942:0: `probNotHitBy_succ_eq_tsum_step_of_not_goal` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#10)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:2976:0: `probHitBy_succ_eq_tsum_step_of_not_goal` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#10)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3011:0: `truncatedExpectedHittingTime_succ_eq_of_not_goal` does not use the following hypothesis in its type:\n  • [DecidablePred Goal] (#10)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3053:0: `expectedHittingTime_add_le` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Mid] (#11)\n  • [DecidablePred Goal] (#12)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3057:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3175:0: `expectedHittingTime_add_le_of_absorbing` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Mid] (#11)\n  • [DecidablePred Goal] (#12)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3680:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:3646:0: `ProbHitWithin_add_ge_mul` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Mid] (#11)\n  • [DecidablePred Goal] (#12)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:4152:0: `expectedHittingTime_le_of_potential_descent` does not use the following hypothesis in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:4258:0: `expectedHittingTime_le_of_variable_descent` does not use the following hypothesis in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:4373:0: `expectedHittingTime_le_of_variable_descent_until_goal` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#11)\n  • [DecidablePred Inv] (#12)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:4550:0: `expectedHittingTime_le_of_deterministic_descent` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#11)\n  • [DecidablePred Inv] (#12)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Probability/ExpectedTime.lean:4667:0: `ProbHitWithin_ge_inv_pow_of_execution` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#10)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Probability.ExpectedTime:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Probability.RandomScheduler transitive imports (legacy)",
+         "faeda7e08b98820e"],
+        ["SSExactMajority.Probability.RandomScheduler:importAllArts",
+         "d5502da7b18737c2"],
+        ["SSExactMajority.Convergence.Silent transitive imports (legacy)",
+         "ca094a73bfbbc9af"],
+        ["SSExactMajority.Convergence.Silent:importAllArts",
+         "6e6903b431f85fcf"],
+        ["Mathlib.Analysis.SpecificLimits.Basic transitive imports (legacy)",
+         "d5a0f464bc323b3c"],
+        ["Mathlib.Analysis.SpecificLimits.Basic:importAllArts",
+         "4f6939a66bf4769f"],
+        ["Mathlib.MeasureTheory.Integral.Lebesgue.Markov transitive imports (legacy)",
+         "f23f186de5057828"],
+        ["Mathlib.MeasureTheory.Integral.Lebesgue.Markov:importAllArts",
+         "0d871bbd7ec17744"],
+        ["Mathlib.Topology.Instances.ENNReal.Lemmas transitive imports (legacy)",
+         "a69c707865cfdc99"],
+        ["Mathlib.Topology.Instances.ENNReal.Lemmas:importAllArts",
+         "0d0601732bd9fdac"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/ExpectedTime.lean",
+   "04fcecc5ccc8c75c"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Probability.ExpectedTime", "f2d3523a0bc380cf"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "cb1b74c506891839"}

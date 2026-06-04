@@ -1,0 +1,372 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["df57b248771df2e2.olean"],
+  "m": false,
+  "i": "7336e81382cada78.ilean",
+  "c": "0f5cd30a4f016e8f.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Time.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Time.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/LowerBound/Time.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Time.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/LowerBound/Time.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `open scoped ENNReal`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A silent configuration is output-stable.\n\nKanaya §2 distinguishes the two predicates: safe/output-stable means\noutputs never change, while silent means states never change. -/\ntheorem Config.isSilent.isOutputStable {Q X Y : Type*} [DecidableEq Q] [DecidableEq X] {n : ℕ} {P : Protocol Q X Y}\n    {C : Config Q X n} (hSilent : C.isSilent P) : C.isOutputStable P :=\n  by\n  intro γ t w\n  have hExec : execution P C γ t = C := by\n    induction t with\n    | zero => rfl\n    | succ t ih =>\n      simp only [execution, ih]\n      exact hSilent _ _\n  rw [hExec]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A protocol is *silent on `n` agents* if every deterministic execution\neventually reaches a silent configuration.\n\nThis is the deterministic-scheduler analogue of Kanaya §2's probabilistic\ndefinition: under the uniform random scheduler, an execution reaches a\nsilent configuration with probability 1.  It deliberately uses\n`Config.isSilent`, not `Config.isOutputStable`; the latter is only the\nsafe/stabilized predicate. -/\ndef SilentProtocol {Q : Type*} [DecidableEq Q] (P : Protocol Q Opinion Output) (n : ℕ) : Prop :=\n  ∀ C₀ : Config Q Opinion n, ∀ (γ : DetScheduler n), ∃ t : ℕ, (execution P C₀ γ t).isSilent P`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Random-scheduler stabilization to a safe and correct configuration,\nexpressed through the finite-prefix PMF API.  This is the probabilistic\npart of Kanaya §2's self-stabilizing exact-majority definition. -/\ndef RandomStabilizesSSEM {Q : Type*} [DecidableEq Q] (P : Protocol Q Opinion Output) (n : ℕ) (hn : 2 ≤ n) : Prop :=\n  ∀ C₀ : Config Q Opinion n,\n    Probability.reachesGoalAlmostSurely P hn C₀\n      (fun C => C.isOutputStable P ∧ ExactMajoritySafe' P C Opinion.A Opinion.B Output.A Output.B Output.T)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- If a configuration is already output-stable, then `SolvesSSEM` forces it\nto already have the correct exact-majority outputs. -/\ntheorem exactMajoritySafe_of_outputStable_of_solves {Q : Type*} [DecidableEq Q] {P : Protocol Q Opinion Output} {n : ℕ}\n    {C : Config Q Opinion n} (hSolves : SolvesSSEM P n) (hStable : C.isOutputStable P) :\n    ExactMajoritySafe' P C Opinion.A Opinion.B Output.A Output.B Output.T :=\n  by\n  obtain ⟨γ, t, _hStable', hSafe'⟩ := hSolves C\n  unfold ExactMajoritySafe' at hSafe' ⊢\n  rw [Config.agentsWithInput_execution P C γ t Opinion.A] at hSafe'\n  rw [Config.agentsWithInput_execution P C γ t Opinion.B] at hSafe'\n  by_cases hgt : (C.agentsWithInput Opinion.A).card > (C.agentsWithInput Opinion.B).card\n  · simp [hgt] at hSafe' ⊢\n    intro w\n    rw [hStable γ t w]\n    exact hSafe' w\n  · by_cases hlt : (C.agentsWithInput Opinion.A).card < (C.agentsWithInput Opinion.B).card\n    · simp [hgt, hlt] at hSafe' ⊢\n      intro w\n      rw [hStable γ t w]\n      exact hSafe' w\n    · simp [hgt, hlt] at hSafe' ⊢\n      intro w\n      rw [hStable γ t w]\n      exact hSafe' w`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: `simp [hgt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:97:4: `intro w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: `simp [hgt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:98:4: `rw [hStable γ t w]` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: `simp [hgt] at hSafe' ⊢` is a flexible tactic modifying `hSafe'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:99:4: `exact hSafe' w` uses `hSafe'`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: `simp [hgt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:96:4: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:99:4: `exact hSafe' w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:103:6: `intro w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:104:6: `rw [hStable γ t w]` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:105:6: `exact hSafe' w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `hSafe'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:102:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:105:6: `exact hSafe' w` uses `hSafe'`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message": "SSExactMajority/LowerBound/Time.lean:107:6: `intro w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:108:6: `rw [hStable γ t w]` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `hSafe'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:109:6: `exact hSafe' w` uses `hSafe'`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: `simp [hgt, hlt] at hSafe' ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:106:6: Try this:\n  [apply] simp only [gt_iff_lt] at hSafe' ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:109:6: `exact hSafe' w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:145:22: This simp argument is unused:\n  gt_iff_lt\n\nHint: Omit it from the simp argument list.\n  simp only [hnpos, g̵t̵_̵i̵f̵f̵_̵l̵t̵,̵ ̵↓reduceIte] at hSafeAllA\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A self-stabilizing exact-majority protocol on at least two agents has some\nconfiguration that is not output-stable.  Otherwise all-A and one-A/rest-B\ninitial configurations would force incompatible outputs for the same local\nstate/input pair. -/\ntheorem exists_not_outputStable_of_solves {Q : Type*} [DecidableEq Q] [Nonempty Q] {P : Protocol Q Opinion Output}\n    {n : ℕ} (hn : 2 ≤ n) (hSolves : SolvesSSEM P n) : ∃ C₀ : Config Q Opinion n, ¬C₀.isOutputStable P := by\n  classical\n  by_contra hnone\n  have hAllStable : ∀ C₀ : Config Q Opinion n, C₀.isOutputStable P :=\n    by\n    intro C₀\n    by_contra hC\n    exact hnone ⟨C₀, hC⟩\n  let q : Q := Classical.choice inferInstance\n  let i0 : Fin n := ⟨0, by omega⟩\n  let allA : Config Q Opinion n := fun _ => (q, Opinion.A)\n  let mixed : Config Q Opinion n := fun i => if i = i0 then (q, Opinion.A) else (q, Opinion.B)\n  have hSafeAllA : ExactMajoritySafe' P allA Opinion.A Opinion.B Output.A Output.B Output.T :=\n    exactMajoritySafe_of_outputStable_of_solves hSolves (hAllStable allA)\n  have hAllA_A : allA.agentsWithInput Opinion.A = Finset.univ :=\n    by\n    ext w\n    simp [allA, Config.agentsWithInput, Config.inputOf]\n  have hAllA_B : allA.agentsWithInput Opinion.B = ∅ := by\n    ext w\n    simp [allA, Config.agentsWithInput, Config.inputOf]\n  have hqA : P.π_out (q, Opinion.A) = Output.A :=\n    by\n    unfold ExactMajoritySafe' at hSafeAllA\n    rw [hAllA_A, hAllA_B] at hSafeAllA\n    simp only [Finset.card_univ, Fintype.card_fin, Finset.card_empty] at hSafeAllA\n    have hnpos : 0 < n := by omega\n    simp only [hnpos, gt_iff_lt, ↓reduceIte] at hSafeAllA\n    have := hSafeAllA i0\n    simpa [Config.allOutput, Config.outputOf, allA] using this\n  have hSafeMixed : ExactMajoritySafe' P mixed Opinion.A Opinion.B Output.A Output.B Output.T :=\n    exactMajoritySafe_of_outputStable_of_solves hSolves (hAllStable mixed)\n  have hMixedA : mixed.agentsWithInput Opinion.A = { i0 } :=\n    by\n    ext w\n    by_cases hw : w = i0\n    · subst w\n      simp [mixed, Config.agentsWithInput, Config.inputOf]\n    · simp [mixed, Config.agentsWithInput, Config.inputOf, hw]\n  have hMixedB : mixed.agentsWithInput Opinion.B = Finset.univ.erase i0 :=\n    by\n    ext w\n    by_cases hw : w = i0\n    · subst w\n      simp [mixed, Config.agentsWithInput, Config.inputOf]\n    · simp [mixed, Config.agentsWithInput, Config.inputOf, hw]\n  have hMixedOutNotA : mixed.outputOf P i0 ≠ Output.A :=\n    by\n    unfold ExactMajoritySafe' at hSafeMixed\n    rw [hMixedA, hMixedB] at hSafeMixed\n    have hcardB : (Finset.univ.erase i0 : Finset (Fin n)).card = n - 1 := by\n      rw [Finset.card_erase_of_mem (Finset.mem_univ i0), Finset.card_univ, Fintype.card_fin]\n    simp only [Finset.card_singleton, hcardB] at hSafeMixed\n    by_cases hn_eq_two : n = 2\n    · have hnotGt : ¬1 > n - 1 := by omega\n      have hnotLt : ¬1 < n - 1 := by omega\n      simp only [hnotGt, hnotLt, ↓reduceIte] at hSafeMixed\n      have := hSafeMixed i0\n      rw [this]\n      decide\n    · have hnotGt : ¬1 > n - 1 := by omega\n      have hlt : 1 < n - 1 := by omega\n      simp only [hnotGt, hlt, ↓reduceIte] at hSafeMixed\n      have := hSafeMixed i0\n      rw [this]\n      decide\n  have hMixedOutA : mixed.outputOf P i0 = Output.A := by simp [Config.outputOf, mixed, i0, hqA]\n  exact hMixedOutNotA hMixedOutA`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:196:5: unused variable `hRandom`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:197:5: unused variable `hSilent`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- **Theorem 3, expected part (Ω(n) parallel time lower bound).**\n\nGeneric in the state type `Q`.  Goal is the protocol-level\noutput-stability `Config.isOutputStable P` — what `SolvesSSEM` actually\nrequires. -/\ntheorem time_lower_bound_omega_n_expected {Q : Type*} [Fintype Q] [DecidableEq Q] [Nonempty Q]\n    {P : Protocol Q Opinion Output} {n : ℕ} (hn : 2 ≤ n) (hSolves : SolvesSSEM P n)\n    (hRandom : RandomStabilizesSSEM P n hn) (hSilent : SilentProtocol P n) :\n    ∃ (C₀ : Config Q Opinion n) (c : ℝ),\n      0 < c ∧ ENNReal.ofReal (c * n) ≤ Probability.expectedParallelTime P hn C₀ (fun C => C.isOutputStable P) :=\n  by\n  classical\n  obtain ⟨C₀, hC₀⟩ := exists_not_outputStable_of_solves hn hSolves\n  let c : ℝ := ((n : ℝ) * (n : ℝ))⁻¹\n  refine ⟨C₀, c, ?_, ?_⟩\n  · have hnpos : 0 < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)\n    positivity\n  · have hpar := Probability.inv_nat_le_expectedParallelTime_of_not_goal P hn C₀ (fun C => C.isOutputStable P) hC₀\n    have hnpos : 0 < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)\n    have hc : c * n = (n : ℝ)⁻¹ := by\n      dsimp [c]\n      field_simp [hnpos.ne']\n    calc\n      ENNReal.ofReal (c * n) = ((n : ENNReal))⁻¹ := by rw [hc, ENNReal.ofReal_inv_of_pos hnpos, ENNReal.ofReal_natCast]\n      _ ≤ Probability.expectedParallelTime P hn C₀ (fun C => C.isOutputStable P) := hpar`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:187:0: `time_lower_bound_omega_n_expected` does not use the following hypothesis in its type:\n  • [Fintype Q] (#2)\n\nConsider replacing this hypothesis with the corresponding instance of `Finite` and using `Fintype.ofFinite` in the proof, or removing it entirely.\n\nNote: This linter can be disabled with `set_option linter.unusedFintypeInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time Lower Bound (Theorem 3) — scaffold\n\nTheorem 3 of Kanaya et al. (2025): any silent self-stabilizing exact\nmajority protocol requires Ω(n) expected parallel time and Ω(n log n)\nparallel time with high probability to reach a safe configuration.\n\nProof outline from the paper:\n1. In a silent configuration for an odd population with more B than A,  A-input agents have pairwise distinct states.\n2. Replace one B-input agent by an A-input agent carrying one of those\n   silent A states. The resulting configuration is not safe.\n3. Because the original configuration is silent, the bad configuration\n   can only be repaired after a particular pair of agents interacts.\n4. This pair fires with probability `2 / (n * (n - 1))` per sequential\n   interaction. Hence the expected wait is Ω(n²), i.e. Ω(n) parallel\n   time.  The advertised whp lower bound needs a separate amplification\n   or clarification; the one-pair geometric tail alone is not enough for\n   the standard `1 - O(1/n)` meaning of whp.\n\nThis file is a **scaffold**.  The quantitative lower-bound claim is kept\nas a target proposition until the stochastic waiting-time proof is closed;\nthe file lives outside the root import graph (`SSExactMajority.lean` does\nnot import it).  See `docs/TIME_BOUND_PLAN.md` for the full plan.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:4:0: * '\n# Time L':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:12:70: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:8:54: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/LowerBound/Time.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.LowerBound.Time:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b0e96ee57fc227eb"],
+        ["SSExactMajority.Defs.Execution:importAllArts", "80edd9f14896ca67"],
+        ["SSExactMajority.LowerBound.Space transitive imports (legacy)",
+         "c8d662e2631930db"],
+        ["SSExactMajority.LowerBound.Space:importAllArts", "e09600e3a26de6a1"],
+        ["SSExactMajority.Probability.ExpectedTime transitive imports (legacy)",
+         "4a6cb76c58b4535a"],
+        ["SSExactMajority.Probability.ExpectedTime:importAllArts",
+         "36188e096b864569"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/LowerBound/Time.lean",
+   "79df4bb90c61e6f2"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.LowerBound.Time", "b0bfecd66678dba0"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "49d861fd58e38953"}

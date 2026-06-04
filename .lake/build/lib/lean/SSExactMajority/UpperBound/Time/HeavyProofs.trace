@@ -1,0 +1,174 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["a22a33e61e1e7f9b.olean"],
+  "m": false,
+  "i": "3ba7b35cddd80c52.ilean",
+  "c": "05cc1d84949334b6.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/HeavyProofs.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/HeavyProofs.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/HeavyProofs.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/HeavyProofs.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/HeavyProofs.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:164:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil, hjR_no_lower, hjR_no_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:165:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hjR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hjR_no_lower, hjR_no_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:207:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_no_med, hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:207:20: This simp argument is unused:\n  hiR_no_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵hiR_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:207:32: This simp argument is unused:\n  hiR_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, hνR_ceil, h̵i̵R̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵h̵i̵R̵_̵n̵o̵_̵m̵a̵x̵]̵h̲i̲R̲_̲n̲o̲_̲m̲e̲d̲]̲\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:233:56: This simp argument is unused:\n  hN_ne1\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, h̵N̵_̵n̵e̵1̵,̵ ̵hN_ne2, hνR_ceil, hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:234:10: This simp argument is unused:\n  hνR_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsi, hsj, ne_eq, role_settled_ne_resetting, not_true_eq_false,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲not_false_eq_true, false_and, and_false, if_false, and_self, if_true, h_no_swap, hpar,\n  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲hνR, hiR, hN_ne1, hN_ne2, h̵ν̵R̵_̵c̵e̵i̵l̵,̵ ̵hiR_ne_med, hiR_ne_med_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:31:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 800000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:50:15: `simp [Config.step]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:50:35: `exact hM ν hν_pre` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:166:67: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:179:65: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:215:69: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:219:71: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:235:67: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:248:65: '(exfalso; simp_all; omega)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:110:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:185:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:166:67: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:179:65: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:215:69: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:219:71: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:235:67: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:248:65: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:284:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 800000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:327:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:338:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:339:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:341:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:344:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:355:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:367:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:370:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:381:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:382:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:384:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:387:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:398:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:325:18: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:328:18: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:368:18: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/HeavyProofs.lean:371:18: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.UpperBound.Time.HeavyProofs:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.UpperBound.Time.Bridge transitive imports (legacy)",
+         "5a739420220325fd"],
+        ["SSExactMajority.UpperBound.Time.Bridge:importAllArts",
+         "4504380ad290044d"],
+        ["SSExactMajority.UpperBound.Time.CRSOdd transitive imports (legacy)",
+         "4208cb0def6b5315"],
+        ["SSExactMajority.UpperBound.Time.CRSOdd:importAllArts",
+         "4587f57bca1915bd"],
+        ["SSExactMajority.UpperBound.Time.CRSEvenTimerPos transitive imports (legacy)",
+         "4208cb0def6b5315"],
+        ["SSExactMajority.UpperBound.Time.CRSEvenTimerPos:importAllArts",
+         "212b57e450c4bae3"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/HeavyProofs.lean",
+   "a4be2abe31fd49a0"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.UpperBound.Time.HeavyProofs",
+   "363bc2d452128305"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "377f2129c921f8a1"}

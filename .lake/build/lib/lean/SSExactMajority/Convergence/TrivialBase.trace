@@ -1,0 +1,147 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["f6b819cb4720b8db.olean"],
+  "m": false,
+  "i": "75cc547c921df7b9.ilean",
+  "c": "041ff05c86487eb5.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TrivialBase.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TrivialBase.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TrivialBase.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TrivialBase.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TrivialBase.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- If a configuration is already a consensus configuration, then `SolvesSSEM`\nholds for that initial configuration: the trivial `t = 0` schedule witnesses\nthe existence claim. -/\ntheorem trivial_reach_consensus [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} {C : Config (AgentState n) Opinion n}\n    (hC : IsConsensusConfig C) :\n    ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  ⟨fun _ => default, 0, hC⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- If every initial configuration is already a consensus configuration, then\n`P_EM` solves SSEM. (A degenerate but useful base case.) -/\ntheorem P_EM_solves_SSEM_when_all_consensus [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    (hAll : ∀ C₀ : Config (AgentState n) Opinion n, IsConsensusConfig C₀) :\n    SolvesSSEM (protocolPEM n trank Rmax rankDelta) n :=\n  P_EM_solves_SSEM_of_consensus_reachable hRank (fun C₀ => trivial_reach_consensus (hAll C₀))`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivial Base Cases for Theorem 4\n\nIf the initial configuration is already a consensus configuration, the\nexistence claim of `SolvesSSEM` holds with `t = 0`: zero steps suffice.\nThis gives a fully unconditional Theorem 4 in the special case where\n\"start = already consensus\", and serves as the base case for the\ngeneral phase-decomposition.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:4:0: * '\n# Trivia':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:10:28: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:8:70: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/TrivialBase.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.TrivialBase:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.Theorem4 transitive imports (legacy)",
+         "32807f999a9c26d2"],
+        ["SSExactMajority.Convergence.Theorem4:importAllArts",
+         "332e9ae313ae5118"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TrivialBase.lean",
+   "99591789b04e682f"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.TrivialBase", "9ca9c6ee4b4209fe"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "ac4e2a7149d3c46e"}

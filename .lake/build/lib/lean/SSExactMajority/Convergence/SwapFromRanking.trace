@@ -1,0 +1,160 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["a62eba3900ac7fb8.olean"],
+  "m": false,
+  "i": "35d643e3fc435b85.ilean",
+  "c": "b855e3aef894d727.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapFromRanking.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapFromRanking.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/SwapFromRanking.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapFromRanking.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/SwapFromRanking.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-Phase Reachability from a Specific Timer Bound\n\nThis file proves structural lemmas toward eliminating the universal\n`h_inv_swap` hypothesis from the master theorem.\n\n## Key insight\n\nThe timer at the median agent only decrements when the median interacts\nwith the max-rank agent in the propagation phase. After a median-max\nswap step:\n\n1. The max-rank position gets input B (from the original median position)\n2. A position with input B and max rank is NEVER part of a misordered pair\n3. Therefore, max position is never moved by subsequent swaps\n4. Therefore, no future median-max interaction occurs\n5. Therefore, the timer never decrements again\n\nSo the timer budget ≥ 2 allows for exactly ONE median-max interaction,after which the timer stays ≥ 1 permanently.\n\n## Proved lemmas\n\n* `not_misordered_fst_at_max_rank` — max rank too high for fst of misorder\n* `not_misordered_snd_at_max_with_B` — input B excludes snd of misorder\n* `no_misorder_at_max_with_B` — no median-max misorder when max has B\n* `swap_step_exists_8way_with_max_B` — swap step with timer ≥ 1 when max has B\n* `step_at_misorder_preserves_max_B` — max position preserved through swaps\n\n## Remaining for timer elimination\n\nTo compose these into `swap_reaches_Sswap_from_timer_bound`, one needs\na `transitionPEM_timer_no_max` lemma proving that when neither\ninteracting agent has max rank, the median's timer field is unchanged\nthrough all phases of transitionPEM (~150 lines of split_ifs + rfl).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:17:26: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:8:47: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:43:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-Phase Reachability from a Specific Timer Bound\n\nThis file proves structural lemmas toward eliminating the universal\n`h_inv_swap` hypothesis from the master theorem.\n\n## Key insight\n\nThe timer at the median agent only decrements when the median interacts\nwith the max-rank agent in the propagation phase. After a median-max\nswap step:\n\n1. The max-rank position gets input B (from the original median position)\n2. A position with input B and max rank is NEVER part of a misordered pair\n3. Therefore, max position is never moved by subsequent swaps\n4. Therefore, no future median-max interaction occurs\n5. Therefore, the timer never decrements again\n\nSo the timer budget ≥ 2 allows for exactly ONE median-max interaction,after which the timer stays ≥ 1 permanently.\n\n## Proved lemmas\n\n* `not_misordered_fst_at_max_rank` — max rank too high for fst of misorder\n* `not_misordered_snd_at_max_with_B` — input B excludes snd of misorder\n* `no_misorder_at_max_with_B` — no median-max misorder when max has B\n* `swap_step_exists_8way_with_max_B` — swap step with timer ≥ 1 when max has B\n* `step_at_misorder_preserves_max_B` — max position preserved through swaps\n\n## Remaining for timer elimination\n\nTo compose these into `swap_reaches_Sswap_from_timer_bound`, one needs\na `transitionPEM_timer_no_max` lemma proving that when neither\ninteracting agent has max rank, the median's timer field is unchanged\nthrough all phases of transitionPEM (~150 lines of split_ifs + rfl).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:17:26: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:8:47: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:43:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-Phase Reachability from a Specific Timer Bound\n\nThis file proves structural lemmas toward eliminating the universal\n`h_inv_swap` hypothesis from the master theorem.\n\n## Key insight\n\nThe timer at the median agent only decrements when the median interacts\nwith the max-rank agent in the propagation phase. After a median-max\nswap step:\n\n1. The max-rank position gets input B (from the original median position)\n2. A position with input B and max rank is NEVER part of a misordered pair\n3. Therefore, max position is never moved by subsequent swaps\n4. Therefore, no future median-max interaction occurs\n5. Therefore, the timer never decrements again\n\nSo the timer budget ≥ 2 allows for exactly ONE median-max interaction,after which the timer stays ≥ 1 permanently.\n\n## Proved lemmas\n\n* `not_misordered_fst_at_max_rank` — max rank too high for fst of misorder\n* `not_misordered_snd_at_max_with_B` — input B excludes snd of misorder\n* `no_misorder_at_max_with_B` — no median-max misorder when max has B\n* `swap_step_exists_8way_with_max_B` — swap step with timer ≥ 1 when max has B\n* `step_at_misorder_preserves_max_B` — max position preserved through swaps\n\n## Remaining for timer elimination\n\nTo compose these into `swap_reaches_Sswap_from_timer_bound`, one needs\na `transitionPEM_timer_no_max` lemma proving that when neither\ninteracting agent has max rank, the median's timer field is unchanged\nthrough all phases of transitionPEM (~150 lines of split_ifs + rfl).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:4:0: * '\n# Swap-P':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:17:26: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:8:47: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:43:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Max-rank position is never misordered when it has input B -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:83:2: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:76:22: unused variable `hn`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:168:43: unused variable `hC`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:219:30: This simp argument is unused:\n  h_no_max_0\n\nHint: Omit it from the simp argument list.\n  simp only [hpar, if_true, h_no_max_0̵,̵ ̵h̵_̵n̵o̵_̵m̵a̵x̵_̵1]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:219:42: This simp argument is unused:\n  h_no_max_1\n\nHint: Omit it from the simp argument list.\n  simp only [hpar, if_true, h_no_max_0,̵ ̵h̵_̵n̵o̵_̵m̵a̵x̵_̵1̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:221:31: This simp argument is unused:\n  h_no_max_0\n\nHint: Omit it from the simp argument list.\n  simp only [hpar, if_false, h_no_max_0̵,̵ ̵h̵_̵n̵o̵_̵m̵a̵x̵_̵1]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:221:43: This simp argument is unused:\n  h_no_max_1\n\nHint: Omit it from the simp argument list.\n  simp only [hpar, if_false, h_no_max_0,̵ ̵h̵_̵n̵o̵_̵m̵a̵x̵_̵1̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:197:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 4000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:212:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:224:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 4000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:237:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:251:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 4000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:280:45: 'simp_all [h_no_max_u, h_no_max_v]' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:282:45: 'simp_all [h_no_max_u, h_no_max_v]' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:272:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:280:45: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:282:45: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:284:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:306:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:417:26: `simp [huv]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:417:38: `exact hMis.1` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/SwapFromRanking.lean:525:0: 'SSEM.swap_reaches_Sswap_from_timer_bound_with_timer' depends on axioms: [propext, Classical.choice, Quot.sound]",
+   "level": "info"}],
+ "inputs":
+ [["SSExactMajority.Convergence.SwapFromRanking:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.MedianWitnesses transitive imports (legacy)",
+         "4e9293db730c98c4"],
+        ["SSExactMajority.Convergence.MedianWitnesses:importAllArts",
+         "a695502a835f09f7"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/SwapFromRanking.lean",
+   "aa5e610dd669c9c5"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.SwapFromRanking",
+   "dc94100576905d62"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "f79848b59864b305"}

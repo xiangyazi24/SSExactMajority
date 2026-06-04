@@ -1,0 +1,154 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["a869f2958ab8d083.olean"],
+  "m": false,
+  "i": "53f19e775f0a7072.ilean",
+  "c": "e01eb05c6fb61808.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/PhaseProofs.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/PhaseProofs.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/PhaseProofs.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/PhaseProofs.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/PhaseProofs.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:6:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:6:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `open scoped ENNReal`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:6:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!Stage 2: Reset trigger. From InSswap + MedianCorrect + timer=0 +\nwrongAnswer > 0: trigger_correct_reset_from_InSrank gives a deterministic\npair that creates CorrectResetSeed.\nE[T] ≤ n(n-1) via ProbHitWithin_one_lower_bound_of_step. -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:71:19: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:89:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:101:8: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:23:5: unused variable `hWrong`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:164:27: `simp [hwμ, hwv]\n            -- w ≠ μ, w ≠ v: by hNonUpper, w has correct answer` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:167:14: `exact hw_ans` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:164:27: `simp [hwμ, hwv]\n            -- w ≠ μ, w ≠ v: by hNonUpper, w has correct answer` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:168:14: `exfalso` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:164:27: `simp [hwμ, hwv]\n            -- w ≠ μ, w ≠ v: by hNonUpper, w has correct answer` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:168:23: `apply hwv` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:164:27: `simp [hwμ, hwv]\n            -- w ≠ μ, w ≠ v: by hNonUpper, w has correct answer` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:169:14: `apply hS.toInSrank.ranks_inj` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:164:27: `simp [hwμ, hwv]\n            -- w ≠ μ, w ≠ v: by hNonUpper, w has correct answer` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:170:14: `exact Fin.ext (Nat.add_right_cancel ((hNonUpper w hw_ans).trans hv_upper.symm))` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:15:0: `PEM_expected_reset_trigger_v2` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:71:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:105:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:305:5: unused variable `hSeed`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:300:0: `PEM_expected_epidemic_to_consensus_v2` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:321:5: unused variable `hSswap`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:322:5: unused variable `hMedCorrect`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:323:5: unused variable `hTimerLo`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:324:5: unused variable `hTimerHi`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:315:0: `PEM_expected_median_correct_to_consensus_v2` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:345:5: unused variable `hSswap`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:346:5: unused variable `hTimerLo`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:347:5: unused variable `hTimerHi`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PhaseProofs.lean:339:0: `PEM_hConsensusBound_from_bridge_v2` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.UpperBound.Time.PhaseProofs:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.UpperBound.Time.HeavyProofs transitive imports (legacy)",
+         "f9efd904e06e721d"],
+        ["SSExactMajority.UpperBound.Time.HeavyProofs:importAllArts",
+         "0c77a715b4d2757f"],
+        ["SSExactMajority.UpperBound.Time.CRSOdd transitive imports (legacy)",
+         "4208cb0def6b5315"],
+        ["SSExactMajority.UpperBound.Time.CRSOdd:importAllArts",
+         "4587f57bca1915bd"],
+        ["SSExactMajority.UpperBound.Time.CRSEven transitive imports (legacy)",
+         "b78d59f025a3d5dc"],
+        ["SSExactMajority.UpperBound.Time.CRSEven:importAllArts",
+         "721854a194bba811"],
+        ["SSExactMajority.UpperBound.Time.RecoveryBound transitive imports (legacy)",
+         "76236e44246aa322"],
+        ["SSExactMajority.UpperBound.Time.RecoveryBound:importAllArts",
+         "9686e3d2492e9bb1"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/PhaseProofs.lean",
+   "04d3d25cdde37b3f"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.UpperBound.Time.PhaseProofs",
+   "7132dd3247b28668"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "07fb52226728bcf9"}

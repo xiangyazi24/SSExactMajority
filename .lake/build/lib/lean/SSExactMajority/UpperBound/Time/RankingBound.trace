@@ -1,0 +1,52 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["a5e831beadd161e8.olean"],
+  "m": false,
+  "i": "d7dc25a9d232c941.ilean",
+  "c": "0c03ce6adda3728b.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RankingBound.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/RankingBound.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/RankingBound.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/RankingBound.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/RankingBound.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RankingBound.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RankingBound.lean:4:0: * '\n# Ranking expected-time bound (re-export wrapper)\n\nThis file imports the monolithic `Time.lean` and re-exports the ranking\nsubphase expected-time bound so that split files (`RecoveryBound`,`PhaseProofs`) can use them without tracing the full 10K-line dependency\nchain.\n\nKey theorems re-exported:\n- `PEM_FreshRankingStart_expected_until_rankingEndpoint_or_heap_exit_le`\n- `PEM_FreshRankingStart_expected_until_srank_timer2_or_consensus_or_heap_exit_le`\n- `PEM_heapPrefix_expected_until_rankingEndpoint_or_exit_from_level_le`':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RankingBound.lean:4:0: * '\n# Rankin':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RankingBound.lean:7:44: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.UpperBound.Time.RankingBound:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.UpperBound.Time transitive imports (legacy)",
+         "cdeea241dda6b752"],
+        ["SSExactMajority.UpperBound.Time:importAllArts",
+         "b742bf5fbdd08ffa"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RankingBound.lean",
+   "8be47941c85a9f79"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.UpperBound.Time.RankingBound",
+   "a66552cf18a88821"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "6629f2a46b435640"}

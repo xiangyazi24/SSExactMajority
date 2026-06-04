@@ -1,0 +1,140 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["6f979418fcef655c.olean"],
+  "m": false,
+  "i": "ce10ffe150faf829.ilean",
+  "c": "4381b75308315ee0.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RecoveryBridge.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/RecoveryBridge.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/RecoveryBridge.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/RecoveryBridge.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/RecoveryBridge.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `open scoped ENNReal`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Self-pair steps are no-ops. -/\ntheorem step_self_eq (P : Protocol (AgentState n) Opinion Output) (C : Config (AgentState n) Opinion n) (i : Fin n) :\n    C.step P i i = C := by simp [Config.step]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:10: This simp argument is unused:\n  h1\n\nHint: Omit it from the simp argument list.\n  simp [h̵1̵,̵ ̵Nat.succ_sub_one] at ih ⊢\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:14: This simp argument is unused:\n  Nat.succ_sub_one\n\nHint: Omit it from the simp argument list.\n  simp [h1,̵ ̵N̵a̵t̵.̵s̵u̵c̵c̵_̵s̵u̵b̵_̵o̵n̵e̵] at ih ⊢\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Prepending a pair to a schedule and running one more step. -/\nprivate theorem execution_prepend_eq (P : Protocol (AgentState n) Opinion Output) (C : Config (AgentState n) Opinion n)\n    (p : Fin n × Fin n) (γ : DetScheduler n) (t : ℕ) :\n    execution P C (fun k => if k = 0 then p else γ (k - 1)) (t + 1) = execution P (C.step P p.1 p.2) γ t :=\n  by\n  suffices key :\n    ∀ s, execution P (C.step P p.1 p.2) γ s = execution P C (fun k => if k = 0 then p else γ (k - 1)) (s + 1) from\n    (key t).symm\n  intro s\n  induction s with\n  | zero => simp [execution]\n  | succ s ih =>\n    simp only [execution] at ih ⊢\n    have h1 : (s + 1 : ℕ) ≠ 0 := Nat.succ_ne_zero s\n    simp [h1, Nat.succ_sub_one] at ih ⊢\n    rw [← ih]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:4: `simp [h1, Nat.succ_sub_one] at ih ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:4: Try this:\n  [apply] simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte, add_tsub_cancel_right] at ih ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:33:4: `rw [← ih]` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:4: `simp [h1, Nat.succ_sub_one] at ih ⊢` is a flexible tactic modifying `ih`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:32:4: Try this:\n  [apply] simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte, add_tsub_cancel_right] at ih ⊢",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:33:4: `rw [← ih]` uses `ih`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Shifting a schedule by 1 when the first step is identity. -/\nprivate theorem execution_shift_self (P : Protocol (AgentState n) Opinion Output) (C : Config (AgentState n) Opinion n)\n    (γ : DetScheduler n) (t : ℕ) (hself : (γ 0).1 = (γ 0).2) :\n    execution P C γ (t + 1) = execution P C (fun k => γ (k + 1)) t :=\n  by\n  suffices key : ∀ s, execution P C (fun k => γ (k + 1)) s = execution P C γ (s + 1) from (key t).symm\n  intro s\n  induction s with\n  | zero =>\n    simp only [execution]\n    rw [hself, step_self_eq]\n  | succ s ih =>\n    simp only [execution] at ih ⊢\n    rw [← ih]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Strip self-pairs from an execution. -/\ntheorem execution_filter_distinct (P : Protocol (AgentState n) Opinion Output) (C : Config (AgentState n) Opinion n)\n    (γ : DetScheduler n) (t : ℕ) {Goal : Config (AgentState n) Opinion n → Prop} (hGoal : Goal (execution P C γ t)) :\n    ∃ (γ2 : DetScheduler n) (t2 : ℕ), t2 ≤ t ∧ (∀ k, k < t2 → (γ2 k).1 ≠ (γ2 k).2) ∧ Goal (execution P C γ2 t2) := by\n  induction t generalizing C γ with\n  | zero => exact ⟨γ, 0, le_refl 0, fun k hk => absurd hk (Nat.not_lt_zero k), hGoal⟩\n  | succ t ih =>\n    by_cases hself : (γ 0).1 = (γ 0).2\n    · rw [execution_shift_self P C γ t hself] at hGoal\n      obtain ⟨γ2, t2, ht2, hdist, hGoal2⟩ := ih C (fun k => γ (k + 1)) hGoal\n      exact ⟨γ2, t2, Nat.le_succ_of_le ht2, hdist, hGoal2⟩\n    · have htail : execution P C γ (t + 1) = execution P (C.step P (γ 0).1 (γ 0).2) (fun k => γ (k + 1)) t :=\n        by\n        rw [← execution_prepend_eq P C (γ 0) (fun k => γ (k + 1)) t]\n        congr 1; funext k\n        by_cases hk : k = 0\n        · simp [hk]\n        · simp [hk, Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hk)]\n      rw [htail] at hGoal\n      obtain ⟨γ2, t2, ht2, hdist, hGoal2⟩ := ih (C.step P (γ 0).1 (γ 0).2) (fun k => γ (k + 1)) hGoal\n      refine ⟨fun k => if k = 0 then γ 0 else γ2 (k - 1), t2 + 1, Nat.succ_le_succ ht2, ?_, ?_⟩\n      · intro k hk\n        by_cases hk0 : k = 0\n        · simp [hk0]; exact hself\n        · simp [hk0]; exact hdist (k - 1) (by omega)\n      · rw [execution_prepend_eq]; exact hGoal2`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:86:10: `simp [hk0]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:86:10: Try this:\n  [apply] simp only [ne_eq]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:86:22: `exact hself` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:87:10: `simp [hk0]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:87:10: Try this:\n  [apply] simp only [ne_eq]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:87:22: `exact hdist (k - 1) (by omega)` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:1:1: * '-/':\nCopyright too short!\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/RecoveryBridge.lean:4:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.UpperBound.Time.RecoveryBridge:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.BurmanConvergenceFinal transitive imports (legacy)",
+         "d892560573689d3d"],
+        ["SSExactMajority.Convergence.BurmanConvergenceFinal:importAllArts",
+         "ec72f07840d95624"],
+        ["SSExactMajority.Probability.ExpectedTime transitive imports (legacy)",
+         "4a6cb76c58b4535a"],
+        ["SSExactMajority.Probability.ExpectedTime:importAllArts",
+         "36188e096b864569"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/RecoveryBridge.lean",
+   "c516ee8b92fe0d7e"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.UpperBound.Time.RecoveryBridge",
+   "bf9a3a45216288ad"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "ad0ae36e0c68e8ee"}

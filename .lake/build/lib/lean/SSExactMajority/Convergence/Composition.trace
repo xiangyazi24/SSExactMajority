@@ -1,0 +1,172 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["95fce1f56fef2072.olean"],
+  "m": false,
+  "i": "6f7d7b0640be3441.ilean",
+  "c": "99553e45bcf75e17.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Composition: from per-phase reachability, derive the full\nconsensus-reachability hypothesis used by `P_EM_solves_SSEM_of_consensus_reachable`. -/\ntheorem hReach_of_phases {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (hRankPhase :\n      ∀ C₀ : Config (AgentState n) Opinion n,\n        ∃ (γ : DetScheduler n) (t : ℕ), InSrank (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t))\n    (hSwapPhase :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSrank C → ∃ (γ : DetScheduler n) (t : ℕ), InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ t))\n    (hDecisionPhase :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSswap C →\n          ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t)) :\n    ∀ C₀ : Config (AgentState n) Opinion n,\n      ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t) :=\n  by\n  -- First chain Srank → Sswap.\n  \n  have h12 : ∀ C₀, ∃ γ t, InSswap (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t) :=\n    reachable_compose hRankPhase hSwapPhase\n  exact reachable_compose h12 hDecisionPhase`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The full unconditional theorem statement, with the three phase\nreachabilities exposed as hypotheses on the parameterized ranking\nsubprotocol. -/\ntheorem P_EM_solves_SSEM_via_phases {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    (hRankPhase :\n      ∀ C₀ : Config (AgentState n) Opinion n,\n        ∃ (γ : DetScheduler n) (t : ℕ), InSrank (execution (protocolPEM n trank Rmax rankDelta) C₀ γ t))\n    (hSwapPhase :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSrank C → ∃ (γ : DetScheduler n) (t : ℕ), InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ t))\n    (hDecisionPhase :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSswap C →\n          ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t)) :\n    SolvesSSEM (protocolPEM n trank Rmax rankDelta) n :=\n  P_EM_solves_SSEM_of_consensus_reachable hRank (hReach_of_phases hRankPhase hSwapPhase hDecisionPhase)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reachability Composition for hReach\n\nDischarging the consensus-reachability hypothesis by chaining three\nphase-reachability hypotheses:\n\n  * `hRankPhase`     — every initial configuration eventually reaches\n                       an `Srank` configuration (ranking convergence,                      Burman et al. PODC 2021).\n  * `hSwapPhase`     — every `Srank` configuration eventually reaches\n                       an `Sswap` configuration (input-sorted ranks).\n  * `hDecisionPhase` — every `Sswap` configuration eventually reaches\n                       a consensus configuration.\n\nThe composed result is the `hReach` hypothesis assumed by\n`P_EM_solves_SSEM_of_consensus_reachable`.\n\nEach phase hypothesis is a separable subgoal: ranking is the deep\nexternal reference (Burman et al.); swap and decision are local\nprotocol arguments that we will discharge by deterministic scheduler\nconstructions in `SwapPhase.lean` and `DecisionPhase.lean`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:4:0: * '\n# Reacha':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:22:38: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:12:33: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Composition.lean:31:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Composition:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.Schedule transitive imports (legacy)",
+         "ebdcdb1dff5bf6c5"],
+        ["SSExactMajority.Convergence.Schedule:importAllArts",
+         "fe0db90d8541527d"],
+        ["SSExactMajority.Convergence.Sets transitive imports (legacy)",
+         "8d7de78ed1f57b00"],
+        ["SSExactMajority.Convergence.Sets:importAllArts", "a996fb4d9a1c65ed"],
+        ["SSExactMajority.Convergence.Theorem4 transitive imports (legacy)",
+         "32807f999a9c26d2"],
+        ["SSExactMajority.Convergence.Theorem4:importAllArts",
+         "332e9ae313ae5118"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean",
+   "199b89268b9fdb65"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.Composition", "a88fa51d9cf3ac78"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "f0078702700b9254"}

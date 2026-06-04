@@ -38,3 +38,22 @@ generic keystone at trank=1 so OW_globalWindow = O(n^2) sequential / E[parallel]
 - NO sorry/axiom/admit/native_decide anywhere. Report precisely to HANDOFF/outbox/codex-generic-report.md after
   each major layer (helpers done / windows done / keystones done / instantiated O(n) build-verified).
 - Commit after each layer that lake-builds clean: `git commit` with [Xiang-proxy] tag describing the layer.
+
+## AUDIT NOTE (Xiang-proxy, verified against source) — trank=1 is sound on BOTH sides
+Two potential audit risks checked and RESOLVED before you grind:
+
+1. n <= Rmax (hRmax in keystone + CRSEven/CRSOdd lemmas): Rmax is the RANK-VALUE RANGE
+   (Theta(n), n distinct ranks), NOT 60 log n. n <= Rmax is satisfiable (e.g. Rmax = n) and only
+   enters the rank range + the cited [12] windows — it does NOT break O(n). KEEP n <= Rmax as a
+   hypothesis (it is in b0bee4b already; orthogonal to trank).
+
+2. Correctness at trank=1: P_EM_solves_SSEM_master / _concrete (Final.lean:55,141) take {trank Rmax}
+   FULLY GENERIC with NO lower-bound hypothesis on trank. Correctness (SolvesSSEM) holds for ANY trank.
+   The convergence file BurmanConvergenceFinal picks (trank := Rmax) as an INCIDENTAL choice, not a
+   correctness necessity.
+   => For step 5, do NOT re-prove BurmanConvergence at trank=1. INSTANTIATE the generic master theorem
+      at trank=1, discharging hRankPhase from the [12] ranking-convergence citation (scope A) — the
+      [12] ranking subprotocol is timer/trank-independent, so the citation is the same at trank=1.
+   The ONLY timer constraint is the time-side floor MedianTimerAtLeast 35; 7*(1+4)=35 hits it exactly.
+
+So trank=1 / T_timer=35 yields a protocol that is (correct) AND (O(n) expected), with no hidden gap.

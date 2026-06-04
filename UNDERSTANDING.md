@@ -48,3 +48,8 @@ with constant probability using Chernoff bounds on:
 - UpperBound/Time/ (15K lines): ranking bounds, CRS, timer drain
 - Probability/ (5K lines): expected hitting time framework
 - Protocol/ (800 lines): transition function definitions
+
+## [2026-06-04] Audit-critical structural facts (verified)
+- **Correctness is FULLY FORMALIZED (not cited).** `P_EM_solves_SSEM_final` proves `SolvesSSEM (protocolPEM n n n …)` with NO external hypotheses; `#print axioms` = `{propext, Classical.choice, Quot.sound}` only. Ranking convergence is proven by `ranking_field_proof` + `burmanConvergence_concrete` (~32k lines of Burman mechanism). The ONLY thing cited from Burman [12] is the ranking EXPECTED-TIME bound `srank=O(n)` ([12] Thm 4.3), which enters the PARALLEL-TIME keystone as the `h12*` hypotheses. We formalize the renewal/window composition that lifts "ranking O(n) expected" to "PEM O(n) expected".
+- **Rmax = n in the formalization, NOT the papers 60 log n.** Forced by `CorrectResetSeed` requiring `nonResettingCount < resetcount` (resetcount:=Rmax, count up to n-1 ⟹ Rmax≥n). This is a DETERMINISTIC reset model vs the papers PROBABILISTIC one (epidemic w.h.p. ⟹ 60 log n suffices). Preserves correctness + O(n) EXPECTED time; sacrifices space-optimality + possibly w.h.p. O(n log n). Decision (accept variant vs reprove faithful) pending Xiang.
+- **trank ⟂ Rmax.** Median-timer param (trank, →1 for O(n) time) is independent of reset-counter param (Rmax). The generic-trank O(n)-time work holds under any Rmax choice.

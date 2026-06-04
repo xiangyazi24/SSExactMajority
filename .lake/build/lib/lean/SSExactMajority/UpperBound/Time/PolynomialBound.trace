@@ -1,0 +1,176 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["fec02f1d061f6fa9.olean"],
+  "m": false,
+  "i": "34a68eb739bd15b4.ilean",
+  "c": "0c8673842414e453.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/PolynomialBound.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/PolynomialBound.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/UpperBound/Time/PolynomialBound.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/PolynomialBound.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/UpperBound/Time/PolynomialBound.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:54:51: unused variable `hT`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:127:56: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_med]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:49:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:113:40: 'omega' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:115:40: 'omega' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:98:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:113:40: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:115:40: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:224:70: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:237:72: This simp argument is unused:\n  maxMedianTimer\n\nHint: Omit it from the simp argument list.\n  simp [m̵a̵x̵M̵e̵d̵i̵a̵n̵T̵i̵m̵e̵r̵,̵ ̵hμ_pre]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:255:55: This simp argument is unused:\n  Fin.val_mk\n\nHint: Omit it from the simp argument list.\n  simp only [̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵ ̵at h\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:150:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:297:46: 'omega' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:150:0: `PEM_expected_timer_drain_poly` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:278:12: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:297:46: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:340:0: `PEM_expected_epidemic_to_consensus_poly` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:382:26: This simp argument is unused:\n  ht_rc\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht̵_̵rc, h̵r̵c̵,̵ ̵show ¬(s.role = .Resetting) from hs_not,\n       ̵ ̵show (Dmax : ℕ) ≠ 0 from by omega, show Dmax - 1 ≠ 0 from by omega,\n       ̵ ̵show ¬(Dmax = 0) from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:382:38: This simp argument is unused:\n  show ¬(s.role = .Resetting) from hs_not\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht_rc, hrc, show ¬̵(̵s̵.̵r̵o̵l̵e̵ ̵=̵ ̵.̵R̵e̵s̵e̵t̵t̵i̵n̵g̵)̵ ̵f̵r̵o̵m̵ ̵h̵s̵_̵n̵o̵t̵,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵s̵h̵o̵w̵ ̵(Dmax : ℕ) ≠ 0 from by omega,\n  ̲  ̲ ̲ ̲show Dmax - 1 ≠ 0 from by omega, show ¬(Dmax = 0) from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:383:41: This simp argument is unused:\n  show Dmax - 1 ≠ 0 from by omega\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht_rc, hrc, show ¬(s.role = .Resetting) from hs_not,\n      show (Dmax : ℕ) ≠ 0 from by omega, show D̵m̵a̵x̵ ̵-̵ ̵1̵ ̵≠̵ ̵0̵ ̵f̵r̵o̵m̵ ̵b̵y̵ ̵o̵m̵e̵g̵a̵,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵s̵h̵o̵w̵ ̵¬(Dmax = 0) from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:384:6: This simp argument is unused:\n  show ¬(Dmax = 0) from by omega\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht_rc, hrc, show ¬(s.role = .Resetting) from hs_not,\n      show (Dmax : ℕ) ≠ 0 from by omega, show Dmax - 1 ≠ 0 from by o̵m̵e̵g̵a̵,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵s̵h̵o̵w̵ ̵¬̵(̵D̵m̵a̵x̵ ̵=̵ ̵0̵)̵ ̵f̵r̵o̵m̵ ̵b̵y̵ ̵omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:386:38: This simp argument is unused:\n  show ¬(s.role = .Resetting) from hs_not\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht_rc, hne, show ¬̵(̵s̵.̵r̵o̵l̵e̵ ̵=̵ ̵.̵R̵e̵s̵e̵t̵t̵i̵n̵g̵)̵ ̵f̵r̵o̵m̵ ̵h̵s̵_̵n̵o̵t̵,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵s̵h̵o̵w̵ ̵(Dmax : ℕ) ≠ 0 from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:387:6: This simp argument is unused:\n  show (Dmax : ℕ) ≠ 0 from by omega\n\nHint: Omit it from the simp argument list.\n  simp [hs_not, ht_res, ht_rc, hne, show ¬(s.role = .Resetting) from hs_not,̵\n  ̵ ̵ ̵ ̵ ̵ ̵ ̵s̵h̵o̵w̵ ̵(̵D̵m̵a̵x̵ ̵:̵ ̵ℕ̵)̵ ̵≠̵ ̵0̵ ̵f̵r̵o̵m̵ ̵b̵y̵ ̵o̵m̵e̵g̵a̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:428:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:441:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:458:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:470:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:495:5: unused variable `hSeed`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:666:10: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:586:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 800000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:586:0: `PEM_CRS_to_allR_or_break` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:635:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:649:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:678:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:718:5: unused variable `hSswap`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:718:26: unused variable `hTimerLo`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:711:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:726:0: `PEM_expected_time_finite` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:749:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 800000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:749:0: `expectedHittingTime_eq_goal_and_inv_of_invariant` does not use the following hypotheses in its type:\n  • [DecidableEq (Config Q X n)] (#5)\n  • [DecidablePred Goal] (#11)\n  • [DecidablePred Inv] (#12)\n  • [DecidablePred fun C ↦ Goal C ∧ Inv C] (#13)\n\nConsider removing these hypotheses and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:778:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 1600000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:778:0: `bounded_config_consensus_uniform_le` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:808:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 6400000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/UpperBound/Time/PolynomialBound.lean:808:0: `allR_to_consensus_bound` does not use the following hypothesis in its type:\n  • [DecidableEq (Config (AgentState n) Opinion n)] (#6)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.UpperBound.Time.PolynomialBound:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.UpperBound.Time.PhaseProofs transitive imports (legacy)",
+         "49f951a2ee244617"],
+        ["SSExactMajority.UpperBound.Time.PhaseProofs:importAllArts",
+         "1f902aa3c21c01d3"],
+        ["SSExactMajority.UpperBound.Time.RecoveryBound transitive imports (legacy)",
+         "76236e44246aa322"],
+        ["SSExactMajority.UpperBound.Time.RecoveryBound:importAllArts",
+         "9686e3d2492e9bb1"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/UpperBound/Time/PolynomialBound.lean",
+   "eec63b4cdde99a7b"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.UpperBound.Time.PolynomialBound",
+   "9ae1bb5f70a7a5fb"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "1c3c79fddb4afd93"}

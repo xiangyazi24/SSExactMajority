@@ -1,0 +1,114 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["17b9775ef86f44f3.olean"],
+  "m": false,
+  "i": "06c5de4391fad5a0.ilean",
+  "c": "f23f556895f03e97.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/ResetCycle.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/ResetCycle.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/ResetCycle.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/ResetCycle.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/ResetCycle.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset Cycle Infrastructure\n\nWhen the median agent's `.timer` reaches zero and its post-decision\n`.answer` disagrees with the partner's `.answer`, the propagation phase\nfires the reset branch: both agents become `.Resetting`, with their\nanswers synchronized.\n\nThis file develops:\n  * `reset_fires_at_misorder_median_v_max_odd_timer_zero` — the\n    transitionPEM result when timer = 0 + answers differ + odd n + the\n    misorder swap-fires structure.\n  * `AllResettingOrSettled` predicate.\n  * Epidemic single-step preservation (`epidemic_step_preserves`).\n\nThe macro-step \"reset cycle returns to InSrank\" goes via Burman 2021\nexternal assumption (阶段 B3).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:13:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:45: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:25:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset Cycle Infrastructure\n\nWhen the median agent's `.timer` reaches zero and its post-decision\n`.answer` disagrees with the partner's `.answer`, the propagation phase\nfires the reset branch: both agents become `.Resetting`, with their\nanswers synchronized.\n\nThis file develops:\n  * `reset_fires_at_misorder_median_v_max_odd_timer_zero` — the\n    transitionPEM result when timer = 0 + answers differ + odd n + the\n    misorder swap-fires structure.\n  * `AllResettingOrSettled` predicate.\n  * Epidemic single-step preservation (`epidemic_step_preserves`).\n\nThe macro-step \"reset cycle returns to InSrank\" goes via Burman 2021\nexternal assumption (阶段 B3).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:13:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:45: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:25:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset Cycle Infrastructure\n\nWhen the median agent's `.timer` reaches zero and its post-decision\n`.answer` disagrees with the partner's `.answer`, the propagation phase\nfires the reset branch: both agents become `.Resetting`, with their\nanswers synchronized.\n\nThis file develops:\n  * `reset_fires_at_misorder_median_v_max_odd_timer_zero` — the\n    transitionPEM result when timer = 0 + answers differ + odd n + the\n    misorder swap-fires structure.\n  * `AllResettingOrSettled` predicate.\n  * Epidemic single-step preservation (`epidemic_step_preserves`).\n\nThe macro-step \"reset cycle returns to InSrank\" goes via Burman 2021\nexternal assumption (阶段 B3).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:4:0: * '\n# Reset ':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:13:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:45: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:7:25: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:25:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Reset fires at (μ, v) with timer = 0, answers differ -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:87:36: This simp argument is unused:\n  hb0_no_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hb̵0̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵h̵μ_med, h_no_inner_A, hv_max,\n      hN_ne_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:87:56: This simp argument is unused:\n  h_no_inner_A\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hb0_no_med, hμ_med, h_̵n̵o̵_̵i̵n̵n̵e̵r̵_̵A̵,̵ ̵h̵v_max,\n      hN_ne_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:31:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/ResetCycle.lean:82:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.ResetCycle:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.RankPreservation transitive imports (legacy)",
+         "2ce83e7377be2a6e"],
+        ["SSExactMajority.Convergence.RankPreservation:importAllArts",
+         "1a31d9e930521f09"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/ResetCycle.lean",
+   "5c0c27431975d293"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.ResetCycle", "159322ffd60f48af"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "7c7015bfa82e9e48"}

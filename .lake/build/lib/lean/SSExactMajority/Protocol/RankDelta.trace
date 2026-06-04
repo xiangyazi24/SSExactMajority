@@ -1,0 +1,108 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["c9a197c772238943.olean"],
+  "m": false,
+  "i": "3d47c33020941e00.ilean",
+  "c": "01eea84cca2e2531.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Protocol/RankDelta.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Protocol/RankDelta.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Protocol/RankDelta.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Protocol/RankDelta.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Protocol/RankDelta.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concrete Ranking Subprotocol (OPTIMAL-SILENT-SSR)\n\nThis file defines the concrete `rankDeltaOSSR` implementing Protocol 3\nfrom Burman, Chen, Chen, Doty, Nowak, Severson, Xu (PODC 2021):\n\"Time-Optimal Self-Stabilizing Leader Election in Population Protocols\".\n\n## Components\n\n* `resetOSSR` — Protocol 4 (RESET subroutine for OPTIMAL-SILENT-SSR):\n  Leaders become Settled at rank 1; followers become Unsettled.\n\n* `propagateReset` — Protocol 2 (PROPAGATE-RESET):\n  Epidemic-style reset propagation with resetcount synchronization\n  and delaytimer-based dormancy.\n\n* `rankDeltaOSSR` — Protocol 3 (OPTIMAL-SILENT-SSR):\n  Binary-tree ranking with collision detection and error monitoring.\n\n## Key property\n\n`rankDeltaOSSR_settled_distinct_ranks`: when both agents are Settled\nwith distinct ranks, the protocol is the identity (no state change).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concre':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:18:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:9:71: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:32:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concrete Ranking Subprotocol (OPTIMAL-SILENT-SSR)\n\nThis file defines the concrete `rankDeltaOSSR` implementing Protocol 3\nfrom Burman, Chen, Chen, Doty, Nowak, Severson, Xu (PODC 2021):\n\"Time-Optimal Self-Stabilizing Leader Election in Population Protocols\".\n\n## Components\n\n* `resetOSSR` — Protocol 4 (RESET subroutine for OPTIMAL-SILENT-SSR):\n  Leaders become Settled at rank 1; followers become Unsettled.\n\n* `propagateReset` — Protocol 2 (PROPAGATE-RESET):\n  Epidemic-style reset propagation with resetcount synchronization\n  and delaytimer-based dormancy.\n\n* `rankDeltaOSSR` — Protocol 3 (OPTIMAL-SILENT-SSR):\n  Binary-tree ranking with collision detection and error monitoring.\n\n## Key property\n\n`rankDeltaOSSR_settled_distinct_ranks`: when both agents are Settled\nwith distinct ranks, the protocol is the identity (no state change).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concre':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:18:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:9:71: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:32:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concrete Ranking Subprotocol (OPTIMAL-SILENT-SSR)\n\nThis file defines the concrete `rankDeltaOSSR` implementing Protocol 3\nfrom Burman, Chen, Chen, Doty, Nowak, Severson, Xu (PODC 2021):\n\"Time-Optimal Self-Stabilizing Leader Election in Population Protocols\".\n\n## Components\n\n* `resetOSSR` — Protocol 4 (RESET subroutine for OPTIMAL-SILENT-SSR):\n  Leaders become Settled at rank 1; followers become Unsettled.\n\n* `propagateReset` — Protocol 2 (PROPAGATE-RESET):\n  Epidemic-style reset propagation with resetcount synchronization\n  and delaytimer-based dormancy.\n\n* `rankDeltaOSSR` — Protocol 3 (OPTIMAL-SILENT-SSR):\n  Binary-tree ranking with collision detection and error monitoring.\n\n## Key property\n\n`rankDeltaOSSR_settled_distinct_ranks`: when both agents are Settled\nwith distinct ranks, the protocol is the identity (no state change).':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:4:0: * '\n# Concre':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:14:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:18:1: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:9:71: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:32:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Protocol 4: RESET for OPTIMAL-SILENT-SSR -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Protocol/RankDelta.lean:323:5: unused variable `hne`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Protocol.RankDelta:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Protocol.State transitive imports (legacy)",
+         "e5ccaf785cc122bd"],
+        ["SSExactMajority.Protocol.State:importAllArts", "03ff748b44a2cbd4"],
+        ["SSExactMajority.Convergence.Silent transitive imports (legacy)",
+         "ca094a73bfbbc9af"],
+        ["SSExactMajority.Convergence.Silent:importAllArts",
+         "6e6903b431f85fcf"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Protocol/RankDelta.lean",
+   "71bed044694cc9d1"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Protocol.RankDelta", "c59045dd2422712f"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "791675f79b2a58f7"}

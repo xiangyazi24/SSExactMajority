@@ -1,0 +1,354 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["4645bb3d49c7b8d3.olean"],
+  "m": false,
+  "i": "8c0f83e25c37613d.ilean",
+  "c": "c2a2f503be5e6b8a.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/DecisionReach.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/DecisionReach.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/DecisionReach.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/DecisionReach.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/DecisionReach.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Number of agents whose `.answer` disagrees with the global majority. -/\ndef wrongAnswerCount (C : Config (AgentState n) Opinion n) : ℕ :=\n  (Finset.univ.filter (fun v : Fin n => (C v).1.answer ≠ majorityAnswer C)).card`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `theorem mem_wrongAnswerSet {C : Config (AgentState n) Opinion n} {v : Fin n} :\n    v ∈ Finset.univ.filter (fun v : Fin n => (C v).1.answer ≠ majorityAnswer C) ↔ (C v).1.answer ≠ majorityAnswer C :=\n  by\n  rw [Finset.mem_filter]\n  exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ _, h⟩⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Wrong-answer count is zero iff every agent's answer matches the majority. -/\ntheorem wrongAnswerCount_eq_zero_iff (C : Config (AgentState n) Opinion n) :\n    wrongAnswerCount C = 0 ↔ ∀ v, (C v).1.answer = majorityAnswer C :=\n  by\n  unfold wrongAnswerCount\n  rw [Finset.card_eq_zero]\n  constructor\n  · intro h v\n    by_contra hne\n    have hmem : v ∈ Finset.univ.filter (fun v => (C v).1.answer ≠ majorityAnswer C) := mem_wrongAnswerSet.mpr hne\n    rw [h] at hmem\n    exact (Finset.notMem_empty _ hmem).elim\n  · intro h\n    apply Finset.ext\n    intro v\n    constructor\n    · intro hmem\n      exact absurd (h v) (mem_wrongAnswerSet.mp hmem)\n    · intro hmem\n      exact (Finset.notMem_empty _ hmem).elim`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/--\nAn `InSswap` configuration with all answers correct is a consensus config. -/\ntheorem isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero {C : Config (AgentState n) Opinion n} (hC : InSswap C)\n    (h0 : wrongAnswerCount C = 0) : IsConsensusConfig C\n    where\n  allSettled := hC.allSettled\n  ranks_inj := hC.ranks_inj\n  input_rank := hC.input_rank\n  allAnswerCorrect := (wrongAnswerCount_eq_zero_iff C).mp h0`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Decision-phase reachability follows from a single-step decreasing-potential\nhypothesis.  Used to instantiate `hDecisionPhase` in `Composition.lean`. -/\ntheorem decision_reaches_consensus_of_singleStep [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (hStep :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSswap C →\n          0 < wrongAnswerCount C →\n            ∃ u v : Fin n,\n              InSswap (C.step (protocolPEM n trank Rmax rankDelta) u v) ∧\n                wrongAnswerCount (C.step (protocolPEM n trank Rmax rankDelta) u v) < wrongAnswerCount C) :\n    ∀ C : Config (AgentState n) Opinion n,\n      InSswap C →\n        ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  by\n  intro C hC\n  obtain ⟨γ, t, hC_t, h0_t⟩ :=\n    reach_zero_potential (P := protocolPEM n trank Rmax rankDelta) (Pinv := InSswap) (φ := wrongAnswerCount) hStep C hC\n  exact ⟨γ, t, isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hC_t h0_t⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Decision-phase reachability via the **macro-step** variant. -/\ntheorem decision_reaches_consensus_of_macroStep [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (hMacro :\n      ∀ C : Config (AgentState n) Opinion n,\n        InSswap C →\n          0 < wrongAnswerCount C →\n            ∃ (γ : DetScheduler n) (k : ℕ),\n              InSswap (execution (protocolPEM n trank Rmax rankDelta) C γ k) ∧\n                wrongAnswerCount (execution (protocolPEM n trank Rmax rankDelta) C γ k) < wrongAnswerCount C) :\n    ∀ C : Config (AgentState n) Opinion n,\n      InSswap C →\n        ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  by\n  intro C hC\n  obtain ⟨γ, t, hC_t, h0_t⟩ :=\n    reach_zero_potential_macro (P := protocolPEM n trank Rmax rankDelta) (Pinv := InSswap) (φ := wrongAnswerCount)\n      hMacro C hC\n  exact ⟨γ, t, isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hC_t h0_t⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Trivial decision phase reachability when `Sout` already holds: every\n`Sswap ∩ Sout = Stim = IsConsensusConfig` configuration is its own\nwitness with `t = 0`. -/\ntheorem decision_reaches_consensus_when_Sout [Inhabited (Fin n × Fin n)] {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} {C : Config (AgentState n) Opinion n}\n    (hC : InSswap C) (hOut : InSout C) :\n    ∃ (γ : DetScheduler n) (t : ℕ), IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t) :=\n  by\n  refine ⟨fun _ => default, 0, ?_⟩\n  refine { allSettled := hC.allSettled, ranks_inj := hC.ranks_inj, input_rank := hC.input_rank, allAnswerCorrect := ?_ }\n  exact hOut`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decision-Phase Reachability via Single-Step Reduction\n\n`hDecisionPhase` reduced to a single local hypothesis using the\n\"wrong answer count\" potential — the number of agents whose `.answer`\nfield disagrees with the global majority.\n\nWhen the count is zero (all answers correct), an `InSswap`\nconfiguration is precisely an `IsConsensusConfig` (since `Stim = Sswap ∩ Sout`).\n\nThe local single-step hypothesis requires showing that from any\n`InSswap` configuration with at least one wrong answer there exists an\ninteraction `(u, v)` that preserves `InSswap` (or, more generally,returns to it after a finite number of steps via a reset cycle) while\ndecreasing the wrong-answer count.  The paper's Lemma 11 provides the\nprobabilistic version of this; the deterministic discharge requires\ncareful timer/reset management.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:4:0: * '\n# Decisi':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:18:33: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:8:61: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Median's input matches the majority side (even n with strict majority) -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:152:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:196:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:298:29: This simp argument is unused:\n  h_no_swap\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpa̵r̵a̲r̲, h_no_swap,̵ ̵h̵_̵n̵o̵_̵s̵w̵a̵p̵', h_xv_BA,\n  ̵  ̵ ̵ ̵h_inputs_agree,\n  ̲  ̲ ̲ ̲hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:298:40: This simp argument is unused:\n  h_no_swap'\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_n̵o̵_̵s̵w̵a̵p̵'̵,̵ ̵h̵_̵xv_BA,\n  ̵  ̵ ̵ ̵h_inputs_agree,\n  ̲  ̲ ̲ ̲hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:4: This simp argument is unused:\n  hu_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu̵_̵m̵e̵d̵,̵ ̵h̵v_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:12: This simp argument is unused:\n  hv_upper\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv̵_̵u̵p̵p̵e̵r̵,̵ ̵h̵N1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:300:37: This simp argument is unused:\n  hu_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu̵_̵m̵e̵d̵_̵c̵e̵i̵l̵,̵\n  ̵ ̵ ̵ ̵ ̵h̵v_no_med_ceil, hv_no_max, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:301:4: This simp argument is unused:\n  hv_no_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_me̵d̵_̵c̵e̵i̵l̵,̵ ̵h̵v̵_̵n̵o̵_̵m̵ax, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:301:20: This simp argument is unused:\n  hv_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hpar, h_no_swap, h_no_swap', h_xv_BA,\n      h_inputs_agree, hd1,\n  ̵  ̵ ̵ ̵hu_med, hv_upper, hN1, hN2, hN3, hu_med_ceil,\n  ̵  ̵ ̵ ̵hv_no_med_ceil, hv̵_̵n̵o̵_̵m̵a̵x̵,̵ ̵h̵ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:247:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:293:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:324:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:332:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:17: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:17: Try this:\n  [apply] simp only [↓reduceIte, AgentState.answer_with_answer]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:366:23: `exact h_correct` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:4: `simp [hvu]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:4: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:370:16: `exact h_correct` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:429:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:449:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:457:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:488:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:496:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:504:30: This simp argument is unused:\n  hvu\n\nHint: Omit it from the simp argument list.\n  simp [hwu,̵ ̵h̵v̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:462:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:573:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:605:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:643:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:700:28: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:653:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:691:17: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:691:17: Try this:\n  [apply] simp only [↓reduceIte, AgentState.answer_with_answer]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:692:4: `exact opinionToAnswer_median_eq_majorityAnswer_odd hC hμ_med hpar` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:723:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:690:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:696:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:733:2: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:773:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:783:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:793:30: This simp argument is unused:\n  hvμ\n\nHint: Omit it from the simp argument list.\n  simp [hwμ,̵ ̵h̵v̵μ̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/DecisionReach.lean:738:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.DecisionReach:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.PotentialReach transitive imports (legacy)",
+         "3246214c89dffae4"],
+        ["SSExactMajority.Convergence.PotentialReach:importAllArts",
+         "94474cff360dbb8d"],
+        ["SSExactMajority.Convergence.SwapPhase transitive imports (legacy)",
+         "60cca1094f2652e1"],
+        ["SSExactMajority.Convergence.SwapPhase:importAllArts",
+         "32bb05d1567f62d8"],
+        ["SSExactMajority.Convergence.RankPreservation transitive imports (legacy)",
+         "2ce83e7377be2a6e"],
+        ["SSExactMajority.Convergence.RankPreservation:importAllArts",
+         "1a31d9e930521f09"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/DecisionReach.lean",
+   "0d14f51095ebdf06"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.DecisionReach",
+   "597a30ce7c0b210c"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "fa9cc842905ffcbf"}

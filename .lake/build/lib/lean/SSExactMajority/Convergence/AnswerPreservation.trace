@@ -1,0 +1,205 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["fd8d3dcf2b7b94cc.olean"],
+  "m": false,
+  "i": "b851d0692f34c947.ilean",
+  "c": "92cb9b2ce7d8c1cf.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/AnswerPreservation.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/AnswerPreservation.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/AnswerPreservation.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/AnswerPreservation.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/AnswerPreservation.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer-Field Preservation through `transitionPEM`\n\nPair-level invariant: applied to any pair of agent states drawn from a\nconsensus configuration, `transitionPEM` returns a result whose\n`.answer` field equals the input's `.answer` field.\n\nThe proof is a careful case analysis over the four phases of\nAlgorithm 1.  Each phase is collapsed by:\n\n  * `RankDeltaSettledFix` — Phase 1 ranking is identity on Settled.\n  * `Settled ≠ Resetting` — Phase 2 lines 3–6, Phase 3 epidemic.\n  * `swap_does_not_fire` — Phase 4 swap precondition is false at\n    consensus (sorted-rank arithmetic).\n  * Decision-match lemmas — Phase 4 decision sets `.answer` to a value\n    that already equals `majorityAnswer C`.\n  * Equal-answer trigger — Phase 4 propagation reset trigger\n    `b₀.answer ≠ b₁.answer` is false because all answers equal\n    `majorityAnswer C`; only `timer` mutates.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:12:12: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:9:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer-Field Preservation through `transitionPEM`\n\nPair-level invariant: applied to any pair of agent states drawn from a\nconsensus configuration, `transitionPEM` returns a result whose\n`.answer` field equals the input's `.answer` field.\n\nThe proof is a careful case analysis over the four phases of\nAlgorithm 1.  Each phase is collapsed by:\n\n  * `RankDeltaSettledFix` — Phase 1 ranking is identity on Settled.\n  * `Settled ≠ Resetting` — Phase 2 lines 3–6, Phase 3 epidemic.\n  * `swap_does_not_fire` — Phase 4 swap precondition is false at\n    consensus (sorted-rank arithmetic).\n  * Decision-match lemmas — Phase 4 decision sets `.answer` to a value\n    that already equals `majorityAnswer C`.\n  * Equal-answer trigger — Phase 4 propagation reset trigger\n    `b₀.answer ≠ b₁.answer` is false because all answers equal\n    `majorityAnswer C`; only `timer` mutates.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:12:12: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:9:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer-Field Preservation through `transitionPEM`\n\nPair-level invariant: applied to any pair of agent states drawn from a\nconsensus configuration, `transitionPEM` returns a result whose\n`.answer` field equals the input's `.answer` field.\n\nThe proof is a careful case analysis over the four phases of\nAlgorithm 1.  Each phase is collapsed by:\n\n  * `RankDeltaSettledFix` — Phase 1 ranking is identity on Settled.\n  * `Settled ≠ Resetting` — Phase 2 lines 3–6, Phase 3 epidemic.\n  * `swap_does_not_fire` — Phase 4 swap precondition is false at\n    consensus (sorted-rank arithmetic).\n  * Decision-match lemmas — Phase 4 decision sets `.answer` to a value\n    that already equals `majorityAnswer C`.\n  * Equal-answer trigger — Phase 4 propagation reset trigger\n    `b₀.answer ≠ b₁.answer` is false because all answers equal\n    `majorityAnswer C`; only `timer` mutates.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:4:0: * '\n# Answer':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:12:12: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:9:1: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:27:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### A pair invariant lifted from a consensus configuration -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:276:4: This simp argument is unused:\n  true_and\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hs0, hs1, hswap, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false,\n  ̲  ̲ ̲ ̲not_false_eq_true,\n  ̵  ̵ ̵ ̵false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵t̵r̵u̵e̵_̵and,̵ ̵a̵n̵d̵_self, if_true]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:252:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:34: 'exact ha0' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:46: 'exact ha1' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:58: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:38: 'exact ha0' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:50: 'exact ha1' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:62: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:36: 'exact ha0' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:48: 'exact ha1' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:60: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:40: 'exact ha0' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:52: 'exact ha1' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:64: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:323:43: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:334:45: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:338:44: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:344:44: 'rfl' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:351:12: '(split_ifs <;> refine ⟨?_, ?_⟩ <;>\n    (first\n      | exact ha0\n      | exact ha1\n      | rfl))' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:270:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:34: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:46: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:292:58: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:38: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:50: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:299:62: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:36: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:48: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:311:60: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:40: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:52: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:317:64: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:323:43: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:334:45: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:338:44: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:344:44: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/AnswerPreservation.lean:351:12: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.AnswerPreservation:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.Silent transitive imports (legacy)",
+         "ca094a73bfbbc9af"],
+        ["SSExactMajority.Convergence.Silent:importAllArts",
+         "6e6903b431f85fcf"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/AnswerPreservation.lean",
+   "6d8c1fef09fbb311"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.AnswerPreservation",
+   "23a100fe474fff27"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "407547fff19870b8"}

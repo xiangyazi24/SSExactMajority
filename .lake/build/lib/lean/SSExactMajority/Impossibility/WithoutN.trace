@@ -1,0 +1,228 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["09a1528d681bb2b9.olean"],
+  "m": false,
+  "i": "73960b486b432ca0.ilean",
+  "c": "fe399688b3f0f6ef.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Impossibility/WithoutN.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Impossibility/WithoutN.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Impossibility/WithoutN.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Impossibility/WithoutN.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Impossibility/WithoutN.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {Q : Type*} [DecidableEq Q] [Inhabited Q]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private def embed25 : Fin 2 → Fin 5\n  | ⟨0, _⟩ => ⟨3, by omega⟩\n  | ⟨1, _⟩ => ⟨4, by omega⟩`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private theorem embed25_injective : Function.Injective embed25 := by\n  intro a b h; fin_cases a <;> fin_cases b <;> simp_all [embed25]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private def liftSched (γ' : DetScheduler 2) : DetScheduler 5 := fun t =>\n  (embed25 (γ' t).1, embed25 (γ' t).2)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private def C₀_5 : Config Q Opinion 5 := fun v =>\n  if v.val < 3 then (default, .A) else (default, .B)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:34:8: automatically included section variable(s) unused in theorem `_private.SSExactMajority.Impossibility.WithoutN.0.SSEM.safe5_gives_allA`:\n  [DecidableEq Q]\n  [Inhabited Q]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [DecidableEq Q] [Inhabited Q] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private theorem safe5_gives_allA (P : Protocol Q Opinion Output)\n    (C : Config Q Opinion 5) (hInput : ∀ v : Fin 5, C.inputOf v = if v.val < 3 then Opinion.A else Opinion.B)\n    (hSafe : ExactMajoritySafe' P C Opinion.A Opinion.B Output.A Output.B Output.T) : C.allOutput P .A :=\n  by\n  unfold ExactMajoritySafe' at hSafe\n  have hA : C.agentsWithInput .A = {⟨0, by omega⟩, ⟨1, by omega⟩, ⟨2, by omega⟩} :=\n    by\n    ext v;\n    simp only [Config.agentsWithInput, Finset.mem_filter, Finset.mem_univ, true_and, Config.inputOf, Finset.mem_insert,\n      Finset.mem_singleton]\n    have hv := hInput v; simp only [Config.inputOf] at hv\n    constructor\n    · intro h; rw [hv] at h; split at h\n      · fin_cases v <;> simp_all\n      · exact absurd h (by decide)\n    · intro h; rw [hv]; rcases h with h | h | h <;> subst h <;> simp\n  have hB : C.agentsWithInput .B = {⟨3, by omega⟩, ⟨4, by omega⟩} :=\n    by\n    ext v;\n    simp only [Config.agentsWithInput, Finset.mem_filter, Finset.mem_univ, true_and, Config.inputOf, Finset.mem_insert,\n      Finset.mem_singleton]\n    have hv := hInput v; simp only [Config.inputOf] at hv\n    constructor\n    · intro h; rw [hv] at h; split at h\n      · exact absurd h (by decide)\n      · fin_cases v <;> simp_all\n    · intro h; rw [hv]; rcases h with h | h <;> subst h <;> simp\n  simp only [hA, hB] at hSafe; norm_num at hSafe; exact hSafe`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:34:0: `safe5_gives_allA` does not use the following hypothesis in its type:\n  • [DecidableEq Q] (#2)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:60:8: automatically included section variable(s) unused in theorem `_private.SSExactMajority.Impossibility.WithoutN.0.SSEM.safe2_gives_allB`:\n  [DecidableEq Q]\n  [Inhabited Q]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [DecidableEq Q] [Inhabited Q] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private theorem safe2_gives_allB (P : Protocol Q Opinion Output)\n    (C : Config Q Opinion 2) (hInput : ∀ v : Fin 2, C.inputOf v = .B)\n    (hSafe : ExactMajoritySafe' P C Opinion.A Opinion.B Output.A Output.B Output.T) : C.allOutput P .B :=\n  by\n  unfold ExactMajoritySafe' at hSafe\n  have hA : C.agentsWithInput Opinion.A = ∅ := by\n    ext v; constructor\n    · intro h\n      simp only [Config.agentsWithInput, Finset.mem_filter, Finset.mem_univ, true_and, Config.inputOf] at h\n      have hv := hInput v; simp only [Config.inputOf] at hv\n      rw [hv] at h; exact absurd h (by decide)\n    · intro h; exact absurd h (by simp)\n  have hB : C.agentsWithInput Opinion.B = Finset.univ := by\n    ext v; simp only [Config.agentsWithInput, Finset.mem_filter, Finset.mem_univ, true_and, Config.inputOf, iff_true]\n    have hv := hInput v; simp only [Config.inputOf] at hv\n    exact hv\n  simp only [hA, hB, Finset.card_empty, Finset.card_univ, Fintype.card_fin] at hSafe\n  norm_num at hSafe; exact hSafe`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:60:0: `safe2_gives_allB` does not use the following hypothesis in its type:\n  • [DecidableEq Q] (#2)\n\nConsider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).\n\nNote: This linter can be disabled with `set_option linter.unusedDecidableInType false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `theorem impossibility_without_n (P : Protocol Q Opinion Output) :\n    ¬(∀ n, n ≥ 2 → SolvesSSEM P n) := by\n  intro hAll\n  obtain ⟨γ₅, t₅, hOS₅, hSafe₅⟩ := hAll 5 (by omega) (C₀_5 (Q := Q))\n  set Ct := execution P C₀_5 γ₅ t₅\n  have hCtInput : ∀ v : Fin 5, Ct.inputOf v = if v.val < 3 then Opinion.A else Opinion.B :=\n    by\n    intro v; simp only [Config.inputOf]; rw [execution_input_preserved]\n    simp only [C₀_5]; split <;> rfl\n  have hAllA := safe5_gives_allA P Ct hCtInput hSafe₅\n  set C₀' : Config Q Opinion 2 := fun v => Ct (embed25 v)\n  have hC₀'B : ∀ v : Fin 2, C₀'.inputOf v = .B := by\n    intro v; simp only [Config.inputOf, C₀']\n    have := hCtInput (embed25 v)\n    simp only [Config.inputOf] at this\n    fin_cases v <;>\n      simp_all [embed25]\n        -- Apply SolvesSSEM P 2\n        \n  obtain ⟨γ₂, t₂, _, hSafe₂⟩ := hAll 2 (by omega) C₀'\n  set Ct' := execution P C₀' γ₂ t₂\n  have hCt'B : ∀ v : Fin 2, Ct'.inputOf v = .B := by intro v; simp only [Config.inputOf, Ct'];\n    rw [execution_input_preserved]; exact hC₀'B v\n  have hAllB := safe2_gives_allB P Ct' hCt'B hSafe₂\n  have hMatch := execution_embed P embed25 embed25_injective C₀' Ct (fun i => rfl) γ₂ (liftSched γ₂) (fun t => rfl)\n  have hOutEq : Ct'.outputOf P ⟨0, by omega⟩ = (execution P Ct (liftSched γ₂) t₂).outputOf P (embed25 ⟨0, by omega⟩) :=\n    by simp only [Config.outputOf, Ct']; rw [hMatch]\n  have hStable := hOS₅ (liftSched γ₂) t₂ (embed25 ⟨0, by omega⟩)\n  have : Output.B = Output.A :=\n    calc\n      Output.B = Ct'.outputOf P ⟨0, by omega⟩ := (hAllB ⟨0, by omega⟩).symm\n      _ = (execution P Ct (liftSched γ₂) t₂).outputOf P (embed25 ⟨0, by omega⟩) := hOutEq\n      _ = Ct.outputOf P (embed25 ⟨0, by omega⟩) := hStable.symm\n      _ = Output.A := hAllA _\n  exact absurd this (by decide)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theorem 1: Impossibility Without Knowledge of n\n\nNo protocol can solve the self-stabilizing exact majority problem\nwithout knowledge of n.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:4:0: * '\n# Theore':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:8:22: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Impossibility/WithoutN.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Impossibility.WithoutN:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.ExactMajority transitive imports (legacy)",
+         "ebdcdb1dff5bf6c5"],
+        ["SSExactMajority.Defs.ExactMajority:importAllArts",
+         "5d796a4c5a82f832"],
+        ["SSExactMajority.Embed transitive imports (legacy)",
+         "7d82ede7dca3221f"],
+        ["SSExactMajority.Embed:importAllArts", "6fa64c51ad35c941"],
+        ["Mathlib.Tactic.FinCases transitive imports (legacy)",
+         "5211e576a394a1a8"],
+        ["Mathlib.Tactic.FinCases:importAllArts", "d3b66a136fd34123"],
+        ["Mathlib.Tactic.NormNum transitive imports (legacy)",
+         "dec7276cf045ce72"],
+        ["Mathlib.Tactic.NormNum:importAllArts", "78697e92efacf92d"],
+        ["Mathlib.Data.Fintype.Card transitive imports (legacy)",
+         "cc7ed9d55362a60b"],
+        ["Mathlib.Data.Fintype.Card:importAllArts", "eb322543cf4e4361"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Impossibility/WithoutN.lean",
+   "c6710c904ceeffc9"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Impossibility.WithoutN", "bfa0958f1b749483"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "0a84ae063bdef7b9"}

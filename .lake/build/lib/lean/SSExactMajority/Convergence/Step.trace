@@ -1,0 +1,439 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["39c7fc7a3ef09a89.olean"],
+  "m": false,
+  "i": "6fdb139a8c58cc09.ilean",
+  "c": "7eaceb380c202f8b.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Step.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Step.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Step.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Step.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Step.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Step preserves the input field. -/\ntheorem step_input_preserved {Q X Y : Type*} (P : Protocol Q X Y) (C : Config Q X n) (u v w : Fin n) :\n    ((C.step P u v) w).2 = (C w).2 := by\n  unfold Config.step\n  by_cases huv : u = v\n  · simp [huv]\n  · simp only [if_neg huv]\n    by_cases hwu : w = u\n    · subst hwu; simp\n    · by_cases hwv : w = v\n      · subst hwv; simp [hwu]\n      · simp [hwu, hwv]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- Project: `.role` of the new state at agent `w`. -/\nprivate theorem step_role_eq {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (C : Config (AgentState n) Opinion n) (u v w : Fin n)\n    (h1 : (transitionPEM n trank Rmax rankDelta (C u, C v)).1.role = (C u).1.role)\n    (h2 : (transitionPEM n trank Rmax rankDelta (C u, C v)).2.role = (C v).1.role) :\n    ((C.step (protocolPEM n trank Rmax rankDelta) u v) w).1.role = (C w).1.role :=\n  by\n  unfold Config.step\n  by_cases huv : u = v\n  · simp [huv]\n  · simp only [if_neg huv]\n    by_cases hwu : w = u\n    · subst hwu; simp [protocolPEM]; exact h1\n    · by_cases hwv : w = v\n      · subst hwv; simp [hwu, protocolPEM]; exact h2\n      · simp [hwu, hwv]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:17: `simp [protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:47:37: `exact h1` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:19: `simp [hwu, protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:49:44: `exact h2` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private theorem step_rank_eq {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (C : Config (AgentState n) Opinion n)\n    (u v w : Fin n) (h1 : (transitionPEM n trank Rmax rankDelta (C u, C v)).1.rank = (C u).1.rank)\n    (h2 : (transitionPEM n trank Rmax rankDelta (C u, C v)).2.rank = (C v).1.rank) :\n    ((C.step (protocolPEM n trank Rmax rankDelta) u v) w).1.rank = (C w).1.rank :=\n  by\n  unfold Config.step\n  by_cases huv : u = v\n  · simp [huv]\n  · simp only [if_neg huv]\n    by_cases hwu : w = u\n    · subst hwu; simp [protocolPEM]; exact h1\n    · by_cases hwv : w = v\n      · subst hwv; simp [hwu, protocolPEM]; exact h2\n      · simp [hwu, hwv]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:17: `simp [protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:63:37: `exact h1` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:19: `simp [hwu, protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:65:44: `exact h2` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `private theorem step_answer_eq {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (C : Config (AgentState n) Opinion n)\n    (u v w : Fin n) (h1 : (transitionPEM n trank Rmax rankDelta (C u, C v)).1.answer = (C u).1.answer)\n    (h2 : (transitionPEM n trank Rmax rankDelta (C u, C v)).2.answer = (C v).1.answer) :\n    ((C.step (protocolPEM n trank Rmax rankDelta) u v) w).1.answer = (C w).1.answer :=\n  by\n  unfold Config.step\n  by_cases huv : u = v\n  · simp [huv]\n  · simp only [if_neg huv]\n    by_cases hwu : w = u\n    · subst hwu; simp [protocolPEM]; exact h1\n    · by_cases hwv : w = v\n      · subst hwv; simp [hwu, protocolPEM]; exact h2\n      · simp [hwu, hwv]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:17: `simp [protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:17: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:79:37: `exact h1` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:19: `simp [hwu, protocolPEM]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:19: Try this:\n  [apply] simp only [↓reduceIte]",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:81:44: `exact h2` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The set `agentsWithInput x` is invariant under `Config.step`. -/\ntheorem agentsWithInput_step_eq [DecidableEq X] {Q Y : Type*} (P : Protocol Q X Y) (C : Config Q X n) (u v : Fin n)\n    (x : X) : (C.step P u v).agentsWithInput x = C.agentsWithInput x :=\n  by\n  unfold Config.agentsWithInput\n  ext w\n  simp only [Finset.mem_filter, Finset.mem_univ, true_and]\n  rw [show (C.step P u v).inputOf w = C.inputOf w from step_input_preserved P C u v w]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `nAOf` is invariant under `Config.step`. -/\ntheorem nAOf_step_eq {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (C : Config (AgentState n) Opinion n) (u v : Fin n) :\n    nAOf (C.step (protocolPEM n trank Rmax rankDelta) u v) = nAOf C :=\n  by\n  unfold nAOf\n  exact congrArg Finset.card (agentsWithInput_step_eq _ C u v Opinion.A)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `theorem nBOf_step_eq {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (C : Config (AgentState n) Opinion n)\n    (u v : Fin n) : nBOf (C.step (protocolPEM n trank Rmax rankDelta) u v) = nBOf C :=\n  by\n  unfold nBOf\n  exact congrArg Finset.card (agentsWithInput_step_eq _ C u v Opinion.B)`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `nAOf` is invariant along an `execution` (inputs are immutable). -/\ntheorem nAOf_execution_eq {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (C : Config (AgentState n) Opinion n) (γ : DetScheduler n) (t : ℕ) :\n    nAOf (execution (protocolPEM n trank Rmax rankDelta) C γ t) = nAOf C := by\n  induction t with\n  | zero => rfl\n  | succ t\n    ih =>\n    show\n      nAOf\n          ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step (protocolPEM n trank Rmax rankDelta) (γ t).1\n            (γ t).2) =\n        _\n    rw [nAOf_step_eq]; exact ih`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:116:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `nBOf` is invariant along an `execution` (inputs are immutable). -/\ntheorem nBOf_execution_eq {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (C : Config (AgentState n) Opinion n) (γ : DetScheduler n) (t : ℕ) :\n    nBOf (execution (protocolPEM n trank Rmax rankDelta) C γ t) = nBOf C := by\n  induction t with\n  | zero => rfl\n  | succ t\n    ih =>\n    show\n      nBOf\n          ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step (protocolPEM n trank Rmax rankDelta) (γ t).1\n            (γ t).2) =\n        _\n    rw [nBOf_step_eq]; exact ih`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:128:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `majorityAnswer` is invariant under `Config.step`. -/\ntheorem majorityAnswer_step_eq {trank Rmax : ℕ} {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}\n    (C : Config (AgentState n) Opinion n) (u v : Fin n) :\n    majorityAnswer (C.step (protocolPEM n trank Rmax rankDelta) u v) = majorityAnswer C :=\n  by\n  unfold majorityAnswer\n  rw [nAOf_step_eq, nBOf_step_eq]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:147:39: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [Config.step,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `Config.step` preserves `IsConsensusConfig`. -/\ntheorem step_preserves_consensus {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {C : Config (AgentState n) Opinion n} (hC : IsConsensusConfig C) (u v : Fin n) :\n    IsConsensusConfig (C.step (protocolPEM n trank Rmax rankDelta) u v) :=\n  by\n  by_cases huv : u = v\n  · subst huv; simp only [Config.step, if_pos rfl]; exact hC\n  · -- u ≠ v → ranks differ (from InSrank bijection)\n    \n    have hne : (C u).1.rank ≠ (C v).1.rank := fun h => huv (hC.ranks_inj h)\n    set C' := C.step (protocolPEM n trank Rmax rankDelta) u v\n    have hpair := consensus_pair_of_config hC u v\n    have hAns := transitionPEM_consensus_pair_answer (trank := trank) (Rmax := Rmax) hRank hpair hne\n    have hRR := transitionPEM_consensus_pair_role_rank (trank := trank) (Rmax := Rmax) hRank hpair hne\n    have role_at (w : Fin n) : (C' w).1.role = (C w).1.role := step_role_eq C u v w hRR.1 hRR.2.1\n    have rank_at (w : Fin n) : (C' w).1.rank = (C w).1.rank := step_rank_eq C u v w hRR.2.2.1 hRR.2.2.2\n    have answer_at (w : Fin n) : (C' w).1.answer = (C w).1.answer := step_answer_eq C u v w hAns.1 hAns.2\n    have input_at (w : Fin n) : (C' w).2 = (C w).2 := step_input_preserved _ C u v w\n    refine ⟨?_, ?_, ?_, ?_⟩\n    · intro w; rw [role_at w]; exact hC.allSettled w\n    · intro w₁ w₂ hw\n      apply hC.ranks_inj\n      show (C w₁).1.rank = (C w₂).1.rank\n      have h1 := rank_at w₁\n      have h2 := rank_at w₂\n      have hw' : (C' w₁).1.rank = (C' w₂).1.rank := hw\n      exact h1.symm.trans (hw'.trans h2)\n    · intro w\n      rw [input_at w, rank_at w, show nAOf C' = nAOf C from nAOf_step_eq C u v]\n      exact hC.input_rank w\n    · intro w\n      rw [answer_at w, majorityAnswer_step_eq]\n      exact hC.allAnswerCorrect w`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:168:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `execution` preserves `IsConsensusConfig` for any number of steps. -/\ntheorem execution_preserves_consensus {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {C : Config (AgentState n) Opinion n} (hC : IsConsensusConfig C) (γ : DetScheduler n) (t : ℕ) :\n    IsConsensusConfig (execution (protocolPEM n trank Rmax rankDelta) C γ t) := by\n  induction t with\n  | zero => exact hC\n  | succ t\n    ih =>\n    show\n      IsConsensusConfig\n        ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step (protocolPEM n trank Rmax rankDelta) (γ t).1\n          (γ t).2)\n    exact step_preserves_consensus hRank ih (γ t).1 (γ t).2`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:192:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- `majorityAnswer` is invariant under `execution`. -/\ntheorem majorityAnswer_execution_eq {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (C : Config (AgentState n) Opinion n)\n    (γ : DetScheduler n) (t : ℕ) :\n    majorityAnswer (execution (protocolPEM n trank Rmax rankDelta) C γ t) = majorityAnswer C := by\n  induction t with\n  | zero => rfl\n  | succ t\n    ih =>\n    show\n      majorityAnswer\n          ((execution (protocolPEM n trank Rmax rankDelta) C γ t).step (protocolPEM n trank Rmax rankDelta) (γ t).1\n            (γ t).2) =\n        _\n    rw [majorityAnswer_step_eq]; exact ih`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:204:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A consensus configuration is output-stable: outputs never change. -/\ntheorem IsConsensusConfig.isOutputStable {trank Rmax : ℕ}\n    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n} (hRank : RankDeltaSettledFix rankDelta)\n    {C : Config (AgentState n) Opinion n} (hC : IsConsensusConfig C) :\n    C.isOutputStable (protocolPEM n trank Rmax rankDelta) :=\n  by\n  intro γ t w\n  have hC_t := execution_preserves_consensus (trank := trank) (Rmax := Rmax) hRank hC γ t\n  have hAll := hC.allOutput (trank := trank) (Rmax := Rmax) (rankDelta := rankDelta)\n  have hAll_t := hC_t.allOutput (trank := trank) (Rmax := Rmax) (rankDelta := rankDelta)\n  rw [hAll w, hAll_t w, majorityAnswer_execution_eq]`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step / Execution preserves `IsConsensusConfig`\n\nLifting the pair-level invariants to the configuration level:\n\n  * `step_preserves_consensus`: `Config.step` preserves `IsConsensusConfig`.\n  * `execution_preserves_consensus`: by induction on `t`.\n  * `consensus_isOutputStable`: outputs unchanged through any execution.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:4:0: * '\n# Step /':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:9:39: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/Step.lean:17:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.Step:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.AnswerPreservation transitive imports (legacy)",
+         "be0588565fc64090"],
+        ["SSExactMajority.Convergence.AnswerPreservation:importAllArts",
+         "f96a1b04e7a83bf8"],
+        ["SSExactMajority.Convergence.StatePreservation transitive imports (legacy)",
+         "3be373e585254af8"],
+        ["SSExactMajority.Convergence.StatePreservation:importAllArts",
+         "e117ebf49dce841f"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Step.lean",
+   "6a8ad90dab0de777"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.Step", "ae4bfcf3e21c1893"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "6bb6ba18ed51a48a"}

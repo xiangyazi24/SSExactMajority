@@ -1,0 +1,437 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["d50da1fde47e0de6.olean"],
+  "m": false,
+  "i": "86e879ca2be6ee9c.ilean",
+  "c": "5ef1cd278820a1bc.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/RankPreservation.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/RankPreservation.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/RankPreservation.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/RankPreservation.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/RankPreservation.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.rank_with_role (s : AgentState n) (r : Role) : ({ s with role := r }).rank = s.rank :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.rank_with_leader (s : AgentState n) (l : Leader) : ({ s with leader := l }).rank = s.rank :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.rank_with_resetcount (s : AgentState n) (rc : ℕ) : ({ s with resetcount := rc }).rank = s.rank :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.children_with_timer (s : AgentState n) (t : ℕ) : ({ s with timer := t }).children = s.children :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `@[simp]\ntheorem AgentState.delaytimer_with_timer (s : AgentState n) (t : ℕ) :\n    ({ s with timer := t }).delaytimer = s.delaytimer :=\n  rfl`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-Field Projection Helpers\n\nThe `.rank` field of an `AgentState` is never modified by any record\nupdate used in `transitionPEM`.  These helpers project `.rank` through\nsingle-field updates, available as building blocks for rank-preservation\nproofs.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:4:0: * '\n# Rank-F':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:8:31: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:7:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:16:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### Propagation rank preservation -/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:71:54: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:73:54: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:79:56: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:81:56: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:71:54: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:73:54: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:79:56: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:81:56: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:104:50: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:104:50: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:113:50: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:113:50: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:117:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 16000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:146:20: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:147:8: '(show ({ _ with answer := _, role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:148:8: '(show ({ _ with answer := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:149:8: '(show ({ _ with timer := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:150:8: '(show ({ _ with role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:151:8: '(show ({ _ with timer := _, role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:155:20: 'trivial' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:156:8: '(show ({ _ with answer := _, role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:157:8: '(show ({ _ with answer := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:158:8: '(show ({ _ with timer := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:159:8: '(show ({ _ with role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:160:8: '(show ({ _ with timer := _, role := _, leader := _, resetcount := _ }.rank) = _; rfl)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:134:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:146:20: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:147:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:148:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:149:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:150:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:151:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:155:20: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:156:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:157:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:158:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:159:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:160:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:298:29: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:306:43: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv, if_neg hvu,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:320:24: This simp argument is unused:\n  hwu\n\nHint: Omit it from the simp argument list.\n  simp [τ, hwv,̵ ̵h̵w̵u̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:333:31: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:339:50: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv, if_neg huv.symm,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:311:8: `simp [huv, hwu, hwv]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:312:8: `exact hC.allSettled w` uses `⊢`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:296:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:299:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:303:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:307:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:309:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:329:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:334:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:340:10: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:376:27: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:383:39: This simp argument is unused:\n  if_pos rfl\n\nHint: Omit it from the simp argument list.\n  simp only [if_neg huv, if_neg hvu,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:351:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:438:8: `simp [hp1u, hp2v] at h3val` is a flexible tactic modifying `h3val`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.\n\nNote: This linter can be disabled with `set_option linter.flexible false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:440:8: `exact h3val` uses `h3val`!",
+   "level": "info"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:374:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:377:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:380:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:384:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:388:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:393:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:427:4: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:432:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:436:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:439:8: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:571:36: This simp argument is unused:\n  hd1_fail\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hd1̵_̵f̵a̵i̵l̵,̵ ̵h̵d̵2, hxne,\n  ̵  ̵ ̵ ̵hb0_no_med_ceil,\n  ̲  ̲ ̲ ̲hb1_med_ceil, hb0_no_max, hBA, hAB,\n  ̵  ̵ ̵ ̵hN1, hN2, hN3, hN4, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:571:51: This simp argument is unused:\n  hxne\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hd1_fail, hd2, hx̵n̵e̵,̵\n  ̵ ̵ ̵ ̵ ̵h̵b0_no_med_ceil,\n  ̲  ̲ ̲ ̲hb1_med_ceil, hb0_no_max, hBA, hAB,\n  ̵  ̵ ̵ ̵hN1, hN2, hN3, hN4, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:572:4: This simp argument is unused:\n  hb0_no_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hd1_fail, hd2, hxne,\n      hb0̵_̵n̵o̵_̵m̵e̵d̵_̵c̵e̵i̵l̵,̵ ̵h̵b̵1_med_ceil, hb0_no_max, hBA, hAB,\n  ̵  ̵ ̵ ̵hN1, hN2, hN3, hN4, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:572:21: This simp argument is unused:\n  hb1_med_ceil\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hd1_fail, hd2, hxne,\n      hb0_no_med_ceil, hb1̵_̵m̵e̵d̵_̵c̵e̵i̵l̵,̵ ̵h̵b̵0_no_max, hBA, hAB,\n  ̵  ̵ ̵ ̵hN1, hN2, hN3, hN4, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:572:35: This simp argument is unused:\n  hb0_no_max\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hd1_fail, hd2, hxne,\n      hb0_no_med_ceil, hb1_med_ceil, hb̵0̵_̵n̵o̵_̵m̵a̵x̵,̵ ̵h̵BA, hAB,\n  ̵  ̵ ̵ ̵hN1, hN2, hN3, hN4, hceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:511:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:566:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:644:56: This simp argument is unused:\n  h_no_inner_A\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hb0_no_med, hu_med, h_̵n̵o̵_̵i̵n̵n̵e̵r̵_̵A̵,̵ ̵h̵v_no_max]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:612:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:639:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:651:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:700:36: This simp argument is unused:\n  hb0_no_med\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hb̵0̵_̵n̵o̵_̵m̵e̵d̵,̵ ̵h̵u_med, h_no_inner_A, hv_max,\n      hN_ne_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:700:56: This simp argument is unused:\n  h_no_inner_A\n\nHint: Omit it from the simp argument list.\n  simp only [hRD, hsu, hsv, ne_eq,\n  ̵  ̵ ̵ ̵role_settled_ne_resetting,\n  ̵  ̵ ̵ ̵not_true_eq_false, not_false_eq_true,\n      false_and, and_false, if_false,\n  ̵  ̵ ̵ ̵and_self, if_true, hswap, hpar, hb0_no_med, hu_med, h_̵n̵o̵_̵i̵n̵n̵e̵r̵_̵A̵,̵ ̵h̵v_max,\n      hN_ne_ceil]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:661:0: Please, add a comment explaining the need for modifying the maxHeartbeat limit, as in\nset_option maxHeartbeats 8000000 in\n-- reason for change\n...\n\nNote: This linter can be disabled with `set_option linter.style.maxHeartbeats false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/RankPreservation.lean:695:100: This line exceeds the 100 character limit, please shorten it!\n\nNote: This linter can be disabled with `set_option linter.style.longLine false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.RankPreservation:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.SwapPhase transitive imports (legacy)",
+         "60cca1094f2652e1"],
+        ["SSExactMajority.Convergence.SwapPhase:importAllArts",
+         "32bb05d1567f62d8"],
+        ["SSExactMajority.Convergence.SwapStep transitive imports (legacy)",
+         "38f6ee62841c933b"],
+        ["SSExactMajority.Convergence.SwapStep:importAllArts",
+         "42286705b02d2733"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/RankPreservation.lean",
+   "cb46430ef65969ed"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.RankPreservation",
+   "bb307a11ee588ace"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "f01eb4489ca2bd0c"}

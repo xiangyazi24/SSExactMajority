@@ -1,0 +1,127 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["a6ad034e053b86f6.olean"],
+  "m": false,
+  "i": "01a4061dc15530e6.ilean",
+  "c": "103803b524e9f145.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/MasterModuloBurman.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/MasterModuloBurman.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/MasterModuloBurman.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/MasterModuloBurman.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/MasterModuloBurman.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master Theorem 4 modulo Burman 2021\n\nThis file consolidates the complete formal proof of Theorem 4 of Kanaya\net al. (2025) into one statement, modulo a single Burman-2021 hypothesis\nthat bundles three external pieces:\n\n  1. Burman's ranking convergence (PODC 2021).\n  2. Reset-cycle return to `InSrank`.\n  3. Macro-step decision-phase progress when the median is already\n     correct but some non-median agent is wrong.\n\nThe first three components correspond to phases A, B, C of the\nmacro-step plan; the fourth component (decision-phase progress for the\nmedian-wrong case) is closed unconditionally in `DecisionReach.lean`\nand used by name here.\n\n## Master statements\n\n  * `P_EM_solves_SSEM_full_odd_modulo_burman`\n  * `P_EM_solves_SSEM_full_even_modulo_burman`\n  * `P_EM_solves_SSEM_full_modulo_burman`\n\nEach takes the bundled Burman hypothesis and the structural witnesses\n(four-way swap-step existence, median-wrong/median-pair decision-step\nexistence) and concludes `SolvesSSEM`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:27:40: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:8:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master Theorem 4 modulo Burman 2021\n\nThis file consolidates the complete formal proof of Theorem 4 of Kanaya\net al. (2025) into one statement, modulo a single Burman-2021 hypothesis\nthat bundles three external pieces:\n\n  1. Burman's ranking convergence (PODC 2021).\n  2. Reset-cycle return to `InSrank`.\n  3. Macro-step decision-phase progress when the median is already\n     correct but some non-median agent is wrong.\n\nThe first three components correspond to phases A, B, C of the\nmacro-step plan; the fourth component (decision-phase progress for the\nmedian-wrong case) is closed unconditionally in `DecisionReach.lean`\nand used by name here.\n\n## Master statements\n\n  * `P_EM_solves_SSEM_full_odd_modulo_burman`\n  * `P_EM_solves_SSEM_full_even_modulo_burman`\n  * `P_EM_solves_SSEM_full_modulo_burman`\n\nEach takes the bundled Burman hypothesis and the structural witnesses\n(four-way swap-step existence, median-wrong/median-pair decision-step\nexistence) and concludes `SolvesSSEM`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:27:40: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:8:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `variable {n : ℕ}`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master Theorem 4 modulo Burman 2021\n\nThis file consolidates the complete formal proof of Theorem 4 of Kanaya\net al. (2025) into one statement, modulo a single Burman-2021 hypothesis\nthat bundles three external pieces:\n\n  1. Burman's ranking convergence (PODC 2021).\n  2. Reset-cycle return to `InSrank`.\n  3. Macro-step decision-phase progress when the median is already\n     correct but some non-median agent is wrong.\n\nThe first three components correspond to phases A, B, C of the\nmacro-step plan; the fourth component (decision-phase progress for the\nmedian-wrong case) is closed unconditionally in `DecisionReach.lean`\nand used by name here.\n\n## Master statements\n\n  * `P_EM_solves_SSEM_full_odd_modulo_burman`\n  * `P_EM_solves_SSEM_full_even_modulo_burman`\n  * `P_EM_solves_SSEM_full_modulo_burman`\n\nEach takes the bundled Burman hypothesis and the structural witnesses\n(four-way swap-step existence, median-wrong/median-pair decision-step\nexistence) and concludes `SolvesSSEM`.':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:4:0: * '\n# Master':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:11:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:27:40: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:8:5: * '.':\nPlease, do not end the authors' line with a period.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:34:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-!### The bundled Burman + reset-cycle hypothesis\n\n`hBurmanMacro` says: from any `InSswap` configuration with some non-median\nagent's answer differing from the majority (and the median already\ncorrect), some multi-step trajectory exists that returns to `InSswap`\nwith strictly smaller `wrongAnswerCount`.\n\nThis is the residue of phases A, B, C of the macro-step plan: timer\ndescent, reset firing, epidemic propagation, and Burman re-settle all\ncombine to give this multi-step decrease.  Treating it as a single named\nhypothesis lets us close `Theorem 4` modulo precisely one external\nassumption tied to Burman 2021.\n-/\n`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:114:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:103:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:105:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:108:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:110:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:207:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:199:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Convergence/MasterModuloBurman.lean:203:6: The `show` tactic should only be used to indicate intermediate goal states for readability.\nHowever, this tactic invocation changed the goal. Please use `change` instead for these purposes.\n\nNote: This linter can be disabled with `set_option linter.style.show false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Convergence.MasterModuloBurman:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Convergence.DecisionReach transitive imports (legacy)",
+         "1463c75f76e1dc7f"],
+        ["SSExactMajority.Convergence.DecisionReach:importAllArts",
+         "93ef02ffdb81e180"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/MasterModuloBurman.lean",
+   "eb4015cd25cb48c4"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Convergence.MasterModuloBurman",
+   "2c76955e5654aa39"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "b334b430d972e54b"}

@@ -1,0 +1,129 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["e099030f0dcb0cbe.olean"],
+  "m": false,
+  "i": "0c033d767e47e877.ilean",
+  "c": "106f51bdba2a1016.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.30.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Defs/ExactMajority.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Defs/ExactMajority.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Defs/ExactMajority.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Defs/ExactMajority.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Defs/ExactMajority.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-Stabilizing Exact Majority — Problem Definition\n\nDefinition 1 from Kanaya et al. (2025):\nA protocol P = (Q, X, Y, δ, π_out) is a self-stabilizing exact majority protocol\nif X = {A, B}, Y = {A, B, T}, and for any initial configuration C₀:\n  1. For any safe C_safe reachable from C₀: ∀ v, π_out(C_safe(v)) = majority opinion\n  2. Any execution from C₀ reaches safe configurations with probability 1.\n\nThe exact majority opinion is:\n  - A  if |V_a| > |V_b|\n  - B  if |V_a| < |V_b|\n  - T  if |V_a| = |V_b|':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-S':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:9:29: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:21:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `namespace SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-Stabilizing Exact Majority — Problem Definition\n\nDefinition 1 from Kanaya et al. (2025):\nA protocol P = (Q, X, Y, δ, π_out) is a self-stabilizing exact majority protocol\nif X = {A, B}, Y = {A, B, T}, and for any initial configuration C₀:\n  1. For any safe C_safe reachable from C₀: ∀ v, π_out(C_safe(v)) = majority opinion\n  2. Any execution from C₀ reaches safe configurations with probability 1.\n\nThe exact majority opinion is:\n  - A  if |V_a| > |V_b|\n  - B  if |V_a| < |V_b|\n  - T  if |V_a| = |V_b|':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-S':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:9:29: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:21:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- The exact majority opinion given counts of A and B agents. -/\ndef majorityOpinion (countA countB : ℕ) : Output :=\n  if countA > countB then .A else if countA < countB then .B else .T`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-Stabilizing Exact Majority — Problem Definition\n\nDefinition 1 from Kanaya et al. (2025):\nA protocol P = (Q, X, Y, δ, π_out) is a self-stabilizing exact majority protocol\nif X = {A, B}, Y = {A, B, T}, and for any initial configuration C₀:\n  1. For any safe C_safe reachable from C₀: ∀ v, π_out(C_safe(v)) = majority opinion\n  2. Any execution from C₀ reaches safe configurations with probability 1.\n\nThe exact majority opinion is:\n  - A  if |V_a| > |V_b|\n  - B  if |V_a| < |V_b|\n  - T  if |V_a| = |V_b|':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-S':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:9:29: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:21:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `/-- A protocol is \"uniform\" (does not use knowledge of n) if the same\n    transition function δ works for all population sizes.\n    Formally, P_m and P_n share the same δ and π_out. -/\ndef UniformProtocol (Q X Y : Type*) :=\n  Protocol Q X Y`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-Stabilizing Exact Majority — Problem Definition\n\nDefinition 1 from Kanaya et al. (2025):\nA protocol P = (Q, X, Y, δ, π_out) is a self-stabilizing exact majority protocol\nif X = {A, B}, Y = {A, B, T}, and for any initial configuration C₀:\n  1. For any safe C_safe reachable from C₀: ∀ v, π_out(C_safe(v)) = majority opinion\n  2. Any execution from C₀ reaches safe configurations with probability 1.\n\nThe exact majority opinion is:\n  - A  if |V_a| > |V_b|\n  - B  if |V_a| < |V_b|\n  - T  if |V_a| = |V_b|':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-S':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:9:29: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:21:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before `end SSEM`.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:2:18: * '. All rights reserved.':\n'Copyright (c) YYYY' should be followed by a space\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-Stabilizing Exact Majority — Problem Definition\n\nDefinition 1 from Kanaya et al. (2025):\nA protocol P = (Q, X, Y, δ, π_out) is a self-stabilizing exact majority protocol\nif X = {A, B}, Y = {A, B, T}, and for any initial configuration C₀:\n  1. For any safe C_safe reachable from C₀: ∀ v, π_out(C_safe(v)) = majority opinion\n  2. Any execution from C₀ reaches safe configurations with probability 1.\n\nThe exact majority opinion is:\n  - A  if |V_a| > |V_b|\n  - B  if |V_a| < |V_b|\n  - T  if |V_a| = |V_b|':\nIf an authors line spans multiple lines, each line but the last must end with a trailing comma\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:4:0: * '\n# Self-S':\nThe authors line should begin with 'Authors: '\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:10:0: * '  ':\nDouble spaces are not allowed.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:9:29: * ' and ':\nPlease, do not use 'and'; use ',' instead.\n\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"},
+  {"message":
+   "SSExactMajority/Defs/ExactMajority.lean:21:0: The module doc-string for a file should be the first command after the imports.\nPlease, add a module doc-string before ``.\n\nNote: This linter can be disabled with `set_option linter.style.header false`",
+   "level": "warning"}],
+ "inputs":
+ [["SSExactMajority.Defs.ExactMajority:deps",
+   [["deps",
+     [["SSExactMajority/SSExactMajority:extraDep",
+       [["@SSExactMajority:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["SSExactMajority.Defs.Execution transitive imports (legacy)",
+         "b0e96ee57fc227eb"],
+        ["SSExactMajority.Defs.Execution:importAllArts",
+         "80edd9f14896ca67"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.30.0, commit d024af099ca4bf2c86f649261ebf59565dc8c622",
+   "2f4703bb19086252"],
+  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Defs/ExactMajority.lean",
+   "7cb4f0114302e1cb"],
+  ["options",
+   [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
+    ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
+    ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: SSExactMajority.Defs.ExactMajority", "712afa306cc4f54e"],
+  ["Package.id?: (some SSExactMajority)", "216f9e708503a682"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "62b826929c2c16a0"}
