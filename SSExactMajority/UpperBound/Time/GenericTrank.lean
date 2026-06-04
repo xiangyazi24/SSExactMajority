@@ -2245,6 +2245,87 @@ theorem generic_MAClive_to_consensus_or_crs_window
     hM
     (by omega)
 
+theorem generic_swap_live_to_cons_or_crs_or_break
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (hTimerStep : ∀ D : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig T_timer D → ∀ i j : Fin n,
+        IsTimerBoundedConfig T_timer
+          (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j))
+    (C : Config (AgentState n) Opinion n) (hC : InSswap C)
+    (hT : MedianTimerAtLeast 1 C) (hB : IsTimerBoundedConfig T_timer C) :
+    ((4 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+          ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+        (2 * (n * (n - 1)) + 2 * (T_timer * n * (n - 1))) := by
+  have hn2 : (2 : ℕ) ≤ n := by omega
+  set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
+  set Inv : Config (AgentState n) Opinion n → Prop :=
+    fun D => IsTimerBoundedConfig T_timer D with hInvDef
+  set Goal : Config (AgentState n) Opinion n → Prop :=
+    fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+    with hGoalDef
+  have hInvStep : ∀ D, Inv D → ∀ i j, Inv (D.step P i j) :=
+    fun D hD i j => by
+      simpa [P, Inv] using hTimerStep D hD i j
+  by_cases hMAC : MedianAnswerCorrect C
+  · refine le_trans ?_ (Probability.ProbHitWithin_mono_time P hn2 C Goal
+      (m := 2 * (T_timer * n * (n - 1))) (by omega))
+    refine le_trans ?_ (generic_timer_drain_window
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax T_timer C hC hMAC hT hB)
+    rw [ENNReal.inv_le_inv]
+    norm_num
+  · set dG : Config (AgentState n) Opinion n → Prop :=
+      fun D => (InSswap D ∧ MedianAnswerCorrect D) ∨
+        ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+      with hdGDef
+    set Mid : Config (AgentState n) Opinion n → Prop :=
+      fun D => dG D ∧ Inv D with hMidDef
+    have hMid : ((2 : ENNReal)⁻¹) ≤
+        Probability.ProbHitWithin P hn2 C Mid (2 * (n * (n - 1))) := by
+      rw [hMidDef,
+        Probability.ProbHitWithin_eq_and_inv_of_invariant P hn2 C dG Inv hB hInvStep]
+      exact
+        generic_decision_window
+          (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn4 hn0 C hC hT hMAC
+    have hGoal : ∀ C' : Config (AgentState n) Opinion n, Mid C' →
+        ((2 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) := by
+      intro C' hC'
+      obtain ⟨hdg, hinv⟩ := hC'
+      by_cases hlive : InSswap C' ∧ MedianTimerAtLeast 1 C'
+      · have hmac : MedianAnswerCorrect C' := by
+          rcases hdg with ⟨_, hm⟩ | hexit
+          · exact hm
+          · exact absurd hlive hexit
+        exact generic_timer_drain_window
+          (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn4 hn0 hRmax T_timer C' hlive.1 hmac hlive.2 hinv
+      · have hgC' : Goal C' := Or.inr (Or.inr hlive)
+        have h1 : (1 : ENNReal) ≤
+            Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) := by
+          calc (1 : ENNReal) = Probability.probReached P hn2 C' Goal 0 :=
+                (Probability.probReached_zero_of_goal P hn2 C' Goal hgC').symm
+            _ ≤ Probability.ProbHitWithin P hn2 C' Goal 0 :=
+                Probability.probReached_le_ProbHitWithin P hn2 C' Goal 0
+            _ ≤ Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) :=
+                Probability.ProbHitWithin_mono_time P hn2 C' Goal (Nat.zero_le _)
+        exact le_trans (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1) h1
+    have hchain := Probability.ProbHitWithin_add_ge_mul P hn2 C Mid Goal
+      (2 * (n * (n - 1))) (2 * (T_timer * n * (n - 1)))
+      ((2 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹) hMid hGoal
+    have harith : ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) = ((4 : ENNReal)⁻¹) := by
+      rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
+      norm_num
+    rwa [harith] at hchain
+
 end GenericTimerDrain
 
 end SSEM

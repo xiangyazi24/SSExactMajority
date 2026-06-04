@@ -67,6 +67,24 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank swap-live window checkpoint
+
+Ported the live-swap window over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_swap_live_to_cons_or_crs_or_break`
+
+The proof threads the generic timer-bound invariant, uses
+`generic_decision_window` for the median-not-yet-correct branch, and uses
+`generic_timer_drain_window` for the MAC branch.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
+
 ## 2026-06-04 codex generic-trank MAC-live checkpoint
 
 Ported the MAC-live composition layer over
