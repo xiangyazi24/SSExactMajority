@@ -90,6 +90,26 @@ Verification:
 Result: passed. The helper layer requested in step 1 is now present in
 `GenericTrank.lean`. No semantic `trank = Rmax` dependency encountered.
 
+## 2026-06-04 codex generic-trank expected-transfer checkpoint
+
+Added tail-probability and expected-time transfer from `PEMProtocol n trank Rmax`
+to `PEMProtocolCoupled n Rmax` under a non-goal step-equality hypothesis:
+
+- `generic_probNotHitBy_succ_eq_tsum_step_of_not_goal`
+- `generic_probNotHitBy_eq_of_step_eq_until`
+- `generic_expectedHittingTime_eq_of_step_eq_until`
+
+Also imported `PolynomialBound` so the next window layer can cite
+`maxMedianTimer`, `timer_ge_two_descent_step`, and
+`PEM_expected_timer_drain_poly`.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. The new import forced `PolynomialBound.lean` to rebuild
+(about 279 seconds), then `GenericTrank.lean` built cleanly.
+
 ## 2026-06-04 codex generic-trank step-helper checkpoint
 
 Added generic wrappers over the coupled step helpers:

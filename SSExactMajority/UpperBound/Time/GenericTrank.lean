@@ -2,6 +2,7 @@ import SSExactMajority.UpperBound.Time
 import SSExactMajority.UpperBound.Time.TransitionLemmas
 import SSExactMajority.UpperBound.Time.DecisionTiming
 import SSExactMajority.UpperBound.Time.PhaseProofs
+import SSExactMajority.UpperBound.Time.PolynomialBound
 
 /-!
 # Generic `trank` time-window restatements
@@ -440,6 +441,127 @@ private theorem generic_ProbHitWithin_eq_of_step_eq_until
         change Probability.probHitBy Pg hn2 D Bad t =
           Probability.probHitBy Pc hn2 D Bad t at hih
         rw [hstepDist, hih]
+
+private theorem generic_probNotHitBy_succ_eq_tsum_step_of_not_goal
+    {Q X Y : Type*} {n : ℕ} [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C₀ : Config Q X n) (Goal : Config Q X n → Prop)
+    [DecidablePred Goal] (hGoal : ¬ Goal C₀) (t : ℕ) :
+    Probability.probNotHitBy P hn C₀ Goal (t + 1) =
+      ∑' C : Config Q X n,
+        Probability.stepDist P hn C₀ C *
+          Probability.probNotHitBy P hn C Goal t := by
+  classical
+  rw [← Probability.probNotHitFrom_initial_eq_probNotHitBy P hn C₀ Goal (t + 1)]
+  simp only [hGoal, decide_false]
+  rw [show t + 1 = 1 + t by omega]
+  rw [Probability.probNotHitFrom_eq_toOuterMeasure, Probability.hitFlagDistFrom_add]
+  simp only [Probability.hitFlagDistFrom, PMF.pure_bind]
+  rw [Probability.hitFlagStepDist, PMF.bind_map]
+  simp only [Bool.false_or]
+  rw [PMF.toOuterMeasure_bind_apply]
+  apply tsum_congr
+  intro C
+  simp only [Function.comp_apply]
+  have hdec :
+      @decide (Goal C) (Classical.propDecidable (Goal C)) =
+        @decide (Goal C) (inferInstance : Decidable (Goal C)) := by
+    by_cases h : Goal C <;> simp [h]
+  rw [hdec]
+  have htail :
+      (Probability.hitFlagDistFrom P hn Goal (C, decide (Goal C)) t).toOuterMeasure
+          {T : Config Q X n × Bool | T.2 = false} =
+        Probability.probNotHitBy P hn C Goal t := by
+    rw [← Probability.probNotHitFrom_eq_toOuterMeasure P hn Goal
+      (C, decide (Goal C)) t]
+    rw [Probability.probNotHitFrom_initial_eq_probNotHitBy P hn C Goal t]
+  exact congrArg (fun x => Probability.stepDist P hn C₀ C * x) htail
+
+private theorem generic_probNotHitBy_eq_of_step_eq_until
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn2 : 2 ≤ n) (hn0 : 0 < n)
+    (Goal : Config (AgentState n) Opinion n → Prop) [DecidablePred Goal]
+    (hstep :
+      ∀ C : Config (AgentState n) Opinion n, ¬ Goal C →
+        ∀ i j : Fin n,
+          C.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+            C.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)
+    (C : Config (AgentState n) Opinion n) (t : ℕ) :
+    Probability.probNotHitBy
+        (PEMProtocol n trank Rmax Emax Dmax hn0) hn2 C Goal t =
+      Probability.probNotHitBy
+        (PEMProtocolCoupled n Rmax Emax Dmax hn0) hn2 C Goal t := by
+  classical
+  let Pg := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  induction t generalizing C with
+  | zero =>
+      by_cases hC : Goal C
+      · rw [Probability.probNotHitBy_zero_of_goal Pg hn2 C Goal hC,
+          Probability.probNotHitBy_zero_of_goal Pc hn2 C Goal hC]
+      · rw [Probability.probNotHitBy_zero_of_not_goal Pg hn2 C Goal hC,
+          Probability.probNotHitBy_zero_of_not_goal Pc hn2 C Goal hC]
+  | succ t ih =>
+      by_cases hC : Goal C
+      · have hg0 :
+            Probability.probNotHitBy Pg hn2 C Goal 0 = 0 :=
+          Probability.probNotHitBy_zero_of_goal Pg hn2 C Goal hC
+        have hc0 :
+            Probability.probNotHitBy Pc hn2 C Goal 0 = 0 :=
+          Probability.probNotHitBy_zero_of_goal Pc hn2 C Goal hC
+        have hg_le :
+            Probability.probNotHitBy Pg hn2 C Goal (t + 1) ≤ 0 := by
+          simpa [hg0] using
+            (Probability.probNotHitBy_le_of_le Pg hn2 C Goal
+              (Nat.zero_le (t + 1)))
+        have hc_le :
+            Probability.probNotHitBy Pc hn2 C Goal (t + 1) ≤ 0 := by
+          simpa [hc0] using
+            (Probability.probNotHitBy_le_of_le Pc hn2 C Goal
+              (Nat.zero_le (t + 1)))
+        have hg :
+            Probability.probNotHitBy Pg hn2 C Goal (t + 1) = 0 :=
+          le_antisymm hg_le zero_le
+        have hc :
+            Probability.probNotHitBy Pc hn2 C Goal (t + 1) = 0 :=
+          le_antisymm hc_le zero_le
+        rw [hg, hc]
+      · have hstepDist :
+            Probability.stepDist Pg hn2 C = Probability.stepDist Pc hn2 C := by
+          unfold Probability.stepDist
+          congr 1
+          funext p
+          exact hstep C hC p.1 p.2
+        rw [
+          generic_probNotHitBy_succ_eq_tsum_step_of_not_goal Pg hn2 C Goal hC t,
+          generic_probNotHitBy_succ_eq_tsum_step_of_not_goal Pc hn2 C Goal hC t]
+        apply tsum_congr
+        intro D
+        have hih := ih D
+        rw [hstepDist, hih]
+
+theorem generic_expectedHittingTime_eq_of_step_eq_until
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn2 : 2 ≤ n) (hn0 : 0 < n)
+    (Goal : Config (AgentState n) Opinion n → Prop) [DecidablePred Goal]
+    (hstep :
+      ∀ C : Config (AgentState n) Opinion n, ¬ Goal C →
+        ∀ i j : Fin n,
+          C.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+            C.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)
+    (C : Config (AgentState n) Opinion n) :
+    Probability.expectedHittingTime
+        (PEMProtocol n trank Rmax Emax Dmax hn0) hn2 C Goal =
+      Probability.expectedHittingTime
+        (PEMProtocolCoupled n Rmax Emax Dmax hn0) hn2 C Goal := by
+  classical
+  rw [Probability.expectedHittingTime, Probability.expectedHittingTime]
+  apply tsum_congr
+  intro t
+  exact
+    generic_probNotHitBy_eq_of_step_eq_until
+      (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn2 hn0 Goal hstep C t
 
 end CoupledTransfer
 
