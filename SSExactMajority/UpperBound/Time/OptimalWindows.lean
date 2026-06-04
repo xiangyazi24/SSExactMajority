@@ -1,4 +1,5 @@
 import SSExactMajority.UpperBound.Time
+import SSExactMajority.UpperBound.Time.EpidemicBound
 import SSExactMajority.UpperBound.Time.PolynomialBound
 
 /-!
@@ -23,7 +24,7 @@ Remaining work = these two keystones:
 
 namespace SSEM
 
-open scoped ENNReal
+open scoped BigOperators ENNReal
 
 attribute [local instance] Classical.propDecidable
 
@@ -60,6 +61,184 @@ def OW_consensusExpectedSteps (n Rmax : ℕ) : ℕ :=
 bound to a `1/2` hit window. -/
 def OW_globalWindow (n Rmax : ℕ) : ℕ :=
   (2 * Rmax * n * n + 4 * n * n) + 2 * OW_consensusExpectedSteps n Rmax
+
+/-- The endpoint supplied by the [12] ranking window after the reset epidemic has
+already made the answer uniform: ranking has reached `InSswap`, the uniform
+answer is still `m`, and the global majority answer agrees with `m`. -/
+def OW_rankedEpidemicEndpoint {n : ℕ} (m : Answer)
+    (C : Config (AgentState n) Opinion n) : Prop :=
+  InSswap C ∧ EpidemicPhiGoal m C ∧ majorityAnswer C = m
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- The proven silence link for a ranked uniform endpoint.  This is the Kanaya
+part: no [12] timing statement is used here. -/
+theorem OW_silenceEndpoint_of_rankedEpidemicEndpoint
+    {m : Answer} {C : Config (AgentState n) Opinion n}
+    (hC : OW_rankedEpidemicEndpoint m C) :
+    OW_silenceEndpoint C := by
+  rcases hC with ⟨hSswap, hEpi, hMaj⟩
+  refine ⟨hSswap, ?_, hEpi.1⟩
+  intro w
+  exact Or.inl (by
+    rw [hMaj]
+    exact hEpi.2 w)
+
+omit [Inhabited (Fin n × Fin n)] in
+/-- Markov-window form of the proven abstract epidemic descent theorem. -/
+theorem epidemic_phiCount_to_zero_window_ge_half
+    (P : Protocol (AgentState n) Opinion Output) (hn : 2 ≤ n)
+    {m : Answer} (C : Config (AgentState n) Opinion n)
+    (Inv : Config (AgentState n) Opinion n → Prop)
+    [DecidablePred Inv]
+    (M T : ℕ)
+    (hInv₀ : Inv C)
+    (hAnsInv : ∀ D : Config (AgentState n) Opinion n,
+      Inv D → EpidemicAnswerInv m D)
+    (hInvStep : ∀ D : Config (AgentState n) Opinion n, Inv D →
+      ¬ EpidemicPhiGoal m D →
+        ∀ i j : Fin n, Inv (D.step P i j) ∨ EpidemicPhiGoal m (D.step P i j))
+    (hNonincrease : ∀ D : Config (AgentState n) Opinion n, Inv D →
+      ¬ EpidemicPhiGoal m D →
+        ∀ i j : Fin n, phiCount (D.step P i j) ≤ phiCount D)
+    (hGood : ∀ D : Config (AgentState n) Opinion n, Inv D →
+      ¬ EpidemicPhiGoal m D → 0 < phiCount D →
+        ∀ p : Fin n × Fin n, p ∈ phiNonPhiPairs D →
+          EpidemicPhiGoal m (D.step P p.1 p.2) ∨
+            (Inv (D.step P p.1 p.2) ∧
+              phiCount (D.step P p.1 p.2) < phiCount D))
+    (hSumLe :
+      (∑ r ∈ Finset.range (phiCount C),
+        ((((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal) *
+            ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹)) ≤
+        ((M : ℕ) : ENNReal))
+    (hWindow : 2 * M ≤ T + 1) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin P hn C (EpidemicPhiGoal m) T := by
+  have hExp :=
+    epidemic_phiCount_to_zero_expected_le
+      P hn (m := m) C Inv hInv₀ hAnsInv hInvStep hNonincrease hGood
+  exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    P hn C (EpidemicPhiGoal m) (hExp.trans hSumLe) hWindow
+
+omit [Inhabited (Fin n × Fin n)] in
+/-- Faithful CRS-to-silence composition.
+
+The epidemic half is discharged through `epidemic_phiCount_to_zero_expected_le`
+and Markov.  The only timing hypothesis for the rank phase is `h12rank`, which
+starts from a uniform no-`phi` epidemic endpoint and reaches the ranked epidemic
+endpoint.  The final conversion to `OW_silenceEndpoint` is the proven silence
+link above.
+
+The product side condition is explicit on purpose: with an epidemic `1/2`
+window and a rank `1/2` window, the chain gives `1/4`, not `1/2`.  A caller
+that wants the old `hRank12` probability must provide either a probability-one
+reset/epidemic window or a stronger rank-window lower bound. -/
+theorem CRS_to_silence_of_rank12 (hn4 : 4 ≤ n)
+    (T_reset T_rank M : ℕ)
+    (Inv : Answer → Config (AgentState n) Opinion n → Prop)
+    [hInvDec : ∀ m : Answer, DecidablePred (Inv m)]
+    (rankProb : ENNReal)
+    (hProduct : ((2 : ENNReal)⁻¹) ≤ ((2 : ENNReal)⁻¹) * rankProb)
+    (hResetInv :
+      ∀ C : Config (AgentState n) Opinion n,
+        IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+        CorrectResetSeed C →
+        Inv (majorityAnswer C) C)
+    (hAnsInv : ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      Inv m D → EpidemicAnswerInv m D)
+    (hInvStep : ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      Inv m D → ¬ EpidemicPhiGoal m D →
+        ∀ i j : Fin n,
+          Inv m (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) i j) ∨
+            EpidemicPhiGoal m
+              (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) i j))
+    (hNonincrease : ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      Inv m D → ¬ EpidemicPhiGoal m D →
+        ∀ i j : Fin n,
+          phiCount
+              (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) i j) ≤
+            phiCount D)
+    (hGood : ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      Inv m D → ¬ EpidemicPhiGoal m D → 0 < phiCount D →
+        ∀ p : Fin n × Fin n, p ∈ phiNonPhiPairs D →
+          EpidemicPhiGoal m
+              (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) p.1 p.2) ∨
+            (Inv m
+                (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) p.1 p.2) ∧
+              phiCount
+                  (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) p.1 p.2) <
+                phiCount D))
+    (hEpidemicSum :
+      ∀ C : Config (AgentState n) Opinion n,
+        IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+        CorrectResetSeed C →
+          (∑ r ∈ Finset.range (phiCount C),
+            ((((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal) *
+                ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹)) ≤
+            ((M : ℕ) : ENNReal))
+    (hResetWindow : 2 * M ≤ T_reset + 1)
+    (h12rank :
+      ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+        EpidemicPhiGoal m D →
+          rankProb ≤
+            Probability.ProbHitWithin
+              (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) D
+              (OW_rankedEpidemicEndpoint m) T_rank) :
+    ∀ C : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      CorrectResetSeed C →
+        ((2 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin
+            (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
+            (by omega : 2 ≤ n) C OW_silenceEndpoint
+            (T_reset + T_rank) := by
+  classical
+  intro C hTimer hSeed
+  have hn2 : 2 ≤ n := by omega
+  set P := PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n) with hP
+  haveI : DecidablePred (Inv (majorityAnswer C)) := hInvDec (majorityAnswer C)
+  have hEpiWindow :
+      ((2 : ENNReal)⁻¹) ≤
+        Probability.ProbHitWithin P hn2 C (EpidemicPhiGoal (majorityAnswer C))
+          T_reset := by
+    exact epidemic_phiCount_to_zero_window_ge_half
+      P hn2 (m := majorityAnswer C) C (Inv (majorityAnswer C)) M T_reset
+      (hResetInv C hTimer hSeed)
+      (fun D hD => hAnsInv (majorityAnswer C) D hD)
+      (fun D hD hNot i j => by
+        simpa [P] using hInvStep (majorityAnswer C) D hD hNot i j)
+      (fun D hD hNot i j => by
+        simpa [P] using hNonincrease (majorityAnswer C) D hD hNot i j)
+      (fun D hD hNot hPhi p hp => by
+        simpa [P] using hGood (majorityAnswer C) D hD hNot hPhi p hp)
+      (hEpidemicSum C hTimer hSeed)
+      hResetWindow
+  have hRankToSilence :
+      ∀ D : Config (AgentState n) Opinion n,
+        EpidemicPhiGoal (majorityAnswer C) D →
+          rankProb ≤
+            Probability.ProbHitWithin P hn2 D OW_silenceEndpoint T_rank := by
+    intro D hD
+    have hRankRaw :
+        rankProb ≤
+          Probability.ProbHitWithin P hn2 D
+            (OW_rankedEpidemicEndpoint (majorityAnswer C)) T_rank := by
+      simpa [P] using h12rank (majorityAnswer C) D hD
+    exact hRankRaw.trans
+      (Probability.ProbHitWithin_mono_goal P hn2 D
+        (OW_rankedEpidemicEndpoint (majorityAnswer C)) OW_silenceEndpoint
+        (fun E hE => OW_silenceEndpoint_of_rankedEpidemicEndpoint hE)
+        T_rank)
+  have hChain :
+      ((2 : ENNReal)⁻¹) * rankProb ≤
+        Probability.ProbHitWithin P hn2 C OW_silenceEndpoint
+          (T_reset + T_rank) :=
+    Probability.ProbHitWithin_add_ge_mul P hn2 C
+      (EpidemicPhiGoal (majorityAnswer C)) OW_silenceEndpoint
+      T_reset T_rank ((2 : ENNReal)⁻¹) rankProb
+      hEpiWindow hRankToSilence
+  exact hProduct.trans hChain
 
 /-- **Keystone 1 (universal ranking time).** From any timer-bounded configuration,
 the expected time to reach a ranked configuration with a fresh (`≥ 35`) bounded
