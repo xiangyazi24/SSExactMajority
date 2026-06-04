@@ -1,5 +1,7 @@
 import SSExactMajority.UpperBound.Time
 import SSExactMajority.UpperBound.Time.TransitionLemmas
+import SSExactMajority.UpperBound.Time.DecisionTiming
+import SSExactMajority.UpperBound.Time.PhaseProofs
 
 /-!
 # Generic `trank` time-window restatements
@@ -440,6 +442,117 @@ private theorem generic_ProbHitWithin_eq_of_step_eq_until
         rw [hstepDist, hih]
 
 end CoupledTransfer
+
+section GenericStepHelpers
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+theorem generic_step_rank_preserved_of_InSswap
+    (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (w : Fin n) :
+    (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j w).1.rank =
+      (D w).1.rank := by
+  have hEq :=
+    generic_step_eq_coupled_of_InSrank
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hS.toInSrank i j
+  rw [hEq]
+  exact
+    step_rank_preserved_of_InSswap
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hS w
+
+theorem generic_step_timer_le_of_InSswap
+    (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (w : Fin n) :
+    (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j w).1.timer ≤
+      (D w).1.timer := by
+  have hEq :=
+    generic_step_eq_coupled_of_InSrank
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hS.toInSrank i j
+  rw [hEq]
+  exact
+    step_timer_le_of_InSswap
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn0 hS w
+
+theorem generic_crs_of_InSswap_break_with_MedC
+    [Inhabited (Fin n × Fin n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) (hM : MedianAnswerCorrect D)
+    {i j : Fin n}
+    (hS' : ¬ InSswap
+      (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j)) :
+    CorrectResetSeed
+      (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j) := by
+  have hEq :=
+    generic_step_eq_coupled_of_InSrank
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hS.toInSrank i j
+  have hBreakCoupled :
+      ¬ InSswap
+        (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
+    intro hCoupled
+    exact hS' (by simpa [hEq] using hCoupled)
+  have hSeedCoupled :
+      CorrectResetSeed
+        (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) :=
+    crs_of_InSswap_break_with_MedC
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax hS hM hBreakCoupled
+  simpa [hEq] using hSeedCoupled
+
+private theorem generic_step_InSswap_of_InSswap_of_post_InSrank
+    (hn0 : 0 < n)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) {i j : Fin n}
+    (hRank' :
+      InSrank
+        (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j)) :
+    InSswap
+      (D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j) := by
+  classical
+  let P := PEMProtocol n trank Rmax Emax Dmax hn0
+  have hInput :
+      ∀ w : Fin n, (D.step P i j w).2 = (D w).2 := by
+    intro w
+    exact step_input_preserved P D i j w
+  have hRank :
+      ∀ w : Fin n, (D.step P i j w).1.rank = (D w).1.rank := by
+    intro w
+    simpa [P] using
+      generic_step_rank_preserved_of_InSswap
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn0 hS w
+  have hnA : nAOf (D.step P i j) = nAOf D := by
+    simpa [P, PEMProtocol] using
+      (nAOf_step_eq (trank := trank) (Rmax := Rmax)
+        (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)
+  refine { toInSrank := hRank', input_rank := ?_ }
+  intro w
+  constructor
+  · intro hA
+    have hA_old : (D w).2 = Opinion.A := by
+      rw [hInput w] at hA
+      exact hA
+    have hlt_old : (D w).1.rank.val < nAOf D :=
+      (hS.input_rank w).mp hA_old
+    rw [hRank w, hnA]
+    exact hlt_old
+  · intro hlt
+    have hlt_old : (D w).1.rank.val < nAOf D := by
+      rw [hRank w, hnA] at hlt
+      exact hlt
+    have hA_old : (D w).2 = Opinion.A :=
+      (hS.input_rank w).mpr hlt_old
+    rw [hInput w]
+    exact hA_old
+
+end GenericStepHelpers
 
 section GenericExitWindow
 

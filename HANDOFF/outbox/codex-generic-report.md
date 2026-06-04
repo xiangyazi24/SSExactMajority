@@ -66,3 +66,22 @@ Verification:
 
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
+
+## 2026-06-04 codex generic-trank step-helper checkpoint
+
+Added generic wrappers over the coupled step helpers:
+
+- `generic_step_rank_preserved_of_InSswap`
+- `generic_step_timer_le_of_InSswap`
+- `generic_crs_of_InSswap_break_with_MedC`
+- internal `generic_step_InSswap_of_InSswap_of_post_InSrank`
+
+All use the `InSrank` step-equality bridge to transfer the existing coupled
+helper result back to `PEMProtocol n trank Rmax Emax Dmax hn0`.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
