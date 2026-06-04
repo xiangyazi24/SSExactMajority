@@ -22,6 +22,310 @@ section
 
 variable {n trank Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
 
+/-- Per-agent structural bounds for the `Nat` counters whose paper versions
+live in bounded ranges.  The `children` field is included because the ranking
+subprotocol's recruitment budget is also range-bounded in reachable states. -/
+def AgentWellFormed (Rmax Emax Dmax : ℕ) (s : AgentState n) : Prop :=
+  s.resetcount ≤ Rmax ∧
+  s.errorcount ≤ Emax ∧
+  s.delaytimer ≤ Dmax ∧
+  s.children ≤ 2
+
+/-- Well-formed configurations: protocol timer range plus bounded structural
+counter fields. -/
+def WellFormed (trank Rmax Emax Dmax : ℕ)
+    (C : Config (AgentState n) Opinion n) : Prop :=
+  IsTimerBoundedConfig (7 * (trank + 4)) C ∧
+  ∀ v : Fin n, AgentWellFormed Rmax Emax Dmax (C v).1
+
+private theorem resetOSSR_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n} {s : AgentState n}
+    (hs : AgentWellFormed Rmax Emax Dmax s) :
+    AgentWellFormed Rmax Emax Dmax (resetOSSR Emax hn s) := by
+  rcases s with ⟨role, rank, leader, resetcount, answer, timer, children,
+    errorcount, delaytimer⟩
+  cases leader <;> simp [AgentWellFormed, resetOSSR] at * <;> omega
+
+set_option maxHeartbeats 800000 in
+-- Concrete OSSR process-agent case split needs extra heartbeats for record fields.
+private theorem processAgent_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n} {s : AgentState n}
+    {oldRc : ℕ} {partnerResetting : Bool}
+    (hs : AgentWellFormed Rmax Emax Dmax s) :
+    AgentWellFormed Rmax Emax Dmax
+      (processAgent Emax Dmax hn s oldRc partnerResetting) := by
+  unfold processAgent
+  by_cases hmain : s.role = .Resetting ∧ s.resetcount = 0
+  · rw [if_pos hmain]
+    let t : AgentState n :=
+      if 0 < oldRc then
+        { s with delaytimer := Dmax }
+      else
+        { s with delaytimer := s.delaytimer - 1 }
+    have ht : AgentWellFormed Rmax Emax Dmax t := by
+      by_cases hold : 0 < oldRc
+      · simp [t, hold, AgentWellFormed] at *
+        omega
+      · simp [t, hold, AgentWellFormed] at *
+        omega
+    change AgentWellFormed Rmax Emax Dmax
+      (if t.delaytimer = 0 ∨ !partnerResetting then resetOSSR Emax hn t else t)
+    cases partnerResetting <;>
+      by_cases hfire : t.delaytimer = 0 <;>
+      simp [hfire, resetOSSR_preserves_agent_wellformed ht, ht]
+  · rw [if_neg hmain]
+    exact hs
+
+private theorem propagateReset_recruit_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a b : AgentState n}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax
+        (if a.role = .Resetting ∧ 0 < a.resetcount ∧ b.role ≠ .Resetting then
+          (a, { b with role := .Resetting, resetcount := 0, delaytimer := Dmax })
+        else if b.role = .Resetting ∧ 0 < b.resetcount ∧ a.role ≠ .Resetting then
+          ({ a with role := .Resetting, resetcount := 0, delaytimer := Dmax }, b)
+        else (a, b)).1 ∧
+      AgentWellFormed Rmax Emax Dmax
+        (if a.role = .Resetting ∧ 0 < a.resetcount ∧ b.role ≠ .Resetting then
+          (a, { b with role := .Resetting, resetcount := 0, delaytimer := Dmax })
+        else if b.role = .Resetting ∧ 0 < b.resetcount ∧ a.role ≠ .Resetting then
+          ({ a with role := .Resetting, resetcount := 0, delaytimer := Dmax }, b)
+        else (a, b)).2 := by
+  split_ifs <;> simp_all [AgentWellFormed]
+
+private theorem propagateReset_sync_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a b : AgentState n}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax
+        (if a.role = .Resetting ∧ b.role = .Resetting then
+          let newRc := max (a.resetcount - 1) (b.resetcount - 1)
+          ({ a with resetcount := newRc }, { b with resetcount := newRc })
+        else (a, b)).1 ∧
+      AgentWellFormed Rmax Emax Dmax
+        (if a.role = .Resetting ∧ b.role = .Resetting then
+          let newRc := max (a.resetcount - 1) (b.resetcount - 1)
+          ({ a with resetcount := newRc }, { b with resetcount := newRc })
+        else (a, b)).2 := by
+  split_ifs <;> simp_all [AgentWellFormed]
+  omega
+
+private theorem propagateReset_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n} {a b : AgentState n}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax (propagateReset Emax Dmax hn a b).1 ∧
+    AgentWellFormed Rmax Emax Dmax (propagateReset Emax Dmax hn a b).2 := by
+  unfold propagateReset
+  let p₁ :=
+    if a.role = .Resetting ∧ 0 < a.resetcount ∧ b.role ≠ .Resetting then
+      (a, { b with role := .Resetting, resetcount := 0, delaytimer := Dmax })
+    else if b.role = .Resetting ∧ 0 < b.resetcount ∧ a.role ≠ .Resetting then
+      ({ a with role := .Resetting, resetcount := 0, delaytimer := Dmax }, b)
+    else (a, b)
+  have hp₁ :
+      AgentWellFormed Rmax Emax Dmax p₁.1 ∧
+      AgentWellFormed Rmax Emax Dmax p₁.2 := by
+    simpa [p₁] using
+      propagateReset_recruit_preserves_agent_wellformed
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) ha hb
+  let oldRcA := p₁.1.resetcount
+  let oldRcB := p₁.2.resetcount
+  let p₂ :=
+    if p₁.1.role = .Resetting ∧ p₁.2.role = .Resetting then
+      let newRc := max (p₁.1.resetcount - 1) (p₁.2.resetcount - 1)
+      ({ p₁.1 with resetcount := newRc }, { p₁.2 with resetcount := newRc })
+    else p₁
+  have hp₂ :
+      AgentWellFormed Rmax Emax Dmax p₂.1 ∧
+      AgentWellFormed Rmax Emax Dmax p₂.2 := by
+    simpa [p₂] using
+      propagateReset_sync_preserves_agent_wellformed hp₁.1 hp₁.2
+  simpa [p₁, oldRcA, oldRcB, p₂] using
+    And.intro
+      (processAgent_preserves_agent_wellformed hp₂.1)
+      (processAgent_preserves_agent_wellformed hp₂.2)
+
+set_option maxHeartbeats 800000 in
+-- Concrete OSSR rank-delta case split needs extra heartbeats for record fields.
+private theorem rankDeltaOSSR_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n} {a b : AgentState n}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax
+        (rankDeltaOSSR Rmax Emax Dmax hn (a, b)).1 ∧
+      AgentWellFormed Rmax Emax Dmax
+        (rankDeltaOSSR Rmax Emax Dmax hn (a, b)).2 := by
+  unfold rankDeltaOSSR
+  by_cases hReset : a.role = .Resetting ∨ b.role = .Resetting
+  · simp [hReset]
+    have hpr := propagateReset_preserves_agent_wellformed (hn := hn) ha hb
+    split_ifs <;> simp_all [AgentWellFormed]
+  · simp [hReset]
+    repeat' split_ifs <;> simp_all [AgentWellFormed] <;> omega
+
+private theorem transitionPEM_prePhase4_preserves_agent_wellformed
+    {n trank Rmax Emax Dmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hRankDelta :
+      AgentWellFormed Rmax Emax Dmax (rankDelta (s₀, s₁)).1 ∧
+      AgentWellFormed Rmax Emax Dmax (rankDelta (s₀, s₁)).2) :
+    AgentWellFormed Rmax Emax Dmax
+        (transitionPEM_prePhase4 n trank rankDelta s₀ s₁ x₀ x₁).1 ∧
+      AgentWellFormed Rmax Emax Dmax
+        (transitionPEM_prePhase4 n trank rankDelta s₀ s₁ x₀ x₁).2 := by
+  unfold transitionPEM_prePhase4
+  rcases hrd : rankDelta (s₀, s₁) with ⟨r₀, r₁⟩
+  simp [hrd] at hRankDelta ⊢
+  repeat' split_ifs <;> simp_all [AgentWellFormed]
+
+private theorem phase4_swap_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a b : AgentState n} {x₀ x₁ : Opinion}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax (phase4_swap a b x₀ x₁).1 ∧
+    AgentWellFormed Rmax Emax Dmax (phase4_swap a b x₀ x₁).2 := by
+  unfold phase4_swap
+  split_ifs <;> simp_all [AgentWellFormed]
+
+private theorem phase4_decide_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a b : AgentState n} {x₀ x₁ : Opinion}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax (phase4_decide n a b x₀ x₁).1 ∧
+    AgentWellFormed Rmax Emax Dmax (phase4_decide n a b x₀ x₁).2 := by
+  unfold phase4_decide
+  repeat' split_ifs <;> simp_all [AgentWellFormed]
+
+set_option maxHeartbeats 800000 in
+-- Phase-4 propagation has nested timer/reset branches over record updates.
+private theorem phase4_propagate_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a b : AgentState n}
+    (ha : AgentWellFormed Rmax Emax Dmax a)
+    (hb : AgentWellFormed Rmax Emax Dmax b) :
+    AgentWellFormed Rmax Emax Dmax (phase4_propagate n Rmax a b).1 ∧
+    AgentWellFormed Rmax Emax Dmax (phase4_propagate n Rmax a b).2 := by
+  unfold phase4_propagate
+  by_cases haMed : a.rank.val + 1 = ceilHalf n
+  · by_cases hbLast : b.rank.val + 1 = n
+    · by_cases hReset :
+        ({ a with timer := a.timer - 1 } : AgentState n).timer = 0 ∧
+          ({ a with timer := a.timer - 1 } : AgentState n).answer ≠ b.answer
+      · simp [haMed, hbLast, hReset, AgentWellFormed] at *
+        omega
+      · simp [haMed, hbLast, hReset, AgentWellFormed] at *
+        omega
+    · by_cases hReset : a.timer = 0 ∧ a.answer ≠ b.answer
+      · simp [haMed, hbLast, hReset, AgentWellFormed] at *
+        omega
+      · simp [haMed, hbLast, hReset, AgentWellFormed] at *
+        omega
+  · by_cases hbMed : b.rank.val + 1 = ceilHalf n
+    · by_cases haLast : a.rank.val + 1 = n
+      · by_cases hReset :
+          ({ b with timer := b.timer - 1 } : AgentState n).timer = 0 ∧
+            ({ b with timer := b.timer - 1 } : AgentState n).answer ≠ a.answer
+        · have hn_ne_ceil : n ≠ ceilHalf n := by
+            intro h
+            exact haMed (by omega)
+          simp [hn_ne_ceil, hbMed, haLast, hReset, AgentWellFormed] at *
+          omega
+        · have hn_ne_ceil : n ≠ ceilHalf n := by
+            intro h
+            exact haMed (by omega)
+          simp [hn_ne_ceil, hbMed, haLast, hReset, AgentWellFormed] at *
+          omega
+      · by_cases hReset : b.timer = 0 ∧ b.answer ≠ a.answer
+        · simp [haMed, hbMed, haLast, hReset, AgentWellFormed] at *
+          omega
+        · simp [haMed, hbMed, haLast, hReset, AgentWellFormed] at *
+          omega
+    · simp [haMed, hbMed, AgentWellFormed] at *
+      omega
+
+private theorem transitionPEM_phase4_preserves_agent_wellformed
+    {n Rmax Emax Dmax : ℕ} {a : AgentState n × AgentState n} {x₀ x₁ : Opinion}
+    (ha : AgentWellFormed Rmax Emax Dmax a.1)
+    (hb : AgentWellFormed Rmax Emax Dmax a.2) :
+    AgentWellFormed Rmax Emax Dmax (transitionPEM_phase4 n Rmax a x₀ x₁).1 ∧
+    AgentWellFormed Rmax Emax Dmax (transitionPEM_phase4 n Rmax a x₀ x₁).2 := by
+  by_cases hSettled : a.1.role = .Settled ∧ a.2.role = .Settled
+  · let sw := phase4_swap a.1 a.2 x₀ x₁
+    have hsw :
+        AgentWellFormed Rmax Emax Dmax sw.1 ∧
+        AgentWellFormed Rmax Emax Dmax sw.2 :=
+      phase4_swap_preserves_agent_wellformed (x₀ := x₀) (x₁ := x₁) ha hb
+    let dec := phase4_decide n sw.1 sw.2 x₀ x₁
+    have hdec :
+        AgentWellFormed Rmax Emax Dmax dec.1 ∧
+        AgentWellFormed Rmax Emax Dmax dec.2 :=
+      phase4_decide_preserves_agent_wellformed (x₀ := x₀) (x₁ := x₁) hsw.1 hsw.2
+    have hprop :
+        AgentWellFormed Rmax Emax Dmax (phase4_propagate n Rmax dec.1 dec.2).1 ∧
+        AgentWellFormed Rmax Emax Dmax (phase4_propagate n Rmax dec.1 dec.2).2 :=
+      phase4_propagate_preserves_agent_wellformed hdec.1 hdec.2
+    simpa [transitionPEM_phase4, hSettled, sw, dec] using hprop
+  · simpa [transitionPEM_phase4, hSettled] using And.intro ha hb
+
+set_option maxHeartbeats 800000 in
+-- Full transition combines rank-delta and phase-4 structural invariants.
+private theorem transitionPEM_preserves_agent_wellformed
+    {n trank Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hs₀ : AgentWellFormed Rmax Emax Dmax s₀)
+    (hs₁ : AgentWellFormed Rmax Emax Dmax s₁) :
+    AgentWellFormed Rmax Emax Dmax
+        ((PEMProtocol n trank Rmax Emax Dmax hn).δ ((s₀, x₀), (s₁, x₁))).1 ∧
+      AgentWellFormed Rmax Emax Dmax
+        ((PEMProtocol n trank Rmax Emax Dmax hn).δ ((s₀, x₀), (s₁, x₁))).2 := by
+  have hrd :=
+    rankDeltaOSSR_preserves_agent_wellformed
+      (hn := hn) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hs₀ hs₁
+  have hpre :=
+    transitionPEM_prePhase4_preserves_agent_wellformed
+      (trank := trank) (x₀ := x₀) (x₁ := x₁) hrd
+  simpa [PEMProtocol, protocolPEM, transitionPEM] using
+    transitionPEM_phase4_preserves_agent_wellformed
+      (x₀ := x₀) (x₁ := x₁) hpre.1 hpre.2
+
+theorem WellFormed_step
+    {n trank Rmax Emax Dmax : ℕ} (hn : 0 < n)
+    (C : Config (AgentState n) Opinion n)
+    (hC : WellFormed trank Rmax Emax Dmax C) :
+    ∀ i j : Fin n,
+      WellFormed trank Rmax Emax Dmax
+        (C.step (PEMProtocol n trank Rmax Emax Dmax hn) i j) := by
+  intro i j
+  constructor
+  · simpa [PEMProtocol, WellFormed] using
+      generic_timer_preservation
+        (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn (by omega : 7 * (trank + 4) ≤ 7 * (trank + 4))
+        C hC.1 i j
+  · intro μ
+    have hi : AgentWellFormed Rmax Emax Dmax (C i).1 := hC.2 i
+    have hj : AgentWellFormed Rmax Emax Dmax (C j).1 := hC.2 j
+    by_cases hij : i = j
+    · subst j
+      simpa [Config.step, WellFormed] using hC.2 μ
+    · by_cases hμi : μ = i
+      · subst μ
+        have hpair :=
+          transitionPEM_preserves_agent_wellformed
+            (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            (hn := hn) (x₀ := (C i).2) (x₁ := (C j).2) hi hj
+        simpa [Config.step, hij, WellFormed] using hpair.1
+      · by_cases hμj : μ = j
+        · subst μ
+          have hpair :=
+            transitionPEM_preserves_agent_wellformed
+              (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              (hn := hn) (x₀ := (C i).2) (x₁ := (C j).2) hi hj
+          simpa [Config.step, hij, hμi, WellFormed] using hpair.2
+        · simpa [Config.step, hij, hμi, hμj, WellFormed] using hC.2 μ
+
 /-- Generic faithful reset-completion contract.
 
 The reset entry is the [12]-cited probabilistic window from `CorrectResetSeed`
@@ -36,7 +340,7 @@ structure CRSResetCompletion12Generic {n trank Rmax Emax Dmax : ℕ} (hn : 0 < n
   resetWindow_quadratic : K_reset ≤ C_reset * n * n
   resetReach :
     ∀ (hn2 : 2 ≤ n) (C : Config (AgentState n) Opinion n),
-      IsTimerBoundedConfig (7 * (trank + 4)) C →
+      WellFormed trank Rmax Emax Dmax C →
       CorrectResetSeed C →
         p_reset ≤
           Probability.ProbHitWithin
@@ -117,6 +421,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        WellFormed trank Rmax Emax Dmax D →
         majorityAnswer D = m →
           rankProb ≤
             Probability.ProbHitWithin
@@ -124,7 +429,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
               (by omega : 2 ≤ n) D
               (OW_rankedEpidemicEndpoint m) T_rank) :
     ∀ C : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig (7 * (trank + 4)) C →
+      WellFormed trank Rmax Emax Dmax C →
       CorrectResetSeed C →
         p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤
           Probability.ProbHitWithin
@@ -132,12 +437,21 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
             (by omega : 2 ≤ n) C OW_silenceEndpoint
             (K_reset + OW_answerEpidemicWindow n + T_rank) := by
   classical
-  intro C hTimer hSeed
+  intro C hWF hSeed
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
   let MajInv : Config (AgentState n) Opinion n → Prop :=
     fun D => majorityAnswer D = majorityAnswer C
+  let ChainInv : Config (AgentState n) Opinion n → Prop :=
+    fun D => WellFormed trank Rmax Emax Dmax D ∧ MajInv D
+  have hWFStep : ∀ D : Config (AgentState n) Opinion n,
+      WellFormed trank Rmax Emax Dmax D →
+      ∀ i j : Fin n, WellFormed trank Rmax Emax Dmax (D.step P i j) := by
+    intro D hD i j
+    simpa [P] using
+      (WellFormed_step (n := n) (trank := trank) (Rmax := Rmax)
+        (Emax := Emax) (Dmax := Dmax) hn0 D hD i j)
   have hMajInvStep : ∀ D : Config (AgentState n) Opinion n, MajInv D →
       ∀ i j : Fin n, MajInv (D.step P i j) := by
     intro D hD i j
@@ -148,26 +462,30 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
             (trank := trank) (Rmax := Rmax)
             (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)
       _ = majorityAnswer C := hD
+  have hChainInvStep : ∀ D : Config (AgentState n) Opinion n, ChainInv D →
+      ∀ i j : Fin n, ChainInv (D.step P i j) := by
+    intro D hD i j
+    exact ⟨hWFStep D hD.1 i j, hMajInvStep D hD.2 i j⟩
   have hReset :
       p_reset ≤
         Probability.ProbHitWithin P hn2 C
-          (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D)
+          (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D)
           K_reset := by
     have hResetRaw :
         p_reset ≤
           Probability.ProbHitWithin P hn2 C
             (ResetCompletionTarget12 (majorityAnswer C)) K_reset := by
-      simpa [P] using h12resetCompletion.resetReach hn2 C hTimer hSeed
+      simpa [P] using h12resetCompletion.resetReach hn2 C hWF hSeed
     rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-      P hn2 C (ResetCompletionTarget12 (majorityAnswer C)) MajInv rfl
-      hMajInvStep K_reset]
+      P hn2 C (ResetCompletionTarget12 (majorityAnswer C)) ChainInv ⟨hWF, rfl⟩
+      hChainInvStep K_reset]
     exact hResetRaw
   have hEpidemic :
       ∀ D : Config (AgentState n) Opinion n,
-        (ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D) →
+        (ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin P hn2 D
-              (fun E => EpidemicPhiGoal (majorityAnswer C) E ∧ MajInv E)
+              (fun E => EpidemicPhiGoal (majorityAnswer C) E ∧ ChainInv E)
               (OW_answerEpidemicWindow n) := by
     intro D hD
     have hRaw :
@@ -180,22 +498,22 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
           hn4 p_reset C_reset K_reset h12resetCompletion
           (majorityAnswer C) D hD.1)
     rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-      P hn2 D (EpidemicPhiGoal (majorityAnswer C)) MajInv hD.2
-      hMajInvStep (OW_answerEpidemicWindow n)]
+      P hn2 D (EpidemicPhiGoal (majorityAnswer C)) ChainInv hD.2
+      hChainInvStep (OW_answerEpidemicWindow n)]
     exact hRaw
   have hResetToPhi :
       p_reset * ((2 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C
-          (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D)
+          (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D)
           (K_reset + OW_answerEpidemicWindow n) :=
     Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D)
-      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D)
+      (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D)
+      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D)
       K_reset (OW_answerEpidemicWindow n)
       p_reset ((2 : ENNReal)⁻¹) hReset hEpidemic
   have hRankToSilence :
       ∀ D : Config (AgentState n) Opinion n,
-        (EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D) →
+        (EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D) →
           rankProb ≤
             Probability.ProbHitWithin P hn2 D OW_silenceEndpoint T_rank := by
     intro D hD
@@ -203,7 +521,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
         rankProb ≤
           Probability.ProbHitWithin P hn2 D
             (OW_rankedEpidemicEndpoint (majorityAnswer C)) T_rank := by
-      simpa [P] using h12rank (majorityAnswer C) D hD.1 hD.2
+      simpa [P] using h12rank (majorityAnswer C) D hD.1 hD.2.1 hD.2.2
     exact hRankRaw.trans
       (Probability.ProbHitWithin_mono_goal P hn2 D
         (OW_rankedEpidemicEndpoint (majorityAnswer C)) OW_silenceEndpoint
@@ -211,7 +529,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
         T_rank)
   simpa [Nat.add_assoc, add_assoc] using
     (Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D) OW_silenceEndpoint
+      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D) OW_silenceEndpoint
       (K_reset + OW_answerEpidemicWindow n) T_rank
       (p_reset * ((2 : ENNReal)⁻¹)) rankProb
       hResetToPhi hRankToSilence)
@@ -228,6 +546,7 @@ theorem CRS_to_consensus_faithful_product_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        WellFormed trank Rmax Emax Dmax D →
         majorityAnswer D = m →
           rankProb ≤
             Probability.ProbHitWithin
@@ -235,7 +554,7 @@ theorem CRS_to_consensus_faithful_product_generic (hn4 : 4 ≤ n)
               (by omega : 2 ≤ n) D
               (OW_rankedEpidemicEndpoint m) T_rank) :
     ∀ C : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig (7 * (trank + 4)) C →
+      WellFormed trank Rmax Emax Dmax C →
       CorrectResetSeed C →
         p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤
           Probability.ProbHitWithin
@@ -243,7 +562,7 @@ theorem CRS_to_consensus_faithful_product_generic (hn4 : 4 ≤ n)
             (by omega : 2 ≤ n) C IsConsensusConfig
             (K_reset + OW_answerEpidemicWindow n + T_rank) := by
   classical
-  intro C hTimer hSeed
+  intro C hWF hSeed
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
@@ -255,7 +574,7 @@ theorem CRS_to_consensus_faithful_product_generic (hn4 : 4 ≤ n)
       (CRS_to_silence_faithful_product_generic
         (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
         hn4 K_reset T_rank p_reset rankProb C_reset h12resetCompletion h12rank
-        C hTimer hSeed)
+        C hWF hSeed)
   exact hSilence.trans
     (Probability.ProbHitWithin_mono_goal P hn2 C
       OW_silenceEndpoint IsConsensusConfig
@@ -274,13 +593,13 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
           (D.step (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n)) i j))
     (h12ranking :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig (7 * (trank + 4)) C →
+        WellFormed trank Rmax Emax Dmax C →
           IsTimerBoundedConfig T_timer C →
           Probability.expectedHittingTime
             (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
             (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
-              IsTimerBoundedConfig (7 * (trank + 4)) D ∧
+              WellFormed trank Rmax Emax Dmax D ∧
               IsTimerBoundedConfig T_timer D) ∨ IsConsensusConfig D) ≤
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetCompletion :
@@ -290,6 +609,7 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        WellFormed trank Rmax Emax Dmax D →
         majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -298,7 +618,7 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
               (OW_rankedEpidemicEndpoint m) T_rank)
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig (7 * (trank + 4)) C →
+        WellFormed trank Rmax Emax Dmax C →
         IsTimerBoundedConfig T_timer C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
           ((2 : ENNReal)⁻¹) ≤
@@ -308,7 +628,7 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
               (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
                 IsConsensusConfig D) T_rerank) :
     ∀ C₀ : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig (7 * (trank + 4)) C₀ →
+      WellFormed trank Rmax Emax Dmax C₀ →
       IsTimerBoundedConfig T_timer C₀ →
       Probability.expectedParallelTimeToConsensus
         (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
@@ -316,17 +636,17 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
         (((OW_globalWindow n C_rank T_timer K_reset T_rank T_rerank : ℕ) : ENNReal) *
           (p_reset * ((128 : ENNReal)⁻¹))⁻¹ / n) := by
   classical
-  intro C₀ hTimer₀ hTimerT₀
+  intro C₀ hWF₀ hTimerT₀
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
   let Inv : Config (AgentState n) Opinion n → Prop :=
-    fun C => IsTimerBoundedConfig (7 * (trank + 4)) C ∧
+    fun C => WellFormed trank Rmax Emax Dmax C ∧
       IsTimerBoundedConfig T_timer C
   let RankTarget : Config (AgentState n) Opinion n → Prop :=
     fun C =>
       InSrank C ∧ MedianTimerAtLeast 35 C ∧
-        IsTimerBoundedConfig (7 * (trank + 4)) C ∧
+        WellFormed trank Rmax Emax Dmax C ∧
         IsTimerBoundedConfig T_timer C
   let RankOrConsensus : Config (AgentState n) Opinion n → Prop :=
     fun C => RankTarget C ∨ IsConsensusConfig C
@@ -366,10 +686,8 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
     intro C hC i j
     constructor
     · simpa [P, Inv] using
-        generic_timer_preservation
-          (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-          hn0 (by omega : 7 * (trank + 4) ≤ 7 * (trank + 4))
-          C hC.1 i j
+        (WellFormed_step (n := n) (trank := trank) (Rmax := Rmax)
+          (Emax := Emax) (Dmax := Dmax) hn0 C hC.1 i j)
     · simpa [P, Inv] using hTimerStep C hC.2 i j
   have hConsOrCRSToConsensus :
       ∀ C : Config (AgentState n) Opinion n, ConsOrCRSMid C →
@@ -661,7 +979,7 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
   simpa [Probability.expectedParallelTimeToConsensus, P, Inv, K] using
     (Probability.expectedParallelTime_le_window_mul_inv_of_invariant
       P hn2 C₀ IsConsensusConfig Inv K (p_reset * ((128 : ENNReal)⁻¹))
-      hp_le_one ⟨hTimer₀, hTimerT₀⟩ hInvStep hwin)
+      hp_le_one ⟨hWF₀, hTimerT₀⟩ hInvStep hwin)
 
 /-- Concrete constant timer cap for `trank = 1`. -/
 def PEM_trank1_timer : ℕ := 35
@@ -673,11 +991,12 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
     (p_reset : ENNReal) (C_reset : ℕ)
     (h12ranking :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig PEM_trank1_timer C →
+        WellFormed 1 Rmax Emax Dmax C →
           Probability.expectedHittingTime
             (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
             (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
+              WellFormed 1 Rmax Emax Dmax D ∧
               IsTimerBoundedConfig PEM_trank1_timer D) ∨ IsConsensusConfig D) ≤
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetCompletion :
@@ -687,6 +1006,7 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        WellFormed 1 Rmax Emax Dmax D →
         majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -695,7 +1015,7 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
               (OW_rankedEpidemicEndpoint m) T_rank)
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig PEM_trank1_timer C →
+        WellFormed 1 Rmax Emax Dmax C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -704,14 +1024,14 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
               (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
                 IsConsensusConfig D) T_rerank) :
     ∀ C₀ : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig PEM_trank1_timer C₀ →
+      WellFormed 1 Rmax Emax Dmax C₀ →
       Probability.expectedParallelTimeToConsensus
         (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
         (by omega : 2 ≤ n) C₀ ≤
         (((OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank : ℕ) :
             ENNReal) *
           (p_reset * ((128 : ENNReal)⁻¹))⁻¹ / n) := by
-  intro C₀ hTimer₀
+  intro C₀ hWF₀
   have hTimerStep : ∀ D : Config (AgentState n) Opinion n,
       IsTimerBoundedConfig PEM_trank1_timer D → ∀ i j : Fin n,
         IsTimerBoundedConfig PEM_trank1_timer
@@ -726,17 +1046,17 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
       (n := n) (trank := 1) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
       hn4 hRmax hEmax hDmax C_rank PEM_trank1_timer K_reset T_rank T_rerank
       p_reset C_reset hTimerStep
-      (fun C hT35 _hT =>
+      (fun C hWF _hT =>
         by
-          simpa [PEM_trank1_timer] using h12ranking C hT35)
+          simpa [PEM_trank1_timer] using h12ranking C hWF)
       h12resetCompletion
       h12rank
-      (fun C hT35 _hT hNot =>
+      (fun C hWF _hT hNot =>
         by
-          simpa [PEM_trank1_timer] using h12reRank C hT35 hNot)
+          simpa [PEM_trank1_timer] using h12reRank C hWF hNot)
       C₀
-      (by simpa [PEM_trank1_timer] using hTimer₀)
-      (by simpa [PEM_trank1_timer] using hTimer₀))
+      (by simpa [PEM_trank1_timer] using hWF₀)
+      (by simpa [PEM_trank1_timer, WellFormed] using hWF₀.1))
 
 omit [Inhabited (Fin n × Fin n)] in
 /-- Explicit quadratic sequential window for the `trank = 1` instantiation. -/
@@ -790,11 +1110,12 @@ theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
     (C_rank C_reset C_T_rank C_T_rerank K_reset T_rank T_rerank : ℕ)
     (h12ranking :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig PEM_trank1_timer C →
+        WellFormed 1 Rmax Emax Dmax C →
           Probability.expectedHittingTime
             (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
             (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
+              WellFormed 1 Rmax Emax Dmax D ∧
               IsTimerBoundedConfig PEM_trank1_timer D) ∨ IsConsensusConfig D) ≤
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetCompletion :
@@ -804,6 +1125,7 @@ theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        WellFormed 1 Rmax Emax Dmax D →
         majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -812,7 +1134,7 @@ theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
               (OW_rankedEpidemicEndpoint m) T_rank)
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig PEM_trank1_timer C →
+        WellFormed 1 Rmax Emax Dmax C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -823,20 +1145,20 @@ theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
     (hRankWindow : T_rank ≤ C_T_rank * n * n)
     (hRerankWindow : T_rerank ≤ C_T_rerank * n * n) :
     ∀ C₀ : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig PEM_trank1_timer C₀ →
+      WellFormed 1 Rmax Emax Dmax C₀ →
       Probability.expectedParallelTimeToConsensus
         (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
         (by omega : 2 ≤ n) C₀ ≤
         ((PEM_On_explicit_linearConstant
           C_rank C_reset C_T_rank C_T_rerank * n : ℕ) : ENNReal) := by
-  intro C₀ hTimer₀
+  intro C₀ hWF₀
   have hn0 : 0 < n := by omega
   have hBase :=
     PEM_expectedParallelTime_On
       (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
       hn4 hRmax hEmax hDmax C_rank K_reset T_rank T_rerank
       ((2 : ENNReal)⁻¹) C_reset
-      h12ranking h12resetCompletion h12rank h12reRank C₀ hTimer₀
+      h12ranking h12resetCompletion h12rank h12reRank C₀ hWF₀
   let c : ℕ := 2 * C_rank + C_reset + C_T_rank + C_T_rerank + 76
   have hWindowNat :
       OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank ≤
