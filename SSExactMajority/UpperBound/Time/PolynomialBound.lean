@@ -10,7 +10,7 @@ median-correct → consensus phase of the PEM protocol.
 ## Main results
 
 * `timer_ge_two_descent_step` — the timer≥2 descent for deterministic_descent
-* `PEM_expected_timer_drain_poly` — timer drain: E[T] ≤ 7(Rmax+4)·n(n-1)
+* `PEM_expected_timer_drain_poly` — timer drain: E[T] ≤ T_timer·n(n-1)
 * `PEM_expected_epidemic_to_consensus_poly` — epidemic: E[T] < ⊤ (finite)
 * `PEM_expected_median_correct_to_consensus_poly` — composition: E[T] < ⊤ (finite)
 -/
@@ -26,10 +26,10 @@ noncomputable def maxMedianTimer (C : Config (AgentState n) Opinion n) : ℕ :=
   Finset.sup Finset.univ
     (fun μ : Fin n => if (C μ).1.rank.val + 1 = ceilHalf n then (C μ).1.timer else 0)
 
-/-! ## Timer drain: close the timer≥2 sorry
+/-! ## Timer drain: close the timer≥2 gap
 
 From InSswap + MedianCorrect + timer≥1 + timer bounded:
-E[T to consensus ∨ CRS ∨ ¬(InSswap ∧ timer≥1)] ≤ 7(Rmax+4)·n(n-1).
+E[T to consensus ∨ CRS ∨ ¬(InSswap ∧ timer≥1)] ≤ T_timer·n(n-1).
 
 The proof uses deterministic descent on `maxMedianTimer` (defined in Time.lean).
 The timer=1 case was already closed in Time.lean.
@@ -37,7 +37,7 @@ The timer≥2 case requires: at step (median, max), InSswap is preserved,
 MedianCorrect is preserved, timer drops by 1 (so timer≥1 since timer was ≥2),
 and maxMedianTimer strictly decreases.
 
-We prove the timer≥2 descent step here, then use it to close the sorry
+We prove the timer≥2 descent step here, then use it to close the gap
 in the full timer drain theorem. -/
 
 /-! ### Timer≥2 descent step
@@ -145,24 +145,25 @@ theorem timer_ge_two_descent_step
 /-! ## Full timer drain (polynomial bound)
 
 This re-proves PEM_expected_timer_drain from Time.lean with the timer≥2
-sorry closed, using timer_ge_two_descent_step above. -/
+gap closed, using timer_ge_two_descent_step above. -/
 
 set_option maxHeartbeats 16000000 in
 theorem PEM_expected_timer_drain_poly
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hMedCorrect : MedianAnswerCorrect C)
     (hTimerLo : MedianTimerAtLeast 1 C)
-    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
         ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) ≤
-      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   set Goal := fun D : Config (AgentState n) Opinion n =>
@@ -296,7 +297,7 @@ theorem PEM_expected_timer_drain_poly
               split_ifs <;> dsimp only [] <;> omega
           have h0 := hT' μ hμ_rank_post
           omega)
-  have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
+  have hMaxTimer : maxMedianTimer C ≤ T_timer := by
     unfold maxMedianTimer
     apply Finset.sup_le
     intro μ _
@@ -305,12 +306,12 @@ theorem PEM_expected_timer_drain_poly
     · exact Nat.zero_le _
   calc Probability.expectedHittingTime P (by omega) C Goal
       ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
-    _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+    _ ≤ ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
         norm_cast
         calc maxMedianTimer C * (n * (n - 1))
-            ≤ (7 * (Rmax + 4)) * (n * (n - 1)) :=
+            ≤ T_timer * (n * (n - 1)) :=
               Nat.mul_le_mul_right _ hMaxTimer
-          _ = 7 * (Rmax + 4) * n * (n - 1) := by ring
+          _ = T_timer * n * (n - 1) := by ring
 
 
 /-! ## Epidemic bound
@@ -696,13 +697,13 @@ From InSswap + timer≥1 + timer-bounded: E[T to consensus] ≤ 10·Rmax·n².
 
 Proof structure:
 1. Reach MAC: E[T] ≤ n(n-1) via PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le_live
-2. Timer drain: E[T] ≤ 7(Rmax+4)·n(n-1) via PEM_expected_timer_drain_poly
+2. Timer drain: E[T] ≤ T_timer·n(n-1) via PEM_expected_timer_drain_poly
 3. Reset trigger + epidemic: E[T] ≤ n(n-1) + n³ via CRS descent + allR recovery
 
 The total: n(n-1) + 7(R+4)n(n-1) + n(n-1) + n³ + Rn² ≤ 10Rn² for Rmax ≥ n.
 
 BLOCKING: The epidemic bound (CRS → consensus) requires either:
-- Proving nonResettingCount non-increase under CRS (done modulo sorry)
+- Proving nonResettingCount non-increase under CRS (done modulo pending gaps)
 - AND composing the allR → Phase1Goal → consensus chain polynomially
 The finiteness (< ⊤) version is available via bounded_config_to_consensus,
 but extracting a polynomial bound from it is non-trivial. -/

@@ -17,7 +17,7 @@ exactly two universal expected-hitting-time bounds. Discharging them here yields
 
 Remaining work = these two keystones:
 * `OW_rankBound` — from any timer-bounded config, expected time to reach the ranking
-  endpoint (`InSrank ∧ median timer ≥ 35 ∧ timer-bounded`) is `≤ Rmax·n²`.
+  endpoint (`InSrank ∧ median timer ≥ 35 ∧ timer-bounded`) is `≤ C_rank·n²`.
   (Universal ranking time; needs reset-normalization from arbitrary configs +
   `PEM_FreshRankingStart_expected_until_srank_timer2_or_consensus_or_heap_exit_le`.)
 * `OW_consensusBound` — from `InSswap` with a fresh (`≥ 35`), bounded median
@@ -45,31 +45,31 @@ def OW_restartBranch {n : ℕ} (C : Config (AgentState n) Opinion n) : Prop :=
   CorrectResetSeed C ∨ ¬ (InSswap C ∧ MedianTimerAtLeast 1 C)
 
 /-- Proven swap-window length used in the consensus renewal. -/
-def OW_swapWindow (n Rmax : ℕ) : ℕ :=
-  2 * (n * (n - 1)) + 2 * (7 * (Rmax + 4) * n * (n - 1))
+def OW_swapWindow (n T_timer : ℕ) : ℕ :=
+  2 * (n * (n - 1)) + 2 * (T_timer * n * (n - 1))
 
 /-- Markov window for the productive MAC-live drain. -/
-def OW_macLiveWindow (n Rmax : ℕ) : ℕ :=
-  2 * (7 * (Rmax + 4) * n * (n - 1) + n * (n - 1))
+def OW_macLiveWindow (n T_timer : ℕ) : ℕ :=
+  2 * (T_timer * n * (n - 1) + n * (n - 1))
 
 /-- Productive live-swap window: isolate a median decision, then drain/reset
 from the MAC-live branch. -/
-def OW_liveConsensusWindow (n Rmax T_reset T_rank : ℕ) : ℕ :=
-  decisionWindow n + OW_macLiveWindow n Rmax + (T_reset + T_rank)
+def OW_liveConsensusWindow (n T_timer T_reset T_rank : ℕ) : ℕ :=
+  decisionWindow n + OW_macLiveWindow n T_timer + (T_reset + T_rank)
 
 /-- One renewal-cycle window for the consensus proof. -/
-def OW_consensusCycleWindow (n Rmax T_reset T_rank T_rerank : ℕ) : ℕ :=
-  T_rerank + OW_liveConsensusWindow n Rmax T_reset T_rank
+def OW_consensusCycleWindow (n T_timer T_reset T_rank T_rerank : ℕ) : ℕ :=
+  T_rerank + OW_liveConsensusWindow n T_timer T_reset T_rank
 
 /-- Expected sequential-time bound produced by the `1/64` renewal window. -/
-def OW_consensusExpectedSteps (n Rmax T_reset T_rank T_rerank : ℕ) : ℕ :=
-  64 * OW_consensusCycleWindow n Rmax T_reset T_rank T_rerank
+def OW_consensusExpectedSteps (n T_timer T_reset T_rank T_rerank : ℕ) : ℕ :=
+  64 * OW_consensusCycleWindow n T_timer T_reset T_rank T_rerank
 
 /-- End-to-end finite window used after converting the consensus expected-time
 bound to a `1/2` hit window. -/
-def OW_globalWindow (n Rmax T_reset T_rank T_rerank : ℕ) : ℕ :=
-  (2 * Rmax * n * n + T_rerank) +
-    2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank
+def OW_globalWindow (n C_rank T_timer T_reset T_rank T_rerank : ℕ) : ℕ :=
+  (2 * C_rank * n * n + T_rerank) +
+    2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank
 
 /-- The endpoint supplied by the [12] ranking window after the reset epidemic has
 already made the answer uniform: ranking has reached `InSswap`, the uniform
@@ -713,26 +713,32 @@ theorem CRS_to_consensus_faithful (hn4 : 4 ≤ n)
 omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
 /-- **Keystone 1 (universal ranking time).** From any timer-bounded configuration,
 the expected time to reach a ranked configuration with a fresh (`≥ 35`) bounded
-median timer is at most `Rmax·n²`. -/
+median timer is at most `C_rank·n²`, matching the cited [12] ranking theorem
+rather than the reset parameter. -/
 theorem OW_rankBound (hn4 : 4 ≤ n)
     (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C_rank T_timer : ℕ)
     (h12ranking :
       ∀ C : Config (AgentState n) Opinion n,
         IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+          IsTimerBoundedConfig T_timer C →
           Probability.expectedHittingTime
             (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
             (fun D => InSrank D ∧ MedianTimerAtLeast 35 D ∧
-              IsTimerBoundedConfig (7 * (Rmax + 4)) D) ≤
-            ((Rmax * n * n : ℕ) : ENNReal)) :
+              IsTimerBoundedConfig (7 * (Rmax + 4)) D ∧
+              IsTimerBoundedConfig T_timer D) ≤
+            ((C_rank * n * n : ℕ) : ENNReal)) :
     ∀ C : Config (AgentState n) Opinion n,
       IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      IsTimerBoundedConfig T_timer C →
         Probability.expectedHittingTime
           (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
           (by omega : 2 ≤ n) C
           (fun D => InSrank D ∧ MedianTimerAtLeast 35 D ∧
-            IsTimerBoundedConfig (7 * (Rmax + 4)) D) ≤
-          ((Rmax * n * n : ℕ) : ENNReal) := by
+            IsTimerBoundedConfig (7 * (Rmax + 4)) D ∧
+            IsTimerBoundedConfig T_timer D) ≤
+          ((C_rank * n * n : ℕ) : ENNReal) := by
   have _hRmax : n ≤ Rmax := hRmax
   have _hEmax : n ≤ Emax := hEmax
   have _hDmax : n ≤ Dmax := hDmax
@@ -773,21 +779,23 @@ theorem decision_window (hn4 : 4 ≤ n) (hn0 : 0 < n)
 
 
 /-- Timer-drain/propagate window (Markov form of `PEM_expected_timer_drain_poly`):
-from `InSswap`+`MAC`+bounded live timer, within `2·7(Rmax+4)·n(n-1)` steps reach
+from `InSswap`+`MAC`+bounded live timer, within `2·T_timer·n(n-1)` steps reach
 consensus, or form a correct reset seed, or leave the live-swap region, with prob ≥ 1/2. -/
 theorem timer_drain_window (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
     (C : Config (AgentState n) Opinion n) (hC : InSswap C)
     (hMAC : MedianAnswerCorrect C) (hTLo : MedianTimerAtLeast 1 C)
-    (hTHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hTHi : IsTimerBoundedConfig T_timer C) :
     ((2 : ENNReal)⁻¹) ≤
       Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
         (by omega : 2 ≤ n) C
         (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
           ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
-        (2 * (7 * (Rmax + 4) * n * (n - 1))) :=
+        (2 * (T_timer * n * (n - 1))) :=
   Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
     (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
-    (PEM_expected_timer_drain_poly (Emax := Emax) (Dmax := Dmax) hn4 hn0 hRmax C hC hMAC hTLo hTHi)
+    (PEM_expected_timer_drain_poly (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax T_timer C hC hMAC hTLo hTHi)
     (by omega)
 
 /-- Markov-window form of the productive MAC-live drain: from `InSswap` with
@@ -795,19 +803,20 @@ correct median answer and a live bounded timer, reach consensus or a correct
 reset seed with probability at least `1/2`. -/
 theorem MAClive_to_consensus_or_crs_window (hn4 : 4 ≤ n) (hn0 : 0 < n)
     (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (T_timer : ℕ)
     (C : Config (AgentState n) Opinion n)
     (hC : InSswap C) (hMAC : MedianAnswerCorrect C)
     (hTLo : MedianTimerAtLeast 1 C)
-    (hTHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hTHi : IsTimerBoundedConfig T_timer C) :
     ((2 : ENNReal)⁻¹) ≤
       Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
         (by omega : 2 ≤ n) C
         (fun D => IsConsensusConfig D ∨ CorrectResetSeed D)
-        (OW_macLiveWindow n Rmax) := by
+        (OW_macLiveWindow n T_timer) := by
   have hM :=
     MAClive_to_consensus_or_crs
       (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-      hn4 hn0 hRmax hEmax hDmax C hC hMAC hTLo hTHi
+      hn4 hn0 hRmax hEmax hDmax T_timer C hC hMAC hTLo hTHi
   exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
     (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
     hM
@@ -817,30 +826,35 @@ theorem MAClive_to_consensus_or_crs_window (hn4 : 4 ≤ n) (hn0 : 0 < n)
 
 
 /-- Chain decision -> timer-drain (bounded invariant threaded). From InSswap with a
-live, bounded median timer, within `2n(n-1) + 2*7(Rmax+4)n(n-1)` steps reach consensus /
+live, bounded median timer, within `2n(n-1) + 2*T_timer*n(n-1)` steps reach consensus /
 a correct reset seed / leave the live-swap region, with probability >= 1/4. -/
 theorem swap_live_to_cons_or_crs_or_break (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (hTimerStep : ∀ D : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig T_timer D → ∀ i j : Fin n,
+        IsTimerBoundedConfig T_timer (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j))
     (C : Config (AgentState n) Opinion n) (hC : InSswap C)
-    (hT : MedianTimerAtLeast 1 C) (hB : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hT : MedianTimerAtLeast 1 C) (hB : IsTimerBoundedConfig T_timer C) :
     ((4 : ENNReal)⁻¹) ≤
       Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
         (by omega : 2 ≤ n) C
         (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
           ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
-        (2 * (n * (n - 1)) + 2 * (7 * (Rmax + 4) * n * (n - 1))) := by
+        (2 * (n * (n - 1)) + 2 * (T_timer * n * (n - 1))) := by
   have hn2 : (2 : ℕ) ≤ n := by omega
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
   set Inv : Config (AgentState n) Opinion n → Prop :=
-    fun D => IsTimerBoundedConfig (7 * (Rmax + 4)) D with hInvDef
+    fun D => IsTimerBoundedConfig T_timer D with hInvDef
   set Goal : Config (AgentState n) Opinion n → Prop :=
     fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨ ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
     with hGoalDef
   have hInvStep : ∀ D, Inv D → ∀ i j, Inv (D.step P i j) :=
-    fun D hD i j => PEMProtocolCoupled_preserves_timer_bounded hn0 D hD i j
+    fun D hD i j => by
+      simpa [P, Inv] using hTimerStep D hD i j
   by_cases hMAC : MedianAnswerCorrect C
   · refine le_trans ?_ (Probability.ProbHitWithin_mono_time P hn2 C Goal
-      (m := 2 * (7 * (Rmax + 4) * n * (n - 1))) (by omega))
-    refine le_trans ?_ (timer_drain_window hn4 hn0 hRmax C hC hMAC hT hB)
+      (m := 2 * (T_timer * n * (n - 1))) (by omega))
+    refine le_trans ?_ (timer_drain_window hn4 hn0 hRmax T_timer C hC hMAC hT hB)
     rw [ENNReal.inv_le_inv]; norm_num
   · set dG : Config (AgentState n) Opinion n → Prop :=
       fun D => (InSswap D ∧ MedianAnswerCorrect D) ∨ ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
@@ -853,7 +867,7 @@ theorem swap_live_to_cons_or_crs_or_break (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax :
       exact decision_window hn4 hn0 C hC hT hMAC
     have hGoal : ∀ C' : Config (AgentState n) Opinion n, Mid C' →
         ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin P hn2 C' Goal (2 * (7 * (Rmax + 4) * n * (n - 1))) := by
+          Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) := by
       intro C' hC'
       obtain ⟨hdg, hinv⟩ := hC'
       by_cases hlive : InSswap C' ∧ MedianTimerAtLeast 1 C'
@@ -861,19 +875,19 @@ theorem swap_live_to_cons_or_crs_or_break (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax :
           rcases hdg with ⟨_, hm⟩ | hexit
           · exact hm
           · exact absurd hlive hexit
-        exact timer_drain_window hn4 hn0 hRmax C' hlive.1 hmac hlive.2 hinv
+        exact timer_drain_window hn4 hn0 hRmax T_timer C' hlive.1 hmac hlive.2 hinv
       · have hgC' : Goal C' := Or.inr (Or.inr hlive)
         have h1 : (1 : ENNReal) ≤
-            Probability.ProbHitWithin P hn2 C' Goal (2 * (7 * (Rmax + 4) * n * (n - 1))) := by
+            Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) := by
           calc (1 : ENNReal) = Probability.probReached P hn2 C' Goal 0 :=
                 (Probability.probReached_zero_of_goal P hn2 C' Goal hgC').symm
             _ ≤ Probability.ProbHitWithin P hn2 C' Goal 0 :=
                 Probability.probReached_le_ProbHitWithin P hn2 C' Goal 0
-            _ ≤ Probability.ProbHitWithin P hn2 C' Goal (2 * (7 * (Rmax + 4) * n * (n - 1))) :=
+            _ ≤ Probability.ProbHitWithin P hn2 C' Goal (2 * (T_timer * n * (n - 1))) :=
                 Probability.ProbHitWithin_mono_time P hn2 C' Goal (Nat.zero_le _)
         exact le_trans (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1) h1
     have hchain := Probability.ProbHitWithin_add_ge_mul P hn2 C Mid Goal
-      (2 * (n * (n - 1))) (2 * (7 * (Rmax + 4) * n * (n - 1)))
+      (2 * (n * (n - 1))) (2 * (T_timer * n * (n - 1)))
       ((2 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹) hMid hGoal
     have harith : ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) = ((4 : ENNReal)⁻¹) := by
       rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]; norm_num
@@ -883,10 +897,13 @@ theorem swap_live_to_cons_or_crs_or_break (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax :
 window, then the proven swap window.  The endpoint is the swap-cycle event,
 not silence or consensus. -/
 theorem OW_exit_rerank_to_swap_event (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (hRmax : n ≤ Rmax) (T_rerank : ℕ)
+    (hRmax : n ≤ Rmax) (T_timer T_rerank : ℕ)
+    (hTimerStep : ∀ D : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig T_timer D → ∀ i j : Fin n,
+        IsTimerBoundedConfig T_timer (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j))
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
-        IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+        IsTimerBoundedConfig T_timer C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 1 C) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -894,7 +911,7 @@ theorem OW_exit_rerank_to_swap_event (hn4 : 4 ≤ n) (hn0 : 0 < n)
               (by omega : 2 ≤ n) C
               (fun D => InSswap D ∧ MedianTimerAtLeast 1 D) T_rerank) :
     ∀ C : Config (AgentState n) Opinion n,
-      IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      IsTimerBoundedConfig T_timer C →
       ¬ (InSswap C ∧ MedianTimerAtLeast 1 C) →
         ((8 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin
@@ -902,13 +919,13 @@ theorem OW_exit_rerank_to_swap_event (hn4 : 4 ≤ n) (hn0 : 0 < n)
             (by omega : 2 ≤ n) C
             (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
               ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
-            (T_rerank + OW_swapWindow n Rmax) := by
+            (T_rerank + OW_swapWindow n T_timer) := by
   classical
   intro C hTimer hExit
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
   let Inv : Config (AgentState n) Opinion n → Prop :=
-    IsTimerBoundedConfig (7 * (Rmax + 4))
+    IsTimerBoundedConfig T_timer
   let Live : Config (AgentState n) Opinion n → Prop :=
     fun D => InSswap D ∧ MedianTimerAtLeast 1 D
   let SwapEvent : Config (AgentState n) Opinion n → Prop :=
@@ -916,8 +933,7 @@ theorem OW_exit_rerank_to_swap_event (hn4 : 4 ≤ n) (hn0 : 0 < n)
   have hInvStep : ∀ D : Config (AgentState n) Opinion n, Inv D →
       ∀ i j : Fin n, Inv (D.step P i j) := by
     intro D hD i j
-    simpa [P, Inv] using
-      PEMProtocolCoupled_preserves_timer_bounded hn0 D hD i j
+    simpa [P, Inv] using hTimerStep D hD i j
   have hLive :
       ((2 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C
@@ -928,19 +944,19 @@ theorem OW_exit_rerank_to_swap_event (hn4 : 4 ≤ n) (hn0 : 0 < n)
   have hSwap :
       ∀ D : Config (AgentState n) Opinion n, Live D ∧ Inv D →
         ((4 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin P hn2 D SwapEvent (OW_swapWindow n Rmax) := by
+          Probability.ProbHitWithin P hn2 D SwapEvent (OW_swapWindow n T_timer) := by
     intro D hD
     simpa [P, Live, Inv, SwapEvent, OW_swapWindow] using
       swap_live_to_cons_or_crs_or_break
         (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        hn4 hn0 hRmax D hD.1.1 hD.1.2 hD.2
+        hn4 hn0 hRmax T_timer hTimerStep D hD.1.1 hD.1.2 hD.2
   have hChain :
       ((2 : ENNReal)⁻¹) * ((4 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C SwapEvent
-          (T_rerank + OW_swapWindow n Rmax) :=
+          (T_rerank + OW_swapWindow n T_timer) :=
     Probability.ProbHitWithin_add_ge_mul P hn2 C
       (fun D => Live D ∧ Inv D) SwapEvent
-      T_rerank (OW_swapWindow n Rmax)
+      T_rerank (OW_swapWindow n T_timer)
       ((2 : ENNReal)⁻¹) ((4 : ENNReal)⁻¹)
       hLive hSwap
   have hprod : ((2 : ENNReal)⁻¹) * ((4 : ENNReal)⁻¹) = ((8 : ENNReal)⁻¹) := by
@@ -956,7 +972,11 @@ The renewal uses only the cited [12] reset-duration, rank, and re-rank windows.
 The old aggregate `hRank12` hypothesis is not used. -/
 theorem OW_consensusBound (hn4 : 4 ≤ n)
     (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
-    (T_reset T_rank T_rerank : ℕ)
+    (T_timer T_reset T_rank T_rerank : ℕ)
+    (hTimerStep : ∀ D : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig T_timer D → ∀ i j : Fin n,
+        IsTimerBoundedConfig T_timer
+          (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) i j))
     (h12resetDuration :
       CRSResetDuration12 (n := n) (Rmax := Rmax) (Emax := Emax)
         (Dmax := Dmax) (by omega : 0 < n) T_reset)
@@ -971,6 +991,7 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
         IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+        IsTimerBoundedConfig T_timer C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -980,17 +1001,19 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
     ∀ C : Config (AgentState n) Opinion n,
       InSswap C → MedianTimerAtLeast 35 C →
       IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      IsTimerBoundedConfig T_timer C →
         Probability.expectedHittingTime
           (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
           (by omega : 2 ≤ n) C IsConsensusConfig ≤
-          ((OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank : ℕ) : ENNReal) := by
+          ((OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank : ℕ) : ENNReal) := by
   classical
-  intro C₀ hS₀ hT₀ hB₀
+  intro C₀ hS₀ hT₀ hB₀ hBT₀
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
   let Inv : Config (AgentState n) Opinion n → Prop :=
-    IsTimerBoundedConfig (7 * (Rmax + 4))
+    fun C => IsTimerBoundedConfig (7 * (Rmax + 4)) C ∧
+      IsTimerBoundedConfig T_timer C
   let Live35 : Config (AgentState n) Opinion n → Prop :=
     fun C => InSswap C ∧ MedianTimerAtLeast 35 C
   let Live35Mid : Config (AgentState n) Opinion n → Prop :=
@@ -1003,12 +1026,12 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
     fun C => IsConsensusConfig C ∨ CorrectResetSeed C
   let ConsOrCRSMid : Config (AgentState n) Opinion n → Prop :=
     fun C => ConsOrCRS C ∧ Inv C
-  let KLive : ℕ := OW_liveConsensusWindow n Rmax T_reset T_rank
-  let K : ℕ := OW_consensusCycleWindow n Rmax T_reset T_rank T_rerank
+  let KLive : ℕ := OW_liveConsensusWindow n T_timer T_reset T_rank
+  let K : ℕ := OW_consensusCycleWindow n T_timer T_reset T_rank T_rerank
   have hDecisionPos : 0 < decisionWindow n := by
     dsimp [decisionWindow]
     exact Nat.mul_pos (Nat.mul_pos (by norm_num) (by omega)) (by omega)
-  have hLivePos : 0 < OW_liveConsensusWindow n Rmax T_reset T_rank := by
+  have hLivePos : 0 < OW_liveConsensusWindow n T_timer T_reset T_rank := by
     dsimp [OW_liveConsensusWindow]
     omega
   have hKpos : 0 < K := by
@@ -1019,8 +1042,10 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
   have hInvStep : ∀ C : Config (AgentState n) Opinion n, Inv C →
       ∀ i j : Fin n, Inv (C.step P i j) := by
     intro C hC i j
-    simpa [P, Inv] using
-      PEMProtocolCoupled_preserves_timer_bounded hn0 C hC i j
+    constructor
+    · simpa [P, Inv] using
+        PEMProtocolCoupled_preserves_timer_bounded hn0 C hC.1 i j
+    · simpa [P, Inv] using hTimerStep C hC.2 i j
   have hConsOrCRSToConsensus :
       ∀ C : Config (AgentState n) Opinion n, ConsOrCRSMid C →
         ((4 : ENNReal)⁻¹) ≤
@@ -1049,7 +1074,7 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
           (CRS_to_consensus_faithful_product
             (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
             hn4 T_reset T_rank ((2 : ENNReal)⁻¹)
-            h12resetDuration h12rank C hInvC hSeed)
+            h12resetDuration h12rank C hInvC.1 hSeed)
       have hprod :
           ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) = ((4 : ENNReal)⁻¹) := by
         rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
@@ -1059,26 +1084,27 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
       ∀ C : Config (AgentState n) Opinion n, DecisionMid C →
         ((2 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-            (OW_macLiveWindow n Rmax) := by
+            (OW_macLiveWindow n T_timer) := by
     intro C hC
     rcases hC with ⟨hDecision, hInvC⟩
     rcases hDecision with hMAC | hRest
     · have hBase :
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin P hn2 C ConsOrCRS
-              (OW_macLiveWindow n Rmax) := by
+              (OW_macLiveWindow n T_timer) := by
         simpa [P, ConsOrCRS] using
           (MAClive_to_consensus_or_crs_window
             (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-            hn4 hn0 hRmax hEmax hDmax C hMAC.1 hMAC.2.1 hMAC.2.2 hInvC)
+            hn4 hn0 hRmax hEmax hDmax T_timer C
+            hMAC.1 hMAC.2.1 hMAC.2.2 hInvC.2)
       rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-        P hn2 C ConsOrCRS Inv hInvC hInvStep (OW_macLiveWindow n Rmax)]
+        P hn2 C ConsOrCRS Inv hInvC hInvStep (OW_macLiveWindow n T_timer)]
       exact hBase
     · rcases hRest with hCons | hSeed
       · have hGoalC : ConsOrCRSMid C := ⟨Or.inl hCons, hInvC⟩
         have hOne : (1 : ENNReal) ≤
             Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-              (OW_macLiveWindow n Rmax) := by
+              (OW_macLiveWindow n T_timer) := by
           calc
             (1 : ENNReal) =
                 Probability.probReached P hn2 C ConsOrCRSMid 0 := by
@@ -1087,14 +1113,14 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
             _ ≤ Probability.ProbHitWithin P hn2 C ConsOrCRSMid 0 :=
                 Probability.probReached_le_ProbHitWithin P hn2 C ConsOrCRSMid 0
             _ ≤ Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-                  (OW_macLiveWindow n Rmax) :=
+                  (OW_macLiveWindow n T_timer) :=
                 Probability.ProbHitWithin_mono_time P hn2 C ConsOrCRSMid
                   (Nat.zero_le _)
         exact le_trans (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1) hOne
       · have hGoalC : ConsOrCRSMid C := ⟨Or.inr hSeed, hInvC⟩
         have hOne : (1 : ENNReal) ≤
             Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-              (OW_macLiveWindow n Rmax) := by
+              (OW_macLiveWindow n T_timer) := by
           calc
             (1 : ENNReal) =
                 Probability.probReached P hn2 C ConsOrCRSMid 0 := by
@@ -1103,7 +1129,7 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
             _ ≤ Probability.ProbHitWithin P hn2 C ConsOrCRSMid 0 :=
                 Probability.probReached_le_ProbHitWithin P hn2 C ConsOrCRSMid 0
             _ ≤ Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-                  (OW_macLiveWindow n Rmax) :=
+                  (OW_macLiveWindow n T_timer) :=
                 Probability.ProbHitWithin_mono_time P hn2 C ConsOrCRSMid
                   (Nat.zero_le _)
         exact le_trans (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1) hOne
@@ -1128,17 +1154,17 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
     have hAB :
         ((4 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin P hn2 C ConsOrCRSMid
-            (decisionWindow n + OW_macLiveWindow n Rmax) :=
+            (decisionWindow n + OW_macLiveWindow n T_timer) :=
       Probability.ProbHitWithin_add_ge_mul P hn2 C DecisionMid ConsOrCRSMid
-        (decisionWindow n) (OW_macLiveWindow n Rmax)
+        (decisionWindow n) (OW_macLiveWindow n T_timer)
         ((4 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹)
         hDecision hDecisionToConsOrCRS
     have hChain :
         (((4 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹)) * ((4 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin P hn2 C IsConsensusConfig
-            ((decisionWindow n + OW_macLiveWindow n Rmax) + (T_reset + T_rank)) :=
+            ((decisionWindow n + OW_macLiveWindow n T_timer) + (T_reset + T_rank)) :=
       Probability.ProbHitWithin_add_ge_mul P hn2 C ConsOrCRSMid IsConsensusConfig
-        (decisionWindow n + OW_macLiveWindow n Rmax) (T_reset + T_rank)
+        (decisionWindow n + OW_macLiveWindow n T_timer) (T_reset + T_rank)
         (((4 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹)) ((4 : ENNReal)⁻¹)
         hAB hConsOrCRSToConsensus
     have h42 :
@@ -1172,7 +1198,7 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
     · have hReRankBase :
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin P hn2 C Live35 T_rerank := by
-        simpa [P, Live35] using h12reRank C hInvC hLive
+        simpa [P, Live35] using h12reRank C hInvC.1 hInvC.2 hLive
       have hReRank :
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin P hn2 C Live35Mid T_rerank := by
@@ -1200,11 +1226,11 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
   have hExpected :=
     Probability.expectedHittingTime_le_window_mul_inv_of_invariant
       P hn2 C₀ IsConsensusConfig Inv K ((64 : ENNReal)⁻¹)
-      hp_le_one hB₀ hInvStep hWindow
+      hp_le_one ⟨hB₀, hBT₀⟩ hInvStep hWindow
   calc
     Probability.expectedHittingTime P hn2 C₀ IsConsensusConfig
         ≤ (K : ENNReal) * ((64 : ENNReal)⁻¹)⁻¹ := hExpected
-    _ = ((OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank : ℕ) : ENNReal) := by
+    _ = ((OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank : ℕ) : ENNReal) := by
         simp [K, OW_consensusExpectedSteps, OW_consensusCycleWindow, mul_comm]
 
 /-- **Unconditional parallel-time bound modulo the cited [12] ranking windows.**
@@ -1213,16 +1239,22 @@ consensus is controlled by the ranking window, the [12] re-rank entry window,
 and the consensus renewal above. -/
 theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
     (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
-    (T_reset T_rank T_rerank : ℕ)
+    (C_rank T_timer T_reset T_rank T_rerank : ℕ)
+    (hTimerStep : ∀ D : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig T_timer D → ∀ i j : Fin n,
+        IsTimerBoundedConfig T_timer
+          (D.step (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n)) i j))
     (h12ranking :
       ∀ C : Config (AgentState n) Opinion n,
         IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+          IsTimerBoundedConfig T_timer C →
           Probability.expectedHittingTime
             (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
             (fun D => InSrank D ∧ MedianTimerAtLeast 35 D ∧
-              IsTimerBoundedConfig (7 * (Rmax + 4)) D) ≤
-            ((Rmax * n * n : ℕ) : ENNReal))
+              IsTimerBoundedConfig (7 * (Rmax + 4)) D ∧
+              IsTimerBoundedConfig T_timer D) ≤
+            ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetDuration :
       CRSResetDuration12 (n := n) (Rmax := Rmax) (Emax := Emax)
         (Dmax := Dmax) (by omega : 0 < n) T_reset)
@@ -1237,6 +1269,7 @@ theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
     (h12reRank :
       ∀ C : Config (AgentState n) Opinion n,
         IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+        IsTimerBoundedConfig T_timer C →
         ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
@@ -1245,57 +1278,73 @@ theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
               (fun D => InSswap D ∧ MedianTimerAtLeast 35 D) T_rerank) :
     ∀ C₀ : Config (AgentState n) Opinion n,
       IsTimerBoundedConfig (7 * (Rmax + 4)) C₀ →
+      IsTimerBoundedConfig T_timer C₀ →
       Probability.expectedParallelTimeToConsensus
         (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
         (by omega : 2 ≤ n) C₀ ≤
-        (((OW_globalWindow n Rmax T_reset T_rank T_rerank : ℕ) : ENNReal) *
+        (((OW_globalWindow n C_rank T_timer T_reset T_rank T_rerank : ℕ) : ENNReal) *
           ((8 : ENNReal)⁻¹)⁻¹ / n) := by
   classical
-  intro C₀ hTimer₀
+  intro C₀ hTimer₀ hTimerT₀
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
   let Inv : Config (AgentState n) Opinion n → Prop :=
-    IsTimerBoundedConfig (7 * (Rmax + 4))
+    fun C => IsTimerBoundedConfig (7 * (Rmax + 4)) C ∧
+      IsTimerBoundedConfig T_timer C
   let RankTarget : Config (AgentState n) Opinion n → Prop :=
     fun C =>
       InSrank C ∧ MedianTimerAtLeast 35 C ∧
-        IsTimerBoundedConfig (7 * (Rmax + 4)) C
+        IsTimerBoundedConfig (7 * (Rmax + 4)) C ∧
+        IsTimerBoundedConfig T_timer C
   let Live35 : Config (AgentState n) Opinion n → Prop :=
     fun C => InSswap C ∧ MedianTimerAtLeast 35 C
   let Live35Target : Config (AgentState n) Opinion n → Prop :=
     fun C => Live35 C ∧ Inv C
-  let K : ℕ := OW_globalWindow n Rmax T_reset T_rank T_rerank
+  let K : ℕ := OW_globalWindow n C_rank T_timer T_reset T_rank T_rerank
   have hKpos : 0 < K := by
-    dsimp [K, OW_globalWindow, OW_consensusExpectedSteps, OW_consensusCycleWindow,
-      OW_liveConsensusWindow, OW_macLiveWindow, decisionWindow]
-    have hnpos : 0 < n := by omega
-    have hRpos : 0 < Rmax := by omega
-    positivity
+    have hDecisionPos : 0 < decisionWindow n := by
+      dsimp [decisionWindow]
+      exact Nat.mul_pos (Nat.mul_pos (by norm_num) (by omega)) (by omega)
+    have hLivePos : 0 < OW_liveConsensusWindow n T_timer T_reset T_rank := by
+      dsimp [OW_liveConsensusWindow]
+      omega
+    have hCyclePos : 0 < OW_consensusCycleWindow n T_timer T_reset T_rank T_rerank := by
+      dsimp [OW_consensusCycleWindow]
+      omega
+    have hExpectedPos : 0 < OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank := by
+      dsimp [OW_consensusExpectedSteps]
+      exact Nat.mul_pos (by norm_num) hCyclePos
+    have hConsPos : 0 < 2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank :=
+      Nat.mul_pos (by norm_num) hExpectedPos
+    dsimp [K, OW_globalWindow]
+    omega
   haveI : NeZero K := ⟨Nat.pos_iff_ne_zero.mp hKpos⟩
   have hp_le_one : ((8 : ENNReal)⁻¹) ≤ 1 := by norm_num
   have hInvStep : ∀ C : Config (AgentState n) Opinion n, Inv C →
       ∀ i j : Fin n, Inv (C.step P i j) := by
     intro C hC i j
-    simpa [P, Inv] using
-      PEMProtocolCoupled_preserves_timer_bounded hn0 C hC i j
+    constructor
+    · simpa [P, Inv] using
+        PEMProtocolCoupled_preserves_timer_bounded hn0 C hC.1 i j
+    · simpa [P, Inv] using hTimerStep C hC.2 i j
   have hRankBound := OW_rankBound
     (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-    hn4 hRmax hEmax hDmax h12ranking
+    hn4 hRmax hEmax hDmax C_rank T_timer h12ranking
   have hConsensusBound := OW_consensusBound
     (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-    hn4 hRmax hEmax hDmax T_reset T_rank T_rerank
-    h12resetDuration h12rank h12reRank
+    hn4 hRmax hEmax hDmax T_timer T_reset T_rank T_rerank
+    hTimerStep h12resetDuration h12rank h12reRank
   have hwin : ∀ C : Config (AgentState n) Opinion n, Inv C →
       ¬ IsConsensusConfig C →
       ((8 : ENNReal)⁻¹) ≤ Probability.ProbHitWithin P hn2 C IsConsensusConfig K := by
     intro C hInvC _hNot
     have hRankE : Probability.expectedHittingTime P hn2 C RankTarget ≤
-        ((Rmax * n * n : ℕ) : ENNReal) := by
-      simpa [P, RankTarget, Inv] using hRankBound C hInvC
-    have hRankW : 2 * (Rmax * n * n) ≤ (2 * Rmax * n * n) + 1 := by nlinarith
+        ((C_rank * n * n : ℕ) : ENNReal) := by
+      simpa [P, RankTarget, Inv] using hRankBound C hInvC.1 hInvC.2
+    have hRankW : 2 * (C_rank * n * n) ≤ (2 * C_rank * n * n) + 1 := by nlinarith
     have hRankPH : ((2 : ENNReal)⁻¹) ≤
-        Probability.ProbHitWithin P hn2 C RankTarget (2 * Rmax * n * n) :=
+        Probability.ProbHitWithin P hn2 C RankTarget (2 * C_rank * n * n) :=
       Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
         P hn2 C RankTarget hRankE hRankW
     have hLivePH : ∀ D : Config (AgentState n) Opinion n, RankTarget D →
@@ -1320,34 +1369,34 @@ theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
       · have hBase :
             ((2 : ENNReal)⁻¹) ≤
               Probability.ProbHitWithin P hn2 D Live35 T_rerank := by
-          simpa [P, Live35] using h12reRank D hD.2.2 hLive
+          simpa [P, Live35] using h12reRank D hD.2.2.1 hD.2.2.2 hLive
         rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
           P hn2 D Live35 Inv hD.2.2 hInvStep T_rerank]
         exact hBase
     have hConsE : ∀ D : Config (AgentState n) Opinion n, Live35Target D →
         Probability.expectedHittingTime P hn2 D IsConsensusConfig ≤
-          ((OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank : ℕ) : ENNReal) := by
+          ((OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank : ℕ) : ENNReal) := by
       intro D hD
       simpa [P, Live35, Live35Target, Inv] using
-        hConsensusBound D hD.1.1 hD.1.2 hD.2
+        hConsensusBound D hD.1.1 hD.1.2 hD.2.1 hD.2.2
     have hConsW :
-        2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank ≤
-          2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank + 1 := by omega
+        2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank ≤
+          2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank + 1 := by omega
     have hConsPH : ∀ D : Config (AgentState n) Opinion n, Live35Target D →
         ((2 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin P hn2 D IsConsensusConfig
-            (2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank) := by
+            (2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank) := by
       intro D hD
       exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
         P hn2 D IsConsensusConfig (hConsE D hD) hConsW
     have hAB : ((4 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C Live35Target
-          (2 * Rmax * n * n + T_rerank) := by
+          (2 * C_rank * n * n + T_rerank) := by
       have hAB' : ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) ≤
           Probability.ProbHitWithin P hn2 C Live35Target
-            (2 * Rmax * n * n + T_rerank) :=
+            (2 * C_rank * n * n + T_rerank) :=
         Probability.ProbHitWithin_add_ge_mul P hn2 C RankTarget Live35Target
-          (2 * Rmax * n * n) T_rerank
+          (2 * C_rank * n * n) T_rerank
           ((2 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹)
           hRankPH hLivePH
       have hprod :
@@ -1357,11 +1406,11 @@ theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
       simpa [hprod] using hAB'
     have hChain : ((4 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C IsConsensusConfig
-          ((2 * Rmax * n * n + T_rerank) +
-            2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank) :=
+          ((2 * C_rank * n * n + T_rerank) +
+            2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank) :=
       Probability.ProbHitWithin_add_ge_mul P hn2 C Live35Target IsConsensusConfig
-        (2 * Rmax * n * n + T_rerank)
-        (2 * OW_consensusExpectedSteps n Rmax T_reset T_rank T_rerank)
+        (2 * C_rank * n * n + T_rerank)
+        (2 * OW_consensusExpectedSteps n T_timer T_reset T_rank T_rerank)
         ((4 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹)
         hAB hConsPH
     have hprod :
@@ -1373,7 +1422,7 @@ theorem PEM_expectedParallelTime_optimal (hn4 : 4 ≤ n)
   simpa [Probability.expectedParallelTimeToConsensus, P, Inv, K] using
     (Probability.expectedParallelTime_le_window_mul_inv_of_invariant
       P hn2 C₀ IsConsensusConfig Inv K ((8 : ENNReal)⁻¹)
-      hp_le_one hTimer₀ hInvStep hwin)
+      hp_le_one ⟨hTimer₀, hTimerT₀⟩ hInvStep hwin)
 
 end
 

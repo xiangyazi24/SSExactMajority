@@ -5,7 +5,8 @@ import SSExactMajority.UpperBound.Time.PhaseProofs
 # Refined timer-drain (productive endpoint)
 
 `timer_drain_to_zero_productive`: from `InSswap ∧ MAC ∧ timer≥1`, the expected time to reach
-`consensus ∨ CorrectResetSeed ∨ (InSswap ∧ MAC ∧ maxMedianTimer = 0)` is `≤ 7(Rmax+4)·n(n-1)`.
+`consensus ∨ CorrectResetSeed ∨ (InSswap ∧ MAC ∧ maxMedianTimer = 0)` is
+`≤ T_timer·n(n-1)` for any ambient timer cap `T_timer`.
 
 Unlike `PEM_expected_timer_drain_poly` (whose exit disjunct is `¬live`), this isolates the
 PRODUCTIVE endpoint: the timer drains to 0 STAYING in `InSswap ∧ MAC` (no disruption in InSswap),
@@ -23,17 +24,18 @@ variable {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
 set_option maxHeartbeats 16000000 in
 theorem timer_drain_to_zero_productive
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hMedCorrect : MedianAnswerCorrect C)
     (hTimerLo : MedianTimerAtLeast 1 C)
-    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
         (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) ≤
-      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
   set Goal := fun D : Config (AgentState n) Opinion n =>
@@ -196,7 +198,7 @@ theorem timer_drain_to_zero_productive
           · -- broke swap → CRS
             exact Or.inr (Or.inr (Or.inl
               (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'))))
-  have hMaxTimer : maxMedianTimer C ≤ 7 * (Rmax + 4) := by
+  have hMaxTimer : maxMedianTimer C ≤ T_timer := by
     unfold maxMedianTimer
     apply Finset.sup_le
     intro μ _
@@ -205,34 +207,35 @@ theorem timer_drain_to_zero_productive
     · exact Nat.zero_le _
   calc Probability.expectedHittingTime P (by omega) C Goal
       ≤ ↑(maxMedianTimer C) * ((n * (n - 1) : ℕ) : ENNReal) := hBridge
-    _ ≤ ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) := by
+    _ ≤ ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
         norm_cast
         calc maxMedianTimer C * (n * (n - 1))
-            ≤ (7 * (Rmax + 4)) * (n * (n - 1)) :=
+            ≤ T_timer * (n * (n - 1)) :=
               Nat.mul_le_mul_right _ hMaxTimer
-          _ = 7 * (Rmax + 4) * n * (n - 1) := by ring
+          _ = T_timer * n * (n - 1) := by ring
 
 -- From a live MAC swap, the expected time to `consensus ∨ CorrectResetSeed` is polynomial.
 set_option maxHeartbeats 1000000 in
 theorem MAClive_to_consensus_or_crs
     (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (T_timer : ℕ)
     (C : Config (AgentState n) Opinion n)
     (hSswap : InSswap C)
     (hMedCorrect : MedianAnswerCorrect C)
     (hTimerLo : MedianTimerAtLeast 1 C)
-    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
     Probability.expectedHittingTime
       (PEMProtocolCoupled n Rmax Emax Dmax hn0)
       (by omega : 2 ≤ n) C
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
-      ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
+      ((T_timer * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
   classical
   set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
   have hMid : Probability.expectedHittingTime P (by omega : 2 ≤ n) C
       (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
         (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) ≤
-      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) :=
-    timer_drain_to_zero_productive hn4 hn0 hRmax C hSswap hMedCorrect hTimerLo hTimerHi
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) :=
+    timer_drain_to_zero_productive hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi
   have hGoal : ∀ D : Config (AgentState n) Opinion n,
       (IsConsensusConfig D ∨ CorrectResetSeed D ∨
         (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) →
@@ -276,7 +279,7 @@ theorem MAClive_to_consensus_or_crs
     (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
       (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0))
     (fun D => IsConsensusConfig D ∨ CorrectResetSeed D)
-    ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) ((n * (n - 1) : ℕ) : ENNReal)
+    ((T_timer * n * (n - 1) : ℕ) : ENNReal) ((n * (n - 1) : ℕ) : ENNReal)
     hMid hGoal hMidGoal
   refine hadd.trans ?_
   rw [← Nat.cast_add]
