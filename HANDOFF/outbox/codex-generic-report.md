@@ -67,6 +67,29 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank decision-timing helper/window checkpoint
+
+Ported the decision-timing support stack over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_live_exit_ProbHitWithin_le_bad`
+- internal stopped invariant for `hitTwoFlagDist`
+- subtraction wrapper
+  `generic_decision_before_timer_zero_of_exit_le_quarter`
+- `generic_decision_before_timer_zero`
+
+The proof reuses `generic_decision_window` for the median-not-yet-correct
+branch and handles the already-correct branch by the time-0 productive target.
+The exit-to-bad comparison uses the generic stopped invariant and the generic
+step helper preserving `InSswap` under a post-step `InSrank`.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. The helper layer requested in step 1 is now present in
+`GenericTrank.lean`. No semantic `trank = Rmax` dependency encountered.
+
 ## 2026-06-04 codex generic-trank step-helper checkpoint
 
 Added generic wrappers over the coupled step helpers:

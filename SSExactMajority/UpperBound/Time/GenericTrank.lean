@@ -604,6 +604,159 @@ theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
 
 end GenericExitWindow
 
+section GenericLiveExit
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+private theorem generic_toOuterMeasure_le_of_support_imp
+    {α : Type*} (μ : PMF α) (A B : Set α)
+    (h : ∀ a : α, μ a ≠ 0 → a ∈ A → a ∈ B) :
+    μ.toOuterMeasure A ≤ μ.toOuterMeasure B := by
+  rw [PMF.toOuterMeasure_apply, PMF.toOuterMeasure_apply]
+  apply ENNReal.tsum_le_tsum
+  intro a
+  by_cases hA : a ∈ A
+  · rw [Set.indicator_of_mem hA]
+    by_cases hB : a ∈ B
+    · rw [Set.indicator_of_mem hB]
+    · rw [Set.indicator_of_notMem hB]
+      have hzero : μ a = 0 := by
+        by_contra hne
+        exact hB (h a hne hA)
+      simp [hzero]
+  · rw [Set.indicator_of_notMem hA]
+    exact zero_le
+
+private theorem generic_hitTwoFlagDist_live_exit_bad_stopped
+    (hn0 : 0 < n) (hn2 : 2 ≤ n)
+    (C₀ : Config (AgentState n) Opinion n)
+    (hLive₀ : InSswap C₀ ∧ MedianTimerAtLeast 1 C₀) :
+    let P := PEMProtocol n trank Rmax Emax Dmax hn0
+    let Exit : Config (AgentState n) Opinion n → Prop :=
+      fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+    let Bad : Config (AgentState n) Opinion n → Prop :=
+      fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D
+    ∀ t : ℕ, ∀ S : Config (AgentState n) Opinion n × (Bool × Bool),
+      S ∈ (Probability.hitTwoFlagDist P hn2 C₀ Exit Bad t).support →
+        S.2.2 = false →
+          (InSswap S.1 ∧ MedianTimerAtLeast 1 S.1) ∧ S.2.1 = false := by
+  classical
+  intro P Exit Bad t
+  induction t with
+  | zero =>
+      intro S hSupp _hBadFalse
+      rw [Probability.hitTwoFlagDist, PMF.support_pure] at hSupp
+      subst S
+      constructor
+      · exact hLive₀
+      · simp [Exit, hLive₀]
+  | succ t ih =>
+      intro S hSupp hBadFalse
+      rw [Probability.hitTwoFlagDist, PMF.mem_support_bind_iff] at hSupp
+      obtain ⟨T, hT, hStep⟩ := hSupp
+      rcases T with ⟨D, flags⟩
+      rw [Probability.hitTwoFlagStepDist, PMF.support_map] at hStep
+      obtain ⟨D', hD', hEq⟩ := hStep
+      subst S
+      rw [Probability.stepDist, PMF.support_map] at hD'
+      obtain ⟨p, _hp, hpEq⟩ := hD'
+      subst D'
+      have hBadStep :
+          (flags.2 || decide (Bad (D.step P p.1 p.2))) = false := by
+        simpa using hBadFalse
+      have hBadOldFalse : flags.2 = false := by
+        cases hflags : flags.2
+        · rfl
+        · have hContra : False := by
+            simp [hflags] at hBadStep
+          exact False.elim hContra
+      have hNotBadStep : ¬ Bad (D.step P p.1 p.2) := by
+        intro hBad
+        have hContra : False := by
+          simp [hBadOldFalse, hBad] at hBadStep
+        exact False.elim hContra
+      obtain ⟨hLiveD, hExitOldFalse⟩ := ih (D, flags) hT hBadOldFalse
+      have hExitOldFalse' : flags.1 = false := by
+        simpa using hExitOldFalse
+      have hRankStep : InSrank (D.step P p.1 p.2) := by
+        by_contra hNotRank
+        exact hNotBadStep (Or.inl hNotRank)
+      have hTimerStep : MedianTimerAtLeast 1 (D.step P p.1 p.2) := by
+        by_contra hNotTimer
+        exact hNotBadStep (Or.inr hNotTimer)
+      have hSwapStep : InSswap (D.step P p.1 p.2) := by
+        simpa [P] using
+          (generic_step_InSswap_of_InSswap_of_post_InSrank
+            (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            hn0 hLiveD.1 hRankStep)
+      have hLiveStep :
+          InSswap (D.step P p.1 p.2) ∧
+            MedianTimerAtLeast 1 (D.step P p.1 p.2) :=
+        ⟨hSwapStep, hTimerStep⟩
+      constructor
+      · exact hLiveStep
+      · have hNotExitStep : ¬ Exit (D.step P p.1 p.2) := by
+          intro hExitStep
+          exact hExitStep hLiveStep
+        have hExitStepFalse : decide (Exit (D.step P p.1 p.2)) = false := by
+          exact decide_eq_false hNotExitStep
+        simpa [hExitOldFalse', hExitStepFalse]
+
+theorem generic_live_exit_ProbHitWithin_le_bad
+    (hn0 : 0 < n) (hn2 : 2 ≤ n)
+    (C₀ : Config (AgentState n) Opinion n)
+    (hLive₀ : InSswap C₀ ∧ MedianTimerAtLeast 1 C₀) (t : ℕ) :
+    let P := PEMProtocol n trank Rmax Emax Dmax hn0
+    Probability.ProbHitWithin P hn2 C₀
+        (fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) t ≤
+      Probability.ProbHitWithin P hn2 C₀
+        (fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D) t := by
+  classical
+  intro P
+  let Exit : Config (AgentState n) Opinion n → Prop :=
+    fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+  let Bad : Config (AgentState n) Opinion n → Prop :=
+    fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D
+  let μ := Probability.hitTwoFlagDist P hn2 C₀ Exit Bad t
+  have hExitEq :
+      Probability.ProbHitWithin P hn2 C₀ Exit t =
+        μ.toOuterMeasure
+          {S : Config (AgentState n) Opinion n × (Bool × Bool) |
+            S.2.1 = true} := by
+    rw [Probability.ProbHitWithin, Probability.probHitBy_eq_hitFlagDist_toOuterMeasure,
+      ← Probability.hitTwoFlagDist_map_left P hn2 C₀ Exit Bad t,
+      PMF.toOuterMeasure_map_apply]
+    rfl
+  have hBadEq :
+      Probability.ProbHitWithin P hn2 C₀ Bad t =
+        μ.toOuterMeasure
+          {S : Config (AgentState n) Opinion n × (Bool × Bool) |
+            S.2.2 = true} := by
+    rw [Probability.ProbHitWithin, Probability.probHitBy_eq_hitFlagDist_toOuterMeasure,
+      ← Probability.hitTwoFlagDist_map_right P hn2 C₀ Exit Bad t,
+      PMF.toOuterMeasure_map_apply]
+    rfl
+  rw [hExitEq, hBadEq]
+  apply generic_toOuterMeasure_le_of_support_imp
+  intro S hμ hExitHit
+  by_cases hBadHit : S.2.2 = true
+  · exact hBadHit
+  · have hBadFalse : S.2.2 = false := by
+      cases h : S.2.2
+      · rfl
+      · exact False.elim (hBadHit h)
+    have hSupp : S ∈ μ.support := by
+      simpa [μ, PMF.mem_support_iff] using hμ
+    have hStopped :=
+      generic_hitTwoFlagDist_live_exit_bad_stopped
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn0 hn2 C₀ hLive₀ t S hSupp hBadFalse
+    have hExitTrue : S.2.1 = true := hExitHit
+    rw [hStopped.2] at hExitTrue
+    cases hExitTrue
+
+end GenericLiveExit
+
 private theorem generic_card_Fin_filter_val_lt {n k : ℕ} (hk : k ≤ n) :
     (Finset.univ.filter (fun i : Fin n => i.val < k)).card = k := by
   classical
@@ -1026,5 +1179,183 @@ theorem generic_decision_window
     (PEMProtocol n trank Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _ hM (by omega)
 
 end DecisionWindow
+
+section GenericDecisionTiming
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+private theorem generic_ennreal_inv_two_eq_inv_four_add_inv_four :
+    ((2 : ENNReal)⁻¹) = ((4 : ENNReal)⁻¹) + ((4 : ENNReal)⁻¹) := by
+  have h2 : ((2 : ENNReal)⁻¹) ≠ ⊤ := by
+    rw [ENNReal.inv_ne_top]
+    norm_num
+  have h4 : ((4 : ENNReal)⁻¹) ≠ ⊤ := by
+    rw [ENNReal.inv_ne_top]
+    norm_num
+  have hsum : ((4 : ENNReal)⁻¹ + (4 : ENNReal)⁻¹) ≠ ⊤ :=
+    ENNReal.add_ne_top.mpr ⟨h4, h4⟩
+  rw [← ENNReal.toReal_eq_toReal_iff' h2 hsum]
+  rw [ENNReal.toReal_add h4 h4]
+  simp [ENNReal.toReal_inv]
+  norm_num
+
+private theorem generic_ProbHitWithin_left_ge_inv4_of_or_ge_half_and_right_le_inv4
+    {n : ℕ} (P : Protocol (AgentState n) Opinion Output) (hn : 2 ≤ n)
+    (C₀ : Config (AgentState n) Opinion n)
+    (A B : Config (AgentState n) Opinion n → Prop)
+    [DecidablePred A] [DecidablePred B] (t : ℕ)
+    (hor : ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin P hn C₀ (fun C => A C ∨ B C) t)
+    (hB : Probability.ProbHitWithin P hn C₀ B t ≤ (4 : ENNReal)⁻¹) :
+    ((4 : ENNReal)⁻¹) ≤ Probability.ProbHitWithin P hn C₀ A t := by
+  let x := Probability.ProbHitWithin P hn C₀ A t
+  let y := Probability.ProbHitWithin P hn C₀ B t
+  have hOr :
+      Probability.ProbHitWithin P hn C₀ (fun C => A C ∨ B C) t ≤ x + y := by
+    simpa [x, y] using Probability.ProbHitWithin_union_le P hn C₀ A B t
+  have hhalf_le : ((2 : ENNReal)⁻¹) ≤ x + (4 : ENNReal)⁻¹ := by
+    calc
+      ((2 : ENNReal)⁻¹)
+          ≤ Probability.ProbHitWithin P hn C₀ (fun C => A C ∨ B C) t := hor
+      _ ≤ x + y := hOr
+      _ ≤ x + (4 : ENNReal)⁻¹ := by
+        exact add_le_add_right (show y ≤ (4 : ENNReal)⁻¹ from hB) x
+  have hquarter_ne_top : ((4 : ENNReal)⁻¹) ≠ ⊤ := by
+    rw [ENNReal.inv_ne_top]
+    norm_num
+  rw [generic_ennreal_inv_two_eq_inv_four_add_inv_four] at hhalf_le
+  rw [add_comm x ((4 : ENNReal)⁻¹)] at hhalf_le
+  exact (ENNReal.add_le_add_iff_left hquarter_ne_top).mp hhalf_le
+
+theorem generic_decision_before_timer_zero_of_exit_le_quarter
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (C : Config (AgentState n) Opinion n)
+    (hS : InSswap C) (hT : MedianTimerAtLeast 1 C)
+    (hExit :
+      Probability.ProbHitWithin
+        (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+        (decisionWindow n) ≤ (4 : ENNReal)⁻¹) :
+    (4 : ENNReal)⁻¹ ≤
+      Probability.ProbHitWithin
+        (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+        (decisionWindow n) := by
+  classical
+  let P := PEMProtocol n trank Rmax Emax Dmax hn0
+  let LiveDecision : Config (AgentState n) Opinion n → Prop :=
+    fun D => InSswap D ∧ MedianAnswerCorrect D ∧ MedianTimerAtLeast 1 D
+  let Exit : Config (AgentState n) Opinion n → Prop :=
+    fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+  have hn2 : 2 ≤ n := by omega
+  by_cases hMAC : MedianAnswerCorrect C
+  · have hGoal : DecisionProductiveTarget C := Or.inl ⟨hS, hMAC, hT⟩
+    have hZero :
+        Probability.ProbHitWithin P hn2 C
+          (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+          0 = 1 := by
+      exact Probability.probHitBy_zero_of_goal P hn2 C
+        (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop) hGoal
+    have hOne :
+        (1 : ENNReal) ≤
+          Probability.ProbHitWithin P hn2 C
+            (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+            (decisionWindow n) := by
+      rw [← hZero]
+      exact Probability.ProbHitWithin_mono_time P hn2 C
+        (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+        (Nat.zero_le _)
+    exact le_trans (by norm_num : ((4 : ENNReal)⁻¹) ≤ 1) hOne
+  · have hGoalEq :
+        (fun D : Config (AgentState n) Opinion n =>
+            (InSswap D ∧ MedianAnswerCorrect D) ∨ Exit D) =
+          (fun D => LiveDecision D ∨ Exit D) := by
+      funext D
+      apply propext
+      constructor
+      · intro h
+        rcases h with hdec | hexit
+        · by_cases htimer : MedianTimerAtLeast 1 D
+          · exact Or.inl ⟨hdec.1, hdec.2, htimer⟩
+          · exact Or.inr (fun hLive => htimer hLive.2)
+        · exact Or.inr hexit
+      · intro h
+        rcases h with hdec | hexit
+        · exact Or.inl ⟨hdec.1, hdec.2.1⟩
+        · exact Or.inr hexit
+    have hor :
+        ((2 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin P hn2 C
+            (fun D => (InSswap D ∧ MedianAnswerCorrect D) ∨ Exit D)
+            (decisionWindow n) := by
+      simpa [P, Exit, decisionWindow, Nat.mul_assoc] using
+        (generic_decision_window
+          (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn4 hn0 C hS hT hMAC)
+    have hDecision :
+        ((4 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin P hn2 C LiveDecision (decisionWindow n) :=
+      generic_ProbHitWithin_left_ge_inv4_of_or_ge_half_and_right_le_inv4
+        P hn2 C LiveDecision Exit (decisionWindow n)
+        (by simpa [hGoalEq] using hor)
+        (by simpa [P, Exit] using hExit)
+    exact hDecision.trans
+      (Probability.ProbHitWithin_mono_goal P hn2 C
+        LiveDecision
+        (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+        (fun D hD => Or.inl hD) (decisionWindow n))
+
+theorem generic_decision_before_timer_zero
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hS : InSswap C) (hT : MedianTimerAtLeast 35 C) :
+    (4 : ENNReal)⁻¹ ≤
+      Probability.ProbHitWithin
+        (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
+        (decisionWindow n) := by
+  classical
+  let P := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Bad : Config (AgentState n) Opinion n → Prop :=
+    fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D
+  have hn2 : 2 ≤ n := by omega
+  have hT1 : MedianTimerAtLeast 1 C :=
+    MedianTimerAtLeast.mono (n := n) (a := 1) (b := 35) (by norm_num) hT
+  have hBadBig :
+      Probability.ProbHitWithin P hn2 C Bad
+          (4 * n * (n - 1)) ≤ (4 : ENNReal)⁻¹ := by
+    simpa [P, Bad] using
+      (generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
+        (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn4 hn0 hRmax hEmax hDmax C hS.toInSrank hT)
+  have hBadSmall :
+      Probability.ProbHitWithin P hn2 C Bad
+          (decisionWindow n) ≤ (4 : ENNReal)⁻¹ := by
+    exact
+      (Probability.ProbHitWithin_mono_time P hn2 C Bad
+        (by
+          dsimp [decisionWindow]
+          nlinarith [Nat.zero_le (n * (n - 1))])).trans hBadBig
+  have hExitSmall :
+      Probability.ProbHitWithin P hn2 C
+          (fun D => ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+          (decisionWindow n) ≤ (4 : ENNReal)⁻¹ := by
+    exact
+      (generic_live_exit_ProbHitWithin_le_bad
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn0 hn2 C ⟨hS, hT1⟩ (decisionWindow n)).trans
+        (by simpa [P, Bad] using hBadSmall)
+  exact
+    generic_decision_before_timer_zero_of_exit_le_quarter
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 C hS hT1 hExitSmall
+
+end GenericDecisionTiming
 
 end SSEM
