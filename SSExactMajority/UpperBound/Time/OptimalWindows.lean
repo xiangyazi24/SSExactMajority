@@ -332,9 +332,8 @@ theorem epidemic_coupon_sum_le_nsq {m : Answer}
           ring
 
 omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
-/-- Faithful post-reset target for the cited [12] reset-completion window.
-This is intentionally an all-`Resetting` epidemic region, not a consequence
-asserted directly from `CorrectResetSeed`. -/
+/-- Bare all-`Resetting` epidemic-region helper retained for local mechanics.
+The reset-completion contracts cite the completed epidemic target directly. -/
 def ResetCompletionTarget12 {n : ℕ} (m : Answer)
     (C : Config (AgentState n) Opinion n) : Prop :=
   EpidemicRegion m C
@@ -343,13 +342,11 @@ omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)
 /-- Faithful [12]-cited reset-completion contract.
 
 The reset fact is probabilistic: from a `CorrectResetSeed` configuration, the
-random scheduler reaches the all-`Resetting` epidemic region within
+random scheduler reaches the completed answer epidemic within
 `K_reset = O(n^2)` sequential interactions with constant probability
 `p_reset`.  This is the shape to cite from [12] Lemma 3.2 / Corollary 3.5.
-
-The remaining one-step fields are only for configurations already in
-`EpidemicRegion`; those are the legitimate hypotheses needed by the proved
-`EpidemicMechanics` lemmas. -/
+The reset-counter dormancy race is internal to this cited window rather than
+an exposed deterministic invariant over all `EpidemicRegion` configurations. -/
 structure CRSResetCompletion12 {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
     (p_reset : ENNReal) (C_reset K_reset : ℕ) : Prop where
   resetProb_pos : 0 < p_reset
@@ -363,94 +360,7 @@ structure CRSResetCompletion12 {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
         p_reset ≤
           Probability.ProbHitWithin
             (PEMProtocolCoupled n Rmax Emax Dmax hn) hn2 C
-            (ResetCompletionTarget12 (majorityAnswer C)) K_reset
-  stepNoPhase4 :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
-        ∀ i j : Fin n,
-          ¬ ((transitionPEM_prePhase4 n Rmax
-                (rankDeltaOSSR Rmax Emax Dmax hn)
-                (D i).1 (D j).1 (D i).2 (D j).2).1.role = .Settled ∧
-              (transitionPEM_prePhase4 n Rmax
-                (rankDeltaOSSR Rmax Emax Dmax hn)
-                (D i).1 (D j).1 (D i).2 (D j).2).2.role = .Settled)
-  stepAllResetting :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
-        ∀ i j w : Fin n,
-          ((D.step (PEMProtocolCoupled n Rmax Emax Dmax hn) i j) w).1.role =
-            .Resetting
-  pairRankResetting :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
-        ∀ p : Fin n × Fin n, p ∈ phiNonPhiPairs D →
-          (rankDeltaOSSR Rmax Emax Dmax hn ((D p.1).1, (D p.2).1)).1.role =
-            .Resetting ∧
-          (rankDeltaOSSR Rmax Emax Dmax hn ((D p.1).1, (D p.2).1)).2.role =
-            .Resetting
-
-omit [Inhabited (Fin n × Fin n)] in
-/-- Answer-epidemic window after the cited reset completion has reached
-`EpidemicRegion`.  This uses only the sound one-step epidemic mechanics. -/
-theorem resetCompletion_to_phiGoal_window (hn4 : 4 ≤ n)
-    (p_reset : ENNReal) (C_reset K_reset : ℕ)
-    (h12resetCompletion :
-      CRSResetCompletion12 (n := n) (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) (by omega : 0 < n) p_reset C_reset K_reset) :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D →
-        ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin
-            (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
-            (by omega : 2 ≤ n) D (EpidemicPhiGoal m)
-            (OW_answerEpidemicWindow n) := by
-  classical
-  intro m D hD
-  have hn0 : 0 < n := by omega
-  have hn2 : 2 ≤ n := by omega
-  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
-  refine epidemic_phiCount_to_zero_window_ge_half
-    P hn2 (m := m) D (fun E => EpidemicRegion m E)
-    (n * n) (OW_answerEpidemicWindow n) hD
-    (fun E hE => epidemicRegion_answerInv hE)
-    (fun E hE hNot i j => ?_)
-    (fun E hE hNot i j => ?_)
-    (fun E hE hNot _hPhi p hp => ?_)
-    (epidemic_coupon_sum_le_nsq hD)
-    (by
-      dsimp [OW_answerEpidemicWindow]
-      calc
-        2 * (n * n) = 2 * n * n := by ring
-        _ ≤ 2 * n * n + 1 := Nat.le_succ _)
-  · left
-    have hClosed :=
-      epidemicRegion_step_closed
-        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
-        (m := m) (C := E) hE i j
-        (h12resetCompletion.stepNoPhase4 m E hE hNot i j)
-        (h12resetCompletion.stepAllResetting m E hE hNot i j)
-    simpa [PEMProtocolCoupled, PEMProtocol] using hClosed
-  · have hMono :=
-      epidemicRegion_phiCount_nonincrease
-        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
-        (m := m) (C := E) hE i j
-        (h12resetCompletion.stepNoPhase4 m E hE hNot i j)
-    simpa [PEMProtocolCoupled, PEMProtocol] using hMono
-  · have hPair := h12resetCompletion.pairRankResetting m E hE hNot p hp
-    have hClosed :=
-      epidemicRegion_step_closed
-        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
-        (m := m) (C := E) hE p.1 p.2
-        (h12resetCompletion.stepNoPhase4 m E hE hNot p.1 p.2)
-        (h12resetCompletion.stepAllResetting m E hE hNot p.1 p.2)
-    have hDesc :=
-      epidemicRegion_phiPair_descent
-        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
-        (m := m) (C := E) hE p hp hPair.1 hPair.2
-    right
-    constructor
-    · simpa [PEMProtocolCoupled, PEMProtocol] using hClosed
-    · simpa [PEMProtocolCoupled, PEMProtocol] using hDesc
+            (EpidemicPhiGoal (majorityAnswer C)) K_reset
 
 omit [Inhabited (Fin n × Fin n)] in
 /-- Faithful CRS-to-silence wrapper retaining the actual product probability.
@@ -486,30 +396,8 @@ theorem CRS_to_silence_faithful_product (hn4 : 4 ≤ n)
   have hReset :
       p_reset ≤
         Probability.ProbHitWithin P hn2 C
-          (ResetCompletionTarget12 (majorityAnswer C)) K_reset := by
+          (EpidemicPhiGoal (majorityAnswer C)) K_reset := by
     simpa [P] using h12resetCompletion.resetReach hn2 C hTimer hSeed
-  have hEpidemic :
-      ∀ D : Config (AgentState n) Opinion n,
-        ResetCompletionTarget12 (majorityAnswer C) D →
-          ((2 : ENNReal)⁻¹) ≤
-            Probability.ProbHitWithin P hn2 D
-              (EpidemicPhiGoal (majorityAnswer C)) (OW_answerEpidemicWindow n) := by
-    intro D hD
-    simpa [P, ResetCompletionTarget12] using
-      (resetCompletion_to_phiGoal_window
-        (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        hn4 p_reset C_reset K_reset h12resetCompletion
-        (majorityAnswer C) D hD)
-  have hResetToPhi :
-      p_reset * ((2 : ENNReal)⁻¹) ≤
-        Probability.ProbHitWithin P hn2 C
-          (EpidemicPhiGoal (majorityAnswer C))
-          (K_reset + OW_answerEpidemicWindow n) :=
-    Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (ResetCompletionTarget12 (majorityAnswer C))
-      (EpidemicPhiGoal (majorityAnswer C))
-      K_reset (OW_answerEpidemicWindow n)
-      p_reset ((2 : ENNReal)⁻¹) hReset hEpidemic
   have hRankToSilence :
       ∀ D : Config (AgentState n) Opinion n,
         EpidemicPhiGoal (majorityAnswer C) D →
@@ -526,12 +414,29 @@ theorem CRS_to_silence_faithful_product (hn4 : 4 ≤ n)
         (OW_rankedEpidemicEndpoint (majorityAnswer C)) OW_silenceEndpoint
         (fun E hE => OW_silenceEndpoint_of_rankedEpidemicEndpoint hE)
         T_rank)
-  simpa [Nat.add_assoc, add_assoc] using
-    (Probability.ProbHitWithin_add_ge_mul P hn2 C
+  have hStrong :
+      p_reset * rankProb ≤
+        Probability.ProbHitWithin P hn2 C OW_silenceEndpoint
+          (K_reset + T_rank) :=
+    Probability.ProbHitWithin_add_ge_mul P hn2 C
       (EpidemicPhiGoal (majorityAnswer C)) OW_silenceEndpoint
-      (K_reset + OW_answerEpidemicWindow n) T_rank
-      (p_reset * ((2 : ENNReal)⁻¹)) rankProb
-      hResetToPhi hRankToSilence)
+      K_reset T_rank p_reset rankProb hReset hRankToSilence
+  have hWeak :
+      p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤ p_reset * rankProb := by
+    have hmul :
+        p_reset * ((2 : ENNReal)⁻¹) ≤ p_reset * (1 : ENNReal) := by
+      exact mul_le_mul' le_rfl (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1)
+    have hmulRank :
+        p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤
+          p_reset * (1 : ENNReal) * rankProb := by
+      exact mul_le_mul' hmul le_rfl
+    simpa [mul_assoc] using hmulRank
+  have hTime :
+      Probability.ProbHitWithin P hn2 C OW_silenceEndpoint (K_reset + T_rank) ≤
+        Probability.ProbHitWithin P hn2 C OW_silenceEndpoint
+          (K_reset + OW_answerEpidemicWindow n + T_rank) :=
+    Probability.ProbHitWithin_mono_time P hn2 C OW_silenceEndpoint (by omega)
+  exact hWeak.trans (hStrong.trans hTime)
 
 omit [Inhabited (Fin n × Fin n)] in
 /-- Faithful CRS-to-silence wrapper with a caller-chosen lower-bound target. -/

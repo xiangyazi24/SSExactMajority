@@ -1,96 +1,94 @@
-# Generic keystone round-3 WellFormed report
+# Round-5 Dormancy Reset Fix Report
 
 ## Verdict
 
-No blocker.  The pathological unbounded-counter class is closed by adding a
-structural `WellFormed` domain invariant and requiring it at every cited
-[12]-window start.  The `trank = 1` explicit theorem still concludes the same
-linear `K * n` bound.
+No blocker.
 
-The Lean source change is only in
-`SSExactMajority/UpperBound/Time/GenericKeystone.lean`; this report was also
-updated.  `OptimalWindows.lean` and `GenericTrank.lean` were not edited.
+The dormancy hole is closed by removing the exposed deterministic epidemic-step
+fields from the reset contracts.  Both reset contracts now expose only the
+cited probabilistic reset-completion window:
 
-## Structural Fix
+- Generic: `CRSResetCompletion12Generic.resetReach` reaches
+  `EpidemicPhiGoal (majorityAnswer C)` within `K_reset`.
+- Coupled legacy path: `CRSResetCompletion12.resetReach` has the same completed
+  epidemic target.
 
-`AgentWellFormed` bounds the unbounded structural fields:
-`resetcount <= Rmax`, `errorcount <= Emax`, `delaytimer <= Dmax`, and
-`children <= 2`.  I included `children` because it is also a protocol counter
-whose pathological values can block faithful ranking/recruitment behavior.
+I did not introduce a separate finite dormancy predicate as a renewal invariant.
+The natural candidates are not preserved under all scheduler pairs: a
+`resetcount = 1` pair can drain to zero, and a zero-counter delayed resetting
+agent can keep ticking toward wake.  Treating such a condition as the invariant
+for `epidemic_phiCount_to_zero_window_ge_half` would reintroduce the same
+pathological-config class.  The faithful placement is the one in the spec's
+race clause: the cited reset-completion window covers reaching the completed
+answer epidemic before reset-counter drain can wake agents.
 
-Evidence:
-
-| Item | Evidence |
-|---|---|
-| Per-agent structural bounds | `GenericKeystone.lean:28-32` |
-| Config-level `WellFormed` = protocol timer bound plus structural bounds | `GenericKeystone.lean:36-39` |
-| Generic `WellFormed_step` invariant for `PEMProtocol n trank Rmax Emax Dmax` | `GenericKeystone.lean:293-327` |
-| Counter/children preservation through OSSR reset/propagate/rankDelta and PEM phase 4 | `GenericKeystone.lean:41-291` |
-
-## Renewal Threading
-
-The generic renewal invariant is now
-`Inv C := WellFormed trank Rmax Emax Dmax C /\ IsTimerBoundedConfig T_timer C`:
-`GenericKeystone.lean:643-645`.  Its step preservation uses `WellFormed_step`
-and the existing `hTimerStep`: `GenericKeystone.lean:684-691`.
-
-The reset-to-epidemic chain also carries `WellFormed` together with the
-majority invariant:
+## Source Changes
 
 | Item | Evidence |
 |---|---|
-| Local `ChainInv := WellFormed /\ MajInv` | `GenericKeystone.lean:444-468` |
-| `resetReach` strengthened to target `ResetCompletionTarget12 /\ ChainInv` | `GenericKeystone.lean:469-482` |
-| answer-epidemic window strengthened to `EpidemicPhiGoal /\ ChainInv` | `GenericKeystone.lean:483-503` |
-| `h12rank` called only with `EpidemicPhiGoal`, `WellFormed`, and `majorityAnswer D = m` | `GenericKeystone.lean:514-524` |
+| Generic reset contract has only `resetReach` after positivity/window fields | `SSExactMajority/UpperBound/Time/GenericKeystone.lean:336-349` |
+| Generic reset target is completed epidemic, not bare `EpidemicRegion` | `GenericKeystone.lean:342-349` |
+| Generic renewal strengthens reset hit with `WellFormed` and majority preservation | `GenericKeystone.lean:383-421` |
+| Generic reset-to-silence now composes reset hit directly with rank | `GenericKeystone.lean:422-444` |
+| Generic wrapper weakens probability/window only after proving the stronger chain | `GenericKeystone.lean:438-460` |
+| Coupled reset contract also has only `resetReach` after positivity/window fields | `SSExactMajority/UpperBound/Time/OptimalWindows.lean:350-363` |
+| Coupled reset-to-silence now composes reset hit directly with rank | `OptimalWindows.lean:396-423` |
+| Coupled wrapper weakens probability/window only after proving the stronger chain | `OptimalWindows.lean:417-439` |
+| `EpidemicMechanics` documents why bare all-resetting is insufficient | `SSExactMajority/UpperBound/Time/EpidemicMechanics.lean:11-15` |
+| Remaining local mechanics theorems require explicit non-wake side conditions | `EpidemicMechanics.lean:339-387`, `441-455` |
 
-## Satisfiability Sweep
+The old local reset-step assumptions and the old answer-epidemic wrapper are
+gone from `GenericKeystone.lean` and `OptimalWindows.lean`; grep for their names
+returns no matches.
 
-| Hypothesis / field | Satisfiable? | Reason / precondition |
+## Satisfiability Table
+
+| Hypothesis / field | Satisfiable? | Reason |
 |---|---:|---|
-| `h12ranking` in the generic keystone | Yes | Start requires `WellFormed` and `T_timer` bound. Target includes `(InSrank /\ MedianTimerAtLeast 35 /\ WellFormed /\ T_timer-bound) \/ IsConsensusConfig`, so silent/consensus starts still escape at time 0 and pathological huge-counter starts are outside the cited domain. Evidence: `GenericKeystone.lean:594-604`; consumed at `850-858`. |
-| `h12ranking` in `PEM_expectedParallelTime_On` and `_On_explicit` | Yes | Same shape specialized to `trank = 1`; initial theorem now assumes `WellFormed 1 Rmax Emax Dmax C0`. Evidence: `GenericKeystone.lean:992-1001`, `1026-1033`, `1111-1120`, `1147-1153`. |
-| `h12reRank` in the generic keystone | Yes | Start requires `WellFormed`, `T_timer` bound, and `not (InSswap /\ MedianTimerAtLeast 35)`. The proof strengthens the hit target with invariant preservation before continuing; already-consensus targets still have a time-0 branch. Evidence: `GenericKeystone.lean:619-629`, consumed and strengthened at `908-918`. |
-| `h12reRank` in `PEM_expectedParallelTime_On` and `_On_explicit` | Yes | Same WellFormed start precondition, specialized to `trank = 1`; the wrapper supplies the redundant timer bound from `WellFormed`. Evidence: `GenericKeystone.lean:1016-1025`, `1034-1058`, `1135-1144`. |
-| `h12rank` in all keystones | Yes | Start requires `EpidemicPhiGoal m D`, `WellFormed D`, and `majorityAnswer D = m`, matching the endpoint's majority requirement and excluding wrong-answer/pathological starts. Evidence: generic `GenericKeystone.lean:609-618`; `trank = 1` `1006-1015`; explicit `1125-1134`. |
-| `h12resetCompletion.resetReach` | Yes | Start requires `WellFormed C` and `CorrectResetSeed C`; it no longer quantifies over timer-only configs with huge `resetcount/errorcount/delaytimer/children`. Target remains the faithful probabilistic reset-completion target `ResetCompletionTarget12 (majorityAnswer C)` within `K_reset = O(n^2)`. Evidence: `GenericKeystone.lean:335-348`; call site `474-481`. |
-| `CRSResetCompletion12Generic` local epidemic fields | Yes | `epidemicStep`, `epidemicNonincrease`, and `epidemicPairDescent` are conditional one-step mechanics on configurations already in `EpidemicRegion`; they are not universal hitting-window hypotheses. Evidence: `GenericKeystone.lean:349-373`, consumed at `408-410`. |
-| `hTimerStep` | Yes-shaped | This is a timer-bound preservation assumption, not a [12] hitting window. In `trank = 1` it is discharged by `generic_timer_preservation`. Evidence: generic hypothesis `GenericKeystone.lean:590-593`, wrapper proof `1034-1043`. |
-| `hRmax`, `hEmax`, `hDmax`, `hn4` | Yes-shaped | Numeric domain assumptions only. They do not assert reachability to a target, and are compatible with the `WellFormed` structural bounds. Evidence: `GenericKeystone.lean:586-589`, `988-991`, `1108-1110`. |
-| `hRankWindow`, `hRerankWindow` in `_On_explicit` | Yes-shaped | Arithmetic bounds on fixed cited window lengths, not hitting-window hypotheses. They still feed the same explicit linear arithmetic. Evidence: `GenericKeystone.lean:1145-1146`, used at `1163-1172`. |
+| `h12ranking` in generic keystone | Yes | Start requires `WellFormed` and the free `T_timer` bound. Target has a consensus escape, so already-consensus starts hit at time 0; non-consensus starts are in the bounded cited domain. Evidence: `GenericKeystone.lean:519-529`, consumed at `775-783`. |
+| `h12ranking` in `PEM_expectedParallelTime_On` / explicit | Yes | Same target shape specialized to `trank = 1`; wrappers pass the `WellFormed` start and the timer bound from `WellFormed`. Evidence: `GenericKeystone.lean:917-926`, `1036-1045`, wrapper at `969-984`. |
+| `CRSResetCompletion12Generic.resetReach` | Yes | Start requires `WellFormed` and `CorrectResetSeed`; target is the faithful completed answer epidemic for the true `majorityAnswer C`, with `K_reset <= C_reset*n*n`. No forall over arbitrary drained `EpidemicRegion` remains. Evidence: `GenericKeystone.lean:336-349`, used at `413-421`. |
+| Coupled `CRSResetCompletion12.resetReach` | Yes | Same completed epidemic target in the older coupled contract. The previous local fields are removed, so only the cited reset window remains. Evidence: `OptimalWindows.lean:350-363`, used at `396-400`. |
+| `h12rank` in generic / On / explicit | Yes | Start requires `EpidemicPhiGoal m D`, `WellFormed D`, and `majorityAnswer D = m`, so wrong-answer endpoints are excluded. Evidence: `GenericKeystone.lean:534-543`, `931-940`, `1050-1059`; call site `422-437`. |
+| `h12reRank` in generic / On / explicit | Yes | Start requires `WellFormed`, timer boundedness in the generic theorem, and not already live. Target has a consensus escape; the proof strengthens the hit target with invariant preservation before continuing. Evidence: `GenericKeystone.lean:544-554`, `941-950`, `1060-1069`; call site `833-843`. |
+| Local epidemic-step facts | Removed | `epidemicStep`, `epidemicNonincrease`, `epidemicPairDescent`, `stepNoPhase4`, `stepAllResetting`, and `pairRankResetting` are no longer hypothesis fields in either reset contract. The reset race is cited through `resetReach`; deterministic mechanics stay in `EpidemicMechanics` with side conditions. |
+| `hTimerStep` | Yes-shaped | It is a preservation assumption, not a hitting-window citation. In `trank = 1`, it is discharged by `generic_timer_preservation`. Evidence: `GenericKeystone.lean:515-518`, wrapper proof `960-968`. |
+| Arithmetic window hypotheses in explicit theorem | Yes-shaped | `hRankWindow` and `hRerankWindow` are numeric bounds only. Reset has `resetWindow_quadratic`; the final bound remains linear. Evidence: `GenericKeystone.lean:1070-1078`, arithmetic at `1088-1130`. |
 
 ## O(n) Status
 
-The O(n) conclusion is not weakened.  `PEM_expectedParallelTime_On_explicit`
-still fixes `p_reset = 1/2` and concludes
-`expectedParallelTimeToConsensus <= PEM_On_explicit_linearConstant ... * n`;
-the only new theorem-domain assumption is `WellFormed 1 Rmax Emax Dmax C0`.
+The explicit theorem is unchanged in strength.  It still fixes the reset
+success probability to `1/2`, keeps `K_reset <= C_reset*n*n`, and concludes
+
+```text
+expectedParallelTimeToConsensus <= PEM_On_explicit_linearConstant ... * n
+```
 
 Evidence:
 
 | Item | Evidence |
 |---|---|
-| Fixed linear constant | `GenericKeystone.lean:1096-1101` |
-| Explicit theorem assumes reset success probability `1/2` | `GenericKeystone.lean:1121-1124` |
-| Explicit theorem conclusion remains linear in `n` | `GenericKeystone.lean:1147-1153` |
-| Quadratic window divided by `n` and success factor rewritten to `256` | `GenericKeystone.lean:1173-1205` |
+| Fixed linear coefficient | `GenericKeystone.lean:1021-1026` |
+| Explicit theorem fixes reset probability at `1/2` | `GenericKeystone.lean:1046-1049` |
+| Explicit theorem conclusion is linear in `n` | `GenericKeystone.lean:1072-1078` |
+| Quadratic sequential window divided by `n` | `GenericKeystone.lean:1088-1130` |
 
 ## Verification
 
 Checks run:
 
 ```bash
-exec -a lake /data/home/xhuan5/.elan/bin/elan env lean SSExactMajority/UpperBound/Time/GenericKeystone.lean
-exec -a lake /data/home/xhuan5/.elan/bin/elan build
+/data/home/xhuan5/.elan/bin/elan run $(cat lean-toolchain) lake env lean SSExactMajority/UpperBound/Time/OptimalWindows.lean
+/data/home/xhuan5/.elan/bin/elan run $(cat lean-toolchain) lake env lean SSExactMajority/UpperBound/Time/GenericKeystone.lean
+/data/home/xhuan5/.elan/bin/elan run $(cat lean-toolchain) lake build
 ```
-
-I also ran the forbidden-placeholder grep over
-`SSExactMajority/UpperBound/Time/GenericKeystone.lean`.
 
 Results:
 
 ```text
+OptimalWindows single-file Lean check: passed, with one pre-existing linter warning.
 GenericKeystone single-file Lean check: passed with no output.
 Full lake build: Build completed successfully (3266 jobs).
-Forbidden-token scan: no matches.
+Forbidden-placeholder scan: no matches in the changed Lean files or this report.
+Local reset-step-field grep: no matches in GenericKeystone.lean or OptimalWindows.lean.
 ```

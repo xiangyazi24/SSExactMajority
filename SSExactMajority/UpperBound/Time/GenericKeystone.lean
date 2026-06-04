@@ -329,9 +329,10 @@ theorem WellFormed_step
 /-- Generic faithful reset-completion contract.
 
 The reset entry is the [12]-cited probabilistic window from `CorrectResetSeed`
-to the all-resetting epidemic region.  The local epidemic fields are exactly
-the abstract obligations consumed by `epidemic_phiCount_to_zero_window_ge_half`,
-stated for the generic protocol. -/
+to the completed answer epidemic.  This is the only cited reset obligation:
+the race between answer spread and reset-counter drain is part of the cited
+reset-completion window, rather than an exposed deterministic invariant over
+all `EpidemicRegion` configurations. -/
 structure CRSResetCompletion12Generic {n trank Rmax Emax Dmax : ℕ} (hn : 0 < n)
     (p_reset : ENNReal) (C_reset K_reset : ℕ) : Prop where
   resetProb_pos : 0 < p_reset
@@ -345,69 +346,7 @@ structure CRSResetCompletion12Generic {n trank Rmax Emax Dmax : ℕ} (hn : 0 < n
         p_reset ≤
           Probability.ProbHitWithin
             (PEMProtocol n trank Rmax Emax Dmax hn) hn2 C
-            (ResetCompletionTarget12 (majorityAnswer C)) K_reset
-  epidemicStep :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
-        ∀ i j : Fin n,
-          EpidemicRegion m
-              (D.step (PEMProtocol n trank Rmax Emax Dmax hn) i j) ∨
-            EpidemicPhiGoal m
-              (D.step (PEMProtocol n trank Rmax Emax Dmax hn) i j)
-  epidemicNonincrease :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
-        ∀ i j : Fin n,
-          phiCount (D.step (PEMProtocol n trank Rmax Emax Dmax hn) i j) ≤
-            phiCount D
-  epidemicPairDescent :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D → ¬ EpidemicPhiGoal m D → 0 < phiCount D →
-        ∀ p : Fin n × Fin n, p ∈ phiNonPhiPairs D →
-          EpidemicPhiGoal m
-              (D.step (PEMProtocol n trank Rmax Emax Dmax hn) p.1 p.2) ∨
-            (EpidemicRegion m
-                (D.step (PEMProtocol n trank Rmax Emax Dmax hn) p.1 p.2) ∧
-              phiCount
-                  (D.step (PEMProtocol n trank Rmax Emax Dmax hn) p.1 p.2) <
-                phiCount D)
-
-omit [Inhabited (Fin n × Fin n)] in
-/-- Generic answer-epidemic window after reset completion. -/
-theorem resetCompletion_to_phiGoal_window_generic (hn4 : 4 ≤ n)
-    (p_reset : ENNReal) (C_reset K_reset : ℕ)
-    (h12resetCompletion :
-      CRSResetCompletion12Generic (n := n) (trank := trank) (Rmax := Rmax)
-        (Emax := Emax) (Dmax := Dmax) (by omega : 0 < n)
-        p_reset C_reset K_reset) :
-    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
-      EpidemicRegion m D →
-        ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin
-            (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
-            (by omega : 2 ≤ n) D (EpidemicPhiGoal m)
-            (OW_answerEpidemicWindow n) := by
-  classical
-  intro m D hD
-  have hn0 : 0 < n := by omega
-  have hn2 : 2 ≤ n := by omega
-  set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
-  refine epidemic_phiCount_to_zero_window_ge_half
-    P hn2 (m := m) D (fun E => EpidemicRegion m E)
-    (n * n) (OW_answerEpidemicWindow n) hD
-    (fun E hE => epidemicRegion_answerInv hE)
-    (fun E hE hNot i j => ?_)
-    (fun E hE hNot i j => ?_)
-    (fun E hE hNot hPhi p hp => ?_)
-    (epidemic_coupon_sum_le_nsq hD)
-    (by
-      dsimp [OW_answerEpidemicWindow]
-      calc
-        2 * (n * n) = 2 * n * n := by ring
-        _ ≤ 2 * n * n + 1 := Nat.le_succ _)
-  · simpa [P] using h12resetCompletion.epidemicStep m E hE hNot i j
-  · simpa [P] using h12resetCompletion.epidemicNonincrease m E hE hNot i j
-  · simpa [P] using h12resetCompletion.epidemicPairDescent m E hE hNot hPhi p hp
+            (EpidemicPhiGoal (majorityAnswer C)) K_reset
 
 omit [Inhabited (Fin n × Fin n)] in
 /-- Generic faithful CRS-to-silence wrapper retaining the product probability. -/
@@ -469,48 +408,17 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
   have hReset :
       p_reset ≤
         Probability.ProbHitWithin P hn2 C
-          (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D)
+          (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D)
           K_reset := by
     have hResetRaw :
         p_reset ≤
           Probability.ProbHitWithin P hn2 C
-            (ResetCompletionTarget12 (majorityAnswer C)) K_reset := by
+            (EpidemicPhiGoal (majorityAnswer C)) K_reset := by
       simpa [P] using h12resetCompletion.resetReach hn2 C hWF hSeed
     rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-      P hn2 C (ResetCompletionTarget12 (majorityAnswer C)) ChainInv ⟨hWF, rfl⟩
+      P hn2 C (EpidemicPhiGoal (majorityAnswer C)) ChainInv ⟨hWF, rfl⟩
       hChainInvStep K_reset]
     exact hResetRaw
-  have hEpidemic :
-      ∀ D : Config (AgentState n) Opinion n,
-        (ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D) →
-          ((2 : ENNReal)⁻¹) ≤
-            Probability.ProbHitWithin P hn2 D
-              (fun E => EpidemicPhiGoal (majorityAnswer C) E ∧ ChainInv E)
-              (OW_answerEpidemicWindow n) := by
-    intro D hD
-    have hRaw :
-        ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin P hn2 D
-            (EpidemicPhiGoal (majorityAnswer C)) (OW_answerEpidemicWindow n) := by
-      simpa [P, ResetCompletionTarget12] using
-        (resetCompletion_to_phiGoal_window_generic
-          (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-          hn4 p_reset C_reset K_reset h12resetCompletion
-          (majorityAnswer C) D hD.1)
-    rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-      P hn2 D (EpidemicPhiGoal (majorityAnswer C)) ChainInv hD.2
-      hChainInvStep (OW_answerEpidemicWindow n)]
-    exact hRaw
-  have hResetToPhi :
-      p_reset * ((2 : ENNReal)⁻¹) ≤
-        Probability.ProbHitWithin P hn2 C
-          (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D)
-          (K_reset + OW_answerEpidemicWindow n) :=
-    Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ ChainInv D)
-      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D)
-      K_reset (OW_answerEpidemicWindow n)
-      p_reset ((2 : ENNReal)⁻¹) hReset hEpidemic
   have hRankToSilence :
       ∀ D : Config (AgentState n) Opinion n,
         (EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D) →
@@ -527,12 +435,29 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
         (OW_rankedEpidemicEndpoint (majorityAnswer C)) OW_silenceEndpoint
         (fun E hE => OW_silenceEndpoint_of_rankedEpidemicEndpoint hE)
         T_rank)
-  simpa [Nat.add_assoc, add_assoc] using
-    (Probability.ProbHitWithin_add_ge_mul P hn2 C
+  have hStrong :
+      p_reset * rankProb ≤
+        Probability.ProbHitWithin P hn2 C OW_silenceEndpoint
+          (K_reset + T_rank) :=
+    Probability.ProbHitWithin_add_ge_mul P hn2 C
       (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ ChainInv D) OW_silenceEndpoint
-      (K_reset + OW_answerEpidemicWindow n) T_rank
-      (p_reset * ((2 : ENNReal)⁻¹)) rankProb
-      hResetToPhi hRankToSilence)
+      K_reset T_rank p_reset rankProb hReset hRankToSilence
+  have hWeak :
+      p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤ p_reset * rankProb := by
+    have hmul :
+        p_reset * ((2 : ENNReal)⁻¹) ≤ p_reset * (1 : ENNReal) := by
+      exact mul_le_mul' le_rfl (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1)
+    have hmulRank :
+        p_reset * ((2 : ENNReal)⁻¹) * rankProb ≤
+          p_reset * (1 : ENNReal) * rankProb := by
+      exact mul_le_mul' hmul le_rfl
+    simpa [mul_assoc] using hmulRank
+  have hTime :
+      Probability.ProbHitWithin P hn2 C OW_silenceEndpoint (K_reset + T_rank) ≤
+        Probability.ProbHitWithin P hn2 C OW_silenceEndpoint
+          (K_reset + OW_answerEpidemicWindow n + T_rank) :=
+    Probability.ProbHitWithin_mono_time P hn2 C OW_silenceEndpoint (by omega)
+  exact hWeak.trans (hStrong.trans hTime)
 
 omit [Inhabited (Fin n × Fin n)] in
 /-- Generic faithful CRS-to-consensus wrapper retaining the product probability. -/
