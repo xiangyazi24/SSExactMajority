@@ -195,3 +195,53 @@ O(n) status: unchanged and still genuinely O(n) under the same window
 assumptions. The final faithful theorem still bounds expected parallel time by
 the existing `OW_globalWindow ... (K_reset + K_bridge) ...` divided by `n`,
 with constant probability factor `(p_reset * (pE / 2)) * 128⁻¹`.
+
+## Log-Tree Reset Result
+
+- Added `SSExactMajority/Convergence/LogTreeReset.lean`.
+- Proved the missing symmetric delaytimer endpoint for positive-resetcount
+  Resetting/Resetting synchronization.
+- Proved exact two-sided pair drain: two positive Resetting agents can be
+  repeatedly paired until both have `role = Resetting`, `resetcount = 0`, and
+  `delaytimer = Dmax`, while all other agents are unchanged.
+- Proved disjoint covering pair-list drain: a disjoint list of pairs covering
+  the agents drains all covered agents to the exact fresh state without
+  selecting them after dormancy.
+- Wired these into `all_fresh_from_log_seed`.
+
+Important preconditions landed for `all_fresh_from_log_seed`:
+
+- `hDmax : 1 < Dmax`
+- `hfuel : Nat.clog 2 n + 1 ≤ R`
+- a seed `r` with `(C r).1.role = .Resetting` and `R ≤ (C r).1.resetcount`
+- `hBalancedTreeGrowth`: explicit Phase-A balanced-growth certificate from
+  any log-fueled seed, producing a schedule after which every agent is
+  `Resetting` with positive resetcount
+- a disjoint pair list `pairs` satisfying `PairListDisjoint pairs`
+- coverage `∀ w, w ∈ pairEndpoints pairs`
+
+Status note: Phase B/drain is fully discharged. The balanced-tree Phase A
+doubling bookkeeping is isolated as the explicit `hBalancedTreeGrowth`
+precondition; it is not eliminated in this file.
+
+## Log-Tree Theorems
+
+- `SSEM.rankDeltaOSSR_both_rc_pos_snd_delay_final`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:21`
+- `SSEM.step_both_rc_pos_snd_delay_final`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:36`
+- `SSEM.drain_pair_rc_with_both_delay`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:69`
+- `SSEM.drain_pair_list_to_fresh_on_endpoints`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:188`
+- `SSEM.all_fresh_from_log_seed`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:305`
+
+## Log-Tree Verification
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogTreeReset
+```
+
+Result: build completed successfully. No `sorry`, `axiom`, or
+`native_decide` in `SSExactMajority/Convergence/LogTreeReset.lean`.
