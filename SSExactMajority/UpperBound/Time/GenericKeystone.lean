@@ -247,9 +247,9 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
           Probability.expectedHittingTime
             (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
-            (fun D => InSrank D ∧ MedianTimerAtLeast 35 D ∧
+            (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
               IsTimerBoundedConfig (7 * (trank + 4)) D ∧
-              IsTimerBoundedConfig T_timer D) ≤
+              IsTimerBoundedConfig T_timer D) ∨ IsConsensusConfig D) ≤
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetCompletion :
       CRSResetCompletion12Generic (n := n) (trank := trank) (Rmax := Rmax)
@@ -272,7 +272,8 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
             Probability.ProbHitWithin
               (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
               (by omega : 2 ≤ n) C
-              (fun D => InSswap D ∧ MedianTimerAtLeast 35 D) T_rerank) :
+              (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
+                IsConsensusConfig D) T_rerank) :
     ∀ C₀ : Config (AgentState n) Opinion n,
       IsTimerBoundedConfig (7 * (trank + 4)) C₀ →
       IsTimerBoundedConfig T_timer C₀ →
@@ -294,10 +295,16 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
       InSrank C ∧ MedianTimerAtLeast 35 C ∧
         IsTimerBoundedConfig (7 * (trank + 4)) C ∧
         IsTimerBoundedConfig T_timer C
+  let RankOrConsensus : Config (AgentState n) Opinion n → Prop :=
+    fun C => RankTarget C ∨ IsConsensusConfig C
   let Live35 : Config (AgentState n) Opinion n → Prop :=
     fun C => InSswap C ∧ MedianTimerAtLeast 35 C
+  let LiveOrConsensus : Config (AgentState n) Opinion n → Prop :=
+    fun C => Live35 C ∨ IsConsensusConfig C
   let Live35Target : Config (AgentState n) Opinion n → Prop :=
     fun C => Live35 C ∧ Inv C
+  let LiveOrConsensusTarget : Config (AgentState n) Opinion n → Prop :=
+    fun C => LiveOrConsensus C ∧ Inv C
   let DecisionTarget : Config (AgentState n) Opinion n → Prop :=
     (DecisionProductiveTarget : Config (AgentState n) Opinion n → Prop)
   let DecisionMid : Config (AgentState n) Opinion n → Prop :=
@@ -489,74 +496,135 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
       p_reset * ((128 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C IsConsensusConfig K := by
     intro C hInvC _hNot
-    have hRankE : Probability.expectedHittingTime P hn2 C RankTarget ≤
+    have hRankE : Probability.expectedHittingTime P hn2 C RankOrConsensus ≤
         ((C_rank * n * n : ℕ) : ENNReal) := by
-      simpa [P, RankTarget, Inv] using h12ranking C hInvC.1 hInvC.2
+      simpa [P, RankOrConsensus, RankTarget, Inv] using
+        h12ranking C hInvC.1 hInvC.2
     have hRankW : 2 * (C_rank * n * n) ≤ (2 * C_rank * n * n) + 1 := by nlinarith
     have hRankPH : ((2 : ENNReal)⁻¹) ≤
-        Probability.ProbHitWithin P hn2 C RankTarget (2 * C_rank * n * n) :=
+        Probability.ProbHitWithin P hn2 C RankOrConsensus (2 * C_rank * n * n) :=
       Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
-        P hn2 C RankTarget hRankE hRankW
-    have hLivePH : ∀ D : Config (AgentState n) Opinion n, RankTarget D →
-        ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin P hn2 D Live35Target T_rerank := by
-      intro D hD
-      by_cases hLive : Live35 D
-      · have hGoalD : Live35Target D := ⟨hLive, hD.2.2⟩
-        have hOne : (1 : ENNReal) ≤
-            Probability.ProbHitWithin P hn2 D Live35Target T_rerank := by
+        P hn2 C RankOrConsensus hRankE hRankW
+    have hLiveOrConsensusToConsensus :
+        ∀ E : Config (AgentState n) Opinion n, LiveOrConsensusTarget E →
+          p_reset * ((32 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin P hn2 E IsConsensusConfig KLive := by
+      intro E hE
+      rcases hE with ⟨hEvent, hInvE⟩
+      rcases hEvent with hLiveE | hConsE
+      · exact hLiveToConsensus E ⟨hLiveE, hInvE⟩
+      · have hOne : (1 : ENNReal) ≤
+            Probability.ProbHitWithin P hn2 E IsConsensusConfig KLive := by
           calc
             (1 : ENNReal) =
-                Probability.probReached P hn2 D Live35Target 0 := by
-                  exact (Probability.probReached_zero_of_goal P hn2 D
-                    Live35Target hGoalD).symm
-            _ ≤ Probability.ProbHitWithin P hn2 D Live35Target 0 :=
-                Probability.probReached_le_ProbHitWithin P hn2 D Live35Target 0
-            _ ≤ Probability.ProbHitWithin P hn2 D Live35Target T_rerank :=
-                Probability.ProbHitWithin_mono_time P hn2 D Live35Target
+                Probability.probReached P hn2 E IsConsensusConfig 0 := by
+                  exact (Probability.probReached_zero_of_goal P hn2 E
+                    IsConsensusConfig hConsE).symm
+            _ ≤ Probability.ProbHitWithin P hn2 E IsConsensusConfig 0 :=
+                Probability.probReached_le_ProbHitWithin P hn2 E IsConsensusConfig 0
+            _ ≤ Probability.ProbHitWithin P hn2 E IsConsensusConfig KLive :=
+                Probability.ProbHitWithin_mono_time P hn2 E IsConsensusConfig
                   (Nat.zero_le _)
-        exact le_trans (by norm_num : ((2 : ENNReal)⁻¹) ≤ 1) hOne
-      · have hBase :
-            ((2 : ENNReal)⁻¹) ≤
-              Probability.ProbHitWithin P hn2 D Live35 T_rerank := by
-          simpa [P, Live35] using h12reRank D hD.2.2.1 hD.2.2.2 hLive
-        rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
-          P hn2 D Live35 Inv hD.2.2 hInvStep T_rerank]
-        exact hBase
-    have hAB : ((4 : ENNReal)⁻¹) ≤
-        Probability.ProbHitWithin P hn2 C Live35Target
-          (2 * C_rank * n * n + T_rerank) := by
-      have hAB' : ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) ≤
-          Probability.ProbHitWithin P hn2 C Live35Target
-            (2 * C_rank * n * n + T_rerank) :=
-        Probability.ProbHitWithin_add_ge_mul P hn2 C RankTarget Live35Target
-          (2 * C_rank * n * n) T_rerank
-          ((2 : ENNReal)⁻¹) ((2 : ENNReal)⁻¹)
-          hRankPH hLivePH
-      have hprod :
-          ((2 : ENNReal)⁻¹) * ((2 : ENNReal)⁻¹) = ((4 : ENNReal)⁻¹) := by
-        rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
-        norm_num
-      simpa [hprod] using hAB'
-    have hChain : ((4 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹)) ≤
+        have hp32_le_one : p_reset * ((32 : ENNReal)⁻¹) ≤ 1 := by
+          exact (mul_le_mul' h12resetCompletion.resetProb_le_one
+            (by norm_num : ((32 : ENNReal)⁻¹) ≤ 1)).trans (by simp)
+        exact hp32_le_one.trans hOne
+    have hAfterRank :
+        ∀ D : Config (AgentState n) Opinion n, RankOrConsensus D →
+          p_reset * ((64 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin P hn2 D IsConsensusConfig (T_rerank + KLive) := by
+      intro D hD
+      rcases hD with hRankD | hConsD
+      · have hInvD : Inv D := hRankD.2.2
+        by_cases hLive : Live35 D
+        · have hGoalD : Live35Target D := ⟨hLive, hInvD⟩
+          have hBase :
+              p_reset * ((32 : ENNReal)⁻¹) ≤
+                Probability.ProbHitWithin P hn2 D IsConsensusConfig KLive :=
+            hLiveToConsensus D hGoalD
+          have hBase' :
+              p_reset * ((32 : ENNReal)⁻¹) ≤
+                Probability.ProbHitWithin P hn2 D IsConsensusConfig
+                  (T_rerank + KLive) :=
+            hBase.trans
+              (Probability.ProbHitWithin_mono_time P hn2 D IsConsensusConfig
+                (by omega : KLive ≤ T_rerank + KLive))
+          have hweak :
+              p_reset * ((64 : ENNReal)⁻¹) ≤
+                p_reset * ((32 : ENNReal)⁻¹) :=
+            mul_le_mul' le_rfl (by norm_num : ((64 : ENNReal)⁻¹) ≤ ((32 : ENNReal)⁻¹))
+          exact hweak.trans hBase'
+        · have hBase :
+              ((2 : ENNReal)⁻¹) ≤
+                Probability.ProbHitWithin P hn2 D LiveOrConsensus T_rerank := by
+            simpa [P, LiveOrConsensus, Live35] using
+              h12reRank D hInvD.1 hInvD.2 hLive
+          have hRerank :
+              ((2 : ENNReal)⁻¹) ≤
+                Probability.ProbHitWithin P hn2 D LiveOrConsensusTarget T_rerank := by
+            rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
+              P hn2 D LiveOrConsensus Inv hInvD hInvStep T_rerank]
+            exact hBase
+          have hChain :
+              ((2 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹)) ≤
+                Probability.ProbHitWithin P hn2 D IsConsensusConfig
+                  (T_rerank + KLive) :=
+            Probability.ProbHitWithin_add_ge_mul P hn2 D
+              LiveOrConsensusTarget IsConsensusConfig
+              T_rerank KLive
+              ((2 : ENNReal)⁻¹) (p_reset * ((32 : ENNReal)⁻¹))
+              hRerank hLiveOrConsensusToConsensus
+          have hprod :
+              ((2 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹)) =
+                p_reset * ((64 : ENNReal)⁻¹) := by
+            have h2_32 :
+                ((2 : ENNReal)⁻¹) * ((32 : ENNReal)⁻¹) =
+                  ((64 : ENNReal)⁻¹) := by
+              rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
+              norm_num
+            calc
+              ((2 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹))
+                  = p_reset * (((2 : ENNReal)⁻¹) * ((32 : ENNReal)⁻¹)) := by
+                    ac_rfl
+              _ = p_reset * ((64 : ENNReal)⁻¹) := by rw [h2_32]
+          simpa [hprod] using hChain
+      · have hOne : (1 : ENNReal) ≤
+            Probability.ProbHitWithin P hn2 D IsConsensusConfig
+              (T_rerank + KLive) := by
+          calc
+            (1 : ENNReal) =
+                Probability.probReached P hn2 D IsConsensusConfig 0 := by
+                  exact (Probability.probReached_zero_of_goal P hn2 D
+                    IsConsensusConfig hConsD).symm
+            _ ≤ Probability.ProbHitWithin P hn2 D IsConsensusConfig 0 :=
+                Probability.probReached_le_ProbHitWithin P hn2 D IsConsensusConfig 0
+            _ ≤ Probability.ProbHitWithin P hn2 D IsConsensusConfig
+                  (T_rerank + KLive) :=
+                Probability.ProbHitWithin_mono_time P hn2 D IsConsensusConfig
+                  (Nat.zero_le _)
+        have hp64_le_one : p_reset * ((64 : ENNReal)⁻¹) ≤ 1 := by
+          exact (mul_le_mul' h12resetCompletion.resetProb_le_one
+            (by norm_num : ((64 : ENNReal)⁻¹) ≤ 1)).trans (by simp)
+        exact hp64_le_one.trans hOne
+    have hChain : ((2 : ENNReal)⁻¹) * (p_reset * ((64 : ENNReal)⁻¹)) ≤
         Probability.ProbHitWithin P hn2 C IsConsensusConfig
-          ((2 * C_rank * n * n + T_rerank) + KLive) :=
-      Probability.ProbHitWithin_add_ge_mul P hn2 C Live35Target IsConsensusConfig
-        (2 * C_rank * n * n + T_rerank) KLive
-        ((4 : ENNReal)⁻¹) (p_reset * ((32 : ENNReal)⁻¹))
-        hAB hLiveToConsensus
+          (2 * C_rank * n * n + (T_rerank + KLive)) :=
+      Probability.ProbHitWithin_add_ge_mul P hn2 C RankOrConsensus IsConsensusConfig
+        (2 * C_rank * n * n) (T_rerank + KLive)
+        ((2 : ENNReal)⁻¹) (p_reset * ((64 : ENNReal)⁻¹))
+        hRankPH hAfterRank
     have hprod :
-        ((4 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹)) =
+        ((2 : ENNReal)⁻¹) * (p_reset * ((64 : ENNReal)⁻¹)) =
           p_reset * ((128 : ENNReal)⁻¹) := by
-      have h432 :
-          ((4 : ENNReal)⁻¹) * ((32 : ENNReal)⁻¹) = ((128 : ENNReal)⁻¹) := by
+      have h2_64 :
+          ((2 : ENNReal)⁻¹) * ((64 : ENNReal)⁻¹) = ((128 : ENNReal)⁻¹) := by
         rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
         norm_num
       calc
-        ((4 : ENNReal)⁻¹) * (p_reset * ((32 : ENNReal)⁻¹))
-            = p_reset * (((4 : ENNReal)⁻¹) * ((32 : ENNReal)⁻¹)) := by ac_rfl
-        _ = p_reset * ((128 : ENNReal)⁻¹) := by rw [h432]
-    simpa [K, OW_globalWindow, hprod] using hChain
+        ((2 : ENNReal)⁻¹) * (p_reset * ((64 : ENNReal)⁻¹))
+            = p_reset * (((2 : ENNReal)⁻¹) * ((64 : ENNReal)⁻¹)) := by ac_rfl
+        _ = p_reset * ((128 : ENNReal)⁻¹) := by rw [h2_64]
+    simpa [K, OW_globalWindow, hprod, Nat.add_assoc, add_assoc] using hChain
   simpa [Probability.expectedParallelTimeToConsensus, P, Inv, K] using
     (Probability.expectedParallelTime_le_window_mul_inv_of_invariant
       P hn2 C₀ IsConsensusConfig Inv K (p_reset * ((128 : ENNReal)⁻¹))
@@ -576,8 +644,8 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
           Probability.expectedHittingTime
             (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
             (by omega : 2 ≤ n) C
-            (fun D => InSrank D ∧ MedianTimerAtLeast 35 D ∧
-              IsTimerBoundedConfig PEM_trank1_timer D) ≤
+            (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
+              IsTimerBoundedConfig PEM_trank1_timer D) ∨ IsConsensusConfig D) ≤
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12resetCompletion :
       CRSResetCompletion12Generic (n := n) (trank := 1) (Rmax := Rmax)
@@ -599,7 +667,8 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
             Probability.ProbHitWithin
               (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
               (by omega : 2 ≤ n) C
-              (fun D => InSswap D ∧ MedianTimerAtLeast 35 D) T_rerank) :
+              (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
+                IsConsensusConfig D) T_rerank) :
     ∀ C₀ : Config (AgentState n) Opinion n,
       IsTimerBoundedConfig PEM_trank1_timer C₀ →
       Probability.expectedParallelTimeToConsensus
@@ -649,6 +718,134 @@ theorem OW_globalWindow_trank1_quadratic
   dsimp [OW_globalWindow, OW_liveConsensusWindow, decisionWindow,
     OW_macLiveWindow, OW_answerEpidemicWindow, PEM_trank1_timer]
   nlinarith
+
+omit [Inhabited (Fin n × Fin n)] in
+/-- Arithmetic helper for converting a quadratic sequential window into a
+linear parallel-time bound after division by `n`. -/
+theorem ennreal_quadratic_nat_mul_div_cancel
+    {c q n : ℕ} (hn : 0 < n) :
+    (((c * n * n : ℕ) : ENNReal) * (q : ENNReal) / n) =
+      ((q * c * n : ℕ) : ENNReal) := by
+  have hn_ne : (↑n : ENNReal) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+  have hn_ne_top : (↑n : ENNReal) ≠ ⊤ := ENNReal.natCast_ne_top n
+  rw [show (c * n * n : ℕ) = c * (n * n) from by ring]
+  rw [show (q * c * n : ℕ) = q * (c * n) from by ring]
+  push_cast [Nat.cast_mul]
+  rw [div_eq_mul_inv]
+  calc
+    ↑c * (↑n * ↑n) * ↑q * (↑n : ENNReal)⁻¹
+        = ↑q * ↑c * (↑n * (↑n * (↑n : ENNReal)⁻¹)) := by ac_rfl
+    _ = ↑q * ↑c * (↑n * 1) := by
+        rw [ENNReal.mul_inv_cancel hn_ne hn_ne_top]
+    _ = ↑q * (↑c * ↑n) := by simp [mul_assoc]
+
+omit [Inhabited (Fin n × Fin n)] in
+/-- Explicit linear constant for the `trank = 1` end-to-end theorem when the
+cited reset success probability is fixed at `1/2`. -/
+def PEM_On_explicit_linearConstant
+    (C_rank C_reset C_T_rank C_T_rerank : ℕ) : ℕ :=
+  256 * (2 * C_rank + C_reset + C_T_rank + C_T_rerank + 76)
+
+/-- Explicit `O(n)` corollary at `trank = 1`.
+
+The reset success probability is fixed to the absolute constant `1/2`; the
+four window constants are ordinary natural constants, folded into the explicit
+linear coefficient `PEM_On_explicit_linearConstant`. -/
+theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C_rank C_reset C_T_rank C_T_rerank K_reset T_rank T_rerank : ℕ)
+    (h12ranking :
+      ∀ C : Config (AgentState n) Opinion n,
+        IsTimerBoundedConfig PEM_trank1_timer C →
+          Probability.expectedHittingTime
+            (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+            (by omega : 2 ≤ n) C
+            (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
+              IsTimerBoundedConfig PEM_trank1_timer D) ∨ IsConsensusConfig D) ≤
+            ((C_rank * n * n : ℕ) : ENNReal))
+    (h12resetCompletion :
+      CRSResetCompletion12Generic (n := n) (trank := 1) (Rmax := Rmax)
+        (Emax := Emax) (Dmax := Dmax) (by omega : 0 < n)
+        ((2 : ENNReal)⁻¹) C_reset K_reset)
+    (h12rank :
+      ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+        EpidemicPhiGoal m D →
+          ((2 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin
+              (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) D
+              (OW_rankedEpidemicEndpoint m) T_rank)
+    (h12reRank :
+      ∀ C : Config (AgentState n) Opinion n,
+        IsTimerBoundedConfig PEM_trank1_timer C →
+        ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
+          ((2 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin
+              (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) C
+              (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
+                IsConsensusConfig D) T_rerank)
+    (hRankWindow : T_rank ≤ C_T_rank * n * n)
+    (hRerankWindow : T_rerank ≤ C_T_rerank * n * n) :
+    ∀ C₀ : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig PEM_trank1_timer C₀ →
+      Probability.expectedParallelTimeToConsensus
+        (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+        (by omega : 2 ≤ n) C₀ ≤
+        ((PEM_On_explicit_linearConstant
+          C_rank C_reset C_T_rank C_T_rerank * n : ℕ) : ENNReal) := by
+  intro C₀ hTimer₀
+  have hn0 : 0 < n := by omega
+  have hBase :=
+    PEM_expectedParallelTime_On
+      (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hRmax hEmax hDmax C_rank K_reset T_rank T_rerank
+      ((2 : ENNReal)⁻¹) C_reset
+      h12ranking h12resetCompletion h12rank h12reRank C₀ hTimer₀
+  let c : ℕ := 2 * C_rank + C_reset + C_T_rank + C_T_rerank + 76
+  have hWindowNat :
+      OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank ≤
+        c * n * n := by
+    simpa [c] using
+      (OW_globalWindow_trank1_quadratic
+        (n := n) (K_reset := K_reset) (C_reset := C_reset)
+        (T_rank := T_rank) (C_T_rank := C_T_rank)
+        (T_rerank := T_rerank) (C_T_rerank := C_T_rerank)
+        (C_rank := C_rank)
+        h12resetCompletion.resetWindow_quadratic hRankWindow hRerankWindow)
+  have hWindowENN :
+      ((OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank : ℕ) :
+          ENNReal) ≤ ((c * n * n : ℕ) : ENNReal) := by
+    exact_mod_cast hWindowNat
+  have hpInv :
+      ((((2 : ENNReal)⁻¹) * ((128 : ENNReal)⁻¹))⁻¹) = (256 : ENNReal) := by
+    have hmul :
+        ((2 : ENNReal)⁻¹) * ((128 : ENNReal)⁻¹) = ((256 : ENNReal)⁻¹) := by
+      rw [← ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
+      norm_num
+    rw [hmul]
+    norm_num
+  have hMono :
+      (((OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank : ℕ) :
+          ENNReal) *
+          ((((2 : ENNReal)⁻¹) * ((128 : ENNReal)⁻¹))⁻¹) / n) ≤
+        (((c * n * n : ℕ) : ENNReal) * (256 : ENNReal) / n) := by
+    rw [hpInv]
+    exact ENNReal.div_le_div
+      (mul_le_mul' hWindowENN le_rfl) le_rfl
+  calc
+    Probability.expectedParallelTimeToConsensus
+        (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+        (by omega : 2 ≤ n) C₀
+        ≤ (((OW_globalWindow n C_rank PEM_trank1_timer K_reset T_rank T_rerank : ℕ) :
+            ENNReal) *
+          (((2 : ENNReal)⁻¹) * ((128 : ENNReal)⁻¹))⁻¹ / n) := hBase
+    _ ≤ (((c * n * n : ℕ) : ENNReal) * (256 : ENNReal) / n) := hMono
+    _ = ((256 * c * n : ℕ) : ENNReal) :=
+        ennreal_quadratic_nat_mul_div_cancel (c := c) (q := 256) hn0
+    _ = ((PEM_On_explicit_linearConstant
+          C_rank C_reset C_T_rank C_T_rerank * n : ℕ) : ENNReal) := by
+        simp [PEM_On_explicit_linearConstant, c, Nat.mul_assoc]
 
 end
 
