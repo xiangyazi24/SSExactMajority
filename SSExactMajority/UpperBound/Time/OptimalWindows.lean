@@ -1,5 +1,6 @@
 import SSExactMajority.UpperBound.Time
 import SSExactMajority.UpperBound.Time.EpidemicBound
+import SSExactMajority.UpperBound.Time.EpidemicMechanics
 import SSExactMajority.UpperBound.Time.PolynomialBound
 
 /-!
@@ -239,6 +240,203 @@ theorem CRS_to_silence_of_rank12 (hn4 : 4 ≤ n)
       T_reset T_rank ((2 : ENNReal)⁻¹) rankProb
       hEpiWindow hRankToSilence
   exact hProduct.trans hChain
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- In an epidemic region at least one agent carries the non-`phi` answer, so
+the number of `phi` agents is strictly below `n`. -/
+theorem epidemicRegion_phiCount_lt {m : Answer}
+    {C : Config (AgentState n) Opinion n}
+    (hReg : EpidemicRegion m C) :
+    phiCount C < n := by
+  classical
+  rcases hReg.2.2.2 with ⟨w, hw⟩
+  have hsub : phiAgents C ⊆ (Finset.univ : Finset (Fin n)) := by
+    intro v hv
+    simp
+  have hproper : phiAgents C ⊂ (Finset.univ : Finset (Fin n)) := by
+    rw [Finset.ssubset_iff_of_subset hsub]
+    refine ⟨w, by simp, ?_⟩
+    intro hwmem
+    have hphi : (C w).1.answer = .phi := (Finset.mem_filter.mp hwmem).2
+    exact hReg.2.2.1 (hw.symm.trans hphi)
+  have hcard := Finset.card_lt_card hproper
+  simpa [phiAgents_card, Fintype.card_fin] using hcard
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- Coarse coupon bound for the one-way reset epidemic.  Each non-terminal
+level has rate at least `1 / (n*(n-1))`, and there are at most `n` levels. -/
+theorem epidemic_coupon_sum_le_quadratic {m : Answer}
+    {C : Config (AgentState n) Opinion n}
+    (hReg : EpidemicRegion m C) :
+    (∑ r ∈ Finset.range (phiCount C),
+      ((((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal) *
+          ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹)) ≤
+      ((n * n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  have hPhi_lt : phiCount C < n := epidemicRegion_phiCount_lt hReg
+  have hTerm :
+      ∀ r ∈ Finset.range (phiCount C),
+        ((((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal) *
+            ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹) ≤
+          ((n * (n - 1) : ℕ) : ENNReal) := by
+    intro r hr
+    have hr_lt : r < phiCount C := Finset.mem_range.mp hr
+    have hrn : r + 1 < n := by omega
+    have hleft : 0 < 2 * (r + 1) := by positivity
+    have hright : 0 < n - (r + 1) := Nat.sub_pos_of_lt hrn
+    have hApos : 0 < 2 * (r + 1) * (n - (r + 1)) :=
+      Nat.mul_pos hleft hright
+    have hAge1 : 1 ≤ 2 * (r + 1) * (n - (r + 1)) :=
+      Nat.succ_le_of_lt hApos
+    have hA_ne_zero :
+        (((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal)) ≠ 0 := by
+      exact_mod_cast Nat.ne_of_gt hApos
+    have hA_ne_top :
+        (((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal)) ≠ ⊤ :=
+      ENNReal.natCast_ne_top _
+    rw [ENNReal.mul_inv (Or.inl hA_ne_zero) (Or.inl hA_ne_top), inv_inv]
+    have hInv_le : (((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal))⁻¹ ≤ 1 := by
+      apply ENNReal.inv_le_one.mpr
+      exact_mod_cast hAge1
+    calc
+      (((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal))⁻¹ *
+          ((n * (n - 1) : ℕ) : ENNReal)
+          ≤ 1 * ((n * (n - 1) : ℕ) : ENNReal) :=
+            by
+              simpa [mul_comm] using
+                (mul_le_mul_right hInv_le
+                  (((n * (n - 1) : ℕ) : ENNReal)))
+      _ = ((n * (n - 1) : ℕ) : ENNReal) := one_mul _
+  calc
+    (∑ r ∈ Finset.range (phiCount C),
+      ((((2 * (r + 1) * (n - (r + 1)) : ℕ) : ENNReal) *
+          ((n * (n - 1) : ℕ) : ENNReal)⁻¹)⁻¹))
+        ≤ ∑ _r ∈ Finset.range (phiCount C),
+            ((n * (n - 1) : ℕ) : ENNReal) :=
+          Finset.sum_le_sum hTerm
+    _ = (phiCount C : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal) := by
+          rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    _ ≤ (n : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal) := by
+          have hPhi_le : (phiCount C : ENNReal) ≤ (n : ENNReal) := by
+            exact_mod_cast le_of_lt hPhi_lt
+          simpa [mul_comm] using
+            (mul_le_mul_right hPhi_le (((n * (n - 1) : ℕ) : ENNReal)))
+    _ = ((n * n * (n - 1) : ℕ) : ENNReal) := by
+          push_cast
+          ring
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- Cited [12] reset-duration contract used to run the proven reset epidemic
+mechanics faithfully.  The fields are exactly the reset-window facts not proved
+by `EpidemicMechanics`: the CRS entry into the all-Resetting epidemic region,
+the no-wake/no-Phase4 guard for arbitrary reset-window steps, the post-step
+all-Resetting guard, and the rankDelta Resetting guard for scheduled
+`(phi, non-phi)` pairs. -/
+structure CRSResetDuration12 {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
+    (T_reset : ℕ) : Prop where
+  resetInv :
+    ∀ C : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      CorrectResetSeed C →
+      EpidemicRegion (majorityAnswer C) C
+  stepNoPhase4 :
+    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
+        ∀ i j : Fin n,
+          ¬ ((transitionPEM_prePhase4 n Rmax
+                (rankDeltaOSSR Rmax Emax Dmax hn)
+                (D i).1 (D j).1 (D i).2 (D j).2).1.role = .Settled ∧
+              (transitionPEM_prePhase4 n Rmax
+                (rankDeltaOSSR Rmax Emax Dmax hn)
+                (D i).1 (D j).1 (D i).2 (D j).2).2.role = .Settled)
+  stepAllResetting :
+    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
+        ∀ i j w : Fin n,
+          ((D.step (PEMProtocolCoupled n Rmax Emax Dmax hn) i j) w).1.role =
+            .Resetting
+  pairRankResetting :
+    ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+      EpidemicRegion m D → ¬ EpidemicPhiGoal m D →
+        ∀ p : Fin n × Fin n, p ∈ phiNonPhiPairs D →
+          (rankDeltaOSSR Rmax Emax Dmax hn ((D p.1).1, (D p.2).1)).1.role =
+            .Resetting ∧
+          (rankDeltaOSSR Rmax Emax Dmax hn ((D p.1).1, (D p.2).1)).2.role =
+            .Resetting
+  resetWindow : 2 * (n * n * (n - 1)) ≤ T_reset + 1
+
+omit [Inhabited (Fin n × Fin n)] in
+/-- Faithful concrete CRS-to-silence wrapper.  The only cited ingredients are
+the [12] reset-duration contract and the [12] rank window; the epidemic
+one-step obligations are discharged through the proved `EpidemicMechanics`
+theorems with `Inv := EpidemicRegion`. -/
+theorem CRS_to_silence_faithful (hn4 : 4 ≤ n)
+    (T_reset T_rank : ℕ)
+    (rankProb : ENNReal)
+    (hProduct : ((2 : ENNReal)⁻¹) ≤ ((2 : ENNReal)⁻¹) * rankProb)
+    (h12resetDuration :
+      CRSResetDuration12 (n := n) (Rmax := Rmax) (Emax := Emax)
+        (Dmax := Dmax) (by omega : 0 < n) T_reset)
+    (h12rank :
+      ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+        EpidemicPhiGoal m D →
+          rankProb ≤
+            Probability.ProbHitWithin
+              (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) D
+              (OW_rankedEpidemicEndpoint m) T_rank) :
+    ∀ C : Config (AgentState n) Opinion n,
+      IsTimerBoundedConfig (7 * (Rmax + 4)) C →
+      CorrectResetSeed C →
+        ((2 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin
+            (PEMProtocolCoupled n Rmax Emax Dmax (by omega : 0 < n))
+            (by omega : 2 ≤ n) C OW_silenceEndpoint
+            (T_reset + T_rank) := by
+  classical
+  have hn0 : 0 < n := by omega
+  refine CRS_to_silence_of_rank12
+    (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+    hn4 T_reset T_rank (n * n * (n - 1))
+    (fun m D => EpidemicRegion m D) rankProb hProduct
+    (fun C hTimer hSeed => h12resetDuration.resetInv C hTimer hSeed)
+    (fun m D hD => epidemicRegion_answerInv hD)
+    (fun m D hD hNot i j => ?_)
+    (fun m D hD hNot i j => ?_)
+    (fun m D hD hNot _hPhi p hp => ?_)
+    (fun C hTimer hSeed =>
+      epidemic_coupon_sum_le_quadratic (h12resetDuration.resetInv C hTimer hSeed))
+    h12resetDuration.resetWindow
+    h12rank
+  · left
+    have hClosed :=
+      epidemicRegion_step_closed
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+        (m := m) (C := D) hD i j
+        (h12resetDuration.stepNoPhase4 m D hD hNot i j)
+        (h12resetDuration.stepAllResetting m D hD hNot i j)
+    simpa [PEMProtocolCoupled, PEMProtocol] using hClosed
+  · have hMono :=
+      epidemicRegion_phiCount_nonincrease
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+        (m := m) (C := D) hD i j
+        (h12resetDuration.stepNoPhase4 m D hD hNot i j)
+    simpa [PEMProtocolCoupled, PEMProtocol] using hMono
+  · have hPair := h12resetDuration.pairRankResetting m D hD hNot p hp
+    have hClosed :=
+      epidemicRegion_step_closed
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+        (m := m) (C := D) hD p.1 p.2
+        (h12resetDuration.stepNoPhase4 m D hD hNot p.1 p.2)
+        (h12resetDuration.stepAllResetting m D hD hNot p.1 p.2)
+    have hDesc :=
+      epidemicRegion_phiPair_descent
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+        (m := m) (C := D) hD p hp hPair.1 hPair.2
+    right
+    constructor
+    · simpa [PEMProtocolCoupled, PEMProtocol] using hClosed
+    · simpa [PEMProtocolCoupled, PEMProtocol] using hDesc
 
 /-- **Keystone 1 (universal ranking time).** From any timer-bounded configuration,
 the expected time to reach a ranked configuration with a fresh (`≥ 35`) bounded
