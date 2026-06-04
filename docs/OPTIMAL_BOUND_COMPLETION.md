@@ -47,3 +47,27 @@ Proven reusable component pieces: rcLevelPotential_* (reset-mass, RecoveryBound,
 awakening_step_descent_witness/prob (EntryBound, card descent), phiCount lemmas (answer-error).
 Global φ must use measures defined on ALL bounded configs (Σrc, #non-Settled, #wrong-answer),
 weighted W3≫W2≫W1, with the reset-jump compensator the crux.
+
+## ARCHITECT BLUEPRINT (global supermartingale, validated components)
+Each phase has a PROVEN per-step descent witness IN ITS OWN INVARIANT:
+- P1 rc-drain: φ1=rcLevelPotential=(maxRC-1)·n+rcMaxCount; nonincr+drop≥1/n under StrongRecoveryInv
+  (⟹allResetting). allR_to_phase1Goal_bound ≤Rmax·n². [max-based — linear resetMass FAILS, proven]
+- P2 awakening: φ2=awakeningResettingFollowers.card; descent witness+prob PROVEN (EntryBound).
+- P3 ranking: φ3=n-heapPrefixLen; heapPrefix_recruit_step witness; FreshRankingStart_expected ≤Rmax·n²
+  (+heap-exit disjunct). P4 decision_window ≥1/2. P5 phiCount; timer_drain_window.
+
+KEY STRUCTURE: interleaving is mostly FORWARD (later-phase steps fire early = progress). The only
+BACKWARD jumps are RESETS (collision/error during ranking → agent back to Resetting). Self-stab fact:
+post-initial-wave resets are BOUNDED IN TOTAL (collisions ≤ rank conflicts O(n), errors ≤ Emax) —
+once ranking is clean, NO more resets. ⟹ global φ is a SUPERMARTINGALE with BOUNDED COMPENSATOR:
+  φ = W·(reset/wave incompleteness) + (rank+answer progress);
+  E[Δφ] ≤ -ε except at ≤O(n+Emax) reset events, each Δφ ≤ +W·Rmax.
+  ⟹ E[T] ≤ (φ(C₀) + O(n+Emax)·W·Rmax)/ε = explicit poly.
+
+REMAINING FORMAL PIECES (the build):
+(a) bound TOTAL post-wave resets (collisions ≤ O(n) via unique-rank, errors ≤ Emax) — the crux fact.
+(b) per-step expected drift of φ BETWEEN resets (compose the proven per-phase witnesses on IsBoundedConfig).
+(c) supermartingale-with-bounded-compensator hitting-time lemma (refine expectedHittingTime_le_of_drift
+    to allow a bounded total positive part) — Probability layer, PP-proof supermartingale family.
+(d) arbitrary bounded → allResetting (reset-wave trigger) E[T] — self-stab entry.
+Then assemble → PEM_expectedParallelTime_optimal.
