@@ -212,4 +212,69 @@ theorem timer_drain_to_zero_productive
               Nat.mul_le_mul_right _ hMaxTimer
           _ = 7 * (Rmax + 4) * n * (n - 1) := by ring
 
+-- From a live MAC swap, the expected time to `consensus ∨ CorrectResetSeed` is polynomial.
+set_option maxHeartbeats 1000000 in
+theorem MAClive_to_consensus_or_crs
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+      ((7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  set P := PEMProtocolCoupled n Rmax Emax Dmax hn0 with hP
+  have hMid : Probability.expectedHittingTime P (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) ≤
+      ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) :=
+    timer_drain_to_zero_productive hn4 hn0 hRmax C hSswap hMedCorrect hTimerLo hTimerHi
+  have hGoal : ∀ D : Config (AgentState n) Opinion n,
+      (IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) →
+      Probability.expectedHittingTime P (by omega : 2 ≤ n) D
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+        ((n * (n - 1) : ℕ) : ENNReal) := by
+    intro D hMidD
+    rcases hMidD with hc | hcrs | ⟨hSD, hMD, hmax0⟩
+    · exact le_of_eq_of_le
+        (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inl hc))
+        (zero_le _)
+    · exact le_of_eq_of_le
+        (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inr hcrs))
+        (zero_le _)
+    · have hTimer0 : ∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n → (D μ).1.timer = 0 := by
+        intro μ hμ
+        have hle : (if (D μ).1.rank.val + 1 = ceilHalf n then (D μ).1.timer else 0)
+            ≤ maxMedianTimer D := Finset.le_sup (Finset.mem_univ μ)
+        rw [hmax0, if_pos hμ] at hle
+        omega
+      by_cases hw : 0 < wrongAnswerCount D
+      · exact PEM_expected_reset_trigger_v2 hn4 hn0 hRmax hEmax hDmax D hSD hMD hw hTimer0
+      · have hw0 : wrongAnswerCount D = 0 := by omega
+        exact le_of_eq_of_le
+          (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _
+            (Or.inl (isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hSD hw0)))
+          (zero_le _)
+  have hMidGoal : ∀ D : Config (AgentState n) Opinion n,
+      (IsConsensusConfig D ∨ CorrectResetSeed D) →
+      (IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) := by
+    intro D hD
+    rcases hD with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+  have hadd := Probability.expectedHittingTime_add_le P (by omega : 2 ≤ n) C
+    (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0))
+    (fun D => IsConsensusConfig D ∨ CorrectResetSeed D)
+    ((7 * (Rmax + 4) * n * (n - 1) : ℕ) : ENNReal) ((n * (n - 1) : ℕ) : ENNReal)
+    hMid hGoal hMidGoal
+  refine hadd.trans ?_
+  rw [← Nat.cast_add]
+
 end SSEM
