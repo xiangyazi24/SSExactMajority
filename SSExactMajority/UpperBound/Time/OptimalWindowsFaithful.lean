@@ -1,5 +1,6 @@
 import SSExactMajority.UpperBound.Time.OptimalWindows
 import SSExactMajority.UpperBound.Time.AnswerEpidemicBridge
+import SSExactMajority.UpperBound.Time.GenericKeystone
 
 namespace SSEM
 
@@ -79,5 +80,153 @@ theorem faithful_reset_to_phiGoal
   exact
     Probability.ProbHitWithin_add_ge_mul P hn2 C Mid Goal
       K_reset K_bridge p_reset (pE / 2) hFreshSeed hBridge
+
+/-- Turn the faithful fresh-reset citation plus the proven answer-epidemic
+bridge into the generic reset-completion contract expected by the existing
+renewal keystone. -/
+theorem crsReset12Faithful_to_generic
+    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : n ≤ Dmax)
+    {p_reset pE : ENNReal}
+    (h12reset :
+      CRSReset12Faithful (n := n) (Rmax := Rmax) (Emax := Emax)
+        (Dmax := Dmax) hn p_reset C_reset K_reset)
+    (epidemicFast :
+      StandardEpidemicFastHypothesisPEM
+        n Rmax Emax Dmax K_bridge hn hn2 pE)
+    (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2)
+    (hpE_pos : 0 < pE) (hpE_le_one : pE ≤ 1)
+    (hBridgeWindow : K_bridge ≤ C_bridge * n * n) :
+    CRSResetCompletion12Generic (n := n) (trank := 1) (Rmax := Rmax)
+      (Emax := Emax) (Dmax := Dmax) hn
+      (p_reset * (pE / 2)) (C_reset + C_bridge)
+      (K_reset + K_bridge) where
+  resetProb_pos := by
+    have hhalf_pos : 0 < pE / 2 :=
+      ENNReal.half_pos (ne_of_gt hpE_pos)
+    exact ENNReal.mul_pos (ne_of_gt h12reset.resetProb_pos)
+      (ne_of_gt hhalf_pos)
+  resetProb_le_one := by
+    have hsplit : pE / 2 + pE / 2 = pE := by
+      simp
+    have hhalf_le_pE : pE / 2 ≤ pE := by
+      calc
+        pE / 2 ≤ pE / 2 + pE / 2 :=
+          (le_self_add : pE / 2 ≤ pE / 2 + pE / 2)
+        _ = pE := hsplit
+    have hhalf_le_one : pE / 2 ≤ 1 := hhalf_le_pE.trans hpE_le_one
+    have hmul :
+        p_reset * (pE / 2) ≤ (1 : ENNReal) * 1 :=
+      mul_le_mul' h12reset.resetProb_le_one hhalf_le_one
+    simpa using hmul
+  resetConstant_pos := by
+    exact Nat.add_pos_left h12reset.resetConstant_pos C_bridge
+  resetWindow_quadratic := by
+    calc
+      K_reset + K_bridge ≤
+          C_reset * n * n + C_bridge * n * n :=
+        Nat.add_le_add h12reset.resetWindow_quadratic hBridgeWindow
+      _ = (C_reset + C_bridge) * n * n := by
+        ring
+  resetReach := by
+    intro hn2' C hWF hSeed
+    have epidemicFast' :
+        StandardEpidemicFastHypothesisPEM
+          n Rmax Emax Dmax K_bridge hn hn2' pE := by
+      have hhn2 : hn2 = hn2' := Subsingleton.elim hn2 hn2'
+      cases hhn2
+      exact fun {m} {D} hRegion => epidemicFast hRegion
+    have hFaithful :
+        p_reset * (pE / 2) ≤
+          Probability.ProbHitWithin
+            (PEMProtocol n 1 Rmax Emax Dmax hn) hn2' C
+            (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧
+              AllAgentsResetting D)
+            (K_reset + K_bridge) :=
+      faithful_reset_to_phiGoal
+        (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        (K_reset := K_reset) (K_bridge := K_bridge)
+        (C_reset := C_reset) hn hn2' hDmax h12reset epidemicFast'
+        hTail C hWF.1 hSeed
+    exact hFaithful.trans
+      (Probability.ProbHitWithin_mono_goal
+        (PEMProtocol n 1 Rmax Emax Dmax hn) hn2' C
+        (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧
+          AllAgentsResetting D)
+        (EpidemicPhiGoal (majorityAnswer C))
+        (fun D hD => hD.1) (K_reset + K_bridge))
+
+/-- Faithful `trank = 1` O(n) keystone: the reset citation targets only a
+fresh reset seed, and the PEM answer-epidemic bridge supplies the formerly
+over-cited `EpidemicPhiGoal` reset completion. -/
+theorem PEM_expectedParallelTime_On_faithful
+    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge : ℕ}
+    [Inhabited (Fin n × Fin n)]
+    (hn4 : 4 ≤ n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax)
+    (hDmax : n ≤ Dmax)
+    (C_rank T_rank T_rerank : ℕ)
+    {p_reset pE : ENNReal}
+    (h12ranking :
+      ∀ C : Config (AgentState n) Opinion n,
+        WellFormed 1 Rmax Emax Dmax C →
+          Probability.expectedHittingTime
+            (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+            (by omega : 2 ≤ n) C
+            (fun D => (InSrank D ∧ MedianTimerAtLeast 35 D ∧
+              WellFormed 1 Rmax Emax Dmax D ∧
+              IsTimerBoundedConfig PEM_trank1_timer D) ∨ IsConsensusConfig D) ≤
+            ((C_rank * n * n : ℕ) : ENNReal))
+    (h12reset :
+      CRSReset12Faithful (n := n) (Rmax := Rmax) (Emax := Emax)
+        (Dmax := Dmax) (by omega : 0 < n) p_reset C_reset K_reset)
+    (epidemicFast :
+      StandardEpidemicFastHypothesisPEM
+        n Rmax Emax Dmax K_bridge (by omega : 0 < n)
+        (by omega : 2 ≤ n) pE)
+    (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2)
+    (hpE_pos : 0 < pE) (hpE_le_one : pE ≤ 1)
+    (hBridgeWindow : K_bridge ≤ C_bridge * n * n)
+    (h12rank :
+      ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
+        EpidemicPhiGoal m D →
+        WellFormed 1 Rmax Emax Dmax D →
+        majorityAnswer D = m →
+          ((2 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin
+              (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) D
+              (OW_rankedEpidemicEndpoint m) T_rank)
+    (h12reRank :
+      ∀ C : Config (AgentState n) Opinion n,
+        WellFormed 1 Rmax Emax Dmax C →
+        ¬ (InSswap C ∧ MedianTimerAtLeast 35 C) →
+          ((2 : ENNReal)⁻¹) ≤
+            Probability.ProbHitWithin
+              (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+              (by omega : 2 ≤ n) C
+              (fun D => (InSswap D ∧ MedianTimerAtLeast 35 D) ∨
+                IsConsensusConfig D) T_rerank) :
+    ∀ C₀ : Config (AgentState n) Opinion n,
+      WellFormed 1 Rmax Emax Dmax C₀ →
+        Probability.expectedParallelTimeToConsensus
+          (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
+          (by omega : 2 ≤ n) C₀ ≤
+          (((OW_globalWindow n C_rank PEM_trank1_timer
+              (K_reset + K_bridge) T_rank T_rerank : ℕ) : ENNReal) *
+            ((p_reset * (pE / 2)) * ((128 : ENNReal)⁻¹))⁻¹ / n) := by
+  intro C₀ hWF₀
+  have hGeneric :=
+    crsReset12Faithful_to_generic
+      (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      (K_reset := K_reset) (K_bridge := K_bridge)
+      (C_reset := C_reset) (C_bridge := C_bridge)
+      (by omega : 0 < n) (by omega : 2 ≤ n) hDmax h12reset
+      epidemicFast hTail hpE_pos hpE_le_one hBridgeWindow
+  exact
+    PEM_expectedParallelTime_On
+      (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hRmax hEmax hDmax C_rank (K_reset + K_bridge)
+      T_rank T_rerank (p_reset * (pE / 2)) (C_reset + C_bridge)
+      h12ranking hGeneric h12rank h12reRank C₀ hWF₀
 
 end SSEM
