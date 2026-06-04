@@ -38,7 +38,7 @@ namespace SSEM
 #print axioms swap_step_decreases_eight_way
 
 -- Concrete protocol — single hypothesis
-#print axioms P_EM_solves_SSEM_concrete
+#print axioms P_EM_solves_SSEM_concrete_burman
 
 -- Concrete ranking subprotocol
 #print axioms rankDeltaOSSR_settled_distinct_ranks

@@ -15,7 +15,7 @@ et al. rely on.
 * `ProtocolConvergence` — BurmanConvergence + timer invariant (h_inv_swap)
 * `P_EM_solves_SSEM_from_single_hypothesis` — master theorem from
   `ProtocolConvergence` alone
-* `P_EM_solves_SSEM_concrete` — concrete instantiation with `rankDeltaStable`
+* `P_EM_solves_SSEM_concrete_burman` — concrete instantiation with `rankDeltaOSSR`
 
 ## Timer invariant status
 
@@ -335,7 +335,7 @@ decrease in each median-wrong case (~50 lines per parity).
 /-- **Concrete Theorem 4**: P_EM with `rankDeltaOSSR` solves SSEM.
 Uses rankDeltaOSSR directly (not the rankDeltaStable wrapper), enabling
 collision detection for the BurmanConvergence proof. -/
-theorem P_EM_solves_SSEM_concrete
+theorem P_EM_solves_SSEM_concrete_burman
     [Inhabited (Fin n × Fin n)]
     {trank Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
