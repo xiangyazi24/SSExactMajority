@@ -223,3 +223,18 @@ Verification:
 
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
+
+## 2026-06-04 codex generic-trank HOLD checkpoint
+
+Stopped per Xiang update: the audited time keystone route is vacuous via the
+false `resetInv` hypothesis and has the `n^3` reset-window issue. I removed
+the uncommitted keystone/`trank=1` instantiation draft and left the reusable
+generic timer/window ports intact.
+
+Current reusable window stack is committed through:
+
+- `a1cdbb1` `[Xiang-proxy] Generic-trank swap live window`
+
+No keystone instantiation is committed from this handoff.
+
+Done.
