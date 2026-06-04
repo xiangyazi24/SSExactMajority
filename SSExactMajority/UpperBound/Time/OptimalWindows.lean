@@ -74,6 +74,25 @@ theorem crs_to_allR_or_break_window (hn4 : 4 ≤ n) (hn0 : 0 < n) (hDmax : n ≤
     (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
     (PEM_CRS_to_allR_or_break hn4 hn0 hDmax C hSeed) (by omega)
 
+
+/-- Decision-phase window (Markov form of `PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le`):
+from `InSswap` with a live median timer and a wrong median answer, within `2·n(n-1)` steps
+the median answer becomes correct (or the swap/timer region is left) with probability ≥ 1/2. -/
+theorem decision_window (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (C : Config (AgentState n) Opinion n) (hC : InSswap C)
+    (hT : MedianTimerAtLeast 1 C) (hND : ¬ MedianAnswerCorrect C) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => (InSswap D ∧ MedianAnswerCorrect D) ∨
+          ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+        (2 * (n * (n - 1))) := by
+  have hM := PEM_expected_Tswap_to_MedianAnswerCorrect_or_exit_le
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (by omega : 2 ≤ n) hn0 hn4 hC hT hND
+  rw [inv_inv] at hM
+  exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _ hM (by omega)
+
 /-- **Unconditional optimal parallel-time bound.** From any timer-bounded initial
 configuration, the expected parallel time to consensus is
 `≤ (2·Rmax·n² + 4·n² + 20·Rmax·n²)·16 / n = O(Rmax·n)`. Modulo the two keystones above. -/
