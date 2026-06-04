@@ -339,6 +339,149 @@ def ResetCompletionTarget12 {n : ℕ} (m : Answer)
   EpidemicRegion m C
 
 omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- The attack-2 "not about to wake" predicate
+`¬ (resetcount = 0 ∧ delaytimer = 0)` is not a one-step no-wake condition.
+With `resetcount = 0`, `delaytimer = 1`, `oldRc = 0`, and a Resetting
+partner, `processAgent` first decrements the delay timer to `0` and then
+fires `resetOSSR`. -/
+theorem processAgent_not_about_to_wake_counterexample
+    {Emax Dmax : ℕ} {hn : 0 < n} :
+    ∃ s : AgentState n,
+      s.role = .Resetting ∧
+      s.resetcount = 0 ∧
+      s.delaytimer = 1 ∧
+      ¬ (s.resetcount = 0 ∧ s.delaytimer = 0) ∧
+      (processAgent Emax Dmax hn s 0 true).role ≠ .Resetting := by
+  let s : AgentState n :=
+    { role := .Resetting
+      rank := ⟨0, hn⟩
+      leader := .L
+      resetcount := 0
+      answer := .phi
+      timer := 0
+      children := 0
+      errorcount := 0
+      delaytimer := 1 }
+  refine ⟨s, rfl, rfl, rfl, ?_, ?_⟩
+  · rintro ⟨_, hdt⟩
+    norm_num [s] at hdt
+  · simp [s, processAgent, resetOSSR]
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- Exact one-step no-wake condition for a `Resetting` endpoint with a
+Resetting partner: either the endpoint has positive resetcount and therefore
+does not enter `processAgent`'s dormant branch, or it has enough delay budget
+to survive the decrement-then-test path. -/
+def NoWakeAgent {n : ℕ} (s : AgentState n) : Prop :=
+  0 < s.resetcount ∨ 1 < s.delaytimer
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- The exact one-step `processAgent` no-wake fact for a Resetting partner. -/
+theorem processAgent_noWake_role {Emax Dmax : ℕ} {hn : 0 < n}
+    {s : AgentState n} {oldRc : ℕ}
+    (hs : s.role = .Resetting)
+    (hNoWake : NoWakeAgent s)
+    (hDmax : 0 < Dmax) :
+    (processAgent Emax Dmax hn s oldRc true).role = .Resetting := by
+  rcases hNoWake with hrc_pos | hdt
+  · have hpa :=
+      processAgent_rc_ne_zero (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (s := s) (Nat.ne_of_gt hrc_pos) oldRc true
+    rw [hpa, hs]
+  · by_cases hrc : s.resetcount = 0
+    · unfold processAgent
+      simp only [hs, hrc, and_self, ite_true, Bool.not_true,
+        Bool.false_eq_true, or_false]
+      by_cases hold : 0 < oldRc
+      · simp [hold, hDmax.ne']
+      · have hdt_ne : s.delaytimer - 1 ≠ 0 := by omega
+        simp [hold, hdt_ne]
+    · have hpa :=
+        processAgent_rc_ne_zero (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (s := s) hrc oldRc true
+      rw [hpa, hs]
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- `NoWakeAgent` is not an invariant, even though it is the correct one-step
+no-wake condition.  A dormant endpoint with `resetcount = 0` and
+`delaytimer = 2` stays `Resetting` for this interaction, but the timer drops to
+`1`, so the post-state no longer satisfies `NoWakeAgent`. -/
+theorem processAgent_noWake_not_preserved_counterexample
+    {Emax Dmax : ℕ} {hn : 0 < n} :
+    ∃ s : AgentState n,
+      s.role = .Resetting ∧
+      NoWakeAgent s ∧
+      (processAgent Emax Dmax hn s 0 true).role = .Resetting ∧
+      ¬ NoWakeAgent (processAgent Emax Dmax hn s 0 true) := by
+  let s : AgentState n :=
+    { role := .Resetting
+      rank := ⟨0, hn⟩
+      leader := .L
+      resetcount := 0
+      answer := .phi
+      timer := 0
+      children := 0
+      errorcount := 0
+      delaytimer := 2 }
+  refine ⟨s, rfl, Or.inr (by norm_num [s]), ?_, ?_⟩
+  · simp [s, processAgent]
+  · simp [NoWakeAgent, s, processAgent]
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
+/-- A bare `EpidemicRegion` target is not a sufficient starting condition for
+the local answer-epidemic bridge.  It permits all-`Resetting` states whose
+reset counters and delay timers are already drained; such a state can wake on
+the very next interaction, so the joint target
+`EpidemicPhiGoal ∧ still all Resetting` is not even one-step closed from the
+cited target alone. -/
+theorem bare_epidemicRegion_can_wake_counterexample :
+    ∃ C : Config (AgentState 2) Opinion 2,
+      EpidemicRegion .outA C ∧
+      ¬ (∀ w : Fin 2,
+        ((C.step (PEMProtocolCoupled 2 2 2 2 (by norm_num : 0 < 2))
+          (0 : Fin 2) (1 : Fin 2)) w).1.role = .Resetting) := by
+  let sA : AgentState 2 :=
+    { role := .Resetting
+      rank := (0 : Fin 2)
+      leader := .L
+      resetcount := 0
+      answer := .outA
+      timer := 0
+      children := 0
+      errorcount := 0
+      delaytimer := 0 }
+  let sPhi : AgentState 2 :=
+    { role := .Resetting
+      rank := (1 : Fin 2)
+      leader := .F
+      resetcount := 0
+      answer := .phi
+      timer := 0
+      children := 0
+      errorcount := 0
+      delaytimer := 0 }
+  let C : Config (AgentState 2) Opinion 2 :=
+    fun v => if v = (0 : Fin 2) then (sA, .A) else (sPhi, .B)
+  refine ⟨C, ?_, ?_⟩
+  · refine ⟨?_, ?_, by decide, ?_⟩
+    · intro w
+      fin_cases w <;> simp [C, sA, sPhi]
+    · intro w
+      fin_cases w <;> simp [C, sA, sPhi]
+    · exact ⟨(0 : Fin 2), by simp [C, sA]⟩
+  · intro hAll
+    have h0 := hAll (0 : Fin 2)
+    have hStep0 :
+        ((C.step (PEMProtocolCoupled 2 2 2 2 (by norm_num : 0 < 2))
+          (0 : Fin 2) (1 : Fin 2)) (0 : Fin 2)).1.role = .Settled := by
+      simp [Config.step, C, sA, sPhi, PEMProtocolCoupled, PEMProtocol,
+        protocolPEM, transitionPEM, transitionPEM_prePhase4,
+        transitionPEM_phase4, rankDeltaOSSR, propagateReset, processAgent,
+        resetOSSR, ceilHalf]
+    rw [hStep0] at h0
+    exact Role.noConfusion h0
+
+omit [Inhabited (Fin n × Fin n)] [DecidableEq (Config (AgentState n) Opinion n)] in
 /-- Faithful [12]-cited reset-completion contract.
 
 The reset fact is probabilistic: from a `CorrectResetSeed` configuration, the
