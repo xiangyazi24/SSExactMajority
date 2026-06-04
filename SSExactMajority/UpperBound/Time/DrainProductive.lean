@@ -243,14 +243,18 @@ theorem MAClive_to_consensus_or_crs
     rcases hMidD with hc | hcrs | ⟨hSD, hMD, hmax0⟩
     · exact le_of_eq_of_le
         (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inl hc))
-        (zero_le _)
+        zero_le
     · exact le_of_eq_of_le
         (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inr hcrs))
-        (zero_le _)
+        zero_le
     · have hTimer0 : ∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n → (D μ).1.timer = 0 := by
         intro μ hμ
         have hle : (if (D μ).1.rank.val + 1 = ceilHalf n then (D μ).1.timer else 0)
-            ≤ maxMedianTimer D := Finset.le_sup (Finset.mem_univ μ)
+            ≤ maxMedianTimer D := by
+          unfold maxMedianTimer
+          exact Finset.le_sup
+            (f := fun μ => if (D μ).1.rank.val + 1 = ceilHalf n then (D μ).1.timer else 0)
+            (Finset.mem_univ μ)
         rw [hmax0, if_pos hμ] at hle
         omega
       by_cases hw : 0 < wrongAnswerCount D
@@ -259,7 +263,7 @@ theorem MAClive_to_consensus_or_crs
         exact le_of_eq_of_le
           (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _
             (Or.inl (isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hSD hw0)))
-          (zero_le _)
+          zero_le
   have hMidGoal : ∀ D : Config (AgentState n) Opinion n,
       (IsConsensusConfig D ∨ CorrectResetSeed D) →
       (IsConsensusConfig D ∨ CorrectResetSeed D ∨
