@@ -67,6 +67,26 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank timer-drain window checkpoint
+
+Ported the timer-drain expected-time/window layer over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_timer_ge_two_descent_step`
+- `generic_PEM_expected_timer_drain_poly`
+- `generic_timer_drain_window`
+
+The expected-time bound is transferred from the coupled protocol by the
+non-goal step-equality bridge, since non-goal states for this window remain in
+`InSswap` with median timer at least 1.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
+
 ## 2026-06-04 codex generic-trank decision-timing helper/window checkpoint
 
 Ported the decision-timing support stack over

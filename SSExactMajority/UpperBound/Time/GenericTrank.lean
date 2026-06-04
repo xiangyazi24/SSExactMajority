@@ -1480,4 +1480,110 @@ theorem generic_decision_before_timer_zero
 
 end GenericDecisionTiming
 
+section GenericTimerDrain
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+theorem generic_timer_ge_two_descent_step
+    (hn4 : 4 ≤ n) [Inhabited (Fin n × Fin n)] (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax)
+    {D : Config (AgentState n) Opinion n}
+    (hS : InSswap D) (hM : MedianAnswerCorrect D) (hT : MedianTimerAtLeast 1 D)
+    {μ v : Fin n}
+    (hμ_med : (D μ).1.rank.val + 1 = ceilHalf n)
+    (hv_max : (D v).1.rank.val + 1 = n)
+    (huv : μ ≠ v)
+    (hTimer2 : 2 ≤ (D μ).1.timer) :
+    let P := PEMProtocol n trank Rmax Emax Dmax hn0
+    let Goal := fun D' : Config (AgentState n) Opinion n =>
+      IsConsensusConfig D' ∨ CorrectResetSeed D' ∨
+        ¬ (InSswap D' ∧ MedianTimerAtLeast 1 D')
+    let Inv := fun D' : Config (AgentState n) Opinion n =>
+      InSswap D' ∧ MedianAnswerCorrect D' ∧ MedianTimerAtLeast 1 D'
+    ((Inv (D.step P μ v) ∧ maxMedianTimer (D.step P μ v) < maxMedianTimer D) ∨
+      Goal (D.step P μ v)) := by
+  let Pg := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  have hEq : D.step Pg μ v = D.step Pc μ v :=
+    generic_step_eq_coupled_of_InSrank
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn0 hS.toInSrank μ v
+  have hCoupled :=
+    timer_ge_two_descent_step
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax hS hM hT hμ_med hv_max huv hTimer2
+  simpa [Pg, Pc, hEq] using hCoupled
+
+theorem generic_PEM_expected_timer_drain_poly
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
+    Probability.expectedHittingTime
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) ≤
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  let P := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  let Goal : Config (AgentState n) Opinion n → Prop :=
+    fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+  have hn2 : 2 ≤ n := by omega
+  have hstep :
+      ∀ D : Config (AgentState n) Opinion n, ¬ Goal D →
+        ∀ i j : Fin n, D.step P i j = D.step Pc i j := by
+    intro D hD i j
+    have hLive : InSswap D ∧ MedianTimerAtLeast 1 D := by
+      by_contra hNotLive
+      exact hD (Or.inr (Or.inr hNotLive))
+    exact
+      generic_step_eq_coupled_of_InSrank
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn0 hLive.1.toInSrank i j
+  have hEq :
+      Probability.expectedHittingTime P hn2 C Goal =
+        Probability.expectedHittingTime Pc hn2 C Goal :=
+    generic_expectedHittingTime_eq_of_step_eq_until
+      (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn2 hn0 Goal hstep C
+  have hCoupled :
+      Probability.expectedHittingTime Pc hn2 C Goal ≤
+        ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
+    simpa [Pc, Goal] using
+      (PEM_expected_timer_drain_poly
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi)
+  simpa [P, Goal] using (le_of_eq_of_le hEq hCoupled)
+
+theorem generic_timer_drain_window
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n) (hC : InSswap C)
+    (hMAC : MedianAnswerCorrect C) (hTLo : MedianTimerAtLeast 1 C)
+    (hTHi : IsTimerBoundedConfig T_timer C) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+          ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+        (2 * (T_timer * n * (n - 1))) :=
+  Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    (PEMProtocol n trank Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
+    (generic_PEM_expected_timer_drain_poly
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax T_timer C hC hMAC hTLo hTHi)
+    (by omega)
+
+end GenericTimerDrain
+
 end SSEM
