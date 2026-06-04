@@ -93,3 +93,25 @@ defects only destroyed not created (proven) ⟹ existing structuralErrorBudget s
    E[T]<⊤ via finite-state-space + ∃-path prob ≥(1/n²)^K ⟹ B=K·(n²)^K (exponential, non-explicit,
    the +B source). Contains NO reusable structural measure. ⟹ the irreversible reset-wave measure
    must be NEW + structural, from protocol structure (unique-leader anchor / permanently-settled set).
+
+## STRATEGIC PIVOT (ChatGPT R2 + verified): renewal, NOT pathwise compensator
+VERIFIED Case C: AgentState = {role,rank,leader,resetcount,answer,timer,children,errorcount,
+delaytimer} — NO reset-surviving generation/epoch counter; every reset sets resetcount:=Rmax,
+errorcount:=Emax. ⟹ pathwise #resets ≤ poly is UNAVAILABLE (ChatGPT: random schedules give
+geometrically-distributed resets, finite but not pathwise-poly). So the collisionBank-as-GLOBAL-
+potential / supermartingale-compensator route is a DEAD END for this protocol. collisionBank/
+resetBudget remain valid INTRA-epoch lemmas but are OFF the critical path.
+
+CORRECT ROUTE = renewal / E[#epochs]: window_mul_inv (E[T]≤K·p⁻¹) with Goal=consensus,
+K=poly epoch length, p=per-epoch success ≥ CONSTANT (not exp-small!). p is constant because each
+PHASE is a proven expected-poly-time descent ⟹ Markov gives ≥1/2 per phase, O(1) phases ⟹ p≥const:
+  - reset wave: any bounded → allResetting  [E[T] needed]
+  - rc drain: allR → Phase1Goal/dormant  E[T]≤Rmax·n²  [PROVEN allR_to_phase1Goal_bound]
+  - awakening: dormant → FreshRankingStart  [awakening_step_descent PROVEN; E[T] wiring]
+  - ranking: FreshRankingStart → endpoint  E[T]≤Rmax·n²  [PROVEN]
+  - swap: InSswap+timer → cons∨CRS∨exit ≥1/4  [PROVEN]
+Compose via probReached_add_add_add_add_ge_mul5 (EXISTS) → P(consensus in K)≥const → window_mul_inv.
+REMAINING CORE: messy intermediate states (interleaving) breaking clean phase-chaining + the
+reset-wave/awakening E[T]. window_mul_inv robustness (re-applies p from ANY non-goal C) is the
+handle. ChatGPT warning: p must be ≥1/poly via ROBUST success (phase descents), not single path
+(=exp small = compactness bound).
