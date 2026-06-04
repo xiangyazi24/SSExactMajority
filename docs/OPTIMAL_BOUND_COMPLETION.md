@@ -83,3 +83,13 @@ recruit+collision. REMAINING CRUX: resetOSSR follower wake (Resetting→Unsettle
 #reset-WAVES is O(1) (self-stab: error detection → global propagate-reset wave → after one clean
 cycle, consistent → no more errors), tied to the proven convergence invariant. timeoutBank: error
 defects only destroyed not created (proven) ⟹ existing structuralErrorBudget suffices.
+
+## TWO KEY FINDINGS (narrowing to the irreversible measure)
+1. POTENTIAL-ALGEBRA NEGATIVE RESULT: no single local potential charges collision+recruit+wake
+   simultaneously. recruit needs sameRankPairs weighted LOW (absorbed by 2n·unsettled slack),
+   collision needs it weighted HIGH (to dominate +2 non-Settled). Opposing ⟹ two-level/epoch forced.
+   collisionBank (PROVEN) handles WITHIN-epoch (recruit+collision); wake (+2n) is the cross-epoch term.
+2. EXISTING FINITENESS IS COMPACTNESS-ONLY: bounded_config_to_consensus (RecoveryBound:937) proves
+   E[T]<⊤ via finite-state-space + ∃-path prob ≥(1/n²)^K ⟹ B=K·(n²)^K (exponential, non-explicit,
+   the +B source). Contains NO reusable structural measure. ⟹ the irreversible reset-wave measure
+   must be NEW + structural, from protocol structure (unique-leader anchor / permanently-settled set).
