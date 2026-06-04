@@ -258,4 +258,550 @@ theorem awakening_step_descent_prob
       (PEMProtocolCoupled' n Rmax Emax Dmax hn)
       (by omega : 2 ≤ n) C Goal hGoal hrootNeW hstep
 
+private theorem transitionPEM_resetting_leader_of_pre_both_settled
+    {trank Rmax : ℕ}
+    {rankDelta : AgentState n × AgentState n → AgentState n × AgentState n}
+    {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hpre₀ :
+      (transitionPEM_prePhase4 n trank rankDelta s₀ s₁ x₀ x₁).1.role =
+        .Settled)
+    (hpre₁ :
+      (transitionPEM_prePhase4 n trank rankDelta s₀ s₁ x₀ x₁).2.role =
+        .Settled) :
+    let r := transitionPEM n trank Rmax rankDelta ((s₀, x₀), (s₁, x₁))
+    (r.1.role = .Resetting → r.1.leader = .L) ∧
+      (r.2.role = .Resetting → r.2.leader = .L) := by
+  classical
+  have hphase :=
+    phase4_resetting_leader
+      (n := n) (Rmax := Rmax)
+      (a := transitionPEM_prePhase4 n trank rankDelta s₀ s₁ x₀ x₁)
+      (x₀ := x₀) (x₁ := x₁) hpre₀ hpre₁
+  constructor
+  · intro hR
+    simpa [transitionPEM] using
+      hphase.1 (by simpa [transitionPEM] using hR)
+  · intro hR
+    simpa [transitionPEM] using
+      hphase.2 (by simpa [transitionPEM] using hR)
+
+private theorem transitionPEM_recruit_ab_resetting_leader
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} {x y : Opinion}
+    (hs : s.role = .Settled) (ht : t.role = .Unsettled)
+    (hchildren : s.children < 2)
+    (hvalid : 2 * s.rank.val + s.children + 1 < n) :
+    let r :=
+      transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        ((s, x), (t, y))
+    (r.1.role = .Resetting → r.1.leader = .L) ∧
+      (r.2.role = .Resetting → r.2.leader = .L) := by
+  classical
+  let rankDelta := rankDeltaOSSR Rmax Emax Dmax hn
+  have hrd :=
+    rankDeltaOSSR_recruits
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hs ht hchildren hvalid
+  have hpre :=
+    transitionPEM_prePhase4_structural
+      (n := n) (trank := Rmax) (rankDelta := rankDelta)
+      (s₀ := s) (s₁ := t) (x₀ := x) (x₁ := y)
+  have hpre₀ :
+      (transitionPEM_prePhase4 n Rmax rankDelta s t x y).1.role =
+        .Settled := by
+    rw [hpre.1]
+    exact hrd.1
+  have hpre₁ :
+      (transitionPEM_prePhase4 n Rmax rankDelta s t x y).2.role =
+        .Settled := by
+    rw [hpre.2.2.2.2.2.2.1]
+    exact hrd.2.2.2.1
+  simpa [rankDelta] using
+    transitionPEM_resetting_leader_of_pre_both_settled
+      (n := n) (trank := Rmax) (Rmax := Rmax)
+      (rankDelta := rankDelta) (s₀ := s) (s₁ := t)
+      (x₀ := x) (x₁ := y) hpre₀ hpre₁
+
+private theorem transitionPEM_recruit_ba_resetting_leader
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} {x y : Opinion}
+    (hs : s.role = .Unsettled) (ht : t.role = .Settled)
+    (hchildren : t.children < 2)
+    (hvalid : 2 * t.rank.val + t.children + 1 < n) :
+    let r :=
+      transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        ((s, x), (t, y))
+    (r.1.role = .Resetting → r.1.leader = .L) ∧
+      (r.2.role = .Resetting → r.2.leader = .L) := by
+  classical
+  let rankDelta := rankDeltaOSSR Rmax Emax Dmax hn
+  have hrd :=
+    rankDeltaOSSR_recruit_ba
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hs ht hchildren hvalid
+  have hpre :=
+    transitionPEM_prePhase4_structural
+      (n := n) (trank := Rmax) (rankDelta := rankDelta)
+      (s₀ := s) (s₁ := t) (x₀ := x) (x₁ := y)
+  have hpre₀ :
+      (transitionPEM_prePhase4 n Rmax rankDelta s t x y).1.role =
+        .Settled := by
+    rw [hpre.1]
+    change (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Settled
+    rw [hrd]
+  have hpre₁ :
+      (transitionPEM_prePhase4 n Rmax rankDelta s t x y).2.role =
+        .Settled := by
+    rw [hpre.2.2.2.2.2.2.1]
+    change (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Settled
+    rw [hrd]
+    exact ht
+  simpa [rankDelta] using
+    transitionPEM_resetting_leader_of_pre_both_settled
+      (n := n) (trank := Rmax) (Rmax := Rmax)
+      (rankDelta := rankDelta) (s₀ := s) (s₁ := t)
+      (x₀ := x) (x₁ := y) hpre₀ hpre₁
+
+private theorem transitionPEM_unsettled_left_resetting_leader_of_partner_not_resetting
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n} {x y : Opinion}
+    (hs : s.role = .Unsettled) (ht : t.role ≠ .Resetting) :
+    let r :=
+      transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        ((s, x), (t, y))
+    (r.1.role = .Resetting → r.1.leader = .L) ∧
+      (r.2.role = .Resetting → r.2.leader = .L) := by
+  classical
+  let rankDelta := rankDeltaOSSR Rmax Emax Dmax hn
+  let p := transitionPEM_prePhase4 n Rmax rankDelta s t x y
+  have hrd_leader :=
+    rankDeltaOSSR_unsettled_no_resetting_reset_leader
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      (s := s) (t := t) hs ht
+  have hpre :=
+    transitionPEM_prePhase4_structural
+      (n := n) (trank := Rmax) (rankDelta := rankDelta)
+      (s₀ := s) (s₁ := t) (x₀ := x) (x₁ := y)
+  by_cases hboth :
+      (rankDelta (s, t)).1.role = .Settled ∧
+      (rankDelta (s, t)).2.role = .Settled
+  · have hp₁ : p.1.role = .Settled := by
+      simpa [p] using hpre.1.trans hboth.1
+    have hp₂ : p.2.role = .Settled := by
+      simpa [p] using hpre.2.2.2.2.2.2.1.trans hboth.2
+    have hphase :=
+      phase4_resetting_leader
+        (n := n) (Rmax := Rmax) (a := p) (x₀ := x) (x₁ := y) hp₁ hp₂
+    simpa [transitionPEM, rankDelta, p] using hphase
+  · have hpass :=
+      transitionPEM_structural_passthrough
+        (n := n) (trank := Rmax) (Rmax := Rmax)
+        (rankDelta := rankDelta)
+        (s₀ := s) (s₁ := t) (x₀ := x) (x₁ := y) hboth
+    dsimp [rankDelta] at hrd_leader
+    rcases hpass with
+      ⟨hrole₁, hleader₁, _, _, _, _, hrole₂, hleader₂, _, _, _, _, _, _⟩
+    refine ⟨?_, ?_⟩
+    · intro hreset
+      rw [hleader₁]
+      exact hrd_leader.1 (by
+        rw [← hrole₁]
+        exact hreset)
+    · intro hreset
+      rw [hleader₂]
+      exact hrd_leader.2 (by
+        rw [← hrole₂]
+        exact hreset)
+
+set_option maxHeartbeats 200000000 in
+private theorem awakening_endpoint_resetting_follower_old_of_step
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C)
+    {i j x : Fin n}
+    (hx : x = i ∨ x = j)
+    (hxF :
+      (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j x).1.leader = .F)
+    (hxR :
+      (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j x).1.role = .Resetting) :
+    (C x).1.leader = .F ∧ (C x).1.role = .Resetting := by
+  classical
+  by_cases hij : i = j
+  · subst j
+    have hxstate :
+        C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i i x = C x := by
+      simp [Config.step]
+    rw [hxstate] at hxF hxR
+    exact ⟨hxF, hxR⟩
+  · rcases hAwake with ⟨hUnique, hLeaderOK, hFollowerOK⟩
+    obtain ⟨root, _hrootL, hrootUnique⟩ := hUnique
+    let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+    have hn_gt1 : 1 < n := by
+      by_contra hlt
+      have hnle : n ≤ 1 := by omega
+      have hi0 : (i : ℕ) = 0 := by omega
+      have hj0 : (j : ℕ) = 0 := by omega
+      exact hij (Fin.ext (by rw [hi0, hj0]))
+    rcases hx with hxi | hxj
+    · subst x
+      have hfst := Config.step_fst_state P C hij
+      rw [hfst] at hxF hxR
+      have hiLocal :
+          ((P.δ (C i, C j)).1.leader = .F ∧
+              (P.δ (C i, C j)).1.role = .Resetting) →
+            (C i).1.leader = .F ∧ (C i).1.role = .Resetting := by
+        intro hnew
+        rcases hnew with ⟨hnewF, hnewR⟩
+        cases hiLeader : (C i).1.leader with
+        | L =>
+            have hiOK := hLeaderOK i hiLeader
+            cases hjLeader : (C j).1.leader with
+            | L =>
+                have hiRoot : i = root := hrootUnique i hiLeader
+                have hjRoot : j = root := hrootUnique j hjLeader
+                have hij' : i = j := hiRoot.trans hjRoot.symm
+                exact False.elim (hij hij')
+            | F =>
+                rcases hFollowerOK j hjLeader with hjUn | hjReset
+                · have hlocal :
+                      ¬ ((P.δ (C i, C j)).1.leader = .F ∧
+                          (P.δ (C i, C j)).1.role = .Resetting) := by
+                    intro hbad
+                    have hchildren : (C i).1.children < 2 := by
+                      rw [hiOK.2.2]
+                      omega
+                    have hvalid :
+                        2 * (C i).1.rank.val + (C i).1.children + 1 < n := by
+                      rw [hiOK.2.1, hiOK.2.2]
+                      omega
+                    have hlead :=
+                      (transitionPEM_recruit_ab_resetting_leader
+                        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                        (hn := hn) (s := (C i).1) (t := (C j).1)
+                        (x := (C i).2) (y := (C j).2)
+                        hiOK.1 hjUn hchildren hvalid).1 hbad.2
+                    change (P.δ (C i, C j)).1.leader = .L at hlead
+                    rw [hbad.1] at hlead
+                    cases hlead
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+                · have hlocal :
+                      ¬ ((P.δ (C i, C j)).1.leader = .F ∧
+                          (P.δ (C i, C j)).1.role = .Resetting) := by
+                    dsimp [P, PEMProtocolCoupled', protocolPEM, transitionPEM,
+                      transitionPEM_prePhase4, transitionPEM_phase4, phase4_swap,
+                      phase4_decide, phase4_propagate, rankDeltaOSSR, propagateReset,
+                      processAgent, resetOSSR]
+                    simp [hiOK.1, hiOK.2.1, hiLeader, hjLeader,
+                      hjReset.1, hjReset.2]
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+        | F =>
+            rcases hFollowerOK i hiLeader with hiUn | hiReset
+            · cases hjLeader : (C j).1.leader with
+              | L =>
+                  have hjOK := hLeaderOK j hjLeader
+                  have hlocal :
+                      ¬ ((P.δ (C i, C j)).1.leader = .F ∧
+                          (P.δ (C i, C j)).1.role = .Resetting) := by
+                    intro hbad
+                    have hchildren : (C j).1.children < 2 := by
+                      rw [hjOK.2.2]
+                      omega
+                    have hvalid :
+                        2 * (C j).1.rank.val + (C j).1.children + 1 < n := by
+                      rw [hjOK.2.1, hjOK.2.2]
+                      omega
+                    have hlead :=
+                      (transitionPEM_recruit_ba_resetting_leader
+                        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                        (hn := hn) (s := (C i).1) (t := (C j).1)
+                        (x := (C i).2) (y := (C j).2)
+                        hiUn hjOK.1 hchildren hvalid).1 hbad.2
+                    change (P.δ (C i, C j)).1.leader = .L at hlead
+                    rw [hbad.1] at hlead
+                    cases hlead
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+              | F =>
+                  rcases hFollowerOK j hjLeader with hjUn | hjReset
+                  · have hlocal :
+                        ¬ ((P.δ (C i, C j)).1.leader = .F ∧
+                            (P.δ (C i, C j)).1.role = .Resetting) := by
+                      intro hbad
+                      have hjNotReset : (C j).1.role ≠ .Resetting := by
+                        rw [hjUn]
+                        decide
+                      have hlead :=
+                        (transitionPEM_unsettled_left_resetting_leader_of_partner_not_resetting
+                          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                          (hn := hn) (s := (C i).1) (t := (C j).1)
+                          (x := (C i).2) (y := (C j).2)
+                          hiUn hjNotReset).1 hbad.2
+                      change (P.δ (C i, C j)).1.leader = .L at hlead
+                      rw [hbad.1] at hlead
+                      cases hlead
+                    exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+                  · have hlocal :
+                        ¬ ((P.δ (C i, C j)).1.leader = .F ∧
+                            (P.δ (C i, C j)).1.role = .Resetting) := by
+                      dsimp [P, PEMProtocolCoupled', protocolPEM, transitionPEM,
+                        transitionPEM_prePhase4, transitionPEM_phase4, phase4_swap,
+                        phase4_decide, phase4_propagate, rankDeltaOSSR, propagateReset,
+                        processAgent, resetOSSR]
+                      simp [hiLeader, hiUn, hjLeader, hjReset.1, hjReset.2]
+                    exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+            · exact ⟨rfl, hiReset.1⟩
+      exact hiLocal ⟨hxF, hxR⟩
+    · subst x
+      have hsnd := Config.step_snd_state P C hij (fun hji => hij hji.symm)
+      rw [hsnd] at hxF hxR
+      have hjLocal :
+          ((P.δ (C i, C j)).2.leader = .F ∧
+              (P.δ (C i, C j)).2.role = .Resetting) →
+            (C j).1.leader = .F ∧ (C j).1.role = .Resetting := by
+        intro hnew
+        rcases hnew with ⟨hnewF, hnewR⟩
+        cases hjLeader : (C j).1.leader with
+        | L =>
+            have hjOK := hLeaderOK j hjLeader
+            cases hiLeader : (C i).1.leader with
+            | L =>
+                have hiRoot : i = root := hrootUnique i hiLeader
+                have hjRoot : j = root := hrootUnique j hjLeader
+                have hij' : i = j := hiRoot.trans hjRoot.symm
+                exact False.elim (hij hij')
+            | F =>
+                rcases hFollowerOK i hiLeader with hiUn | hiReset
+                · have hlocal :
+                      ¬ ((P.δ (C i, C j)).2.leader = .F ∧
+                          (P.δ (C i, C j)).2.role = .Resetting) := by
+                    intro hbad
+                    have hchildren : (C j).1.children < 2 := by
+                      rw [hjOK.2.2]
+                      omega
+                    have hvalid :
+                        2 * (C j).1.rank.val + (C j).1.children + 1 < n := by
+                      rw [hjOK.2.1, hjOK.2.2]
+                      omega
+                    have hlead :=
+                      (transitionPEM_recruit_ba_resetting_leader
+                        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                        (hn := hn) (s := (C i).1) (t := (C j).1)
+                        (x := (C i).2) (y := (C j).2)
+                        hiUn hjOK.1 hchildren hvalid).2 hbad.2
+                    change (P.δ (C i, C j)).2.leader = .L at hlead
+                    rw [hbad.1] at hlead
+                    cases hlead
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+                · have hlocal :
+                      ¬ ((P.δ (C i, C j)).2.leader = .F ∧
+                          (P.δ (C i, C j)).2.role = .Resetting) := by
+                    dsimp [P, PEMProtocolCoupled', protocolPEM, transitionPEM,
+                      transitionPEM_prePhase4, transitionPEM_phase4, phase4_swap,
+                      phase4_decide, phase4_propagate, rankDeltaOSSR, propagateReset,
+                      processAgent, resetOSSR]
+                    simp [hiLeader, hiReset.1, hiReset.2, hjOK.1,
+                      hjOK.2.1, hjLeader]
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+        | F =>
+            rcases hFollowerOK j hjLeader with hjUn | hjReset
+            · cases hiLeader : (C i).1.leader with
+              | L =>
+                  have hiOK := hLeaderOK i hiLeader
+                  have hlocal :
+                      ¬ ((P.δ (C i, C j)).2.leader = .F ∧
+                          (P.δ (C i, C j)).2.role = .Resetting) := by
+                    intro hbad
+                    have hchildren : (C i).1.children < 2 := by
+                      rw [hiOK.2.2]
+                      omega
+                    have hvalid :
+                        2 * (C i).1.rank.val + (C i).1.children + 1 < n := by
+                      rw [hiOK.2.1, hiOK.2.2]
+                      omega
+                    have hlead :=
+                      (transitionPEM_recruit_ab_resetting_leader
+                        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                        (hn := hn) (s := (C i).1) (t := (C j).1)
+                        (x := (C i).2) (y := (C j).2)
+                        hiOK.1 hjUn hchildren hvalid).2 hbad.2
+                    change (P.δ (C i, C j)).2.leader = .L at hlead
+                    rw [hbad.1] at hlead
+                    cases hlead
+                  exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+                | F =>
+                    rcases hFollowerOK i hiLeader with hiUn | hiReset
+                    · have hlocal :
+                          ¬ ((P.δ (C i, C j)).2.leader = .F ∧
+                              (P.δ (C i, C j)).2.role = .Resetting) := by
+                        intro hbad
+                        have hjNotReset : (C j).1.role ≠ .Resetting := by
+                          rw [hjUn]
+                          decide
+                        have hlead :=
+                          (transitionPEM_unsettled_left_resetting_leader_of_partner_not_resetting
+                            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+                            (hn := hn) (s := (C i).1) (t := (C j).1)
+                            (x := (C i).2) (y := (C j).2)
+                            hiUn hjNotReset).2 hbad.2
+                        change (P.δ (C i, C j)).2.leader = .L at hlead
+                        rw [hbad.1] at hlead
+                        cases hlead
+                      exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+                    · have hlocal :
+                          ¬ ((P.δ (C i, C j)).2.leader = .F ∧
+                              (P.δ (C i, C j)).2.role = .Resetting) := by
+                        dsimp [P, PEMProtocolCoupled', protocolPEM, transitionPEM,
+                          transitionPEM_prePhase4, transitionPEM_phase4, phase4_swap,
+                          phase4_decide, phase4_propagate, rankDeltaOSSR, propagateReset,
+                          processAgent, resetOSSR]
+                        simp [hiLeader, hiReset.1, hiReset.2, hjLeader, hjUn]
+                      exact False.elim (hlocal ⟨hnewF, hnewR⟩)
+            · exact ⟨rfl, hjReset.1⟩
+      exact hjLocal ⟨hxF, hxR⟩
+
+private theorem awakeningResettingFollowers_subset_of_step
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C)
+    (i j : Fin n) :
+    awakeningResettingFollowers
+        (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j) ⊆
+      awakeningResettingFollowers C := by
+  classical
+  intro x hx
+  have hxF :
+      (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j x).1.leader = .F :=
+    (Finset.mem_filter.mp hx).2.1
+  have hxR :
+      (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j x).1.role = .Resetting :=
+    (Finset.mem_filter.mp hx).2.2
+  by_cases hxi : x = i
+  · have hold :=
+      awakening_endpoint_resetting_follower_old_of_step
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        C hAwake (i := i) (j := j) (x := x) (Or.inl hxi)
+        hxF hxR
+    dsimp [awakeningResettingFollowers]
+    simp [hold.1, hold.2]
+  · by_cases hxj : x = j
+    · have hold :=
+        awakening_endpoint_resetting_follower_old_of_step
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          C hAwake (i := i) (j := j) (x := x) (Or.inr hxj)
+          hxF hxR
+      dsimp [awakeningResettingFollowers]
+      simp [hold.1, hold.2]
+    · have hxstate :
+          C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j x = C x := by
+        by_cases hij : i = j
+        · subst j
+          simp [Config.step]
+        · simp [Config.step, hij, hxi, hxj]
+      dsimp [awakeningResettingFollowers]
+      rw [hxstate] at hxF hxR
+      simp [hxF, hxR]
+
+theorem awakeningResettingFollowers_card_step_le_of_awakening
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C)
+    (i j : Fin n) :
+    (awakeningResettingFollowers
+        (C.step (PEMProtocolCoupled' n Rmax Emax Dmax hn) i j)).card ≤
+      (awakeningResettingFollowers C).card := by
+  exact Finset.card_le_card
+    (awakeningResettingFollowers_subset_of_step
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      C hAwake i j)
+
+theorem awakening_to_goal_or_exit_expected_le
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n) C
+      (fun D =>
+        FreshRankingStart D ∨
+          (∃ k, 2 ≤ k ∧ HeapPrefix D k) ∨
+          IsConsensusConfig D ∨
+          ¬ IsAwakeningConfig D)
+      ≤ (((awakeningResettingFollowers C).card * (n * (n - 1)) : ℕ) : ENNReal) := by
+  classical
+  let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  let Goal : Config (AgentState n) Opinion n → Prop :=
+    fun D =>
+      FreshRankingStart D ∨
+        (∃ k, 2 ≤ k ∧ HeapPrefix D k) ∨
+        IsConsensusConfig D ∨
+        ¬ IsAwakeningConfig D
+  let Inv : Config (AgentState n) Opinion n → Prop := IsAwakeningConfig
+  let φ : Config (AgentState n) Opinion n → ℕ :=
+    fun D => (awakeningResettingFollowers D).card
+  let pRate : ℕ → ENNReal :=
+    fun _ => (((n * (n - 1) : ℕ) : ENNReal)⁻¹)
+  have hBound :=
+    Probability.expectedHittingTime_le_of_variable_descent_until_goal
+      P (by omega : 2 ≤ n) C Goal Inv φ pRate hAwake
+      (by
+        intro D hInvD hφ
+        left
+        exact
+          (freshRankingStart_iff_awakeningResettingFollowers_card_zero_of_awakening
+            D hInvD).2 hφ)
+      (by
+        intro D _hInvD _hNotGoal i j
+        by_cases h :
+            IsAwakeningConfig (D.step P i j)
+        · exact Or.inl h
+        · exact Or.inr (Or.inr (Or.inr (Or.inr h))))
+      (by
+        intro D hInvD hNotGoal i j
+        simpa [P, φ] using
+          awakeningResettingFollowers_card_step_le_of_awakening
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            D hInvD i j)
+      (by
+        intro k hk D hInvD hφ
+        let SmallGoal : Config (AgentState n) Opinion n → Prop :=
+          fun E =>
+            FreshRankingStart E ∨
+              (IsAwakeningConfig E ∧
+                (awakeningResettingFollowers E).card < k)
+        let BigGoal : Config (AgentState n) Opinion n → Prop :=
+          fun E => Goal E ∨ (Inv E ∧ φ E < k)
+        have hsmall :
+            (((n * (n - 1) : ℕ) : ENNReal)⁻¹) ≤
+              Probability.ProbHitWithin P (by omega : 2 ≤ n) D SmallGoal 1 := by
+          simpa [P, SmallGoal] using
+            awakening_step_descent_prob
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 k hk D hInvD hφ
+        have hmono : ∀ E : Config (AgentState n) Opinion n,
+            SmallGoal E → BigGoal E := by
+          intro E hE
+          rcases hE with hFresh | hDesc
+          · exact Or.inl (Or.inl hFresh)
+          · exact Or.inr ⟨hDesc.1, by simpa [φ] using hDesc.2⟩
+        have hprob :
+            Probability.ProbHitWithin P (by omega : 2 ≤ n) D SmallGoal 1 ≤
+              Probability.ProbHitWithin P (by omega : 2 ≤ n) D BigGoal 1 :=
+          Probability.ProbHitWithin_mono_goal P (by omega : 2 ≤ n) D
+            SmallGoal BigGoal hmono 1
+        exact hsmall.trans (by simpa [BigGoal, Goal, Inv, φ] using hprob))
+  calc
+    Probability.expectedHittingTime P (by omega : 2 ≤ n) C Goal
+        ≤ ∑ _k ∈ Finset.range (φ C), (pRate (_k + 1))⁻¹ := hBound
+    _ = ∑ _k ∈ Finset.range (φ C),
+          ((n * (n - 1) : ℕ) : ENNReal) := by
+          apply Finset.sum_congr rfl
+          intro k hk
+          simp [pRate, inv_inv]
+    _ = ((φ C : ℕ) : ENNReal) *
+          ((n * (n - 1) : ℕ) : ENNReal) := by
+          simp [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    _ = (((awakeningResettingFollowers C).card *
+          (n * (n - 1)) : ℕ) : ENNReal) := by
+          simp [φ]
+
 end SSEM
