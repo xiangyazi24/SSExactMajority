@@ -1,92 +1,79 @@
-# Generic keystone re-audit fix report
+# Generic keystone round-2 satisfiability report
 
 ## Verdict
 
-No blocker.  Both re-audit holes are closed in
-`SSExactMajority/UpperBound/Time/GenericKeystone.lean`.
+No blocker.  The third over-strong cited-window hypothesis is closed, and the
+generic/trank=1 keystones remain genuinely `O(n)`.
 
-- Hole 1, vacuous timer-ranked hypotheses: closed by adding a consensus
-  done-escape to the ranking and reranking targets, and by threading the
-  renewal proof through the consensus branch.
-- Hole 2, only-positive `p_reset`: closed by adding an explicit linear corollary
-  with reset success probability fixed to the absolute constant `1/2`.
-
+The Lean source change is only in
+`SSExactMajority/UpperBound/Time/GenericKeystone.lean`; this report was also
+updated.
 `OptimalWindows.lean` and `GenericTrank.lean` were not edited.
 
-## Hole 1
+## Round-2 fix
 
-The generic keystone no longer asks the cited ranking/reranking windows to
-force a silent consensus state with median timer `0` to reach
-`MedianTimerAtLeast 35`.
+`OW_rankedEpidemicEndpoint m` requires the endpoint majority to equal `m`:
+`OptimalWindows.lean:80-82`.  Therefore the cited answer-epidemic/ranking
+window cannot be quantified over wrong-answer instances.
 
-Evidence:
+The `h12rank` hypothesis now has the faithful precondition
+`majorityAnswer D = m` everywhere it is exposed:
 
-- `PEM_expectedParallelTime_optimal_generic` ranking target is now
-  `(InSrank ∧ MedianTimerAtLeast 35 ∧ timer-bounded) ∨ IsConsensusConfig`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:243-253`.
-- Its rerank target is now
-  `(InSswap ∧ MedianTimerAtLeast 35) ∨ IsConsensusConfig`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:266-276`.
-- Internal renewal target names are `RankOrConsensus` and
-  `LiveOrConsensus`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:298-306`.
-- If the ranking stage hits consensus, the proof uses the zero-time hit branch;
-  otherwise it continues through live/rerank:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:532-608`.
-- The final composition is still the same renewal window and success product
-  `p_reset * 128^-1`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:609-628`.
+| Site | Evidence |
+|---|---|
+| Generic CRS-to-silence product wrapper | `GenericKeystone.lean:117-125` |
+| Generic CRS-to-consensus product wrapper | `GenericKeystone.lean:228-236` |
+| Generic end-to-end keystone | `GenericKeystone.lean:290-298` |
+| `trank = 1` theorem | `GenericKeystone.lean:687-695` |
+| Explicit `O(n)` corollary | `GenericKeystone.lean:804-812` |
 
-The `trank = 1` theorem exposes the same satisfiable targets:
+The reset/epidemic chain supplies this precondition rather than assuming it for
+free.  `CRS_to_silence_faithful_product_generic` threads the invariant
+`MajInv D := majorityAnswer D = majorityAnswer C`, proves it is step-invariant
+from `majorityAnswer_step_eq`, and strengthens both reset completion and the
+epidemic window with `ProbHitWithin_eq_and_inv_of_invariant`:
+`GenericKeystone.lean:139-206`.  Thus the final call to `h12rank` is made only
+at `m = majorityAnswer C` with `majorityAnswer D = m`.
 
-- ranking with consensus done-escape:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:641-649`;
-- rerank with consensus done-escape:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:662-671`.
+## Satisfiability sweep
 
-This removes the silent-consensus vacuity while preserving the original
-non-consensus renewal composition.
+| Hypothesis / field | Satisfiable? | Reason / precondition |
+|---|---:|---|
+| `h12ranking` in the generic keystone | Yes | Target is `(InSrank ∧ MedianTimerAtLeast 35 ∧ timer-bounded) ∨ IsConsensusConfig`, so an already-silent/consensus start hits at time `0`; non-consensus starts are the cited ranking window. Evidence: `GenericKeystone.lean:275-285`, consumed at `532-540`. |
+| `h12ranking` in `PEM_expectedParallelTime_On` and `_On_explicit` | Yes | Same consensus done-escape, specialized to `PEM_trank1_timer`. Evidence: `GenericKeystone.lean:674-682`, `791-799`. |
+| `h12reRank` in the generic keystone | Yes | It is only asserted under timer bounds and `¬ (InSswap ∧ MedianTimerAtLeast 35)`, and the target is `(InSswap ∧ MedianTimerAtLeast 35) ∨ IsConsensusConfig`; consensus starts are time-`0`, non-live/non-consensus starts use the cited rerank window. Evidence: `GenericKeystone.lean:299-309`, consumed at `590-609`. |
+| `h12reRank` in `PEM_expectedParallelTime_On` and `_On_explicit` | Yes | Same done-escape target and non-live precondition, specialized to `trank = 1`. Evidence: `GenericKeystone.lean:696-705`, `813-822`. |
+| `h12rank` in all keystones | Yes after this fix | Added `majorityAnswer D = m`, matching the target's own majority requirement. Wrong-answer `EpidemicPhiGoal m D` instances are no longer demanded. Evidence: `GenericKeystone.lean:290-298`, `687-695`, `804-812`; target shape at `OptimalWindows.lean:80-82`. |
+| `h12resetCompletion.resetReach` | Yes | Quantifies only over `CorrectResetSeed C` plus the timer bound, not all configs. The target is `ResetCompletionTarget12 (majorityAnswer C)`, i.e. `EpidemicRegion`, with `K_reset <= C_reset*n*n`; no false deterministic invariant or timer-35 target is required. Evidence: `GenericKeystone.lean:31-44`; `CorrectResetSeed` shape at `BurmanConvergenceFinal.lean:13787-13797`; target shape at `OptimalWindows.lean:338-340`. |
+| `h12resetCompletion.epidemicStep`, `epidemicNonincrease`, `epidemicPairDescent` | Yes | These are conditional one-step epidemic-mechanics obligations for configurations already in `EpidemicRegion`; they are not universal reachability windows over arbitrary configs. Evidence: `GenericKeystone.lean:45-69`, consumed at `100-106`. |
+| `hTimerStep` | Yes-shaped | This is an invariant-preservation assumption, not a cited hitting-window target; in `trank = 1` it is discharged by `generic_timer_preservation`. Evidence: generic hypothesis at `GenericKeystone.lean:271-274`, specialization at `715-723`. |
+| `hRmax`, `hEmax`, `hDmax`, `hn4` | Yes-shaped | Numeric domain assumptions only; they do not assert reachability to a target. Evidence: `GenericKeystone.lean:267-270`, `670-673`, `788-790`. |
+| `hRankWindow`, `hRerankWindow` in `_On_explicit` | Yes-shaped | Arithmetic bounds on cited window lengths, not hitting-window hypotheses. They preserve the explicit linear conclusion. Evidence: `GenericKeystone.lean:823-824`, used at `841-850`. |
 
-## Hole 2
+## O(n) status
 
-The new explicit corollary fixes the reset success probability to `1/2` and
-returns a literal linear bound.
+The explicit corollary still fixes the reset success probability to the absolute
+constant `1/2` and folds all fixed quadratic sequential-window constants into
+`PEM_On_explicit_linearConstant`:
+`GenericKeystone.lean:779-831`.  The final arithmetic cancels the quadratic
+sequential window by division by `n` and rewrites the success-probability factor
+to `256`: `GenericKeystone.lean:851-883`.
 
-Evidence:
-
-- Linear coefficient:
-  `PEM_On_explicit_linearConstant C_rank C_reset C_T_rank C_T_rerank =
-  256 * (2*C_rank + C_reset + C_T_rank + C_T_rerank + 76)`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:745-747`.
-- `PEM_expectedParallelTime_On_explicit` assumes
-  `CRSResetCompletion12Generic ... ((2 : ENNReal)^-1) ...`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:754-769`.
-- It assumes the cited `T_rank` and `T_rerank` windows are bounded by fixed
-  constants times `n^2`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:788-789`.
-- Its conclusion is an explicit linear bound:
-  `expectedParallelTimeToConsensus <=
-  (PEM_On_explicit_linearConstant ... * n : Nat)`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:790-796`.
-- The arithmetic helper cancels one `n` from a quadratic sequential window:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:725-740`.
-- The proof rewrites
-  `(((2^-1) * (128^-1))^-1)` to `256` and uses
-  `OW_globalWindow_trank1_quadratic`:
-  `SSExactMajority/UpperBound/Time/GenericKeystone.lean:806-848`.
-
-This makes the theorem family genuinely `O(n)` once the cited constants
-`C_rank`, `C_reset`, `C_T_rank`, and `C_T_rerank` are fixed absolute constants.
+Therefore the final statement remains
+`expectedParallelTimeToConsensus <= PEM_On_explicit_linearConstant ... * n`,
+with no dependence on a variable `1 / p_reset`.
 
 ## Verification
 
-Commands run:
+Checks run:
 
 ```bash
 exec -a lake /data/home/xhuan5/.elan/bin/elan env lean SSExactMajority/UpperBound/Time/GenericKeystone.lean
 exec -a lake /data/home/xhuan5/.elan/bin/elan build
-grep -n "sorry\\|admit\\|axiom\\|native_decide" SSExactMajority/UpperBound/Time/GenericKeystone.lean || true
 ```
+
+I also ran the forbidden-placeholder grep over
+`SSExactMajority/UpperBound/Time/GenericKeystone.lean`.
 
 Results:
 

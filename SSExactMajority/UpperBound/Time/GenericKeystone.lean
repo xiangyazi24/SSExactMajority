@@ -117,6 +117,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        majorityAnswer D = m →
           rankProb ≤
             Probability.ProbHitWithin
               (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
@@ -135,36 +136,66 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
   have hn0 : 0 < n := by omega
   have hn2 : 2 ≤ n := by omega
   set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
+  let MajInv : Config (AgentState n) Opinion n → Prop :=
+    fun D => majorityAnswer D = majorityAnswer C
+  have hMajInvStep : ∀ D : Config (AgentState n) Opinion n, MajInv D →
+      ∀ i j : Fin n, MajInv (D.step P i j) := by
+    intro D hD i j
+    calc
+      majorityAnswer (D.step P i j) = majorityAnswer D := by
+        simpa [P, PEMProtocol] using
+          (majorityAnswer_step_eq
+            (trank := trank) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j)
+      _ = majorityAnswer C := hD
   have hReset :
       p_reset ≤
         Probability.ProbHitWithin P hn2 C
-          (ResetCompletionTarget12 (majorityAnswer C)) K_reset := by
-    simpa [P] using h12resetCompletion.resetReach hn2 C hTimer hSeed
+          (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D)
+          K_reset := by
+    have hResetRaw :
+        p_reset ≤
+          Probability.ProbHitWithin P hn2 C
+            (ResetCompletionTarget12 (majorityAnswer C)) K_reset := by
+      simpa [P] using h12resetCompletion.resetReach hn2 C hTimer hSeed
+    rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
+      P hn2 C (ResetCompletionTarget12 (majorityAnswer C)) MajInv rfl
+      hMajInvStep K_reset]
+    exact hResetRaw
   have hEpidemic :
       ∀ D : Config (AgentState n) Opinion n,
-        ResetCompletionTarget12 (majorityAnswer C) D →
+        (ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D) →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin P hn2 D
-              (EpidemicPhiGoal (majorityAnswer C)) (OW_answerEpidemicWindow n) := by
+              (fun E => EpidemicPhiGoal (majorityAnswer C) E ∧ MajInv E)
+              (OW_answerEpidemicWindow n) := by
     intro D hD
-    simpa [P, ResetCompletionTarget12] using
-      (resetCompletion_to_phiGoal_window_generic
-        (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        hn4 p_reset C_reset K_reset h12resetCompletion
-        (majorityAnswer C) D hD)
+    have hRaw :
+        ((2 : ENNReal)⁻¹) ≤
+          Probability.ProbHitWithin P hn2 D
+            (EpidemicPhiGoal (majorityAnswer C)) (OW_answerEpidemicWindow n) := by
+      simpa [P, ResetCompletionTarget12] using
+        (resetCompletion_to_phiGoal_window_generic
+          (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn4 p_reset C_reset K_reset h12resetCompletion
+          (majorityAnswer C) D hD.1)
+    rw [Probability.ProbHitWithin_eq_and_inv_of_invariant
+      P hn2 D (EpidemicPhiGoal (majorityAnswer C)) MajInv hD.2
+      hMajInvStep (OW_answerEpidemicWindow n)]
+    exact hRaw
   have hResetToPhi :
       p_reset * ((2 : ENNReal)⁻¹) ≤
         Probability.ProbHitWithin P hn2 C
-          (EpidemicPhiGoal (majorityAnswer C))
+          (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D)
           (K_reset + OW_answerEpidemicWindow n) :=
     Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (ResetCompletionTarget12 (majorityAnswer C))
-      (EpidemicPhiGoal (majorityAnswer C))
+      (fun D => ResetCompletionTarget12 (majorityAnswer C) D ∧ MajInv D)
+      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D)
       K_reset (OW_answerEpidemicWindow n)
       p_reset ((2 : ENNReal)⁻¹) hReset hEpidemic
   have hRankToSilence :
       ∀ D : Config (AgentState n) Opinion n,
-        EpidemicPhiGoal (majorityAnswer C) D →
+        (EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D) →
           rankProb ≤
             Probability.ProbHitWithin P hn2 D OW_silenceEndpoint T_rank := by
     intro D hD
@@ -172,7 +203,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
         rankProb ≤
           Probability.ProbHitWithin P hn2 D
             (OW_rankedEpidemicEndpoint (majorityAnswer C)) T_rank := by
-      simpa [P] using h12rank (majorityAnswer C) D hD
+      simpa [P] using h12rank (majorityAnswer C) D hD.1 hD.2
     exact hRankRaw.trans
       (Probability.ProbHitWithin_mono_goal P hn2 D
         (OW_rankedEpidemicEndpoint (majorityAnswer C)) OW_silenceEndpoint
@@ -180,7 +211,7 @@ theorem CRS_to_silence_faithful_product_generic (hn4 : 4 ≤ n)
         T_rank)
   simpa [Nat.add_assoc, add_assoc] using
     (Probability.ProbHitWithin_add_ge_mul P hn2 C
-      (EpidemicPhiGoal (majorityAnswer C)) OW_silenceEndpoint
+      (fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ MajInv D) OW_silenceEndpoint
       (K_reset + OW_answerEpidemicWindow n) T_rank
       (p_reset * ((2 : ENNReal)⁻¹)) rankProb
       hResetToPhi hRankToSilence)
@@ -197,6 +228,7 @@ theorem CRS_to_consensus_faithful_product_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        majorityAnswer D = m →
           rankProb ≤
             Probability.ProbHitWithin
               (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
@@ -258,6 +290,7 @@ theorem PEM_expectedParallelTime_optimal_generic (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
               (PEMProtocol n trank Rmax Emax Dmax (by omega : 0 < n))
@@ -654,6 +687,7 @@ theorem PEM_expectedParallelTime_On (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
               (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
@@ -770,6 +804,7 @@ theorem PEM_expectedParallelTime_On_explicit (hn4 : 4 ≤ n)
     (h12rank :
       ∀ (m : Answer) (D : Config (AgentState n) Opinion n),
         EpidemicPhiGoal m D →
+        majorityAnswer D = m →
           ((2 : ENNReal)⁻¹) ≤
             Probability.ProbHitWithin
               (PEMProtocol n 1 Rmax Emax Dmax (by omega : 0 < n))
