@@ -29,3 +29,21 @@ The repo proves convergence + FINITENESS; the time-OPTIMAL (explicit O(Rmax·n²
 
 Scope: focused multi-session campaign (the explicit-complexity layer of the paper), precisely
 mapped, all qualitative+finiteness scaffolding in place.
+
+## DEFINITIVE DIAGNOSIS (after entry-link attempts)
+No clean phase-invariant region works: the random scheduler INTERLEAVES phases. From partial
+awakening, pair (unsettled-follower, root) fires a recruit step → state is cleanly none of
+awakening/FreshRankingStart/ranking. variable_descent_until_goal + drift BOTH need the region
+closed under ALL pairs (hInvStep/hRegStep); every phase-specific region fails this.
+
+CORRECT ROUTE = global Lyapunov on the ONE provably-closed region IsBoundedConfig
+(PEMProtocolCoupled_preserves_bounded). Collapses everything to ONE obligation:
+  global φ : BoundedConfig → ℕ with  E[φ(step)] + ε ≤ φ  for all non-consensus bounded C,
+then expectedHittingTime_le_of_drift gives E[T to consensus] ≤ φ(C₀)/ε directly.
+Subtlety: fresh collision/error resets inject rare positive jumps ⟹ needs supermartingale /
+bounded-total-increase argument (same family as the PP-proof supermartingale work).
+
+Proven reusable component pieces: rcLevelPotential_* (reset-mass, RecoveryBound, nonincreasing+drop),
+awakening_step_descent_witness/prob (EntryBound, card descent), phiCount lemmas (answer-error).
+Global φ must use measures defined on ALL bounded configs (Σrc, #non-Settled, #wrong-answer),
+weighted W3≫W2≫W1, with the reset-jump compensator the crux.
