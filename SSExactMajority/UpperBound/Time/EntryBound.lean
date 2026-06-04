@@ -80,14 +80,16 @@ theorem freshRankingStart_iff_awakeningResettingFollowers_card_zero_of_awakening
   · exact awakeningResettingFollowers_card_zero_of_fresh C
   · exact freshRankingStart_of_awakening_no_resetting_followers C hAwake
 
-theorem awakening_step_descent_witness
+theorem awakening_step_descent_of_resetting_follower
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n)
     (C : Config (AgentState n) Opinion n)
     (hAwake : IsAwakeningConfig C)
-    (hpos : 0 < (awakeningResettingFollowers C).card) :
-    ∃ root w : Fin n, root ≠ w ∧
+    {root w : Fin n}
+    (hrootL : (C root).1.leader = .L)
+    (hwBad : w ∈ awakeningResettingFollowers C) :
+    root ≠ w ∧
       let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
       let C' := C.step P root w
       IsAwakeningConfig C' ∧
@@ -95,8 +97,10 @@ theorem awakening_step_descent_witness
           (awakeningResettingFollowers C).card := by
   classical
   rcases hAwake with ⟨hUnique, hLeaderOK, hFollowerOK⟩
-  obtain ⟨root, hrootL, hrootUnique⟩ := hUnique
-  obtain ⟨w, hwBad⟩ := Finset.card_pos.mp hpos
+  obtain ⟨root0, _hroot0L, hroot0Unique⟩ := hUnique
+  have hrootUnique : ∀ y : Fin n, (C y).1.leader = .L → y = root := by
+    intro y hyL
+    exact (hroot0Unique y hyL).trans (hroot0Unique root hrootL).symm
   have hwF : (C w).1.leader = .F := (Finset.mem_filter.mp hwBad).2.1
   have hwR : (C w).1.role = .Resetting := (Finset.mem_filter.mp hwBad).2.2
   have hwRc : (C w).1.resetcount = 0 := by
@@ -194,9 +198,33 @@ theorem awakening_step_descent_witness
     have herase : ((awakeningResettingFollowers C).erase w).card =
         (awakeningResettingFollowers C).card - 1 :=
       Finset.card_erase_of_mem hwBad
+    have hposCard : 0 < (awakeningResettingFollowers C).card :=
+      Finset.card_pos.mpr ⟨w, hwBad⟩
     rw [herase] at hle
     omega
-  exact ⟨root, w, hrootNeW, hAwake', hcardLt⟩
+  exact ⟨hrootNeW, hAwake', hcardLt⟩
+
+theorem awakening_step_descent_witness
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C)
+    (hpos : 0 < (awakeningResettingFollowers C).card) :
+    ∃ root w : Fin n, root ≠ w ∧
+      let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+      let C' := C.step P root w
+      IsAwakeningConfig C' ∧
+        (awakeningResettingFollowers C').card <
+          (awakeningResettingFollowers C).card := by
+  classical
+  obtain ⟨root, hrootL, _hrootUnique⟩ := hAwake.1
+  obtain ⟨w, hwBad⟩ := Finset.card_pos.mp hpos
+  have hdesc :=
+    awakening_step_descent_of_resetting_follower
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 C hAwake (root := root) (w := w) hrootL hwBad
+  exact ⟨root, w, hdesc.1, hdesc.2.1, hdesc.2.2⟩
 
 theorem awakening_step_descent_prob
     [Inhabited (Fin n × Fin n)]
@@ -257,6 +285,102 @@ theorem awakening_step_descent_prob
   · exact Probability.ProbHitWithin_one_lower_bound_of_step
       (PEMProtocolCoupled' n Rmax Emax Dmax hn)
       (by omega : 2 ≤ n) C Goal hGoal hrootNeW hstep
+
+theorem awakening_step_descent_prob_sharp
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (k : ℕ) (hk : 0 < k)
+    (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C)
+    (hcard : (awakeningResettingFollowers C).card = k) :
+    ((k : ENNReal) / ((n * (n - 1) : ℕ) : ENNReal)) ≤
+      Probability.ProbHitWithin
+        (PEMProtocolCoupled' n Rmax Emax Dmax hn)
+        (by omega : 2 ≤ n) C
+        (fun D =>
+          FreshRankingStart D ∨
+            (IsAwakeningConfig D ∧
+              (awakeningResettingFollowers D).card < k) ∨
+            ¬ IsAwakeningConfig D) 1 := by
+  classical
+  have _ : 0 < k := hk
+  let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  let Goal : Config (AgentState n) Opinion n → Prop :=
+    fun D =>
+      FreshRankingStart D ∨
+        (IsAwakeningConfig D ∧
+          (awakeningResettingFollowers D).card < k) ∨
+        ¬ IsAwakeningConfig D
+  change ((k : ENNReal) / ((n * (n - 1) : ℕ) : ENNReal)) ≤
+    Probability.ProbHitWithin P (by omega : 2 ≤ n) C Goal 1
+  obtain ⟨root, hrootL, _hrootUnique⟩ := hAwake.1
+  let S : Finset (Fin n × Fin n) :=
+    (awakeningResettingFollowers C).image fun w => (root, w)
+  have hS_card : S.card = k := by
+    dsimp [S]
+    rw [Finset.card_image_of_injective]
+    · exact hcard
+    · intro a b h
+      exact congrArg Prod.snd h
+  have hS_sub : S ⊆ Probability.OffDiagonalPairs n := by
+    intro p hp
+    dsimp [S] at hp
+    obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hp
+    have hdesc :=
+      awakening_step_descent_of_resetting_follower
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 C hAwake (root := root) (w := w) hrootL hw
+    exact (Probability.mem_offDiagonalPairs n (root, w)).mpr hdesc.1
+  have hstep : ∀ p ∈ S, Goal (C.step P p.1 p.2) := by
+    intro p hp
+    dsimp [S] at hp
+    obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hp
+    have hdesc :=
+      awakening_step_descent_of_resetting_follower
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 C hAwake (root := root) (w := w) hrootL hw
+    right
+    left
+    exact ⟨by simpa [P] using hdesc.2.1,
+      by simpa [P, hcard] using hdesc.2.2⟩
+  have hmass :
+      Probability.pairSetMass n (by omega : 2 ≤ n) S =
+        (k : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹ := by
+    rw [Probability.pairSetMass_eq_card_mul_inv_of_subset
+      n (by omega : 2 ≤ n) S hS_sub, hS_card]
+  by_cases hGoal : Goal C
+  · have hzero :
+        Probability.ProbHitWithin P (by omega : 2 ≤ n) C Goal 0 = 1 :=
+      Probability.probHitBy_zero_of_goal P (by omega : 2 ≤ n) C Goal hGoal
+    have hmass_le_one :
+        (k : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ≤ 1 := by
+      calc
+        (k : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹
+            = Probability.pairSetMass n (by omega : 2 ≤ n) S := hmass.symm
+        _ ≤ Probability.pairSetMass n (by omega : 2 ≤ n)
+              (Probability.OffDiagonalPairs n) :=
+            Probability.pairSetMass_mono n (by omega : 2 ≤ n) hS_sub
+        _ = 1 :=
+            Probability.pairSetMass_offDiagonalPairs n (by omega : 2 ≤ n)
+    calc
+      ((k : ENNReal) / ((n * (n - 1) : ℕ) : ENNReal))
+          = (k : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹ := by
+            rw [div_eq_mul_inv]
+      _ ≤ 1 := hmass_le_one
+      _ = Probability.ProbHitWithin P (by omega : 2 ≤ n) C Goal 0 := hzero.symm
+      _ ≤ Probability.ProbHitWithin P (by omega : 2 ≤ n) C Goal 1 :=
+          Probability.ProbHitWithin_mono_time P (by omega : 2 ≤ n) C Goal
+            (by omega)
+  · calc
+      ((k : ENNReal) / ((n * (n - 1) : ℕ) : ENNReal))
+          = (k : ENNReal) * ((n * (n - 1) : ℕ) : ENNReal)⁻¹ := by
+            rw [div_eq_mul_inv]
+      _ = Probability.pairSetMass n (by omega : 2 ≤ n) S := hmass.symm
+      _ ≤ Probability.ProbHitWithin P (by omega : 2 ≤ n) C Goal 1 :=
+          Probability.ProbHitWithin_one_lower_bound_of_pairSet
+            P (by omega : 2 ≤ n) C Goal hGoal S hS_sub hstep
 
 private theorem transitionPEM_resetting_leader_of_pre_both_settled
     {trank Rmax : ℕ}
@@ -803,5 +927,88 @@ theorem awakening_to_goal_or_exit_expected_le
     _ = (((awakeningResettingFollowers C).card *
           (n * (n - 1)) : ℕ) : ENNReal) := by
           simp [φ]
+
+theorem awakening_to_goal_or_exit_expected_le_sharp
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (C : Config (AgentState n) Opinion n)
+    (hAwake : IsAwakeningConfig C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled' n Rmax Emax Dmax hn) (by omega : 2 ≤ n) C
+      (fun D =>
+        FreshRankingStart D ∨
+          (∃ k, 2 ≤ k ∧ HeapPrefix D k) ∨
+          IsConsensusConfig D ∨
+          ¬ IsAwakeningConfig D)
+      ≤ ∑ k ∈ Finset.range (awakeningResettingFollowers C).card,
+          (((k + 1 : ℕ) : ENNReal) /
+            ((n * (n - 1) : ℕ) : ENNReal))⁻¹ := by
+  classical
+  let P := PEMProtocolCoupled' n Rmax Emax Dmax hn
+  let Goal : Config (AgentState n) Opinion n → Prop :=
+    fun D =>
+      FreshRankingStart D ∨
+        (∃ k, 2 ≤ k ∧ HeapPrefix D k) ∨
+        IsConsensusConfig D ∨
+        ¬ IsAwakeningConfig D
+  let Inv : Config (AgentState n) Opinion n → Prop := IsAwakeningConfig
+  let φ : Config (AgentState n) Opinion n → ℕ :=
+    fun D => (awakeningResettingFollowers D).card
+  let pRate : ℕ → ENNReal :=
+    fun k => (k : ENNReal) / ((n * (n - 1) : ℕ) : ENNReal)
+  have hBound :=
+    Probability.expectedHittingTime_le_of_variable_descent_until_goal
+      P (by omega : 2 ≤ n) C Goal Inv φ pRate hAwake
+      (by
+        intro D hInvD hφ
+        left
+        exact
+          (freshRankingStart_iff_awakeningResettingFollowers_card_zero_of_awakening
+            D hInvD).2 hφ)
+      (by
+        intro D _hInvD _hNotGoal i j
+        by_cases h :
+            IsAwakeningConfig (D.step P i j)
+        · exact Or.inl h
+        · exact Or.inr (Or.inr (Or.inr (Or.inr h))))
+      (by
+        intro D hInvD hNotGoal i j
+        simpa [P, φ] using
+          awakeningResettingFollowers_card_step_le_of_awakening
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            D hInvD i j)
+      (by
+        intro k hk D hInvD hφ
+        let SmallGoal : Config (AgentState n) Opinion n → Prop :=
+          fun E =>
+            FreshRankingStart E ∨
+              (IsAwakeningConfig E ∧
+                (awakeningResettingFollowers E).card < k) ∨
+              ¬ IsAwakeningConfig E
+        let BigGoal : Config (AgentState n) Opinion n → Prop :=
+          fun E => Goal E ∨ (Inv E ∧ φ E < k)
+        have hsmall :
+            pRate k ≤
+              Probability.ProbHitWithin P (by omega : 2 ≤ n) D SmallGoal 1 := by
+          simpa [P, SmallGoal, pRate] using
+            awakening_step_descent_prob_sharp
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 k hk D hInvD hφ
+        have hmono : ∀ E : Config (AgentState n) Opinion n,
+            SmallGoal E → BigGoal E := by
+          intro E hE
+          rcases hE with hFresh | hRest
+          · exact Or.inl (Or.inl hFresh)
+          · rcases hRest with hDesc | hExit
+            · exact Or.inr ⟨hDesc.1, by simpa [φ] using hDesc.2⟩
+            · exact Or.inl (Or.inr (Or.inr (Or.inr hExit)))
+        have hprob :
+            Probability.ProbHitWithin P (by omega : 2 ≤ n) D SmallGoal 1 ≤
+              Probability.ProbHitWithin P (by omega : 2 ≤ n) D BigGoal 1 :=
+          Probability.ProbHitWithin_mono_goal P (by omega : 2 ≤ n) D
+            SmallGoal BigGoal hmono 1
+        exact hsmall.trans (by simpa [BigGoal, Goal, Inv, φ] using hprob))
+  simpa [P, Goal, φ, pRate] using hBound
 
 end SSEM
