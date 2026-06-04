@@ -93,6 +93,25 @@ theorem decision_window (hn4 : 4 ≤ n) (hn0 : 0 < n)
   exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
     (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _ hM (by omega)
 
+
+/-- Timer-drain/propagate window (Markov form of `PEM_expected_timer_drain_poly`):
+from `InSswap`+`MAC`+bounded live timer, within `2·7(Rmax+4)·n(n-1)` steps reach
+consensus, or form a correct reset seed, or leave the live-swap region, with prob ≥ 1/2. -/
+theorem timer_drain_window (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) (hC : InSswap C)
+    (hMAC : MedianAnswerCorrect C) (hTLo : MedianTimerAtLeast 1 C)
+    (hTHi : IsTimerBoundedConfig (7 * (Rmax + 4)) C) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+          ¬ (InSswap D ∧ MedianTimerAtLeast 1 D))
+        (2 * (7 * (Rmax + 4) * n * (n - 1))) :=
+  Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
+    (PEM_expected_timer_drain_poly (Emax := Emax) (Dmax := Dmax) hn4 hn0 hRmax C hC hMAC hTLo hTHi)
+    (by omega)
+
 /-- **Unconditional optimal parallel-time bound.** From any timer-bounded initial
 configuration, the expected parallel time to consensus is
 `≤ (2·Rmax·n² + 4·n² + 20·Rmax·n²)·16 / n = O(Rmax·n)`. Modulo the two keystones above. -/
