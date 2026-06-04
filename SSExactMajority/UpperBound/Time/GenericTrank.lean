@@ -2144,6 +2144,107 @@ theorem generic_PEM_expected_reset_trigger_v2
                 apply hS.toInSrank.ranks_inj
                 exact Fin.ext (Nat.add_right_cancel ((hNonUpper w hw_ans).trans hv_upper.symm))
 
+theorem generic_MAClive_to_consensus_or_crs
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
+    Probability.expectedHittingTime
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+      ((T_timer * n * (n - 1) + n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  set P := PEMProtocol n trank Rmax Emax Dmax hn0 with hP
+  have hMid : Probability.expectedHittingTime P (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) ≤
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) :=
+    generic_timer_drain_to_zero_productive
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi
+  have hGoal : ∀ D : Config (AgentState n) Opinion n,
+      (IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) →
+      Probability.expectedHittingTime P (by omega : 2 ≤ n) D
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+        ((n * (n - 1) : ℕ) : ENNReal) := by
+    intro D hMidD
+    rcases hMidD with hc | hcrs | ⟨hSD, hMD, hmax0⟩
+    · exact le_of_eq_of_le
+        (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inl hc))
+        zero_le
+    · exact le_of_eq_of_le
+        (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _ (Or.inr hcrs))
+        zero_le
+    · have hTimer0 : ∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n →
+          (D μ).1.timer = 0 := by
+        intro μ hμ
+        have hle : (if (D μ).1.rank.val + 1 = ceilHalf n then (D μ).1.timer else 0)
+            ≤ maxMedianTimer D := by
+          unfold maxMedianTimer
+          exact Finset.le_sup
+            (f := fun μ => if (D μ).1.rank.val + 1 = ceilHalf n then (D μ).1.timer else 0)
+            (Finset.mem_univ μ)
+        rw [hmax0, if_pos hμ] at hle
+        omega
+      by_cases hw : 0 < wrongAnswerCount D
+      · exact
+          generic_PEM_expected_reset_trigger_v2
+            (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            hn4 hn0 hRmax hEmax hDmax D hSD hMD hw hTimer0
+      · have hw0 : wrongAnswerCount D = 0 := by omega
+        exact le_of_eq_of_le
+          (Probability.expectedHittingTime_eq_zero_of_goal P (by omega : 2 ≤ n) D _
+            (Or.inl (isConsensusConfig_of_InSswap_of_wrongAnswerCount_zero hSD hw0)))
+          zero_le
+  have hMidGoal : ∀ D : Config (AgentState n) Opinion n,
+      (IsConsensusConfig D ∨ CorrectResetSeed D) →
+      (IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)) := by
+    intro D hD
+    rcases hD with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+  have hadd := Probability.expectedHittingTime_add_le P (by omega : 2 ≤ n) C
+    (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+      (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0))
+    (fun D => IsConsensusConfig D ∨ CorrectResetSeed D)
+    ((T_timer * n * (n - 1) : ℕ) : ENNReal) ((n * (n - 1) : ℕ) : ENNReal)
+    hMid hGoal hMidGoal
+  refine hadd.trans ?_
+  rw [← Nat.cast_add]
+
+theorem generic_MAClive_to_consensus_or_crs_window
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n)
+    (hC : InSswap C) (hMAC : MedianAnswerCorrect C)
+    (hTLo : MedianTimerAtLeast 1 C)
+    (hTHi : IsTimerBoundedConfig T_timer C) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocol n trank Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => IsConsensusConfig D ∨ CorrectResetSeed D)
+        (2 * (T_timer * n * (n - 1) + n * (n - 1))) := by
+  have hM :=
+    generic_MAClive_to_consensus_or_crs
+      (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax hEmax hDmax T_timer C hC hMAC hTLo hTHi
+  exact Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    (PEMProtocol n trank Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
+    hM
+    (by omega)
+
 end GenericTimerDrain
 
 end SSEM

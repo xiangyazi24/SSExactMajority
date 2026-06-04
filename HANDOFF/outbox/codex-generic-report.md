@@ -67,6 +67,24 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank MAC-live checkpoint
+
+Ported the MAC-live composition layer over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_MAClive_to_consensus_or_crs`
+- `generic_MAClive_to_consensus_or_crs_window`
+
+This composes the productive drain endpoint with
+`generic_PEM_expected_reset_trigger_v2` at the timer-zero live endpoint.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
+
 ## 2026-06-04 codex generic-trank reset-trigger checkpoint
 
 Ported the timer-zero reset trigger over
