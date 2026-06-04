@@ -1865,6 +1865,285 @@ theorem generic_timer_drain_to_zero_productive
               Nat.mul_le_mul_right _ hMaxTimer
           _ = T_timer * n * (n - 1) := by ring
 
+theorem generic_PEM_expected_reset_trigger_v2
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hWrong : 0 < wrongAnswerCount C)
+    (hTimer0 : ∀ μ : Fin n, (C μ).1.rank.val + 1 = ceilHalf n →
+      (C μ).1.timer = 0) :
+    Probability.expectedHittingTime
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D) ≤
+      ((n * (n - 1) : ℕ) : ENNReal) := by
+  classical
+  set P := PEMProtocol n trank Rmax Emax Dmax hn0
+  set Goal := fun D : Config (AgentState n) Opinion n =>
+    IsConsensusConfig D ∨ CorrectResetSeed D
+  set Inv := fun D : Config (AgentState n) Opinion n =>
+    InSswap D ∧ MedianAnswerCorrect D ∧
+      (∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n → (D μ).1.timer = 0)
+  refine (Probability.expectedHittingTime_le_inv_of_local_one_lower_bound_until_goal
+    P (by omega) C Goal Inv ((n * (n - 1) : ℕ) : ENNReal)⁻¹ ?_ ?_ ?_).trans
+    (by rw [inv_inv])
+  · exact ⟨hSswap, hMedCorrect, hTimer0⟩
+  · intro D ⟨hS, hM, hT⟩ _hGoalD i j
+    by_cases hS' : InSswap (D.step P i j)
+    · have hM' :=
+        generic_step_median_answer_of_InSswap_both
+          (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn0 hn4 hS hS' hM
+      left
+      refine ⟨hS', hM', ?_⟩
+      intro μ hμ
+      have hrank : (D.step P i j μ).1.rank = (D μ).1.rank :=
+        generic_step_rank_preserved_of_InSswap
+          (trank := trank) (Rmax := Rmax) (Emax := Emax)
+          (Dmax := Dmax) hn0 hS μ
+      have hμ_pre : (D μ).1.rank.val + 1 = ceilHalf n := by
+        rwa [← show (D.step P i j μ).1.rank.val = (D μ).1.rank.val from
+          congrArg Fin.val hrank]
+      have h0 := hT μ hμ_pre
+      have hle : (D.step P i j μ).1.timer ≤ (D μ).1.timer :=
+        generic_step_timer_le_of_InSswap
+          (trank := trank) (Rmax := Rmax) (Emax := Emax)
+          (Dmax := Dmax) hn0 hS (i := i) (j := j) μ
+      omega
+    · exact Or.inr (Or.inr
+        (generic_crs_of_InSswap_break_with_MedC
+          (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+          hn4 hn0 hRmax hS hM hS'))
+  · intro D ⟨hS, hM, hT⟩ hGoalD
+    have hNotCons : ¬ IsConsensusConfig D := fun h => hGoalD (Or.inl h)
+    have hWrongExists : ∃ v : Fin n, (D v).1.answer ≠ majorityAnswer D := by
+      by_contra h
+      push_neg at h
+      exact hNotCons ⟨hS.allSettled, hS.toInSrank.ranks_inj, hS.input_rank, h⟩
+    obtain ⟨μ, hμ_med⟩ := hS.toInSrank.exists_median (by omega : 0 < n)
+    have hμ_correct : (D μ).1.answer = majorityAnswer D := hM μ hμ_med
+    have hμ_timer : (D μ).1.timer = 0 := hT μ hμ_med
+    by_cases hNonUpper : ∃ v : Fin n, (D v).1.answer ≠ majorityAnswer D ∧
+        (D v).1.rank.val + 1 ≠ n / 2 + 1
+    · obtain ⟨v, hv_wrong, hv_no_upper⟩ := hNonUpper
+      have hμv : μ ≠ v := fun h => by
+        subst h
+        exact hv_wrong hμ_correct
+      apply Probability.ProbHitWithin_one_lower_bound_of_step P (by omega) D Goal
+        (fun h => hGoalD h) hμv
+      let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+      have hSeedCoupled : CorrectResetSeed (D.step Pc μ v) := by
+        simpa [Pc] using
+          step_timer_zero_median_wrong_nonupper_creates_CorrectResetSeed
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            hn4 hn0 hRmax hS hμv hμ_med hμ_timer hμ_correct
+            hv_wrong hv_no_upper
+      have hEqStep : D.step P μ v = D.step Pc μ v := by
+        simpa [P, Pc] using
+          generic_step_eq_coupled_of_InSrank
+            (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+            hn0 hS.toInSrank μ v
+      exact Or.inr (by rw [hEqStep]; exact hSeedCoupled)
+    · push_neg at hNonUpper
+      obtain ⟨v, hv_wrong⟩ := hWrongExists
+      have hμv : μ ≠ v := fun h => by
+        subst h
+        exact hv_wrong hμ_correct
+      apply Probability.ProbHitWithin_one_lower_bound_of_step P (by omega) D Goal
+        (fun h => hGoalD h) hμv
+      have hv_upper : (D v).1.rank.val + 1 = n / 2 + 1 :=
+        hNonUpper v hv_wrong
+      have hpar : n % 2 = 0 := by
+        by_contra h
+        push_neg at h
+        have hceil : ceilHalf n = n / 2 + 1 := by
+          unfold ceilHalf
+          omega
+        apply hμv
+        apply (hS.toInSrank.ranks_inj (Fin.ext ?_)).symm
+        show (D v).1.rank.val = (D μ).1.rank.val
+        have h1 : (D v).1.rank.val + 1 = (D μ).1.rank.val + 1 := by
+          rw [hv_upper, hμ_med, hceil]
+        omega
+      left
+      have hceil : ceilHalf n = n / 2 := by
+        unfold ceilHalf
+        omega
+      have hμ_lower : (D μ).1.rank.val + 1 = n / 2 := by
+        rw [← hceil]
+        exact hμ_med
+      have hsμ : (D μ).1.role = .Settled := hS.allSettled μ
+      have hsv : (D v).1.role = .Settled := hS.allSettled v
+      have h_maj : majorityAnswer (D.step P μ v) = majorityAnswer D := by
+        simpa [P, PEMProtocol] using
+          majorityAnswer_step_eq (trank := trank) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D μ v
+      by_cases hxeq : (D μ).2 = (D v).2
+      · have hSwap' : InSswap (D.step P μ v) :=
+          step_at_median_pair_even_preserves_InSswap
+            (trank := trank) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            rankDeltaOSSR_satisfies_fix hS hμv hpar hμ_lower hv_upper hxeq hn4
+        have hC'_eq := step_at_median_pair_even_agreed_inputs
+            (trank := trank) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            rankDeltaOSSR_satisfies_fix hμv hsμ hsv hpar hμ_lower hv_upper hxeq hn4
+        have h_sum := nAOf_add_nBOf D
+        have hμ_rank : (D μ).1.rank.val = n / 2 - 1 := by omega
+        have hv_rank : (D v).1.rank.val = n / 2 := by omega
+        have hne : nAOf D ≠ nBOf D := by
+          rcases hx : (D μ).2 with _ | _
+          · have hxv : (D v).2 = Opinion.A := by
+              rw [← hxeq]
+              exact hx
+            have h2 : (D v).1.rank.val < nAOf D := (hS.input_rank v).mp hxv
+            intro h
+            omega
+          · have hxv : (D v).2 = Opinion.B := by
+              rw [← hxeq]
+              exact hx
+            have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+              intro hh
+              have := (hS.input_rank μ).mpr hh
+              rw [hx] at this
+              cases this
+            have h2 : ¬ ((D v).1.rank.val < nAOf D) := by
+              intro h
+              have := (hS.input_rank v).mpr h
+              rw [hxv] at this
+              cases this
+            intro h
+            omega
+        have h_μ_eq_maj : opinionToAnswer (D μ).2 = majorityAnswer D :=
+          opinionToAnswer_lower_median_eq_majorityAnswer_even hS hμ_lower hpar hne
+        refine ⟨hSwap'.allSettled, hSwap'.ranks_inj, hSwap'.input_rank, ?_⟩
+        intro w
+        rw [h_maj]
+        have h_step_w : D.step P μ v w = (
+            fun w => if w = μ then ({(D μ).1 with answer := opinionToAnswer (D μ).2}, (D μ).2)
+                     else if w = v then ({(D v).1 with answer := opinionToAnswer (D μ).2}, (D v).2)
+                     else D w) w := by
+          rw [hC'_eq]
+        by_cases hwμ : w = μ
+        · subst hwμ
+          rw [h_step_w]
+          simp [h_μ_eq_maj]
+        · by_cases hwv : w = v
+          · subst hwv
+            rw [h_step_w]
+            simp [hwμ, h_μ_eq_maj]
+          · rw [h_step_w]
+            simp [hwμ, hwv]
+            by_cases hw_ans : (D w).1.answer = majorityAnswer D
+            · exact hw_ans
+            · exfalso
+              apply hwv
+              apply hS.toInSrank.ranks_inj
+              exact Fin.ext (Nat.add_right_cancel ((hNonUpper w hw_ans).trans hv_upper.symm))
+      · have h_no_swap_disagree : ¬ ((D μ).2 = Opinion.B ∧ (D v).2 = Opinion.A) := by
+          intro ⟨hxμB, hxvA⟩
+          have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+            intro h
+            have := (hS.input_rank μ).mpr h
+            rw [hxμB] at this
+            cases this
+          have h2 : (D v).1.rank.val < nAOf D := (hS.input_rank v).mp hxvA
+          have h_sum := nAOf_add_nBOf D
+          omega
+        have h_step := step_at_median_pair_even_disagreed_inputs
+            (trank := trank) (Rmax := Rmax)
+            (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0)
+            rankDeltaOSSR_satisfies_fix hμv hsμ hsv hpar hμ_lower hv_upper hxeq
+            h_no_swap_disagree hn4
+        obtain ⟨h_μ_post, h_v_post, h_others_post, h_inputs_post⟩ := h_step
+        have hTie : nAOf D = nBOf D := by
+          have h_sum := nAOf_add_nBOf D
+          rcases hxμ : (D μ).2 with _ | _
+          · have hxvB : (D v).2 = Opinion.B := by
+              cases hxv : (D v).2 with
+              | A => exfalso; apply hxeq; rw [hxμ, hxv]
+              | B => rfl
+            have h1 : (D μ).1.rank.val < nAOf D := (hS.input_rank μ).mp hxμ
+            have h2 : ¬ ((D v).1.rank.val < nAOf D) := by
+              intro h
+              have := (hS.input_rank v).mpr h
+              rw [hxvB] at this
+              cases this
+            omega
+          · have hxvA : (D v).2 = Opinion.A := by
+              cases hxv : (D v).2 with
+              | A => rfl
+              | B => exfalso; apply hxeq; rw [hxμ, hxv]
+            have h1 : ¬ ((D μ).1.rank.val < nAOf D) := by
+              intro h
+              have := (hS.input_rank μ).mpr h
+              rw [hxμ] at this
+              cases this
+            have h2 : (D v).1.rank.val < nAOf D := (hS.input_rank v).mp hxvA
+            omega
+        have hMaj_outT : majorityAnswer D = .outT := majorityAnswer_eq_outT_of_tie hTie
+        constructor
+        · intro w
+          by_cases hwμ : w = μ
+          · rw [hwμ, h_μ_post]
+            exact hsμ
+          · by_cases hwv : w = v
+            · rw [hwv, h_v_post]
+              exact hsv
+            · rw [show (D.step P μ v w).1 = (D w).1 from
+                congrArg Prod.fst (h_others_post w hwμ hwv)]
+              exact hS.allSettled w
+        · intro w1 w2 heq
+          have h_rank_w : ∀ w, (D.step P μ v w).1.rank = (D w).1.rank := by
+            intro w
+            by_cases hwμ : w = μ
+            · rw [hwμ, h_μ_post]
+            · by_cases hwv : w = v
+              · rw [hwv, h_v_post]
+              · rw [show (D.step P μ v w).1 = (D w).1 from
+                  congrArg Prod.fst (h_others_post w hwμ hwv)]
+          simp only [h_rank_w] at heq
+          exact hS.toInSrank.ranks_inj heq
+        · intro w
+          have h_nA : nAOf (D.step P μ v) = nAOf D := by
+            unfold nAOf Config.agentsWithInput Config.inputOf
+            congr 1
+            ext w'
+            simp only [Finset.mem_filter]
+            refine ⟨fun ⟨hm, hh⟩ => ⟨hm, by rw [h_inputs_post w'] at hh; exact hh⟩,
+                    fun ⟨hm, hh⟩ => ⟨hm, by rw [h_inputs_post w']; exact hh⟩⟩
+          have h_rank_w : (D.step P μ v w).1.rank = (D w).1.rank := by
+            by_cases hwμ : w = μ
+            · rw [hwμ, h_μ_post]
+            · by_cases hwv : w = v
+              · rw [hwv, h_v_post]
+              · rw [show (D.step P μ v w).1 = (D w).1 from
+                  congrArg Prod.fst (h_others_post w hwμ hwv)]
+          rw [h_inputs_post w, h_rank_w, h_nA]
+          exact hS.input_rank w
+        · intro w
+          rw [h_maj, hMaj_outT]
+          by_cases hwμ : w = μ
+          · rw [hwμ]
+            show (D.step P μ v μ).1.answer = .outT
+            rw [h_μ_post]
+          · by_cases hwv : w = v
+            · rw [hwv]
+              show (D.step P μ v v).1.answer = .outT
+              rw [h_v_post]
+            · rw [show (D.step P μ v w).1 = (D w).1 from
+                congrArg Prod.fst (h_others_post w hwμ hwv)]
+              by_cases hw_ans : (D w).1.answer = majorityAnswer D
+              · rw [hw_ans, hMaj_outT]
+              · exfalso
+                apply hwv
+                apply hS.toInSrank.ranks_inj
+                exact Fin.ext (Nat.add_right_cancel ((hNonUpper w hw_ans).trans hv_upper.symm))
+
 end GenericTimerDrain
 
 end SSEM

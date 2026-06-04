@@ -67,6 +67,25 @@ Verification:
 Result: passed. No semantic `trank = Rmax` dependency encountered in this
 layer.
 
+## 2026-06-04 codex generic-trank reset-trigger checkpoint
+
+Ported the timer-zero reset trigger over
+`PEMProtocol n trank Rmax Emax Dmax hn0`:
+
+- `generic_PEM_expected_reset_trigger_v2`
+
+The invariant step uses the generic rank/timer/median-answer helpers.  The
+non-upper wrong-answer branch transfers the coupled CRS one-step lemma through
+`InSrank` step equality; the upper-median-only branch uses the existing
+`trank`-parameterized median-pair transition lemmas.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.
+
 ## 2026-06-04 codex generic-trank productive timer-drain checkpoint
 
 Ported the productive drain endpoint over
