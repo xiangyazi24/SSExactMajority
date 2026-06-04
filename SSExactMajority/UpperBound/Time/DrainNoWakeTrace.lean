@@ -367,34 +367,32 @@ The `hLoadCert` hypothesis is the codex-proved deterministic connector:
 on any deterministic no-wake prefix from the fixed fresh start `C₀`, the
 wake-load certificate holds at the endpoint of that prefix. -/
 theorem drain_probHitWithin_le_choose
-    {n Rmax Emax Dmax K : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : 0 < Dmax)
+    {n Rmax Emax Dmax K d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d) (hd : d ≤ Dmax)
     {C₀ : Config (AgentState n) Opinion n}
-    (hFresh :
-      ∀ a : Fin n,
-        (C₀ a).1.role = .Resetting ∧
-        (C₀ a).1.delaytimer = Dmax)
+    (hAll : AllAgentsResetting C₀)
     (hLoadCert :
       ∀ γ : DetScheduler n, ∀ T : ℕ,
         (∀ s : ℕ, s ≤ T →
           ¬ SomeAgentAwake
             (execution (PEMProtocol n 1 Rmax Emax Dmax hn) C₀ γ s)) →
-        WakeLoadCertificateAt Dmax γ T
+        WakeLoadCertificateAt d γ T
           (execution (PEMProtocol n 1 Rmax Emax Dmax hn) C₀ γ T)) :
     Probability.ProbHitWithin
         (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C₀ SomeAgentAwake K
       ≤
-        (n : ENNReal) * (Nat.choose K Dmax : ENNReal) *
-          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ Dmax) := by
+        (n : ENNReal) * (Nat.choose K d : ENNReal) *
+          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ d) := by
   classical
+  have hDmax : 0 < Dmax := Nat.lt_of_lt_of_le hd_pos hd
   have hInitNoAwake : ¬ SomeAgentAwake C₀ := by
     rintro ⟨a, ha⟩
-    exact ha (hFresh a).1
+    exact ha (hAll a)
 
   apply drain_probHitWithin_le_choose_of_support_cert
     (hn := hn) (hn2 := hn2)
     (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-    (K := K) (C₀ := C₀)
+    (K := K) (d := d) (C₀ := C₀)
 
   intro S hSupp hHit
   rcases schedulerTraceDist_support_hit_true_to_first_someAgentAwakeBeforeK
@@ -405,7 +403,7 @@ theorem drain_probHitWithin_le_choose
   rcases hfirst with ⟨t, htK, hNoPrefix, hAwakeNext⟩
 
   have hCertAt :
-      WakeLoadCertificateAt Dmax γ t
+      WakeLoadCertificateAt d γ t
         (execution (PEMProtocol n 1 Rmax Emax Dmax hn) C₀ γ t) :=
     hLoadCert γ t hNoPrefix
 
@@ -423,16 +421,16 @@ theorem drain_probHitWithin_le_choose
 
   have hCertified :
       CertifiedWakeBeforeK
-        (PEMProtocol n 1 Rmax Emax Dmax hn) Dmax C₀ γ K := by
+        (PEMProtocol n 1 Rmax Emax Dmax hn) d C₀ γ K := by
     exact ⟨t, htK, w, hCertAt, hTimeout⟩
 
   rcases certified_wake_before_K_implies_high_load
       (P := PEMProtocol n 1 Rmax Emax Dmax hn)
-      (Dmax := Dmax) (C₀ := C₀) (γ := γ) (K := K)
+      (d := d) (C₀ := C₀) (γ := γ) (K := K)
       hCertified with
     ⟨a, ha⟩
 
-  change ∃ a : Fin n, Dmax ≤ prefixSelectionCount S.2 a
+  change ∃ a : Fin n, d ≤ prefixSelectionCount S.2 a
   exact ⟨a, by simpa [hcount a] using ha⟩
 
 /-- Unconditional drain/no-wake binomial tail from a fresh all-Resetting start.
@@ -441,26 +439,27 @@ The deterministic load-certificate hypothesis in
 `drain_probHitWithin_le_choose` is discharged by the proven PEM no-wake-prefix
 certificate. -/
 theorem drain_probHitWithin_le_choose_unconditional
-    {n Rmax Emax Dmax K : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : 0 < Dmax)
+    {n Rmax Emax Dmax K d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d) (hd : d ≤ Dmax)
     {C₀ : Config (AgentState n) Opinion n}
-    (hFresh :
-      ∀ a : Fin n,
-        (C₀ a).1.role = .Resetting ∧
-        (C₀ a).1.delaytimer = Dmax) :
+    (hAll : AllAgentsResetting C₀)
+    (hDormantBudget :
+      ∀ a : Fin n, (C₀ a).1.resetcount = 0 → d ≤ (C₀ a).1.delaytimer) :
     Probability.ProbHitWithin
         (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C₀ SomeAgentAwake K
       ≤
-        (n : ENNReal) * (Nat.choose K Dmax : ENNReal) *
-          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ Dmax) := by
+        (n : ENNReal) * (Nat.choose K d : ENNReal) *
+          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ d) := by
+  have hDmax : 0 < Dmax := Nat.lt_of_lt_of_le hd_pos hd
   apply drain_probHitWithin_le_choose
-    (hn := hn) (hn2 := hn2) (hDmax := hDmax)
+    (hn := hn) (hn2 := hn2) (hd_pos := hd_pos) (hd := hd)
     (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-    (K := K) (C₀ := C₀) hFresh
+    (K := K) (d := d) (C₀ := C₀) hAll
   intro γ T hNoAwakePrefix
   exact
     wake_load_certificate_PEM_on_no_wake_prefix
       (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-      (K := T) hn hDmax C₀ γ hFresh hNoAwakePrefix T le_rfl
+      (K := T) (d := d) hn hDmax hd C₀ γ hAll
+      hDormantBudget hNoAwakePrefix T le_rfl
 
 end SSEM

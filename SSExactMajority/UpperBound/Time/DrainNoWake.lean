@@ -14,8 +14,8 @@ This is the delay-timer analogue of `DisruptionTail.lean`.
 
 The invariant is:
 
-  for every agent still in role `Resetting`,
-    Dmax ≤ delaytimer + selectionCount γ a t.
+  for every dormant agent still in role `Resetting` with `resetcount = 0`,
+    d ≤ delaytimer + selectionCount γ a t.
 
 When a selected dormant resetting agent decrements its delaytimer by one,
 the selected-count term increases by one, so the sum is preserved.  When
@@ -59,34 +59,42 @@ theorem not_someAgentAwake_iff_allAgentsResetting
     rcases hAwake with ⟨a, ha⟩
     exact ha (h a)
 
+/-- Dormant resetting agents are exactly the agents whose delay timer can be
+decremented by `processAgent`. -/
+def DormantResetting
+    (C : Config (AgentState n) Opinion n) (a : Fin n) : Prop :=
+  (C a).1.role = .Resetting ∧ (C a).1.resetcount = 0
+
 /-- The wake-load certificate at a concrete configuration/time.
 
-For every agent still in the resetting/draining phase, the residual
-delaytimer plus the number of scheduler selections already charged to that
-agent is at least the fresh delay value `Dmax`. -/
+For every dormant resetting agent, the residual delaytimer plus the number of
+scheduler selections already charged to that agent is at least the budget `d`.
+Positive-resetcount resetting agents are not charged: `processAgent` does not
+decrement their delaytimer, and when they become dormant they are refreshed to
+`Dmax`. -/
 def WakeLoadCertificateAt
-    (Dmax : ℕ) (γ : DetScheduler n) (t : ℕ)
+    (d : ℕ) (γ : DetScheduler n) (t : ℕ)
     (C : Config (AgentState n) Opinion n) : Prop :=
   ∀ a : Fin n,
-    (C a).1.role = .Resetting →
-      Dmax ≤ (C a).1.delaytimer + selectionCount γ a t
+    DormantResetting C a →
+      d ≤ (C a).1.delaytimer + selectionCount γ a t
 
 /-- A one-step abstract condition sufficient to propagate the wake-load
 certificate.
 
-Each post-step `Resetting` agent is either freshly assigned a delaytimer at
-least `Dmax`, or came from a pre-step `Resetting` agent whose delaytimer
-dropped by at most one if that agent was selected at this step.
+Each post-step dormant resetting agent is either assigned enough fresh delay
+budget, or came from a pre-step dormant resetting agent whose delaytimer dropped
+by at most one if that agent was selected at this step.
 
 This is the exact place where the concrete `processAgent` proof should feed
 in the `rc = 0` and partner-resetting facts. -/
 def WakeDelaytimerStepOK
-    (Dmax : ℕ) (γ : DetScheduler n) (t : ℕ)
+    (d : ℕ) (γ : DetScheduler n) (t : ℕ)
     (C C' : Config (AgentState n) Opinion n) : Prop :=
   ∀ a : Fin n,
-    (C' a).1.role = .Resetting →
-      Dmax ≤ (C' a).1.delaytimer ∨
-        ((C a).1.role = .Resetting ∧
+    DormantResetting C' a →
+      d ≤ (C' a).1.delaytimer ∨
+        (DormantResetting C a ∧
           (C a).1.delaytimer ≤
             (C' a).1.delaytimer +
               (if selectedAt γ a t then 1 else 0))
@@ -95,15 +103,15 @@ def WakeDelaytimerStepOK
 
 This is the delaytimer analogue of `ErrorLoadCertificateAt.step`. -/
 theorem WakeLoadCertificateAt.step
-    {Dmax : ℕ} {γ : DetScheduler n} {t : ℕ}
+    {d : ℕ} {γ : DetScheduler n} {t : ℕ}
     {C C' : Config (AgentState n) Opinion n}
-    (hcert : WakeLoadCertificateAt Dmax γ t C)
-    (hstep : WakeDelaytimerStepOK Dmax γ t C C') :
-    WakeLoadCertificateAt Dmax γ (t + 1) C' := by
+    (hcert : WakeLoadCertificateAt d γ t C)
+    (hstep : WakeDelaytimerStepOK d γ t C C') :
+    WakeLoadCertificateAt d γ (t + 1) C' := by
   classical
-  intro a haRes
+  intro a haDorm
   have hsucc := selectionCount_succ γ a t
-  rcases hstep a haRes with hfresh | hprev
+  rcases hstep a haDorm with hfresh | hprev
   · rw [hsucc]
     omega
   · rcases hprev with ⟨haResOld, hdrop⟩
@@ -116,22 +124,21 @@ theorem WakeLoadCertificateAt.step
 /-- Initial configurations whose existing `Resetting` agents already have a
 fresh enough delaytimer satisfy the time-0 wake-load certificate. -/
 theorem initial_wake_load_certificate
-    {Dmax : ℕ} {γ : DetScheduler n}
+    {d : ℕ} {γ : DetScheduler n}
     {C : Config (AgentState n) Opinion n}
     (hinit : ∀ a : Fin n,
-      (C a).1.role = .Resetting → Dmax ≤ (C a).1.delaytimer) :
-    WakeLoadCertificateAt Dmax γ 0 C := by
+      DormantResetting C a → d ≤ (C a).1.delaytimer) :
+    WakeLoadCertificateAt d γ 0 C := by
   intro a ha
   simpa [selectionCount] using hinit a ha
 
-/-- Common fresh-start specialization: every resetting agent starts with
-delaytimer exactly `Dmax`. -/
+/-- Common fresh-start specialization for dormant resetting agents. -/
 theorem initial_wake_load_certificate_eq
-    {Dmax : ℕ} {γ : DetScheduler n}
+    {d : ℕ} {γ : DetScheduler n}
     {C : Config (AgentState n) Opinion n}
     (hinit : ∀ a : Fin n,
-      (C a).1.role = .Resetting → (C a).1.delaytimer = Dmax) :
-    WakeLoadCertificateAt Dmax γ 0 C := by
+      DormantResetting C a → (C a).1.delaytimer = d) :
+    WakeLoadCertificateAt d γ 0 C := by
   apply initial_wake_load_certificate
   intro a ha
   rw [hinit a ha]
@@ -143,28 +150,28 @@ def WakeTimeoutSelectedAt
     (γ : DetScheduler n) (t : ℕ)
     (C : Config (AgentState n) Opinion n) (a : Fin n) : Prop :=
   selectedAt γ a t ∧
-    (C a).1.role = .Resetting ∧
+    DormantResetting C a ∧
       (C a).1.delaytimer ≤ 1
 
 /-- Certified wake before `K`, packaged with the load certificate at the
 pre-wake time.  This is the direct analogue of `DisruptionBeforeK`. -/
 def CertifiedWakeBeforeK
     (P : Protocol (AgentState n) Opinion Output)
-    (Dmax : ℕ) (C₀ : Config (AgentState n) Opinion n)
+    (d : ℕ) (C₀ : Config (AgentState n) Opinion n)
     (γ : DetScheduler n) (K : ℕ) : Prop :=
   ∃ t : ℕ, t < K ∧
     ∃ a : Fin n,
-      WakeLoadCertificateAt Dmax γ t (execution P C₀ γ t) ∧
+      WakeLoadCertificateAt d γ t (execution P C₀ γ t) ∧
         WakeTimeoutSelectedAt γ t (execution P C₀ γ t) a
 
 /-- Certified load extraction: if a wake timeout happens before `K`, then
-some agent was selected at least `Dmax` times in the first `K` steps. -/
+some agent was selected at least `d` times in the first `K` steps. -/
 theorem certified_wake_before_K_implies_high_load
     {P : Protocol (AgentState n) Opinion Output}
-    {Dmax : ℕ} {C₀ : Config (AgentState n) Opinion n}
+    {d : ℕ} {C₀ : Config (AgentState n) Opinion n}
     {γ : DetScheduler n} {K : ℕ}
-    (hW : CertifiedWakeBeforeK P Dmax C₀ γ K) :
-    ∃ a : Fin n, Dmax ≤ selectionCount γ a K := by
+    (hW : CertifiedWakeBeforeK P d C₀ γ K) :
+    ∃ a : Fin n, d ≤ selectionCount γ a K := by
   rcases hW with ⟨t, htK, a, hcert, htimeout⟩
   rcases htimeout with ⟨hsel, haRes, haDelay⟩
   refine ⟨a, ?_⟩
@@ -217,17 +224,17 @@ Conclusion: some agent has scheduler load at least `Dmax` in the length-`K`
 prefix. -/
 theorem wake_before_K_implies_high_load
     {P : Protocol (AgentState n) Opinion Output}
-    {Dmax : ℕ} {C₀ : Config (AgentState n) Opinion n}
+    {d : ℕ} {C₀ : Config (AgentState n) Opinion n}
     {γ : DetScheduler n} {K : ℕ}
     (hWake : SomeAgentAwakeBeforeK P C₀ γ K)
     (hcert :
       ∀ t : ℕ, t < K →
-        WakeLoadCertificateAt Dmax γ t (execution P C₀ γ t))
+        WakeLoadCertificateAt d γ t (execution P C₀ γ t))
     (hwitness :
       ∀ t : ℕ, t < K →
         SomeAgentAwakeStepWitness γ t
           (execution P C₀ γ t) (execution P C₀ γ (t + 1))) :
-    ∃ a : Fin n, Dmax ≤ selectionCount γ a K := by
+    ∃ a : Fin n, d ≤ selectionCount γ a K := by
   rcases hWake with ⟨t, htK, hnotAwake, hAwakeNext⟩
   rcases hwitness t htK hnotAwake hAwakeNext with ⟨a, htimeout⟩
   rcases htimeout with ⟨hsel, haRes, haDelay⟩

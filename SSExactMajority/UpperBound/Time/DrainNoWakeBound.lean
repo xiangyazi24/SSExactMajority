@@ -111,7 +111,7 @@ the support-restricted pathwise certificate.
 The missing remaining work is exactly the proof of `hcert` from
 `schedulerTraceDist` support plus the deterministic drain certificate. -/
 theorem drain_probHitWithin_le_choose_of_support_cert
-    {n Rmax Emax Dmax K : ℕ}
+    {n Rmax Emax Dmax K d : ℕ}
     (hn : 0 < n) (hn2 : 2 ≤ n)
     (C₀ : Config (AgentState n) Opinion n)
     (hcert :
@@ -120,12 +120,12 @@ theorem drain_probHitWithin_le_choose_of_support_cert
           (Probability.schedulerTraceDist
             (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C₀ SomeAgentAwake K).support →
           S.1.2 = true →
-            PrefixHighLoad S.2 Dmax) :
+            PrefixHighLoad S.2 d) :
     Probability.ProbHitWithin
         (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C₀ SomeAgentAwake K
       ≤
-        (n : ENNReal) * (Nat.choose K Dmax : ENNReal) *
-          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ Dmax) := by
+        (n : ENNReal) * (Nat.choose K d : ENNReal) *
+          (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ d) := by
   exact
     Probability.ProbHitWithin_le_schedulerPrefix_high_load_choose_of_support
       (P := PEMProtocol n 1 Rmax Emax Dmax hn)
@@ -133,7 +133,7 @@ theorem drain_probHitWithin_le_choose_of_support_cert
       (C₀ := C₀)
       (Goal := SomeAgentAwake)
       (K := K)
-      (r := Dmax)
+      (r := d)
       hcert
 
 end SSEM

@@ -59,6 +59,38 @@ theorem propagateReset_all_resetting_snd_stays_of_delay_gt_one
     and_self, ite_false, ite_true]
   repeat' split_ifs <;> simp_all [resetOSSR] <;> omega
 
+set_option maxHeartbeats 2000000 in
+/-- Positive-resetcount first endpoint cannot wake in an all-resetting
+interaction. If synchronization makes it dormant, `processAgent` refreshes its
+delaytimer to `Dmax`, so `0 < Dmax` keeps it Resetting. -/
+theorem propagateReset_all_resetting_fst_stays_of_resetcount_ne_zero
+    {Emax Dmax : ℕ} {hn : 0 < n}
+    {s0 s1 : AgentState n}
+    (hDmax : 0 < Dmax)
+    (hs0 : s0.role = .Resetting)
+    (hs1 : s1.role = .Resetting)
+    (hrc : s0.resetcount ≠ 0) :
+    (propagateReset Emax Dmax hn s0 s1).1.role = .Resetting := by
+  unfold propagateReset processAgent
+  simp only [hs0, hs1, ne_eq, not_true_eq_false, and_false,
+    and_self, ite_false, ite_true]
+  repeat' split_ifs <;> simp_all [resetOSSR] <;> omega
+
+set_option maxHeartbeats 2000000 in
+/-- Symmetric positive-resetcount no-wake lemma for the second endpoint. -/
+theorem propagateReset_all_resetting_snd_stays_of_resetcount_ne_zero
+    {Emax Dmax : ℕ} {hn : 0 < n}
+    {s0 s1 : AgentState n}
+    (hDmax : 0 < Dmax)
+    (hs0 : s0.role = .Resetting)
+    (hs1 : s1.role = .Resetting)
+    (hrc : s1.resetcount ≠ 0) :
+    (propagateReset Emax Dmax hn s0 s1).2.role = .Resetting := by
+  unfold propagateReset processAgent
+  simp only [hs0, hs1, ne_eq, not_true_eq_false, and_false,
+    and_self, ite_false, ite_true]
+  repeat' split_ifs <;> simp_all [resetOSSR] <;> omega
+
 /-- The first endpoint remains resetting after the concrete ranking subprotocol
 when all endpoints were resetting and its delaytimer was still greater than
 `1`. -/
@@ -92,6 +124,42 @@ theorem rankDeltaOSSR_all_resetting_snd_stays_of_delay_gt_one
     propagateReset_all_resetting_snd_stays_of_delay_gt_one
       (Emax := Emax) (Dmax := Dmax) (hn := hn)
       hDmax hs0 hs1 hdelay
+  unfold rankDeltaOSSR
+  simp only [hs0, hs1, true_or, ite_true]
+  repeat' split_ifs <;> simp_all
+
+/-- The first endpoint remains resetting after the concrete ranking subprotocol
+when all endpoints were resetting and its resetcount was positive. -/
+theorem rankDeltaOSSR_all_resetting_fst_stays_of_resetcount_ne_zero
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s0 s1 : AgentState n}
+    (hDmax : 0 < Dmax)
+    (hs0 : s0.role = .Resetting)
+    (hs1 : s1.role = .Resetting)
+    (hrc : s0.resetcount ≠ 0) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s0, s1)).1.role = .Resetting := by
+  have hpr :
+      (propagateReset Emax Dmax hn s0 s1).1.role = .Resetting :=
+    propagateReset_all_resetting_fst_stays_of_resetcount_ne_zero
+      (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax hs0 hs1 hrc
+  simpa [rankDeltaOSSR, hs0, hs1] using hpr
+
+set_option maxHeartbeats 2000000 in
+/-- Symmetric rankDelta positive-resetcount no-wake lemma. -/
+theorem rankDeltaOSSR_all_resetting_snd_stays_of_resetcount_ne_zero
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s0 s1 : AgentState n}
+    (hDmax : 0 < Dmax)
+    (hs0 : s0.role = .Resetting)
+    (hs1 : s1.role = .Resetting)
+    (hrc : s1.resetcount ≠ 0) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s0, s1)).2.role = .Resetting := by
+  have hpr :
+      (propagateReset Emax Dmax hn s0 s1).2.role = .Resetting :=
+    propagateReset_all_resetting_snd_stays_of_resetcount_ne_zero
+      (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax hs0 hs1 hrc
   unfold rankDeltaOSSR
   simp only [hs0, hs1, true_or, ite_true]
   repeat' split_ifs <;> simp_all
@@ -228,6 +296,55 @@ theorem transitionPEM_all_resetting_snd_stays_of_delay_gt_one
       (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
       (s0 := s0) (s1 := s1) (x0 := x0) (x1 := x1) hrd
 
+/-- Positive-resetcount first endpoint remains Resetting through the full PEM
+transition in an all-resetting interaction. -/
+theorem transitionPEM_all_resetting_fst_stays_of_resetcount_ne_zero
+    {Rmax Emax Dmax trank : ℕ} {hn : 0 < n}
+    {q0 q1 : AgentState n × Opinion}
+    (hDmax : 0 < Dmax)
+    (h0 : q0.1.role = .Resetting)
+    (h1 : q1.1.role = .Resetting)
+    (hrc : q0.1.resetcount ≠ 0) :
+    (transitionPEM n trank Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn) (q0, q1)).1.role = .Resetting := by
+  rcases q0 with ⟨s0, x0⟩
+  rcases q1 with ⟨s1, x1⟩
+  have hrd :
+      (rankDeltaOSSR Rmax Emax Dmax hn (s0, s1)).1.role =
+        .Resetting :=
+    rankDeltaOSSR_all_resetting_fst_stays_of_resetcount_ne_zero
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax h0 h1 hrc
+  exact
+    transitionPEM_fst_role_resetting_of_rankDelta_fst_role_resetting
+      (n := n) (trank := trank) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+      (s0 := s0) (s1 := s1) (x0 := x0) (x1 := x1) hrd
+
+/-- Symmetric full PEM positive-resetcount no-wake lemma. -/
+theorem transitionPEM_all_resetting_snd_stays_of_resetcount_ne_zero
+    {Rmax Emax Dmax trank : ℕ} {hn : 0 < n}
+    {q0 q1 : AgentState n × Opinion}
+    (hDmax : 0 < Dmax)
+    (h0 : q0.1.role = .Resetting)
+    (h1 : q1.1.role = .Resetting)
+    (hrc : q1.1.resetcount ≠ 0) :
+    (transitionPEM n trank Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn) (q0, q1)).2.role = .Resetting := by
+  rcases q0 with ⟨s0, x0⟩
+  rcases q1 with ⟨s1, x1⟩
+  have hrd :
+      (rankDeltaOSSR Rmax Emax Dmax hn (s0, s1)).2.role =
+        .Resetting :=
+    rankDeltaOSSR_all_resetting_snd_stays_of_resetcount_ne_zero
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax h0 h1 hrc
+  exact
+    transitionPEM_snd_role_resetting_of_rankDelta_snd_role_resetting
+      (n := n) (trank := trank) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+      (s0 := s0) (s1 := s1) (x0 := x0) (x1 := x1) hrd
+
 /-- Concrete protocol-semantic discharge of `SomeAgentAwakeStepWitness` for the
 `protocolPEM` spelling.
 
@@ -251,45 +368,78 @@ theorem someAgentAwakeStepWitness_protocolPEM
   by_cases hwu : w = (γ t).1
   · refine ⟨w, ?_⟩
     unfold WakeTimeoutSelectedAt
-    refine ⟨Or.inl hwu, hall w, ?_⟩
-    by_contra hle
-    have hgt : 1 < (C w).1.delaytimer := by omega
-    subst w
-    have hpostRole :
-        ((C.step
-          (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
-          (γ t).1 (γ t).2 (γ t).1).1.role = .Resetting) := by
-      by_cases huv : (γ t).1 = (γ t).2
-      · simpa [Config.step, huv] using hall (γ t).1
-      · simpa [Config.step, huv, protocolPEM] using
-          transitionPEM_all_resetting_fst_stays_of_delay_gt_one
-            (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-            (trank := 1) (hn := hn)
-            (q0 := C (γ t).1) (q1 := C (γ t).2)
-            hDmax (hall (γ t).1) (hall (γ t).2) hgt
-    exact hwAwake hpostRole
+    by_cases hrc : (C w).1.resetcount = 0
+    · refine ⟨Or.inl hwu, ⟨hall w, hrc⟩, ?_⟩
+      by_contra hle
+      have hgt : 1 < (C w).1.delaytimer := by omega
+      subst w
+      have hpostRole :
+          ((C.step
+            (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
+            (γ t).1 (γ t).2 (γ t).1).1.role = .Resetting) := by
+        by_cases huv : (γ t).1 = (γ t).2
+        · simpa [Config.step, huv] using hall (γ t).1
+        · simpa [Config.step, huv, protocolPEM] using
+            transitionPEM_all_resetting_fst_stays_of_delay_gt_one
+              (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              (trank := 1) (hn := hn)
+              (q0 := C (γ t).1) (q1 := C (γ t).2)
+              hDmax (hall (γ t).1) (hall (γ t).2) hgt
+      exact hwAwake hpostRole
+    · exfalso
+      subst w
+      have hpostRole :
+          ((C.step
+            (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
+            (γ t).1 (γ t).2 (γ t).1).1.role = .Resetting) := by
+        by_cases huv : (γ t).1 = (γ t).2
+        · simpa [Config.step, huv] using hall (γ t).1
+        · simpa [Config.step, huv, protocolPEM] using
+            transitionPEM_all_resetting_fst_stays_of_resetcount_ne_zero
+              (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              (trank := 1) (hn := hn)
+              (q0 := C (γ t).1) (q1 := C (γ t).2)
+              hDmax (hall (γ t).1) (hall (γ t).2) hrc
+      exact hwAwake hpostRole
 
   · by_cases hwv : w = (γ t).2
     · refine ⟨w, ?_⟩
       unfold WakeTimeoutSelectedAt
-      refine ⟨Or.inr hwv, hall w, ?_⟩
-      by_contra hle
-      have hgt : 1 < (C w).1.delaytimer := by omega
-      subst w
-      have huv : (γ t).1 ≠ (γ t).2 := by
-        intro h
-        exact hwu h.symm
-      have hpostRole :
-          ((C.step
-            (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
-            (γ t).1 (γ t).2 (γ t).2).1.role = .Resetting) := by
-        simpa [Config.step, huv, hwu, protocolPEM] using
-          transitionPEM_all_resetting_snd_stays_of_delay_gt_one
-            (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-            (trank := 1) (hn := hn)
-            (q0 := C (γ t).1) (q1 := C (γ t).2)
-            hDmax (hall (γ t).1) (hall (γ t).2) hgt
-      exact hwAwake hpostRole
+      by_cases hrc : (C w).1.resetcount = 0
+      · refine ⟨Or.inr hwv, ⟨hall w, hrc⟩, ?_⟩
+        by_contra hle
+        have hgt : 1 < (C w).1.delaytimer := by omega
+        subst w
+        have huv : (γ t).1 ≠ (γ t).2 := by
+          intro h
+          exact hwu h.symm
+        have hpostRole :
+            ((C.step
+              (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
+              (γ t).1 (γ t).2 (γ t).2).1.role = .Resetting) := by
+          simpa [Config.step, huv, hwu, protocolPEM] using
+            transitionPEM_all_resetting_snd_stays_of_delay_gt_one
+              (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              (trank := 1) (hn := hn)
+              (q0 := C (γ t).1) (q1 := C (γ t).2)
+              hDmax (hall (γ t).1) (hall (γ t).2) hgt
+        exact hwAwake hpostRole
+      · exfalso
+        subst w
+        have huv : (γ t).1 ≠ (γ t).2 := by
+          intro h
+          exact hwu h.symm
+        have hpostRole :
+            ((C.step
+              (protocolPEM n 1 Rmax (rankDeltaOSSR Rmax Emax Dmax hn))
+              (γ t).1 (γ t).2 (γ t).2).1.role = .Resetting) := by
+          simpa [Config.step, huv, hwu, protocolPEM] using
+            transitionPEM_all_resetting_snd_stays_of_resetcount_ne_zero
+              (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+              (trank := 1) (hn := hn)
+              (q0 := C (γ t).1) (q1 := C (γ t).2)
+              hDmax (hall (γ t).1) (hall (γ t).2) hrc
+        exact hwAwake hpostRole
 
     · exfalso
       have hpostRole :

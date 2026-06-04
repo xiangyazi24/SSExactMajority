@@ -137,3 +137,61 @@ Keystone conclusion status: unchanged. The theorem
 `SSEM.PEM_expectedParallelTime_On_faithful` still concludes the same bound
 with reset probability `p_reset * (pE / 2)` and the same global window
 `OW_globalWindow n C_rank PEM_trank1_timer (K_reset + K_bridge) T_rank T_rerank`.
+
+## Wake-Budget Result
+
+- Replaced the exact-fresh target with `SSEM.ResetSeedWithWakeBudget`, charging
+  only dormant agents (`role = Resetting` and `resetcount = 0`) with budget `d`.
+- Generalized `SSEM.WakeLoadCertificateAt` and the PEM no-wake certificate to
+  `d ≤ Dmax`, including the positive-resetcount and recruitment refresh cases.
+- Generalized the unconditional drain tail to
+  `n * choose K d * (2/n)^d`.
+- Threaded `d` through the answer-epidemic bridge and the faithful keystone.
+  The keystone expected-time conclusion keeps the same global window and
+  probability factor `p_reset * (pE / 2)`.
+- `FreshResetSeedTarget` is gone from `SSExactMajority/`.
+- No `sorry`, `axiom`, or `native_decide` in the touched Lean files.
+
+## Wake-Budget Theorems
+
+- `SSEM.WakeLoadCertificateAt`:
+  `SSExactMajority/UpperBound/Time/DrainNoWake.lean:75`
+- `SSEM.wake_load_certificate_PEM_on_no_wake_prefix`:
+  `SSExactMajority/UpperBound/Time/DrainNoWakeCert.lean:685`
+- `SSEM.drain_probHitWithin_le_choose_unconditional`:
+  `SSExactMajority/UpperBound/Time/DrainNoWakeTrace.lean:441`
+- `SSEM.no_wake_prob_ge_half`:
+  `SSExactMajority/UpperBound/Time/AnswerEpidemicBridge.lean:44`
+- `SSEM.answer_epidemic_bridge_from_fresh_resetting`:
+  `SSExactMajority/UpperBound/Time/AnswerEpidemicBridge.lean:115`
+- `SSEM.ResetSeedWithWakeBudget`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:18`
+- `SSEM.CRSReset12Faithful`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:34`
+- `SSEM.faithful_reset_to_phiGoal`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:52`
+- `SSEM.crsReset12Faithful_to_generic`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:100`
+- `SSEM.PEM_expectedParallelTime_On_faithful`:
+  `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:176`
+
+## Wake-Budget Verification
+
+```bash
+/data/home/xhuan5/.elan/bin/elan run leanprover/lean4:v4.30.0 lake build SSExactMajority.UpperBound.Time.OptimalWindowsFaithful
+```
+
+Result: build completed successfully.
+
+Fresh `#print axioms` for
+`wake_load_certificate_PEM_on_no_wake_prefix`,
+`drain_probHitWithin_le_choose_unconditional`,
+`answer_epidemic_bridge_from_fresh_resetting`,
+`faithful_reset_to_phiGoal`, `crsReset12Faithful_to_generic`, and
+`PEM_expectedParallelTime_On_faithful`:
+`[propext, Classical.choice, Quot.sound]`.
+
+O(n) status: unchanged and still genuinely O(n) under the same window
+assumptions. The final faithful theorem still bounds expected parallel time by
+the existing `OW_globalWindow ... (K_reset + K_bridge) ...` divided by `n`,
+with constant probability factor `(p_reset * (pE / 2)) * 128⁻¹`.

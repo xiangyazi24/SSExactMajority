@@ -6,28 +6,34 @@ namespace SSEM
 
 open scoped BigOperators ENNReal
 
-/-- Fresh reset-seed target delivered by the faithful reset-completion
-citation: the answer epidemic has a valid seed, and every agent has been
-freshly reset with delay timer `Dmax`. -/
-def FreshResetSeedTarget {n : ℕ} (Dmax : ℕ) (m : Answer)
+/-- Reachable reset-seed target delivered by the faithful reset-completion
+citation: the answer epidemic has a valid seed, all agents are still resetting,
+and every dormant agent has remaining wake budget at least `d`.
+
+This replaces the too-strong simultaneous `delaytimer = Dmax` target.  It is the
+faithful [12] fresh-seed condition for the implementation: positive-resetcount
+agents do not spend delay budget, and whenever an agent becomes dormant through
+reset propagation or recruitment, `processAgent`/`propagateReset` refreshes its
+delaytimer to `Dmax`, so any budget `d ≤ Dmax` is available to dormant agents. -/
+def ResetSeedWithWakeBudget {n : ℕ} (d : ℕ) (m : Answer)
     (C : Config (AgentState n) Opinion n) : Prop :=
   EpidemicRegion m C ∧
-    ∀ a : Fin n, (C a).1.role = .Resetting ∧ (C a).1.delaytimer = Dmax
+    AllAgentsResetting C ∧
+      ∀ a : Fin n, (C a).1.resetcount = 0 → d ≤ (C a).1.delaytimer
 
 /-- Faithful [12]-cited reset-completion contract.
 
-The cited reset window delivers a fresh epidemic-region reset seed. It does
+The cited reset window delivers a reachable epidemic-region reset seed. It does
 not cite the PEM-specific answer-epidemic completion; that completion is
 proved separately by `answer_epidemic_bridge_from_fresh_resetting`.
 
-The fresh target is the simultaneous stopping event delivered by the [12]
-reset mechanics for PEM: `processAgent` sets `delaytimer := Dmax` in the
-resetting `oldRc > 0` branch, and reset recruitment assigns
-`delaytimer := Dmax` to agents newly recruited into `Resetting`. Thus when the
-reset epidemic has completed, every agent is freshly in role `Resetting` with
-delay timer `Dmax`; this is the [12]-cited fresh-seed stopping time used here. -/
+The target is intentionally a wake-budget seed, not simultaneous
+`delaytimer = Dmax`: dormant resetting agents are exactly the agents whose
+delaytimer can be decremented, while positive-resetcount resetting agents do not
+spend delay budget before becoming dormant. -/
 structure CRSReset12Faithful {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
-    (p_reset : ENNReal) (C_reset K_reset : ℕ) : Prop where
+    (d : ℕ) (p_reset : ENNReal) (C_reset K_reset : ℕ) : Prop where
+  wakeBudget_le_Dmax : d ≤ Dmax
   resetProb_pos : 0 < p_reset
   resetProb_le_one : p_reset ≤ 1
   resetConstant_pos : 0 < C_reset
@@ -39,21 +45,21 @@ structure CRSReset12Faithful {n Rmax Emax Dmax : ℕ} (hn : 0 < n)
         p_reset ≤
           Probability.ProbHitWithin
             (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C
-            (FreshResetSeedTarget Dmax (majorityAnswer C)) K_reset
+            (ResetSeedWithWakeBudget d (majorityAnswer C)) K_reset
 
 /-- Compose the faithful [12] fresh-reset seed reachability with the proven
 answer-epidemic bridge at `trank = 1`. -/
 theorem faithful_reset_to_phiGoal
-    {n Rmax Emax Dmax K_reset K_bridge C_reset : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : n ≤ Dmax)
+    {n Rmax Emax Dmax K_reset K_bridge C_reset d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d)
     {p_reset pE : ENNReal}
     (h12reset :
       CRSReset12Faithful (n := n) (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) hn p_reset C_reset K_reset)
+        (Dmax := Dmax) hn d p_reset C_reset K_reset)
     (epidemicFast :
       StandardEpidemicFastHypothesisPEM
         n Rmax Emax Dmax K_bridge hn hn2 pE)
-    (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2) :
+    (hTail : drainNoWakeTail n K_bridge d ≤ pE / 2) :
     ∀ C : Config (AgentState n) Opinion n,
       WellFormed 1 Rmax Emax Dmax C →
       CorrectResetSeed C →
@@ -68,10 +74,9 @@ theorem faithful_reset_to_phiGoal
   let P : Protocol (AgentState n) Opinion Output :=
     PEMProtocol n 1 Rmax Emax Dmax hn
   let Mid : Config (AgentState n) Opinion n → Prop :=
-    FreshResetSeedTarget Dmax (majorityAnswer C)
+    ResetSeedWithWakeBudget d (majorityAnswer C)
   let Goal : Config (AgentState n) Opinion n → Prop :=
     fun D => EpidemicPhiGoal (majorityAnswer C) D ∧ AllAgentsResetting D
-  have hDmax_pos : 0 < Dmax := Nat.lt_of_lt_of_le hn hDmax
   have hFreshSeed :
       p_reset ≤ Probability.ProbHitWithin P hn2 C Mid K_reset := by
     simpa [P, Mid] using h12reset.freshSeedReach hn2 C hWF hSeed
@@ -82,8 +87,9 @@ theorem faithful_reset_to_phiGoal
     exact
       answer_epidemic_bridge_from_fresh_resetting
         (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        (K := K_bridge) (C₀ := D) (m := majorityAnswer C)
-        (pE := pE) hn hn2 hDmax_pos hD.2 hD.1 hTail epidemicFast
+        (K := K_bridge) (d := d) (C₀ := D) (m := majorityAnswer C)
+        (pE := pE) hn hn2 hd_pos h12reset.wakeBudget_le_Dmax
+        hD.2.1 hD.2.2 hD.1 hTail epidemicFast
   exact
     Probability.ProbHitWithin_add_ge_mul P hn2 C Mid Goal
       K_reset K_bridge p_reset (pE / 2) hFreshSeed hBridge
@@ -92,16 +98,16 @@ theorem faithful_reset_to_phiGoal
 bridge into the generic reset-completion contract expected by the existing
 renewal keystone. -/
 theorem crsReset12Faithful_to_generic
-    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : n ≤ Dmax)
+    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d)
     {p_reset pE : ENNReal}
     (h12reset :
       CRSReset12Faithful (n := n) (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) hn p_reset C_reset K_reset)
+        (Dmax := Dmax) hn d p_reset C_reset K_reset)
     (epidemicFast :
       StandardEpidemicFastHypothesisPEM
         n Rmax Emax Dmax K_bridge hn hn2 pE)
-    (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2)
+    (hTail : drainNoWakeTail n K_bridge d ≤ pE / 2)
     (hpE_pos : 0 < pE) (hpE_le_one : pE ≤ 1)
     (hBridgeWindow : K_bridge ≤ C_bridge * n * n) :
     CRSResetCompletion12Generic (n := n) (trank := 1) (Rmax := Rmax)
@@ -153,7 +159,8 @@ theorem crsReset12Faithful_to_generic
       faithful_reset_to_phiGoal
         (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
         (K_reset := K_reset) (K_bridge := K_bridge)
-        (C_reset := C_reset) hn hn2' hDmax h12reset epidemicFast'
+        (C_reset := C_reset) (d := d) hn hn2' hd_pos
+        h12reset epidemicFast'
         hTail C hWF hSeed
     exact hFaithful.trans
       (Probability.ProbHitWithin_mono_goal
@@ -167,10 +174,10 @@ theorem crsReset12Faithful_to_generic
 fresh reset seed, and the PEM answer-epidemic bridge supplies the formerly
 over-cited `EpidemicPhiGoal` reset completion. -/
 theorem PEM_expectedParallelTime_On_faithful
-    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge : ℕ}
+    {n Rmax Emax Dmax K_reset K_bridge C_reset C_bridge d : ℕ}
     [Inhabited (Fin n × Fin n)]
     (hn4 : 4 ≤ n) (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax)
-    (hDmax : n ≤ Dmax)
+    (hDmax : n ≤ Dmax) (hd_pos : 0 < d)
     (C_rank T_rank T_rerank : ℕ)
     {p_reset pE : ENNReal}
     (h12ranking :
@@ -185,12 +192,12 @@ theorem PEM_expectedParallelTime_On_faithful
             ((C_rank * n * n : ℕ) : ENNReal))
     (h12reset :
       CRSReset12Faithful (n := n) (Rmax := Rmax) (Emax := Emax)
-        (Dmax := Dmax) (by omega : 0 < n) p_reset C_reset K_reset)
+        (Dmax := Dmax) (by omega : 0 < n) d p_reset C_reset K_reset)
     (epidemicFast :
       StandardEpidemicFastHypothesisPEM
         n Rmax Emax Dmax K_bridge (by omega : 0 < n)
         (by omega : 2 ≤ n) pE)
-    (hTail : drainNoWakeTail n K_bridge Dmax ≤ pE / 2)
+    (hTail : drainNoWakeTail n K_bridge d ≤ pE / 2)
     (hpE_pos : 0 < pE) (hpE_le_one : pE ≤ 1)
     (hBridgeWindow : K_bridge ≤ C_bridge * n * n)
     (h12rank :
@@ -227,7 +234,8 @@ theorem PEM_expectedParallelTime_On_faithful
       (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
       (K_reset := K_reset) (K_bridge := K_bridge)
       (C_reset := C_reset) (C_bridge := C_bridge)
-      (by omega : 0 < n) (by omega : 2 ≤ n) hDmax h12reset
+      (d := d) (by omega : 0 < n) (by omega : 2 ≤ n)
+      hd_pos h12reset
       epidemicFast hTail hpE_pos hpE_le_one hBridgeWindow
   exact
     PEM_expectedParallelTime_On

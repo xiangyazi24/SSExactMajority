@@ -6,9 +6,9 @@ namespace SSEM
 open scoped BigOperators ENNReal
 
 /-- The explicit binomial tail from the unconditional no-wake drain bound. -/
-noncomputable abbrev drainNoWakeTail (n K Dmax : ℕ) : ENNReal :=
-  (n : ENNReal) * (Nat.choose K Dmax : ENNReal) *
-    (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ Dmax)
+noncomputable abbrev drainNoWakeTail (n K d : ℕ) : ENNReal :=
+  (n : ENNReal) * (Nat.choose K d : ENNReal) *
+    (((2 : ENNReal) * (n : ENNReal)⁻¹) ^ d)
 
 private theorem probNotHitBy_ge_half_of_ProbHitWithin_le_half
     {Q X Y : Type*} {n : ℕ}
@@ -42,14 +42,13 @@ private theorem probNotHitBy_ge_half_of_ProbHitWithin_le_half
 tail is at most `1/2`, then no wake occurs through the window with probability
 at least `1/2`. -/
 theorem no_wake_prob_ge_half
-    {n Rmax Emax Dmax K : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : 0 < Dmax)
+    {n Rmax Emax Dmax K d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d) (hd : d ≤ Dmax)
     {C₀ : Config (AgentState n) Opinion n}
-    (hFresh :
-      ∀ a : Fin n,
-        (C₀ a).1.role = .Resetting ∧
-        (C₀ a).1.delaytimer = Dmax)
-    (hTail : drainNoWakeTail n K Dmax ≤ (2 : ENNReal)⁻¹) :
+    (hAll : AllAgentsResetting C₀)
+    (hDormantBudget :
+      ∀ a : Fin n, (C₀ a).1.resetcount = 0 → d ≤ (C₀ a).1.delaytimer)
+    (hTail : drainNoWakeTail n K d ≤ (2 : ENNReal)⁻¹) :
     (2 : ENNReal)⁻¹ ≤
       Probability.probNotHitBy
         (PEMProtocol n 1 Rmax Emax Dmax hn) hn2 C₀ SomeAgentAwake K := by
@@ -57,11 +56,12 @@ theorem no_wake_prob_ge_half
     PEMProtocol n 1 Rmax Emax Dmax hn
   have hDrain :
       Probability.ProbHitWithin P hn2 C₀ SomeAgentAwake K ≤
-        drainNoWakeTail n K Dmax := by
+        drainNoWakeTail n K d := by
     simpa [P, drainNoWakeTail] using
       drain_probHitWithin_le_choose_unconditional
         (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        (K := K) (C₀ := C₀) hn hn2 hDmax hFresh
+        (K := K) (d := d) (C₀ := C₀) hn hn2 hd_pos hd
+        hAll hDormantBudget
   exact
     probNotHitBy_ge_half_of_ProbHitWithin_le_half P hn2 C₀
       SomeAgentAwake K (hDrain.trans hTail)
@@ -113,15 +113,14 @@ The final numeric tail hypothesis is matched to the bridge constant
 `pE / 2`; this is the form needed to turn the epidemic lower bound and the
 wake union bound into an intersection lower bound. -/
 theorem answer_epidemic_bridge_from_fresh_resetting
-    {n Rmax Emax Dmax K : ℕ}
-    (hn : 0 < n) (hn2 : 2 ≤ n) (hDmax : 0 < Dmax)
+    {n Rmax Emax Dmax K d : ℕ}
+    (hn : 0 < n) (hn2 : 2 ≤ n) (hd_pos : 0 < d) (hd : d ≤ Dmax)
     {C₀ : Config (AgentState n) Opinion n} {m : Answer} {pE : ENNReal}
-    (hFresh :
-      ∀ a : Fin n,
-        (C₀ a).1.role = .Resetting ∧
-        (C₀ a).1.delaytimer = Dmax)
+    (hAll : AllAgentsResetting C₀)
+    (hDormantBudget :
+      ∀ a : Fin n, (C₀ a).1.resetcount = 0 → d ≤ (C₀ a).1.delaytimer)
     (hRegion₀ : EpidemicRegion m C₀)
-    (hTail : drainNoWakeTail n K Dmax ≤ pE / 2)
+    (hTail : drainNoWakeTail n K d ≤ pE / 2)
     (epidemicFast :
       StandardEpidemicFastHypothesisPEM
         n Rmax Emax Dmax K hn hn2 pE) :
@@ -136,11 +135,12 @@ theorem answer_epidemic_bridge_from_fresh_resetting
   let Bad : Config (AgentState n) Opinion n → Prop := SomeAgentAwake
   have hDrain :
       Probability.ProbHitWithin P hn2 C₀ Bad K ≤
-        drainNoWakeTail n K Dmax := by
+        drainNoWakeTail n K d := by
     simpa [P, Bad, drainNoWakeTail] using
       drain_probHitWithin_le_choose_unconditional
         (n := n) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        (K := K) (C₀ := C₀) hn hn2 hDmax hFresh
+        (K := K) (d := d) (C₀ := C₀) hn hn2 hd_pos hd
+        hAll hDormantBudget
   have hBad : Probability.ProbHitWithin P hn2 C₀ Bad K ≤ pE / 2 :=
     hDrain.trans hTail
   have hEpidemic :
