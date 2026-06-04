@@ -71,3 +71,15 @@ REMAINING FORMAL PIECES (the build):
     to allow a bounded total positive part) — Probability layer, PP-proof supermartingale family.
 (d) arbitrary bounded → allResetting (reset-wave trigger) E[T] — self-stab entry.
 Then assemble → PEM_expectedParallelTime_optimal.
+
+## CONVERGENT FINDING (codex cxbv + ChatGPT Pro, independent)
+resetBudget NOT monotone on IsBoundedConfig: recruit + leader-wakeup create same-rank pairs
+(≤2(n-1)/recruit, proven). FIX = amortized BANK-ACCOUNT potential (ChatGPT):
+  collisionBank C := sameRankOrderedSettledPairs C + 2n·unsettledCount C   (≤ 3n²)
+Recruit: unsettled -1 (term -2n), sameRankPairs +≤2(n-1) ⟹ collisionBank STRICTLY DROPS.
+Collision reset: sameRankPairs strictly drops, unsettled unchanged ⟹ drops. ⟹ monotone under
+recruit+collision. REMAINING CRUX: resetOSSR follower wake (Resetting→Unsettled, +2n to collisionBank)
+= the epoch circularity (resetCount ≤ C + B·resetCount). Needs IRREVERSIBLE epoch measure. Hypothesis:
+#reset-WAVES is O(1) (self-stab: error detection → global propagate-reset wave → after one clean
+cycle, consistent → no more errors), tied to the proven convergence invariant. timeoutBank: error
+defects only destroyed not created (proven) ⟹ existing structuralErrorBudget suffices.
