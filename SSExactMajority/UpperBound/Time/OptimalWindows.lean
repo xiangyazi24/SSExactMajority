@@ -1,4 +1,5 @@
 import SSExactMajority.UpperBound.Time
+import SSExactMajority.UpperBound.Time.PolynomialBound
 
 /-!
 # Optimal parallel-time bound — reduced to two expected-time keystones
@@ -57,6 +58,21 @@ theorem OW_consensusBound (hn4 : 4 ≤ n)
           (by omega : 2 ≤ n) C IsConsensusConfig ≤
           ((10 * Rmax * n * n : ℕ) : ENNReal) := by
   sorry
+
+
+/-- Markov-window form of `PEM_CRS_to_allR_or_break`: from a correct reset seed,
+within `2·n²(n-1)` steps the epidemic reaches all-Resetting (nrc=0) or CRS breaks
+(ranking starts, answers preserved) with probability ≥ 1/2. Forward building block. -/
+theorem crs_to_allR_or_break_window (hn4 : 4 ≤ n) (hn0 : 0 < n) (hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n) (hSeed : CorrectResetSeed C) :
+    ((2 : ENNReal)⁻¹) ≤
+      Probability.ProbHitWithin (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+        (by omega : 2 ≤ n) C
+        (fun D => (nonResettingCount D = 0) ∨ ¬ CorrectResetSeed D)
+        (2 * (n * n * (n - 1))) :=
+  Probability.ProbHitWithin_ge_half_of_expectedHittingTime_le
+    (PEMProtocolCoupled n Rmax Emax Dmax hn0) (by omega : 2 ≤ n) C _
+    (PEM_CRS_to_allR_or_break hn4 hn0 hDmax C hSeed) (by omega)
 
 /-- **Unconditional optimal parallel-time bound.** From any timer-bounded initial
 configuration, the expected parallel time to consensus is
