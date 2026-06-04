@@ -43,3 +43,26 @@ Timer-cap/trank audit:
   reset-count assumptions, but I did not identify a proof step that
   semantically requires `trank = Rmax`; the remaining work is generic copies of
   those coupled helper layers.
+
+## 2026-06-04 codex generic-trank coupled-transfer checkpoint
+
+Added the coupled-transfer bridge inside `GenericTrank.lean`:
+
+- `generic_step_eq_coupled_of_InSrank`: for any `PEMProtocol n trank Rmax`,
+  one step agrees with `PEMProtocolCoupled n Rmax` whenever the pre-state is
+  `InSrank`.
+- `generic_ProbHitWithin_eq_of_step_eq_until`: finite-window hit probability
+  equality for goals whose non-goal region gives the step-equality hypothesis.
+
+Ported:
+
+- `generic_PEM_srank_or_timer_failure_prob_le_quarter_short35` over
+  `PEMProtocol n trank Rmax Emax Dmax hn0`, retaining the genuine reset-count
+  assumptions `n <= Rmax`, `n <= Emax`, `n <= Dmax`.
+
+Verification:
+
+- `lake build SSExactMajority.UpperBound.Time.GenericTrank`
+
+Result: passed. No semantic `trank = Rmax` dependency encountered in this
+layer.

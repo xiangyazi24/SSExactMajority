@@ -1,4 +1,5 @@
 import SSExactMajority.UpperBound.Time
+import SSExactMajority.UpperBound.Time.TransitionLemmas
 
 /-!
 # Generic `trank` time-window restatements
@@ -274,6 +275,221 @@ theorem generic_timer_preservation
           using hC μ
 
 end TimerPreservation
+
+section CoupledTransfer
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+private theorem generic_transition_eq_coupled_of_settled_distinct
+    (hn0 : 0 < n) {s₀ s₁ : AgentState n} {x₀ x₁ : Opinion}
+    (hs₀ : s₀.role = .Settled) (hs₁ : s₁.role = .Settled)
+    (hne : s₀.rank ≠ s₁.rank) :
+    transitionPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        ((s₀, x₀), (s₁, x₁)) =
+      transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+        ((s₀, x₀), (s₁, x₁)) := by
+  have hFix := rankDeltaOSSR_satisfies_fix
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn0)
+  simp only [transitionPEM_eq]
+  rw [transitionPEM_prePhase4_eq_of_settled_distinct
+      (trank := trank) hFix hs₀ hs₁ hne]
+  rw [transitionPEM_prePhase4_eq_of_settled_distinct
+      (trank := Rmax) hFix hs₀ hs₁ hne]
+
+theorem generic_step_eq_coupled_of_InSrank
+    (hn0 : 0 < n) {C : Config (AgentState n) Opinion n}
+    (hSrank : InSrank C) (i j : Fin n) :
+    C.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+      C.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j := by
+  funext w
+  by_cases hij : i = j
+  · subst j
+    simp [Config.step]
+  · have hsi : (C i).1.role = .Settled := hSrank.allSettled i
+    have hsj : (C j).1.role = .Settled := hSrank.allSettled j
+    have hne : (C i).1.rank ≠ (C j).1.rank := by
+      intro h
+      exact hij (hSrank.ranks_inj h)
+    have hδ :=
+      generic_transition_eq_coupled_of_settled_distinct
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        (x₀ := (C i).2) (x₁ := (C j).2)
+        hn0 hsi hsj hne
+    by_cases hwi : w = i
+    · subst w
+      unfold Config.step
+      simp only [PEMProtocolCoupled, PEMProtocol, hij, ↓reduceIte]
+      exact congrArg (fun p => (p.1, (C i).2)) hδ
+    · by_cases hwj : w = j
+      · subst w
+        unfold Config.step
+        simp only [PEMProtocolCoupled, PEMProtocol, hij, hwi, ↓reduceIte]
+        exact congrArg (fun p => (p.2, (C j).2)) hδ
+      · unfold Config.step
+        simp [PEMProtocolCoupled, PEMProtocol, hij, hwi, hwj]
+
+private theorem generic_step_eq_coupled_of_not_bad
+    (hn0 : 0 < n)
+    {Bad : Config (AgentState n) Opinion n → Prop}
+    (hBad : ∀ C : Config (AgentState n) Opinion n, ¬ Bad C → InSrank C)
+    {C : Config (AgentState n) Opinion n} (hC : ¬ Bad C) (i j : Fin n) :
+    C.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+      C.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j :=
+  generic_step_eq_coupled_of_InSrank
+    (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+    hn0 (hBad C hC) i j
+
+private theorem generic_probHitBy_succ_eq_tsum_step_of_not_goal
+    {Q X Y : Type*} {n : ℕ} [DecidableEq (Config Q X n)]
+    (P : Protocol Q X Y) (hn : 2 ≤ n)
+    (C₀ : Config Q X n) (Goal : Config Q X n → Prop)
+    [DecidablePred Goal] (hGoal : ¬ Goal C₀) (t : ℕ) :
+    Probability.probHitBy P hn C₀ Goal (t + 1) =
+      ∑' C : Config Q X n,
+        Probability.stepDist P hn C₀ C *
+          Probability.probHitBy P hn C Goal t := by
+  classical
+  rw [Probability.probHitBy_eq_hitFlagDist_toOuterMeasure]
+  rw [Probability.hitFlagDist_eq_hitFlagDistFrom]
+  simp only [hGoal, decide_false]
+  rw [show t + 1 = 1 + t by omega]
+  rw [Probability.hitFlagDistFrom_add]
+  simp only [Probability.hitFlagDistFrom, PMF.pure_bind]
+  rw [Probability.hitFlagStepDist, PMF.bind_map]
+  simp only [Bool.false_or]
+  rw [PMF.toOuterMeasure_bind_apply]
+  apply tsum_congr
+  intro C
+  simp only [Function.comp_apply]
+  have hdec :
+      @decide (Goal C) (Classical.propDecidable (Goal C)) =
+        @decide (Goal C) (inferInstance : Decidable (Goal C)) := by
+    by_cases h : Goal C <;> simp [h]
+  rw [hdec]
+  have hhit :
+      (Probability.hitFlagDistFrom P hn Goal (C, decide (Goal C)) t).toOuterMeasure
+          {T : Config Q X n × Bool | T.2 = true} =
+        Probability.probHitBy P hn C Goal t := by
+    rw [Probability.probHitBy_eq_hitFlagDist_toOuterMeasure,
+      Probability.hitFlagDist_eq_hitFlagDistFrom P hn C Goal t]
+  exact congrArg (fun x => Probability.stepDist P hn C₀ C * x) hhit
+
+private theorem generic_ProbHitWithin_eq_of_step_eq_until
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn2 : 2 ≤ n) (hn0 : 0 < n)
+    (Bad : Config (AgentState n) Opinion n → Prop) [DecidablePred Bad]
+    (hstep :
+      ∀ C : Config (AgentState n) Opinion n, ¬ Bad C →
+        ∀ i j : Fin n,
+          C.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+            C.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)
+    (C : Config (AgentState n) Opinion n) (t : ℕ) :
+    Probability.ProbHitWithin
+        (PEMProtocol n trank Rmax Emax Dmax hn0) hn2 C Bad t =
+      Probability.ProbHitWithin
+        (PEMProtocolCoupled n Rmax Emax Dmax hn0) hn2 C Bad t := by
+  classical
+  let Pg := PEMProtocol n trank Rmax Emax Dmax hn0
+  let Pc := PEMProtocolCoupled n Rmax Emax Dmax hn0
+  induction t generalizing C with
+  | zero =>
+      by_cases hC : Bad C
+      · rw [Probability.ProbHitWithin, Probability.ProbHitWithin,
+          Probability.probHitBy_zero_of_goal Pg hn2 C Bad hC,
+          Probability.probHitBy_zero_of_goal Pc hn2 C Bad hC]
+      · rw [Probability.ProbHitWithin, Probability.ProbHitWithin,
+          Probability.probHitBy_zero_of_not_goal Pg hn2 C Bad hC,
+          Probability.probHitBy_zero_of_not_goal Pc hn2 C Bad hC]
+  | succ t ih =>
+      by_cases hC : Bad C
+      · have hg0 :
+            Probability.ProbHitWithin Pg hn2 C Bad 0 = 1 := by
+          exact Probability.probHitBy_zero_of_goal Pg hn2 C Bad hC
+        have hc0 :
+            Probability.ProbHitWithin Pc hn2 C Bad 0 = 1 := by
+          exact Probability.probHitBy_zero_of_goal Pc hn2 C Bad hC
+        have hg_le :
+            (1 : ENNReal) ≤ Probability.ProbHitWithin Pg hn2 C Bad (t + 1) := by
+          rw [← hg0]
+          exact Probability.ProbHitWithin_mono_time Pg hn2 C Bad (Nat.zero_le _)
+        have hc_le :
+            (1 : ENNReal) ≤ Probability.ProbHitWithin Pc hn2 C Bad (t + 1) := by
+          rw [← hc0]
+          exact Probability.ProbHitWithin_mono_time Pc hn2 C Bad (Nat.zero_le _)
+        have hg :
+            Probability.ProbHitWithin Pg hn2 C Bad (t + 1) = 1 :=
+          le_antisymm (Probability.ProbHitWithin_le_one Pg hn2 C Bad (t + 1)) hg_le
+        have hc :
+            Probability.ProbHitWithin Pc hn2 C Bad (t + 1) = 1 :=
+          le_antisymm (Probability.ProbHitWithin_le_one Pc hn2 C Bad (t + 1)) hc_le
+        rw [hg, hc]
+      · have hstepDist :
+            Probability.stepDist Pg hn2 C = Probability.stepDist Pc hn2 C := by
+          unfold Probability.stepDist
+          congr 1
+          funext p
+          exact hstep C hC p.1 p.2
+        rw [Probability.ProbHitWithin, Probability.ProbHitWithin,
+          generic_probHitBy_succ_eq_tsum_step_of_not_goal Pg hn2 C Bad hC t,
+          generic_probHitBy_succ_eq_tsum_step_of_not_goal Pc hn2 C Bad hC t]
+        apply tsum_congr
+        intro D
+        have hih := ih D
+        change Probability.probHitBy Pg hn2 D Bad t =
+          Probability.probHitBy Pc hn2 D Bad t at hih
+        rw [hstepDist, hih]
+
+end CoupledTransfer
+
+section GenericExitWindow
+
+variable {n trank Rmax Emax Dmax : ℕ}
+
+theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSrank : InSrank C)
+    (hTimer : MedianTimerAtLeast 35 C) :
+    Probability.ProbHitWithin
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D)
+      (4 * n * (n - 1)) ≤ ((4 : ENNReal)⁻¹) := by
+  classical
+  let Bad : Config (AgentState n) Opinion n → Prop :=
+    fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D
+  have hstep :
+      ∀ D : Config (AgentState n) Opinion n, ¬ Bad D →
+        ∀ i j : Fin n,
+          D.step (PEMProtocol n trank Rmax Emax Dmax hn0) i j =
+            D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j := by
+    intro D hD i j
+    have hRank : InSrank D := by
+      by_contra hNot
+      exact hD (Or.inl hNot)
+    exact
+      generic_step_eq_coupled_of_InSrank
+        (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn0 hRank i j
+  have hn2 : 2 ≤ n := by omega
+  have hEq :=
+    generic_ProbHitWithin_eq_of_step_eq_until
+      (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn2 hn0 Bad hstep C (4 * n * (n - 1))
+  have hCoupled :
+      Probability.ProbHitWithin
+        (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+        hn2 C Bad (4 * n * (n - 1)) ≤ ((4 : ENNReal)⁻¹) := by
+    simpa [Bad] using
+      (PEM_srank_or_timer_failure_prob_le_quarter_short35
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        hn4 hn0 hRmax hEmax hDmax C hSrank hTimer)
+  simpa [Bad] using (le_of_eq_of_le hEq hCoupled)
+
+end GenericExitWindow
 
 private theorem generic_card_Fin_filter_val_lt {n k : ℕ} (hk : k ≤ n) :
     (Finset.univ.filter (fun i : Fin n => i.val < k)).card = k := by
