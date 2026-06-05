@@ -302,3 +302,71 @@ Result: build completed successfully. Grep found no `sorry`, `axiom`, or
 Fresh `#print axioms` for `balanced_tree_growth`,
 `balanced_tree_growth_floor`, and `all_fresh_from_log_seed_unconditional`:
 `[propext, Classical.choice, Quot.sound]`.
+
+## Log-Regime Rethreading Audit
+
+New file:
+
+- `SSExactMajority/Convergence/LogRegimeConvergence.lean`
+
+Compiled bridge/audit facts:
+
+- `SSEM.log_seed_to_all_fresh`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:18`
+  Preconditions landed: `0 < n`, `2 <= n`, `1 < Dmax`,
+  `Nat.clog 2 n + 2 <= Rmax`, and an explicit seed witness
+  `Rmax <= resetcount`.
+- `SSEM.all_resetting_of_all_fresh`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:38`
+- `SSEM.all_resetcount_zero_of_all_fresh`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:46`
+- `SSEM.all_delaytimer_eq_of_all_fresh`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:54`
+- `SSEM.fresh_uniform_unique_to_FreshRankingStart_resAns_noPhi`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:64`
+  Preconditions landed for the fresh-state Phase-A bridge:
+  `4 <= n`, `0 < Rmax`, `0 < Dmax`, all agents fresh, uniform answer, and
+  a unique leader.  This confirms that once the endpoint is truly dormant
+  (zero resetcount + unique leader + uniform answer), the answer-preserving
+  Phase-A bridge does not need `n <= Dmax`.
+
+Blocked final theorem:
+
+- `burmanConvergence_concrete_log`: not produced.
+- `P_EM_solves_SSEM_log`: not produced.
+
+Exact blocker:
+
+1. `CorrectResetSeed` erases the log fuel needed by
+   `all_fresh_from_log_seed_unconditional`.  Its definition only exposes
+   `nonResettingCount C < resetcount`, not `resetcount = Rmax` or
+   `Nat.clog 2 n + 2 <= resetcount`:
+   `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:13787`.
+   The existing seed-or-progress interfaces return only `CorrectResetSeed`,
+   so the log theorem cannot be threaded through them without strengthening
+   those interfaces:
+   `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:15814`.
+2. The current re-entry consumer still routes a correct seed through the
+   positive-resetcount path and therefore requires `n <= Dmax`:
+   `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:13666` and the
+   call at `:13719`.  The real uses are the positive-resetcount delay budget
+   `positiveRcExcept_card < delaytimer`:
+   `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:6555` and
+   `:6633`.
+3. The available all-fresh theorem gives only role/resetcount/delaytimer.
+   It does not give uniform answer or unique leader, both of which are needed
+   by the zero-resetcount answer-preserving bridge:
+   `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:7470`.
+4. There is an independent ranking-side carrier unrelated to the fresh reset
+   endpoint: `ranking_from_InSrank_by_parity` still requires `n <= Dmax` and
+   `n <= Rmax`, and its bad-ranking handlers consume those bounds at
+   `SSExactMajority/Convergence/BurmanProof.lean:12376` and `:13074`.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeConvergence
+```
+
+Result: build completed successfully. Grep found no `sorry`, `axiom`, or
+`native_decide` in `SSExactMajority/Convergence/LogRegimeConvergence.lean`.
