@@ -760,6 +760,58 @@ grep -nE '\bsorry\b|\baxiom\b' SSExactMajority/Convergence/LogTreeReset.lean SSE
 Result: all target checks completed successfully; the forbidden-token grep
 returned no matches. The build output contains only existing linter warnings.
 
+## Producer Spec Status
+
+Spec file executed:
+
+- `HANDOFF/producer_spec.md`
+
+Landed strong producer layer:
+
+- `SSEM.medCorrectLiveProducesStrongSeedOrProgress_holds`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:3179`)
+- `SSEM.reservoirCaseProducesStrongSeedOrProgress_holds`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:3865`)
+
+Seed witness tracking:
+
+- All direct seed creation branches end at the reset step with
+  `resetcount = Rmax` and `leader = .L`.
+- Branches with timer descent/no-reset steps do those steps before seed
+  creation, then tail-call the strong seed constructor. The final endpoint
+  still has the fresh `Rmax` witness.
+- No seed-producing schedule continues past seed creation while touching or
+  decrementing the created seed. No `Rmax-k` shift is required.
+
+Final theorems:
+
+- `SSEM.burmanConvergence_concrete_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:4117`)
+- `SSEM.P_EM_solves_SSEM_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:4134`)
+
+Complete final hypothesis list:
+
+- `[Inhabited (Fin n x Fin n)]`
+- `hn : 0 < n`
+- `hn4 : 4 <= n`
+- `hDmax1 : 1 < Dmax`
+- `hRlog : 2 * Nat.clog 2 n + 2 <= Rmax`
+
+No `n <= Emax`, no `n <= Dmax`, no `n <= Rmax`, and no remaining strong
+producer assumptions are needed by the final `P_EM_solves_SSEM_log`.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeFinal.lean
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeFinal
+grep -nE '\bsorry\b|\baxiom\b|native_decide' SSExactMajority/Convergence/LogRegimeFinal.lean
+```
+
+Result: the target build completed successfully, and the forbidden-token grep
+returned no matches.
+
 ## Entry Spec Status
 
 Spec file executed:
