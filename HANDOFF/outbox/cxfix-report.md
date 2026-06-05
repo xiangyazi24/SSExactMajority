@@ -812,6 +812,88 @@ grep -nE '\bsorry\b|\baxiom\b|native_decide' SSExactMajority/Convergence/LogRegi
 Result: the target build completed successfully, and the forbidden-token grep
 returned no matches.
 
+## Time-Side Window Classification
+
+Spec file executed:
+
+- `HANDOFF/timeside_spec.md`
+
+STOP status:
+
+- No `SSExactMajority/UpperBound/Time/LogWindows.lean` was created.
+- `PEM_expectedParallelTime_On_faithful_log` was not landed.
+- Reason: there is a genuine-LARGE `hRmax : n <= Rmax` consumption in the
+  probabilistic MAC-live/timer-drain window. The proof turns a one-step reset
+  event, which resets only the selected pair, into the old `CorrectResetSeed`
+  endpoint. That old endpoint requires
+  `nonResettingCount C < (C r).1.resetcount`; immediately after a two-agent
+  reset event the proof only has `nonResettingCount C <= n - 2` and
+  `resetcount = Rmax`, so it needs `n - 2 < Rmax`. This is not an artifact at
+  log-sized `Rmax`.
+
+Classification table:
+
+| File:line | Consumer | Hypothesis | Class | Reason |
+| --- | --- | --- | --- | --- |
+| `SSExactMajority/UpperBound/Time/GenericKeystone.lean:673` | `generic_MAClive_to_consensus_or_crs_window` | `hRmax` | genuine-LARGE | Routes to timer-drain and reset-trigger seed creation; old `CorrectResetSeed` needs `nonResettingCount < Rmax`. |
+| `SSExactMajority/UpperBound/Time/GenericKeystone.lean:673` | same | `hEmax`, `hDmax` | artifact | Passed through this wrapper, but the real downstream uses in this chain are underscore/unused or structural transition parameters, not `n <= _`. |
+| `SSExactMajority/UpperBound/Time/GenericKeystone.lean:723` | `generic_decision_before_timer_zero` | `hRmax`, `hEmax`, `hDmax` | artifact | Routes to the short35 tail theorem whose linear counter hypotheses are underscore/unused; the tail proof depends on the event-count bound and `35`, not `n <= Rmax/Emax/Dmax`. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:630` | `generic_crs_of_InSswap_break_with_MedC` | `hRmax` | genuine-LARGE | Coupled CRS break proof constructs old `CorrectResetSeed`; bottom proofs use `nonResettingCount <= n - 2 < Rmax`. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:713` | `generic_PEM_srank_or_timer_failure_prob_le_quarter_short35` | `hRmax`, `hEmax`, `hDmax` | artifact | Coupled theorem at `Time.lean:8584` names them `_hRmax/_hEmax/_hDmax`; tail theorem at `Time.lean:7259` has no counter lower-bound parameters. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1458` | `generic_decision_before_timer_zero` | `hRmax`, `hEmax`, `hDmax` | artifact | Only used through the short35 failure tail above. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1513` | `generic_timer_ge_two_descent_step` | `hRmax` | genuine-LARGE | In the `InSswap` break branch it calls `generic_crs_of_InSswap_break_with_MedC`, which needs the old CRS counting inequality. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1543` | `generic_PEM_expected_timer_drain_poly` | `hRmax` | genuine-LARGE | Uses `PEM_expected_timer_drain_poly`, whose descent witness calls the CRS break lemma. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1592` | `generic_timer_drain_window` | `hRmax` | genuine-LARGE | Markov window wrapper around the expected timer-drain theorem. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1614` | `generic_timer_drain_to_zero_productive` | `hRmax` | genuine-LARGE | Uses CRS break at `:1680` and `:1772`, and timer-one seed creation at `:1780`. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1868` | `generic_PEM_expected_reset_trigger_v2` | `hRmax` | genuine-LARGE | One-step reset-trigger branch at `:1943` calls `step_timer_zero_median_wrong_nonupper_creates_CorrectResetSeed`; same old CRS count. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:1868` | same | `hEmax`, `hDmax` | artifact | The theorem binds them as `_hEmax/_hDmax`; no `n <= Emax/Dmax` counting use in this proof. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:2147` | `generic_MAClive_to_consensus_or_crs` | `hRmax` | genuine-LARGE | Composes timer-drain-to-zero and reset-trigger-v2, both blocked by old CRS counting. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:2147` | same | `hEmax`, `hDmax` | artifact | Passed only to the blocked sublemmas; no real linear `Emax/Dmax` consumption found. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:2224` | `generic_MAClive_to_consensus_or_crs_window` | `hRmax` | genuine-LARGE | Markov window wrapper around `generic_MAClive_to_consensus_or_crs`. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:2224` | same | `hEmax`, `hDmax` | artifact | Pass-through only. |
+| `SSExactMajority/UpperBound/Time/GenericTrank.lean:2251` | `generic_swap_live_to_cons_or_crs_or_break` | `hRmax` | genuine-LARGE | Its live branches call `generic_timer_drain_window`; same old CRS endpoint. |
+| `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:179` | `PEM_expectedParallelTime_On_faithful` | `hRmax` | genuine-LARGE | Passed to `PEM_expectedParallelTime_On`, which reaches the generic MAC-live window above. |
+| `SSExactMajority/UpperBound/Time/OptimalWindowsFaithful.lean:179` | same | `hEmax`, `hDmax` | artifact for the linear `n <= _` assumptions | The faithful drain side already uses `d <= Dmax` through `CRSReset12Faithful.wakeBudget_le_Dmax`; the extra `n <= Dmax` and all of `n <= Emax` are not real counting needs in the traced window chain. |
+
+Bottom counting sites for the genuine-LARGE `hRmax`:
+
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:13787`:
+  old `CorrectResetSeed` requires
+  `nonResettingCount C < (C r).1.resetcount`.
+- `SSExactMajority/UpperBound/Time/CRSEven.lean:71` and `:124`:
+  even CRS constructors derive `nonResettingCount <= n - 2`, then use
+  `n <= Rmax` to prove `nonResettingCount < Rmax`.
+- `SSExactMajority/UpperBound/Time/CRSOdd.lean:53` and `:137`:
+  odd CRS constructors use the same `n - 2 < Rmax` counting step.
+- `SSExactMajority/UpperBound/Time/CRSEvenTimerPos.lean:10`:
+  timer-one median/max reset constructors use the same two-reset-agent
+  counting step at `:77`, `:118`, `:163`, and `:203`.
+- `SSExactMajority/UpperBound/Time/HeavyProofs.lean:285`:
+  timer-zero wrong-answer reset constructors use the same count at `:347`
+  and `:390`.
+- `SSExactMajority/UpperBound/Time/PolynomialBound.lean:50` and `:151`:
+  timer-drain expected-time proof inherits the CRS break counting through
+  `timer_ge_two_descent_step` and `PEM_expected_timer_drain_poly`.
+
+Conclusion:
+
+- `hEmax : n <= Emax` is artifact in the traced time-side window chain.
+- `hDmax : n <= Dmax` is artifact as a linear assumption in this chain; the
+  separate faithful drain budget `d <= Dmax` remains genuine-small-OK.
+- `hRmax : n <= Rmax` is genuine-LARGE for the old `CorrectResetSeed`
+  endpoint. Eliminating it requires changing the probabilistic renewal event
+  from old `CorrectResetSeed` to a log-compatible strong/fresh reset endpoint,
+  not merely weakening the existing hypotheses.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.UpperBound.Time.GenericKeystone
+```
+
+Result: build completed successfully. Output contains existing linter warnings
+only.
+
 ## Entry Spec Status
 
 Spec file executed:
