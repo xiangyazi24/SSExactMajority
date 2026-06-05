@@ -706,11 +706,10 @@ section GenericExitWindow
 
 variable {n trank Rmax Emax Dmax : ℕ}
 
-theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
+theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35_no_counter
     [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (hRmax : n ≤ Rmax) (hEmax : n ≤ Emax) (hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (hSrank : InSrank C)
     (hTimer : MedianTimerAtLeast 35 C) :
@@ -745,10 +744,27 @@ theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
         (PEMProtocolCoupled n Rmax Emax Dmax hn0)
         hn2 C Bad (4 * n * (n - 1)) ≤ ((4 : ENNReal)⁻¹) := by
     simpa [Bad] using
-      (PEM_srank_or_timer_failure_prob_le_quarter_short35
+      (PEM_srank_or_timer_failure_prob_le_quarter_short35_no_counter
         (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
-        hn4 hn0 hRmax hEmax hDmax C hSrank hTimer)
+        hn4 hn0 C hSrank hTimer)
   simpa [Bad] using (le_of_eq_of_le hEq hCoupled)
+
+theorem generic_PEM_srank_or_timer_failure_prob_le_quarter_short35
+    [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (_hRmax : n ≤ Rmax) (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSrank : InSrank C)
+    (hTimer : MedianTimerAtLeast 35 C) :
+    Probability.ProbHitWithin
+      (PEMProtocol n trank Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D)
+      (4 * n * (n - 1)) ≤ ((4 : ENNReal)⁻¹) :=
+  generic_PEM_srank_or_timer_failure_prob_le_quarter_short35_no_counter
+    (n := n) (trank := trank) (Rmax := Rmax) (Emax := Emax)
+    (Dmax := Dmax) hn4 hn0 C hSrank hTimer
 
 end GenericExitWindow
 

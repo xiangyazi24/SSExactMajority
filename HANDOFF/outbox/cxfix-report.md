@@ -219,6 +219,105 @@ Important preconditions landed for `all_fresh_from_log_seed`:
   `Resetting` with positive resetcount
 - a disjoint pair list `pairs` satisfying `PairListDisjoint pairs`
 
+## Endpoint Strong-Seed Time Windows
+
+- Added `SSExactMajority/UpperBound/Time/LogWindows.lean`.
+- Re-defined the time-side endpoint locally as `SSEM.StrongResetSeed`, matching
+  the correctness-side strong seed shape but avoiding a heavy `LogRegimeFinal`
+  import.
+- Re-derived the time-window chain with the strong endpoint:
+  `generic_crs_of_InSswap_break_with_MedC_strong`,
+  `generic_timer_ge_two_descent_step_strong`,
+  `generic_PEM_expected_timer_drain_poly_strong`,
+  `generic_timer_drain_window_strong`,
+  `generic_timer_drain_to_zero_productive_strong`,
+  `generic_PEM_expected_reset_trigger_v2_strong`,
+  `generic_MAClive_to_consensus_or_crs_strong`,
+  `generic_MAClive_to_consensus_or_crs_window_strong`, and
+  `generic_swap_live_to_cons_or_strong_or_break`.
+- Rewired the faithful reset input through `CRSReset12FaithfulStrong` and
+  `CRSResetCompletion12StrongGeneric`, whose reset reach premise consumes
+  `StrongResetSeed Rmax` rather than old `CorrectResetSeed`.
+- Proved `PEM_expectedParallelTime_On_faithful_log` over `PEMProtocol n 1`
+  using strong renewal endpoint. It has no `n ≤ Rmax`, `n ≤ Emax`, or
+  `n ≤ Dmax` hypothesis. The only timer-budget constraint is
+  `d ≤ Dmax`, carried by `h12reset.wakeBudget_le_Dmax`.
+- No proof uses the old `nonResettingCount < resetcount` dominance clause.
+
+## Endpoint Theorems
+
+- `SSEM.StrongResetSeed`: `SSExactMajority/UpperBound/Time/LogWindows.lean:26`
+- `SSEM.generic_crs_of_InSswap_break_with_MedC_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:946`
+- `SSEM.generic_timer_ge_two_descent_step_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1057`
+- `SSEM.generic_timer_drain_to_zero_productive_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1275`
+- `SSEM.generic_PEM_expected_timer_drain_poly_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1530`
+- `SSEM.generic_timer_drain_window_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1581`
+- `SSEM.generic_PEM_expected_reset_trigger_v2_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1603`
+- `SSEM.generic_MAClive_to_consensus_or_crs_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1882`
+- `SSEM.generic_MAClive_to_consensus_or_crs_window_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1959`
+- `SSEM.generic_swap_live_to_cons_or_strong_or_break`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:1983`
+- `SSEM.CRSReset12FaithfulStrong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2070`
+- `SSEM.CRSResetCompletion12StrongGeneric`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2134`
+- `SSEM.crsReset12FaithfulStrong_to_generic`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2151`
+- `SSEM.CRSStrong_to_consensus_faithful_product_generic`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2224`
+- `SSEM.PEM_expectedParallelTime_optimal_generic_strong`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2343`
+- `SSEM.PEM_expectedParallelTime_On_faithful_log`:
+  `SSExactMajority/UpperBound/Time/LogWindows.lean:2743`
+
+## Endpoint Final Hypotheses
+
+`PEM_expectedParallelTime_On_faithful_log` assumes:
+
+- `[Inhabited (Fin n × Fin n)]`
+- `hn4 : 4 ≤ n`
+- `hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax`
+- `hd_pos : 0 < d`
+- constants `C_rank T_rank T_rerank`
+- cited ranking window `h12ranking`
+- strong faithful reset contract
+  `h12reset : CRSReset12FaithfulStrong ... d p_reset C_reset K_reset`
+- cited epidemic-speed hypothesis `epidemicFast`
+- tail hypothesis `hTail : drainNoWakeTail n K_bridge d ≤ pE / 2`
+- `hpE_pos : 0 < pE`, `hpE_le_one : pE ≤ 1`
+- bridge window bound `hBridgeWindow : K_bridge ≤ C_bridge * n * n`
+- cited rank and re-rank windows `h12rank`, `h12reRank`
+
+The conclusion is the same O(n)-form renewal bound with global window
+`OW_globalWindow n C_rank PEM_trank1_timer (K_reset + K_bridge) T_rank T_rerank`
+and probability factor `(p_reset * (pE / 2)) * 128⁻¹`.
+
+O(n) status: yes, genuinely O(n) under the stated constant-probability and
+quadratic-window cited premises. The global sequential window is quadratic in
+`n` and the expected parallel time theorem divides it by `n`.
+
+## Endpoint Verification
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/UpperBound/Time/LogWindows.lean --json
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.UpperBound.Time.LogWindows
+```
+
+Result: both commands completed successfully. The target Lake build still
+prints pre-existing lint warnings from dependencies and style warnings in the
+new large copied proofs, but no errors.
+
+Actual command-form scan for `sorry`, `axiom`, and `native_decide` in the
+touched source files is empty.
+
 ## No-Answer / Finalwire Audit Result
 
 - Added the answer-agnostic fresh+unique endpoint
@@ -759,6 +858,26 @@ grep -nE '\bsorry\b|\baxiom\b' SSExactMajority/Convergence/LogTreeReset.lean SSE
 
 Result: all target checks completed successfully; the forbidden-token grep
 returned no matches. The build output contains only existing linter warnings.
+
+## Latest: Endpoint Strong-Seed Time Windows
+
+This is the endpoint-spec completion entry. Full details are in the
+`Endpoint Strong-Seed Time Windows` section above.
+
+- New file: `SSExactMajority/UpperBound/Time/LogWindows.lean`
+- Final theorem:
+  `SSEM.PEM_expectedParallelTime_On_faithful_log`
+  at `SSExactMajority/UpperBound/Time/LogWindows.lean:2743`
+- Final counter hypotheses: no `n <= Rmax`, no `n <= Emax`, no `n <= Dmax`.
+  Only `hRlog : 2 * Nat.clog 2 n + 2 <= Rmax` and the genuine budget
+  `d <= Dmax` inside `CRSReset12FaithfulStrong.wakeBudget_le_Dmax`.
+- Verification:
+  `/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/UpperBound/Time/LogWindows.lean --json`
+  and
+  `/data/home/xhuan5/.elan/bin/lake build SSExactMajority.UpperBound.Time.LogWindows`
+  both completed successfully.
+- Actual command-form scan for `sorry`, `axiom`, and `native_decide` in the
+  touched source files is empty.
 
 ## Producer Spec Status
 

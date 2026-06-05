@@ -8581,11 +8581,10 @@ theorem PEM_srank_or_timer_failure_prob_le_quarter
     srankMedianMaxEvent_count_tail_le_quarter
       (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn4 hn0 C
 
-theorem PEM_srank_or_timer_failure_prob_le_quarter_short35
+theorem PEM_srank_or_timer_failure_prob_le_quarter_short35_no_counter
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
     [DecidableEq (Config (AgentState n) Opinion n)]
     (hn4 : 4 ≤ n) (hn0 : 0 < n)
-    (_hRmax : n ≤ Rmax) (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
     (C : Config (AgentState n) Opinion n)
     (_hSrank : InSrank C)
     (_hTimer : MedianTimerAtLeast 35 C) :
@@ -8711,6 +8710,23 @@ theorem PEM_srank_or_timer_failure_prob_le_quarter_short35
   simpa [P, Event, T] using
     srankMedianMaxEvent_count_tail_le_quarter_short35
       (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) hn4 hn0 C
+
+theorem PEM_srank_or_timer_failure_prob_le_quarter_short35
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n)
+    (_hRmax : n ≤ Rmax) (_hEmax : n ≤ Emax) (_hDmax : n ≤ Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSrank : InSrank C)
+    (hTimer : MedianTimerAtLeast 35 C) :
+    Probability.ProbHitWithin
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => ¬ InSrank D ∨ ¬ MedianTimerAtLeast 1 D)
+      (4 * n * (n - 1)) ≤ ((4 : ENNReal)⁻¹) :=
+  PEM_srank_or_timer_failure_prob_le_quarter_short35_no_counter
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+    hn4 hn0 C hSrank hTimer
 
 theorem PEM_swap_ProbHitWithin_InSswap
     {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
