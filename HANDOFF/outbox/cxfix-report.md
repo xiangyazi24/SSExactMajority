@@ -1117,3 +1117,67 @@ grep -nE '\bsorry\b|\baxiom\b|native_decide' SSExactMajority/Convergence/LogRegi
 
 Result: all target checks completed successfully; the forbidden-token grep
 returned no matches. The build output contains only existing linter warnings.
+
+## Trank Spec Status
+
+Spec file executed:
+
+- `HANDOFF/trank_spec.md`
+
+Mechanism audit:
+
+- `SSExactMajority/Protocol/Transition.lean:32-62`:
+  `trank` enters `transitionPEM_prePhase4` only through the Settled median
+  timer initialization `timer := 7 * (trank + 4)`.
+- `SSExactMajority/Protocol/Transition.lean:98-124`:
+  `transitionPEM_phase4` is parameterized only by `Rmax`; reset creation,
+  resetcount, answer propagation, and delay/reset machinery do not mention
+  `trank`.
+- `SSExactMajority/Convergence/BurmanProof.lean:130`:
+  the only explicit correctness-side timer-init lower-bound lemma found is
+  `timer_init_ge_2`, proving the constant lower bound `2 <= 7*(trank+4)`.
+- Searches over `LogTreeReset`, `LogRegimeConvergence`,
+  `LogRegimeFinal`, `BurmanConvergenceFinal`, and `BurmanProof` found no
+  correctness-side proof obligation of the form `timer >= f(n)` coming from
+  `trank`. The ranking/swap/decision consumers use median timer lower bounds
+  `2` and `1`.
+
+Where the unification is blocked:
+
+- `SSExactMajority/Convergence/LogRegimeFinal.lean:2337`:
+  `ranking_field_proof_log` is stated only for
+  `protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)`.
+- `SSExactMajority/Convergence/LogRegimeFinal.lean:4015-4148`:
+  the final log correctness assembly builds
+  `BurmanConvergence Rmax Rmax ...` and
+  `SolvesSSEM (protocolPEM n Rmax Rmax ...) n`; there is no generic
+  `trank` variant to instantiate at `1`.
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:13266-13666`:
+  the fresh-start-to-ranking wrappers and heap-prefix recruit induction are
+  also stated over `protocolPEM n Rmax Rmax ...`.
+- `SSExactMajority/Convergence/LogRegimeFinal.lean:2448-2483`:
+  the strong producer interfaces quantify `runPairs` over the coupled
+  protocol, so the re-entry side cannot be reused directly for `trank = 1`.
+- `SSExactMajority/UpperBound/Time/GenericTrank.lean:302`:
+  existing `generic_step_eq_coupled_of_InSrank` transfers steps only once the
+  configuration is already `InSrank`; it is sufficient for settled
+  swap/decision segments but does not cover the reset/recruit/ranking entry
+  stack where the public theorems are hardcoded.
+
+Conclusion:
+
+- I did not land `P_EM_solves_SSEM_log_trank1`.
+- I found no genuine mechanism-level need for `timer >= f(n)` or
+  `trank = Rmax`; the remaining gap is a proof-interface gap: the log
+  correctness stack must expose generic/trank1 versions of the reset/recruit
+  ranking entry and strong producer interfaces before the final
+  `BurmanConvergence 1 Rmax ...` instance can be assembled without
+  `sorry`/`axiom`.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeFinal.lean --json
+```
+
+Result: completed successfully; existing warnings only.
