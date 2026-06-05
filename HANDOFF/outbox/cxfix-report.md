@@ -245,3 +245,60 @@ precondition; it is not eliminated in this file.
 
 Result: build completed successfully. No `sorry`, `axiom`, or
 `native_decide` in `SSExactMajority/Convergence/LogTreeReset.lean`.
+
+## Phase-A Balanced Growth Result
+
+- Discharged the balanced-doubling growth core in
+  `SSExactMajority/Convergence/LogTreeReset.lean`.
+- Added the cardinal-generation machinery: `highSet`, disjoint source/target
+  pair selection, one-generation growth, and the logarithmic iteration.
+- Proved `balanced_tree_growth` with the requested seed fuel
+  `Nat.clog 2 n + 1`.
+- Added an unconditional fresh-reset entry point. Exact landed preconditions:
+  `2 ≤ n`, `1 < Dmax`, and seed fuel `Nat.clog 2 n + 2 ≤ R`.
+  The extra fuel unit is used only for the odd-leftover drain: a partner whose
+  old resetcount is already `0` is not refreshed by `processAgent` in the
+  `rc = 1` case, so the leftover is first synchronized from fuel at least `2`
+  into a positive equal-fuel pair and then drained by the proven pair drain.
+- Kept the compatibility theorem
+  `all_fresh_from_log_seed_via_balanced_growth`, which feeds the proven
+  `balanced_tree_growth` into the older pair-list theorem when a disjoint
+  covering pair list is supplied.
+
+Theorems landed:
+
+- `SSEM.balanced_tree_growth_card_iter`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:618`
+- `SSEM.balanced_tree_growth`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:674`
+  Preconditions: `0 < n`, `1 < Dmax`, seed `r` Resetting, and
+  `Nat.clog 2 n + 1 ≤ (C r).1.resetcount`.
+- `SSEM.balanced_tree_growth_floor`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:729`
+  Preconditions: `0 < n`, `1 < Dmax`, `0 < d`, seed `r` Resetting, and
+  `Nat.clog 2 n + d ≤ (C r).1.resetcount`.
+- `SSEM.drain_all_floor_two_to_fresh`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1118`
+  Preconditions: `0 < n`, `2 ≤ n`, `1 < Dmax`, and all agents Resetting with
+  resetcount at least `2`.
+- `SSEM.all_fresh_from_log_seed_via_balanced_growth`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1263`
+  Preconditions: the old disjoint covering pair-list inputs, but no
+  `hBalancedTreeGrowth` hypothesis.
+- `SSEM.all_fresh_from_log_seed_unconditional`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1286`
+  Preconditions: `0 < n`, `2 ≤ n`, `1 < Dmax`, seed `r` Resetting, and
+  `Nat.clog 2 n + 2 ≤ R ≤ (C r).1.resetcount`.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogTreeReset
+```
+
+Result: build completed successfully. Grep found no `sorry`, `axiom`, or
+`native_decide` in `SSExactMajority/Convergence/LogTreeReset.lean`.
+
+Fresh `#print axioms` for `balanced_tree_growth`,
+`balanced_tree_growth_floor`, and `all_fresh_from_log_seed_unconditional`:
+`[propext, Classical.choice, Quot.sound]`.

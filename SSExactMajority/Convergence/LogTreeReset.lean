@@ -18,6 +18,766 @@ def PairListDisjoint {n : ℕ} : List (Fin n × Fin n) → Prop
   | (u, v) :: ps =>
       u ≠ v ∧ u ∉ pairEndpoints ps ∧ v ∉ pairEndpoints ps ∧ PairListDisjoint ps
 
+def pairSources {n : ℕ} : List (Fin n × Fin n) → Finset (Fin n)
+  | [] => ∅
+  | (u, _) :: ps => insert u (pairSources ps)
+
+def pairTargets {n : ℕ} : List (Fin n × Fin n) → Finset (Fin n)
+  | [] => ∅
+  | (_, v) :: ps => insert v (pairTargets ps)
+
+theorem pairEndpoints_eq_sources_union_targets {n : ℕ}
+    (pairs : List (Fin n × Fin n)) :
+    pairEndpoints pairs = pairSources pairs ∪ pairTargets pairs := by
+  induction pairs with
+  | nil => simp [pairEndpoints, pairSources, pairTargets]
+  | cons p ps ih =>
+      rcases p with ⟨u, v⟩
+      ext x
+      simp [pairEndpoints, pairSources, pairTargets, ih, or_left_comm]
+
+theorem pairSources_subset_endpoints {n : ℕ}
+    (pairs : List (Fin n × Fin n)) :
+    pairSources pairs ⊆ pairEndpoints pairs := by
+  intro x hx
+  rw [pairEndpoints_eq_sources_union_targets]
+  exact Finset.mem_union_left _ hx
+
+theorem pairTargets_subset_endpoints {n : ℕ}
+    (pairs : List (Fin n × Fin n)) :
+    pairTargets pairs ⊆ pairEndpoints pairs := by
+  intro x hx
+  rw [pairEndpoints_eq_sources_union_targets]
+  exact Finset.mem_union_right _ hx
+
+def highSet {n : ℕ} (C : Config (AgentState n) Opinion n) (k : ℕ) :
+    Finset (Fin n) :=
+  Finset.univ.filter fun w : Fin n =>
+    (C w).1.role = .Resetting ∧ k ≤ (C w).1.resetcount
+
+theorem mem_highSet {n : ℕ} {C : Config (AgentState n) Opinion n}
+    {k : ℕ} {w : Fin n} :
+    w ∈ highSet C k ↔
+      (C w).1.role = .Resetting ∧ k ≤ (C w).1.resetcount := by
+  simp [highSet]
+
+theorem highSet_mono_threshold {n : ℕ} (C : Config (AgentState n) Opinion n)
+    {k l : ℕ} (hkl : k ≤ l) :
+    highSet C l ⊆ highSet C k := by
+  intro w hw
+  rw [mem_highSet] at hw ⊢
+  exact ⟨hw.1, Nat.le_trans hkl hw.2⟩
+
+theorem highSet_card_eq_n_all {n : ℕ}
+    {C : Config (AgentState n) Opinion n} {k : ℕ}
+    (hcard : (highSet C k).card = n) :
+    ∀ w : Fin n, (C w).1.role = .Resetting ∧ k ≤ (C w).1.resetcount := by
+  classical
+  intro w
+  have hsub : (Finset.univ : Finset (Fin n)) ⊆ highSet C k := by
+    intro x hx
+    by_contra hxhigh
+    have hproper : (highSet C k).card < (Finset.univ : Finset (Fin n)).card := by
+      have hssub : highSet C k ⊂ (Finset.univ : Finset (Fin n)) := by
+        exact Finset.ssubset_iff.mpr
+          ⟨x, hxhigh, by intro y hy; exact Finset.mem_univ y⟩
+      exact Finset.card_lt_card hssub
+    simp [hcard] at hproper
+  have hw : w ∈ highSet C k := hsub (Finset.mem_univ w)
+  exact mem_highSet.mp hw
+
+theorem highSet_card_le_n {n : ℕ}
+    (C : Config (AgentState n) Opinion n) (k : ℕ) :
+    (highSet C k).card ≤ n := by
+  simpa [Finset.card_univ, Fintype.card_fin] using
+    (Finset.card_le_univ (highSet C k))
+
+theorem card_add_min_complement_eq_min_double {a n : ℕ}
+    (ha : a ≤ n) :
+    a + Nat.min a (n - a) = Nat.min n (2 * a) := by
+  by_cases hdouble : 2 * a ≤ n
+  · have hleft : a ≤ n - a := by omega
+    have hmin₂ : Nat.min n (2 * a) = 2 * a := Nat.min_eq_right hdouble
+    simp [Nat.min_eq_left hleft, hmin₂]
+    omega
+  · have hright : n - a ≤ a := by omega
+    have hmin₂ : Nat.min n (2 * a) = n := Nat.min_eq_left (by omega)
+    simp [Nat.min_eq_right hright, hmin₂]
+    omega
+
+theorem min_pow_succ_mul_le_min_pow_mul_min_double
+    {n m g : ℕ} (_hn : 0 < n) :
+    Nat.min n (2 ^ (g + 1) * m) ≤
+      Nat.min n (2 ^ g * Nat.min n (2 * m)) := by
+  by_cases hdouble : 2 * m ≤ n
+  · have hmin : Nat.min n (2 * m) = 2 * m := Nat.min_eq_right hdouble
+    have hpow :
+        2 ^ (g + 1) * m = 2 ^ g * (2 * m) := by
+      rw [pow_succ]
+      simp [Nat.mul_assoc]
+    simp [hmin, hpow]
+  · have hn_le : n ≤ 2 * m := by omega
+    have hmin : Nat.min n (2 * m) = n := Nat.min_eq_left hn_le
+    have hpow_ge : 1 ≤ 2 ^ g := by
+      induction g with
+      | zero => simp
+      | succ g ih =>
+          rw [pow_succ]
+          have hmul : 1 * 1 ≤ 2 ^ g * 2 :=
+            Nat.mul_le_mul ih (by omega : 1 ≤ 2)
+          simpa using hmul
+    have hn_le_mul : n ≤ 2 ^ g * n := by
+      simpa using Nat.mul_le_mul_right n hpow_ge
+    have hrhs : Nat.min n (2 ^ g * Nat.min n (2 * m)) = n := by
+      simp [hmin, Nat.min_eq_left hn_le_mul]
+    rw [hrhs]
+    exact Nat.min_le_left _ _
+
+theorem exists_pair_list_of_disjoint_eq_card
+    {n : ℕ} (A T : Finset (Fin n))
+    (hcard : A.card = T.card)
+    (hdis : Disjoint A T) :
+    ∃ pairs : List (Fin n × Fin n),
+      PairListDisjoint pairs ∧
+      pairSources pairs = A ∧
+      pairTargets pairs = T := by
+  classical
+  revert T
+  refine Finset.induction_on A ?base ?step
+  · intro T hcard hdis
+    have hT : T = ∅ := by
+      apply Finset.card_eq_zero.mp
+      simpa using hcard.symm
+    refine ⟨[], ?_, ?_, ?_⟩
+    · trivial
+    · simp [pairSources]
+    · simp [pairTargets, hT]
+  · intro a A ha ih T hcard hdis
+    have hTpos : 0 < T.card := by
+      rw [Finset.card_insert_of_notMem ha] at hcard
+      omega
+    obtain ⟨t, ht⟩ := Finset.card_pos.mp hTpos
+    have hcard_tail : A.card = (T.erase t).card := by
+      rw [Finset.card_erase_of_mem ht]
+      rw [Finset.card_insert_of_notMem ha] at hcard
+      omega
+    have hdis_tail : Disjoint A (T.erase t) := by
+      rw [Finset.disjoint_left]
+      intro x hxA hxT
+      exact (Finset.disjoint_left.mp hdis) (Finset.mem_insert_of_mem hxA)
+        (Finset.mem_of_mem_erase hxT)
+    obtain ⟨pairs, hpair_dis, hsources, htargets⟩ := ih (T.erase t) hcard_tail hdis_tail
+    have hat : a ≠ t := by
+      intro h
+      subst t
+      exact (Finset.disjoint_left.mp hdis) (Finset.mem_insert_self a A) ht
+    have ha_not_T : a ∉ T := by
+      intro haT
+      exact (Finset.disjoint_left.mp hdis) (Finset.mem_insert_self a A) haT
+    have ht_not_A : t ∉ A := by
+      intro htA
+      exact (Finset.disjoint_left.mp hdis) (Finset.mem_insert_of_mem htA) ht
+    have ha_not_end : a ∉ pairEndpoints pairs := by
+      rw [pairEndpoints_eq_sources_union_targets, hsources, htargets]
+      simp [ha, ha_not_T]
+    have ht_not_end : t ∉ pairEndpoints pairs := by
+      rw [pairEndpoints_eq_sources_union_targets, hsources, htargets]
+      simp [ht_not_A]
+    refine ⟨(a, t) :: pairs, ?_, ?_, ?_⟩
+    · exact ⟨hat, ha_not_end, ht_not_end, hpair_dis⟩
+    · simp [pairSources, hsources]
+    · simp [pairTargets, htargets, ht]
+
+theorem exists_pair_list_with_optional_leftover
+    {n : ℕ} (A : Finset (Fin n)) :
+    ∃ pairs : List (Fin n × Fin n), ∃ leftover : Option (Fin n),
+      PairListDisjoint pairs ∧
+      (∀ w : Fin n, w ∈ pairEndpoints pairs → w ∈ A) ∧
+      (∀ w : Fin n, leftover = some w → w ∈ A ∧ w ∉ pairEndpoints pairs) ∧
+      (∀ w : Fin n, w ∈ A → w ∈ pairEndpoints pairs ∨ leftover = some w) := by
+  classical
+  refine Finset.induction_on A ?base ?step
+  · refine ⟨[], none, ?_, ?_, ?_, ?_⟩
+    · trivial
+    · intro w hw
+      simp [pairEndpoints] at hw
+    · intro w h
+      cases h
+    · intro w hw
+      simp at hw
+  · intro a A ha ih
+    obtain ⟨pairs, leftover, hdis, hend_sub, hleft, hcover⟩ := ih
+    cases leftover with
+    | none =>
+        have ha_not_end : a ∉ pairEndpoints pairs := by
+          intro ha_end
+          exact ha (hend_sub a ha_end)
+        refine ⟨pairs, some a, hdis, ?_, ?_, ?_⟩
+        · intro w hw
+          exact Finset.mem_insert_of_mem (hend_sub w hw)
+        · intro w hsome
+          injection hsome with hw
+          subst w
+          exact ⟨Finset.mem_insert_self a A, ha_not_end⟩
+        · intro w hw
+          simp only [Finset.mem_insert] at hw
+          rcases hw with hwa | hwA
+          · subst w
+            exact Or.inr rfl
+          · rcases hcover w hwA with hwEnd | hnone
+            · exact Or.inl hwEnd
+            · cases hnone
+    | some b =>
+        have hbA_end := hleft b rfl
+        have hab : a ≠ b := by
+          intro h
+          subst b
+          exact ha hbA_end.1
+        have ha_not_end : a ∉ pairEndpoints pairs := by
+          intro ha_end
+          exact ha (hend_sub a ha_end)
+        refine ⟨(a, b) :: pairs, none, ?_, ?_, ?_, ?_⟩
+        · exact ⟨hab, ha_not_end, hbA_end.2, hdis⟩
+        · intro w hw
+          simp only [pairEndpoints, Finset.mem_insert] at hw
+          rcases hw with hwa | hwb_or_tail
+          · subst w
+            exact Finset.mem_insert_self a A
+          · rcases hwb_or_tail with hwb | hwTail
+            · subst w
+              exact Finset.mem_insert_of_mem hbA_end.1
+            · exact Finset.mem_insert_of_mem (hend_sub w hwTail)
+        · intro w h
+          cases h
+        · intro w hw
+          simp only [Finset.mem_insert] at hw
+          rcases hw with hwa | hwA
+          · subst w
+            exact Or.inl (by simp [pairEndpoints])
+          · rcases hcover w hwA with hwEnd | hsome
+            · exact Or.inl (by simp [pairEndpoints, hwEnd])
+            · injection hsome with hwb
+              subst w
+              exact Or.inl (by simp [pairEndpoints])
+
+theorem rankDeltaOSSR_resetting_pos_resetting_zero
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    {s t : AgentState n}
+    (hs : s.role = .Resetting) (ht : t.role = .Resetting)
+    (hs_rc : 1 < s.resetcount) (ht_rc : t.resetcount = 0) :
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.role = .Resetting ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.role = .Resetting ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).1.resetcount = s.resetcount - 1 ∧
+    (rankDeltaOSSR Rmax Emax Dmax hn (s, t)).2.resetcount = s.resetcount - 1 := by
+  have hpred : s.resetcount - 1 ≠ 0 := by omega
+  unfold rankDeltaOSSR propagateReset processAgent resetOSSR
+  simp [hs, ht, ht_rc, hpred]
+  by_cases hLL : s.leader = .L ∧ t.leader = .L <;> simp [hLL]
+
+theorem step_resetting_pos_resetting_zero
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (C : Config (AgentState n) Opinion n)
+    {u v : Fin n} (huv : u ≠ v)
+    (hu_res : (C u).1.role = .Resetting) (hv_res : (C v).1.role = .Resetting)
+    (hu_rc : 1 < (C u).1.resetcount) (hv_rc : (C v).1.resetcount = 0) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    let C' := C.step P u v
+    (C' u).1.role = .Resetting ∧
+    (C' v).1.role = .Resetting ∧
+    (C' u).1.resetcount = (C u).1.resetcount - 1 ∧
+    (C' v).1.resetcount = (C u).1.resetcount - 1 := by
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have h_rd := rankDeltaOSSR_resetting_pos_resetting_zero
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+    hu_res hv_res hu_rc hv_rc
+  have h_not_both :
+      ¬((rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).1.role = .Settled ∧
+        (rankDeltaOSSR Rmax Emax Dmax hn ((C u).1, (C v).1)).2.role = .Settled) := by
+    intro ⟨h1, _⟩
+    rw [h_rd.1] at h1
+    exact Role.noConfusion h1
+  have h_pass := transitionPEM_structural_passthrough (trank := Rmax) (Rmax := Rmax)
+    (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn) (x₀ := (C u).2) (x₁ := (C v).2) h_not_both
+  have h_fst := Config.step_fst_state P C huv
+  have h_snd := Config.step_snd_state P C huv huv.symm
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [congrArg AgentState.role h_fst]
+    exact h_pass.1 ▸ h_rd.1
+  · rw [congrArg AgentState.role h_snd]
+    exact h_pass.2.2.2.2.2.2.1 ▸ h_rd.2.1
+  · rw [congrArg AgentState.resetcount h_fst]
+    exact h_pass.2.2.2.2.1 ▸ h_rd.2.2.1
+  · rw [congrArg AgentState.resetcount h_snd]
+    exact h_pass.2.2.2.2.2.2.2.2.2.2.1 ▸ h_rd.2.2.2
+
+set_option maxHeartbeats 4000000 in
+-- Splits the target into the three reset-propagation cases and normalizes all
+-- of them to the next lower high-fuel threshold.
+theorem step_high_source_any_target_next
+    {n Rmax Emax Dmax k : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    {u v : Fin n} (huv : u ≠ v)
+    (hk : 0 < k)
+    (hu_high : u ∈ highSet C (k + 1)) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    let C' := C.step P u v
+    (C' u).1.role = .Resetting ∧
+    k ≤ (C' u).1.resetcount ∧
+    (C' v).1.role = .Resetting ∧
+    k ≤ (C' v).1.resetcount ∧
+    (∀ w : Fin n, w ≠ u → w ≠ v → C' w = C w) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hu_state := mem_highSet.mp hu_high
+  have hu_res : (C u).1.role = .Resetting := hu_state.1
+  have hu_floor : k + 1 ≤ (C u).1.resetcount := hu_state.2
+  have hu_pos : 0 < (C u).1.resetcount := by omega
+  have hu_gt_one : 1 < (C u).1.resetcount := by omega
+  have hothers : ∀ w : Fin n, w ≠ u → w ≠ v → C.step P u v w = C w := by
+    intro w hwu hwv
+    simp [Config.step, huv, hwu, hwv]
+  by_cases hv_res : (C v).1.role = .Resetting
+  · by_cases hv_pos : 0 < (C v).1.resetcount
+    · have hstep := step_both_rc_pos
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (by omega : 0 < Dmax) C huv hu_res hv_res hu_pos hv_pos
+      refine ⟨hstep.1, ?_, hstep.2.1, ?_, hothers⟩
+      · rw [hstep.2.2.1]
+        exact le_max_of_le_left (by omega)
+      · rw [hstep.2.2.2.1]
+        exact le_max_of_le_left (by omega)
+    · have hv_zero : (C v).1.resetcount = 0 := by omega
+      have hstep := step_resetting_pos_resetting_zero
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        C huv hu_res hv_res hu_gt_one hv_zero
+      refine ⟨hstep.1, ?_, hstep.2.1, ?_, hothers⟩
+      · rw [hstep.2.2.1]
+        omega
+      · rw [hstep.2.2.2]
+        omega
+  · have hsender := propagate_reset_step_sender_rc
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax C huv hu_res hu_pos hv_res
+    have hpartner := propagate_reset_step_partner_rc
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax C huv hu_res hu_pos hv_res
+    refine ⟨hsender.1, ?_, hpartner.1, ?_, hothers⟩
+    · rw [hsender.2]
+      omega
+    · rw [hpartner.2]
+      omega
+
+set_option maxHeartbeats 8000000 in
+-- A whole disjoint generation can be run sequentially because every later
+-- endpoint is outside the earlier pair endpoints and is therefore unchanged.
+theorem generation_pair_list_high
+    {n Rmax Emax Dmax k : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (pairs : List (Fin n × Fin n))
+    (U : Finset (Fin n))
+    (hdis : PairListDisjoint pairs)
+    (hk : 0 < k)
+    (hU_high : ∀ w : Fin n, w ∈ U → w ∈ highSet C (k + 1))
+    (hSrc_high :
+      ∀ w : Fin n, w ∈ pairSources pairs → w ∈ highSet C (k + 1))
+    (hU_untouched : ∀ w : Fin n, w ∈ U → w ∉ pairEndpoints pairs) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    (∀ w : Fin n, w ∈ U → w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∈ pairSources pairs →
+      w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∈ pairTargets pairs →
+      w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∉ pairEndpoints pairs → runPairs P C pairs w = C w) := by
+  classical
+  induction pairs generalizing C U with
+  | nil =>
+      intro
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro w hwU
+        simpa using (highSet_mono_threshold C (by omega : k ≤ k + 1)
+          (hU_high w hwU))
+      · intro w hw
+        simp [pairSources] at hw
+      · intro w hw
+        simp [pairTargets] at hw
+      · intro w _hw
+        simp [runPairs]
+  | cons p ps ih =>
+      intro
+      rcases p with ⟨u, v⟩
+      rcases hdis with ⟨huv, hu_not_tail, hv_not_tail, hdis_tail⟩
+      set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+      have hu_source : u ∈ pairSources ((u, v) :: ps) := by
+        simp [pairSources]
+      have hstep := step_high_source_any_target_next
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hDmax C huv hk (hSrc_high u hu_source)
+      have hu_step : u ∈ highSet (C.step P u v) k := by
+        rw [mem_highSet]
+        exact ⟨by simpa [P] using hstep.1,
+          by simpa [P] using hstep.2.1⟩
+      have hv_step : v ∈ highSet (C.step P u v) k := by
+        rw [mem_highSet]
+        exact ⟨by simpa [P] using hstep.2.2.1,
+          by simpa [P] using hstep.2.2.2.1⟩
+      have hothers :
+          ∀ w : Fin n, w ≠ u → w ≠ v → C.step P u v w = C w := by
+        intro w hwu hwv
+        simpa [P] using hstep.2.2.2.2 w hwu hwv
+      have hU_high₁ :
+          ∀ w : Fin n, w ∈ U → w ∈ highSet (C.step P u v) (k + 1) := by
+        intro w hwU
+        have hwu : w ≠ u := by
+          intro h
+          subst w
+          exact hU_untouched u hwU (by simp [pairEndpoints])
+        have hwv : w ≠ v := by
+          intro h
+          subst w
+          exact hU_untouched v hwU (by simp [pairEndpoints])
+        rw [mem_highSet]
+        rw [hothers w hwu hwv]
+        exact mem_highSet.mp (hU_high w hwU)
+      have hSrc_high₁ :
+          ∀ w : Fin n, w ∈ pairSources ps →
+            w ∈ highSet (C.step P u v) (k + 1) := by
+        intro w hwSrc
+        have hwEnd : w ∈ pairEndpoints ps :=
+          pairSources_subset_endpoints ps hwSrc
+        have hwu : w ≠ u := by
+          intro h
+          subst w
+          exact hu_not_tail hwEnd
+        have hwv : w ≠ v := by
+          intro h
+          subst w
+          exact hv_not_tail hwEnd
+        rw [mem_highSet]
+        rw [hothers w hwu hwv]
+        exact mem_highSet.mp (hSrc_high w (by simp [pairSources, hwSrc]))
+      have hU_untouched₁ :
+          ∀ w : Fin n, w ∈ U → w ∉ pairEndpoints ps := by
+        intro w hwU hwEnd
+        exact hU_untouched w hwU (by simp [pairEndpoints, hwEnd])
+      obtain ⟨hU_fin, hSrc_fin, hTgt_fin, hunch_fin⟩ :=
+        ih (C.step P u v) U hdis_tail hU_high₁ hSrc_high₁ hU_untouched₁
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro w hwU
+        change w ∈ highSet (runPairs P (C.step P u v) ps) k
+        exact hU_fin w hwU
+      · intro w hwSrc
+        change w ∈ highSet (runPairs P (C.step P u v) ps) k
+        simp only [pairSources, Finset.mem_insert] at hwSrc
+        rcases hwSrc with hwu_eq | hwSrcTail
+        · subst w
+          rw [mem_highSet] at hu_step ⊢
+          rw [hunch_fin u hu_not_tail]
+          exact hu_step
+        · exact hSrc_fin w hwSrcTail
+      · intro w hwTgt
+        change w ∈ highSet (runPairs P (C.step P u v) ps) k
+        simp only [pairTargets, Finset.mem_insert] at hwTgt
+        rcases hwTgt with hwv_eq | hwTgtTail
+        · subst w
+          rw [mem_highSet] at hv_step ⊢
+          rw [hunch_fin v hv_not_tail]
+          exact hv_step
+        · exact hTgt_fin w hwTgtTail
+      · intro w hwNotEnd
+        change runPairs P (C.step P u v) ps w = C w
+        have hnot_tail : w ∉ pairEndpoints ps := by
+          intro hwTail
+          exact hwNotEnd (by simp [pairEndpoints, hwTail])
+        have hwu : w ≠ u := by
+          intro h
+          subst w
+          exact hwNotEnd (by simp [pairEndpoints])
+        have hwv : w ≠ v := by
+          intro h
+          subst w
+          exact hwNotEnd (by simp [pairEndpoints])
+        rw [hunch_fin w hnot_tail]
+        exact hothers w hwu hwv
+
+set_option maxHeartbeats 10000000 in
+-- Choose a maximal same-size source/target matching from the current high set
+-- into its complement; the generation lemma then gives the cardinal doubling.
+theorem balanced_tree_generation
+    {n Rmax Emax Dmax k : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (hk : 0 < k) :
+    ∃ Lgrow : List (Fin n × Fin n),
+      let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+      Nat.min n (2 * (highSet C (k + 1)).card) ≤
+        (highSet (runPairs P C Lgrow) k).card := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  let S : Finset (Fin n) := highSet C (k + 1)
+  let O : Finset (Fin n) := (Finset.univ : Finset (Fin n)) \ S
+  let q : ℕ := Nat.min S.card O.card
+  have hqS : q ≤ S.card := by
+    dsimp [q]
+    exact Nat.min_le_left _ _
+  have hqO : q ≤ O.card := by
+    dsimp [q]
+    exact Nat.min_le_right _ _
+  obtain ⟨A, hA_sub, hA_card⟩ :=
+    Finset.exists_subset_card_eq (s := S) hqS
+  obtain ⟨T, hT_sub, hT_card⟩ :=
+    Finset.exists_subset_card_eq (s := O) hqO
+  have hdisAT : Disjoint A T := by
+    rw [Finset.disjoint_left]
+    intro x hxA hxT
+    have hxS : x ∈ S := hA_sub hxA
+    have hxO : x ∈ O := hT_sub hxT
+    exact (Finset.mem_sdiff.mp hxO).2 hxS
+  have hcardAT : A.card = T.card := by
+    rw [hA_card, hT_card]
+  obtain ⟨pairs, hpair_dis, hsources, htargets⟩ :=
+    exists_pair_list_of_disjoint_eq_card A T hcardAT hdisAT
+  let U : Finset (Fin n) := S \ A
+  have hU_high :
+      ∀ w : Fin n, w ∈ U → w ∈ highSet C (k + 1) := by
+    intro w hw
+    exact (Finset.mem_sdiff.mp hw).1
+  have hSrc_high :
+      ∀ w : Fin n, w ∈ pairSources pairs → w ∈ highSet C (k + 1) := by
+    intro w hw
+    have hwA : w ∈ A := by
+      simpa [hsources] using hw
+    exact hA_sub hwA
+  have hU_untouched : ∀ w : Fin n, w ∈ U → w ∉ pairEndpoints pairs := by
+    intro w hwU hwEnd
+    have hwS : w ∈ S := (Finset.mem_sdiff.mp hwU).1
+    have hwNotA : w ∉ A := (Finset.mem_sdiff.mp hwU).2
+    have hwEnd' : w ∈ A ∪ T := by
+      simpa [pairEndpoints_eq_sources_union_targets pairs, hsources, htargets]
+        using hwEnd
+    rcases Finset.mem_union.mp hwEnd' with hwA | hwT
+    · exact hwNotA hwA
+    · have hwO : w ∈ O := hT_sub hwT
+      exact (Finset.mem_sdiff.mp hwO).2 hwS
+  have hgen := generation_pair_list_high
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+    hDmax C pairs U hpair_dis hk hU_high hSrc_high hU_untouched
+  change
+    (∀ w : Fin n, w ∈ U → w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∈ pairSources pairs →
+      w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∈ pairTargets pairs →
+      w ∈ highSet (runPairs P C pairs) k) ∧
+    (∀ w : Fin n, w ∉ pairEndpoints pairs → runPairs P C pairs w = C w) at hgen
+  obtain ⟨hU_fin, hSrc_fin, hTgt_fin, _hunch_fin⟩ := hgen
+  have hsubsetST : S ∪ T ⊆ highSet (runPairs P C pairs) k := by
+    intro w hw
+    rcases Finset.mem_union.mp hw with hwS | hwT
+    · by_cases hwA : w ∈ A
+      · have hwSrc : w ∈ pairSources pairs := by
+          simpa [hsources] using hwA
+        exact hSrc_fin w hwSrc
+      · have hwU : w ∈ U := by
+          exact Finset.mem_sdiff.mpr ⟨hwS, hwA⟩
+        exact hU_fin w hwU
+    · have hwTgt : w ∈ pairTargets pairs := by
+        simpa [htargets] using hwT
+      exact hTgt_fin w hwTgt
+  have hdisST : Disjoint S T := by
+    rw [Finset.disjoint_left]
+    intro x hxS hxT
+    have hxO : x ∈ O := hT_sub hxT
+    exact (Finset.mem_sdiff.mp hxO).2 hxS
+  have hST_card : (S ∪ T).card = S.card + q := by
+    rw [Finset.card_union_of_disjoint hdisST, hT_card]
+  have hSle : S.card ≤ n := by
+    simpa [S] using highSet_card_le_n C (k + 1)
+  have hOcard : O.card = n - S.card := by
+    dsimp [O]
+    rw [Finset.card_sdiff_of_subset (Finset.subset_univ S)]
+    simp [Finset.card_univ, Fintype.card_fin]
+  have htarget_eq : S.card + q = Nat.min n (2 * S.card) := by
+    dsimp [q]
+    rw [hOcard]
+    exact card_add_min_complement_eq_min_double hSle
+  refine ⟨pairs, ?_⟩
+  change Nat.min n (2 * (highSet C (k + 1)).card) ≤
+    (highSet (runPairs P C pairs) k).card
+  calc
+    Nat.min n (2 * (highSet C (k + 1)).card)
+        = Nat.min n (2 * S.card) := by simp [S]
+    _ = S.card + q := htarget_eq.symm
+    _ = (S ∪ T).card := hST_card.symm
+    _ ≤ (highSet (runPairs P C pairs) k).card :=
+      Finset.card_le_card hsubsetST
+
+set_option maxHeartbeats 12000000 in
+-- Iterating the one-generation matching lemma keeps only the cardinal lower
+-- bound needed at the final logarithmic depth.
+theorem balanced_tree_growth_card_iter
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax) :
+    ∀ g k (C : Config (AgentState n) Opinion n) (m : ℕ),
+      0 < k →
+      m ≤ n →
+      m ≤ (highSet C (k + g)).card →
+      ∃ Lgrow : List (Fin n × Fin n),
+        let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+        Nat.min n (2 ^ g * m) ≤
+          (highSet (runPairs P C Lgrow) k).card := by
+  classical
+  intro g
+  induction g with
+  | zero =>
+      intro k C m _hk hm_n hm_card
+      refine ⟨[], ?_⟩
+      change Nat.min n (2 ^ 0 * m) ≤ (highSet C k).card
+      have hmin : Nat.min n m = m := Nat.min_eq_right hm_n
+      simpa [hmin] using hm_card
+  | succ g ih =>
+      intro k C m hk hm_n hm_card
+      set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+      have hkg : 0 < k + g := by omega
+      obtain ⟨L₁, hgen⟩ :=
+        balanced_tree_generation
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax C hkg
+      change Nat.min n (2 * (highSet C ((k + g) + 1)).card) ≤
+        (highSet (runPairs P C L₁) (k + g)).card at hgen
+      have hm_card' : m ≤ (highSet C ((k + g) + 1)).card := by
+        simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hm_card
+      have hmin_m_le :
+          Nat.min n (2 * m) ≤
+            Nat.min n (2 * (highSet C ((k + g) + 1)).card) := by
+        exact min_le_min_left n (Nat.mul_le_mul_left 2 hm_card')
+      have hm₁_card : Nat.min n (2 * m) ≤
+          (highSet (runPairs P C L₁) (k + g)).card :=
+        Nat.le_trans hmin_m_le hgen
+      have hm₁_n : Nat.min n (2 * m) ≤ n := Nat.min_le_left _ _
+      obtain ⟨L₂, hih⟩ := ih k (runPairs P C L₁)
+        (Nat.min n (2 * m)) hk hm₁_n hm₁_card
+      change Nat.min n (2 ^ g * Nat.min n (2 * m)) ≤
+        (highSet (runPairs P (runPairs P C L₁) L₂) k).card at hih
+      refine ⟨L₁ ++ L₂, ?_⟩
+      change Nat.min n (2 ^ (g + 1) * m) ≤
+        (highSet (runPairs P C (L₁ ++ L₂)) k).card
+      rw [runPairs_append]
+      exact Nat.le_trans
+        (min_pow_succ_mul_le_min_pow_mul_min_double
+          (n := n) (m := m) (g := g) hn)
+        hih
+
+set_option maxHeartbeats 12000000 in
+-- A log-fueled seed can recruit through balanced generations until every
+-- agent is Resetting with strictly positive resetcount.
+theorem balanced_tree_growth
+    {n Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    (r : Fin n)
+    (hr_role : (C r).1.role = .Resetting)
+    (hr_log : Nat.clog 2 n + 1 ≤ (C r).1.resetcount) :
+    ∃ Lgrow : List (Fin n × Fin n),
+      let C₁ := runPairs (protocolPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C Lgrow
+      ∀ w : Fin n, (C₁ w).1.role = .Resetting ∧ 0 < (C₁ w).1.resetcount := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hseed : r ∈ highSet C (Nat.clog 2 n + 1) := by
+    rw [mem_highSet]
+    exact ⟨hr_role, hr_log⟩
+  have hcard_one : 1 ≤ (highSet C (1 + Nat.clog 2 n)).card := by
+    have hpos : 0 < (highSet C (Nat.clog 2 n + 1)).card :=
+      Finset.card_pos.mpr ⟨r, hseed⟩
+    have hpos' : 0 < (highSet C (1 + Nat.clog 2 n)).card := by
+      simpa [Nat.add_comm] using hpos
+    omega
+  have hm_n : 1 ≤ n := by omega
+  obtain ⟨Lgrow, hiter⟩ :=
+    balanced_tree_growth_card_iter
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax (Nat.clog 2 n) 1 C 1 (by omega) hm_n hcard_one
+  change Nat.min n (2 ^ Nat.clog 2 n * 1) ≤
+    (highSet (runPairs P C Lgrow) 1).card at hiter
+  have hlepow : n ≤ 2 ^ Nat.clog 2 n :=
+    Nat.le_pow_clog (by omega : 1 < 2) n
+  have hminclog : Nat.min n (2 ^ Nat.clog 2 n * 1) = n := by
+    apply le_antisymm
+    · exact Nat.min_le_left _ _
+    · apply le_min
+      · exact le_rfl
+      · simpa [mul_one] using hlepow
+  have hn_le_card : n ≤ (highSet (runPairs P C Lgrow) 1).card := by
+    rw [hminclog] at hiter
+    exact hiter
+  have hcard_eq : (highSet (runPairs P C Lgrow) 1).card = n :=
+    le_antisymm (highSet_card_le_n (runPairs P C Lgrow) 1) hn_le_card
+  refine ⟨Lgrow, ?_⟩
+  change ∀ w : Fin n,
+    ((runPairs P C Lgrow) w).1.role = .Resetting ∧
+      0 < ((runPairs P C Lgrow) w).1.resetcount
+  intro w
+  have hw := highSet_card_eq_n_all
+    (C := runPairs P C Lgrow) (k := 1) hcard_eq w
+  exact ⟨hw.1, by omega⟩
+
+set_option maxHeartbeats 12000000 in
+-- The same logarithmic growth proof with an arbitrary positive fuel floor.
+-- This is needed for odd-size final drains: a lone leftover must have at
+-- least two units of fuel before it is paired with an already-fresh partner.
+theorem balanced_tree_growth_floor
+    {n Rmax Emax Dmax d : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (hd : 0 < d)
+    (C : Config (AgentState n) Opinion n)
+    (r : Fin n)
+    (hr_role : (C r).1.role = .Resetting)
+    (hr_log : Nat.clog 2 n + d ≤ (C r).1.resetcount) :
+    ∃ Lgrow : List (Fin n × Fin n),
+      let C₁ := runPairs (protocolPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C Lgrow
+      ∀ w : Fin n, (C₁ w).1.role = .Resetting ∧
+        d ≤ (C₁ w).1.resetcount := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hseed : r ∈ highSet C (Nat.clog 2 n + d) := by
+    rw [mem_highSet]
+    exact ⟨hr_role, hr_log⟩
+  have hcard_one : 1 ≤ (highSet C (d + Nat.clog 2 n)).card := by
+    have hpos : 0 < (highSet C (Nat.clog 2 n + d)).card :=
+      Finset.card_pos.mpr ⟨r, hseed⟩
+    have hpos' : 0 < (highSet C (d + Nat.clog 2 n)).card := by
+      simpa [Nat.add_comm] using hpos
+    omega
+  have hm_n : 1 ≤ n := by omega
+  obtain ⟨Lgrow, hiter⟩ :=
+    balanced_tree_growth_card_iter
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax (Nat.clog 2 n) d C 1 hd hm_n hcard_one
+  change Nat.min n (2 ^ Nat.clog 2 n * 1) ≤
+    (highSet (runPairs P C Lgrow) d).card at hiter
+  have hlepow : n ≤ 2 ^ Nat.clog 2 n :=
+    Nat.le_pow_clog (by omega : 1 < 2) n
+  have hminclog : Nat.min n (2 ^ Nat.clog 2 n * 1) = n := by
+    apply le_antisymm
+    · exact Nat.min_le_left _ _
+    · apply le_min
+      · exact le_rfl
+      · simpa [mul_one] using hlepow
+  have hn_le_card : n ≤ (highSet (runPairs P C Lgrow) d).card := by
+    rw [hminclog] at hiter
+    exact hiter
+  have hcard_eq : (highSet (runPairs P C Lgrow) d).card = n :=
+    le_antisymm (highSet_card_le_n (runPairs P C Lgrow) d) hn_le_card
+  refine ⟨Lgrow, ?_⟩
+  change ∀ w : Fin n,
+    ((runPairs P C Lgrow) w).1.role = .Resetting ∧
+      d ≤ ((runPairs P C Lgrow) w).1.resetcount
+  intro w
+  exact highSet_card_eq_n_all
+    (C := runPairs P C Lgrow) (k := d) hcard_eq w
+
 theorem rankDeltaOSSR_both_rc_pos_snd_delay_final
     {n Rmax Emax Dmax : ℕ} {hn : 0 < n}
     {s t : AgentState n}
@@ -185,6 +945,57 @@ theorem drain_pair_rc_with_both_delay
           rw [h_others_t w hwu hwv]
           exact h_others w hwu hwv
 
+theorem drain_positive_with_fresh_partner
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (C : Config (AgentState n) Opinion n)
+    {u v : Fin n} (huv : u ≠ v)
+    (hu_res : (C u).1.role = .Resetting)
+    (hu_rc : 1 < (C u).1.resetcount)
+    (hv_fresh : FreshResettingAt Dmax C v) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    ∃ L : List (Fin n × Fin n),
+      FreshResettingAt Dmax (runPairs P C L) u ∧
+      FreshResettingAt Dmax (runPairs P C L) v ∧
+      ∀ w : Fin n, w ≠ u → w ≠ v → runPairs P C L w = C w := by
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  let C₁ : Config (AgentState n) Opinion n := C.step P u v
+  have hstep := step_resetting_pos_resetting_zero
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+    C huv hu_res hv_fresh.1 hu_rc hv_fresh.2.1
+  have hu_res₁ : (C₁ u).1.role = .Resetting := by
+    simpa [C₁, P] using hstep.1
+  have hv_res₁ : (C₁ v).1.role = .Resetting := by
+    simpa [C₁, P] using hstep.2.1
+  have hu_pos₁ : 0 < (C₁ u).1.resetcount := by
+    have hrc := hstep.2.2.1
+    dsimp [C₁, P]
+    rw [hrc]
+    omega
+  have hv_pos₁ : 0 < (C₁ v).1.resetcount := by
+    have hrc := hstep.2.2.2
+    dsimp [C₁, P]
+    rw [hrc]
+    omega
+  obtain ⟨Ltail, hu_fresh, hv_fresh_tail, htail⟩ :=
+    drain_pair_rc_with_both_delay
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax C₁ huv hu_res₁ hv_res₁ hu_pos₁ hv_pos₁
+  refine ⟨[(u, v)] ++ Ltail, ?_, ?_, ?_⟩
+  · rw [runPairs_append]
+    change FreshResettingAt Dmax (runPairs P C₁ Ltail) u
+    exact hu_fresh
+  · rw [runPairs_append]
+    change FreshResettingAt Dmax (runPairs P C₁ Ltail) v
+    exact hv_fresh_tail
+  · intro w hwu hwv
+    rw [runPairs_append]
+    change runPairs P C₁ Ltail w = C w
+    rw [htail w hwu hwv]
+    dsimp [C₁, P]
+    simp [Config.step, huv, hwu, hwv]
+
 theorem drain_pair_list_to_fresh_on_endpoints
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -291,6 +1102,106 @@ theorem drain_pair_list_to_fresh_on_endpoints
         rw [hunchanged_tail w hnot_tail]
         exact hothers w hwu hwv
 
+theorem exists_fin_ne_of_two_le {n : ℕ} (hn2 : 2 ≤ n) (z : Fin n) :
+    ∃ y : Fin n, y ≠ z := by
+  by_cases hz : z.val = 0
+  · refine ⟨⟨1, by omega⟩, ?_⟩
+    intro h
+    have hv := congrArg Fin.val h
+    simp [hz] at hv
+  · refine ⟨⟨0, by omega⟩, ?_⟩
+    intro h
+    have hv := congrArg Fin.val h
+    simp at hv
+    exact hz hv.symm
+
+theorem drain_all_floor_two_to_fresh
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (hn2 : 2 ≤ n)
+    (C : Config (AgentState n) Opinion n)
+    (hAll : ∀ w : Fin n,
+      (C w).1.role = .Resetting ∧ 2 ≤ (C w).1.resetcount) :
+    let P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+    ∃ L : List (Fin n × Fin n),
+      ∀ w : Fin n, FreshResettingAt Dmax (runPairs P C L) w := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  obtain ⟨pairs, leftover, hdis, hend_sub, hleft, hcover⟩ :=
+    exists_pair_list_with_optional_leftover (A := (Finset.univ : Finset (Fin n)))
+  have hAllReset_pairs :
+      ∀ w : Fin n, w ∈ pairEndpoints pairs → (C w).1.role = .Resetting := by
+    intro w _hw
+    exact (hAll w).1
+  have hAllPos_pairs :
+      ∀ w : Fin n, w ∈ pairEndpoints pairs → 0 < (C w).1.resetcount := by
+    intro w _hw
+    have hw_floor := (hAll w).2
+    omega
+  obtain ⟨Lpairs, hfresh_pairs, hunchanged_pairs⟩ :=
+    drain_pair_list_to_fresh_on_endpoints
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax pairs C hdis hAllReset_pairs hAllPos_pairs
+  let C₁ : Config (AgentState n) Opinion n := runPairs P C Lpairs
+  cases leftover with
+  | none =>
+      refine ⟨Lpairs, ?_⟩
+      intro w
+      have hwEnd : w ∈ pairEndpoints pairs := by
+        rcases hcover w (Finset.mem_univ w) with hwEnd | hnone
+        · exact hwEnd
+        · cases hnone
+      exact hfresh_pairs w hwEnd
+  | some z =>
+      have hz_info := hleft z rfl
+      obtain ⟨y, hyz⟩ := exists_fin_ne_of_two_le hn2 z
+      have hyEnd : y ∈ pairEndpoints pairs := by
+        rcases hcover y (Finset.mem_univ y) with hyEnd | hyLeft
+        · exact hyEnd
+        · injection hyLeft with hzy
+          exact False.elim (hyz hzy.symm)
+      have hz_unchanged : C₁ z = C z := by
+        dsimp [C₁]
+        exact hunchanged_pairs z hz_info.2
+      have hz_res : (C₁ z).1.role = .Resetting := by
+        rw [hz_unchanged]
+        exact (hAll z).1
+      have hz_rc : 1 < (C₁ z).1.resetcount := by
+        rw [hz_unchanged]
+        have hz_floor := (hAll z).2
+        omega
+      have hy_fresh : FreshResettingAt Dmax C₁ y := by
+        dsimp [C₁]
+        exact hfresh_pairs y hyEnd
+      have hzy : z ≠ y := by
+        intro h
+        exact hyz h.symm
+      obtain ⟨Llast, hz_fresh, hy_fresh_last, hlast⟩ :=
+        drain_positive_with_fresh_partner
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax C₁ hzy hz_res hz_rc hy_fresh
+      refine ⟨Lpairs ++ Llast, ?_⟩
+      intro w
+      rw [runPairs_append]
+      change FreshResettingAt Dmax (runPairs P C₁ Llast) w
+      by_cases hwz : w = z
+      · subst w
+        exact hz_fresh
+      · by_cases hwy : w = y
+        · subst w
+          exact hy_fresh_last
+        · have hkeep : runPairs P C₁ Llast w = C₁ w :=
+            hlast w hwz hwy
+          have hwEnd : w ∈ pairEndpoints pairs := by
+            rcases hcover w (Finset.mem_univ w) with hwEnd | hwLeft
+            · exact hwEnd
+            · injection hwLeft with hzw
+              exact False.elim (hwz hzw.symm)
+          unfold FreshResettingAt
+          rw [hkeep]
+          simpa [C₁, P, FreshResettingAt] using hfresh_pairs w hwEnd
+
 /-- Log-fuel reset drain from an explicit balanced-growth certificate.
 
 The theorem discharges the deterministic Phase B exactly: once a Phase A
@@ -348,5 +1259,66 @@ theorem all_fresh_from_log_seed
   intro w
   rw [runPairs_append]
   exact hfresh w (hcover w)
+
+theorem all_fresh_from_log_seed_via_balanced_growth
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax R : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (hfuel : Nat.clog 2 n + 1 ≤ R)
+    (C : Config (AgentState n) Opinion n)
+    (hseed : ∃ r : Fin n, (C r).1.role = .Resetting ∧ R ≤ (C r).1.resetcount)
+    (pairs : List (Fin n × Fin n))
+    (hdis : PairListDisjoint pairs)
+    (hcover : ∀ w : Fin n, w ∈ pairEndpoints pairs) :
+    ∃ L : List (Fin n × Fin n),
+      let C₂ := runPairs (protocolPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      ∀ w : Fin n, FreshResettingAt Dmax C₂ w := by
+  exact all_fresh_from_log_seed
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (R := R) (hn := hn)
+    hDmax hfuel C hseed
+    (fun r hr_role hr_log =>
+      balanced_tree_growth
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hDmax C r hr_role hr_log)
+    pairs hdis hcover
+
+theorem all_fresh_from_log_seed_unconditional
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax R : ℕ} {hn : 0 < n}
+    (hDmax : 1 < Dmax)
+    (hn2 : 2 ≤ n)
+    (hfuel : Nat.clog 2 n + 2 ≤ R)
+    (C : Config (AgentState n) Opinion n)
+    (hseed : ∃ r : Fin n, (C r).1.role = .Resetting ∧ R ≤ (C r).1.resetcount) :
+    ∃ L : List (Fin n × Fin n),
+      let C₂ := runPairs (protocolPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      ∀ w : Fin n, FreshResettingAt Dmax C₂ w := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  obtain ⟨r, hr_role, hr_fuel⟩ := hseed
+  have hr_floor : Nat.clog 2 n + 2 ≤ (C r).1.resetcount :=
+    Nat.le_trans hfuel hr_fuel
+  obtain ⟨Lgrow, hAllFloor⟩ :=
+    balanced_tree_growth_floor
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax (by omega : 0 < 2) C r hr_role hr_floor
+  let C₁ : Config (AgentState n) Opinion n := runPairs P C Lgrow
+  have hAll₂ :
+      ∀ w : Fin n, (C₁ w).1.role = .Resetting ∧
+        2 ≤ (C₁ w).1.resetcount := by
+    intro w
+    exact hAllFloor w
+  obtain ⟨Ldrain, hfresh⟩ :=
+    drain_all_floor_two_to_fresh
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax hn2 C₁ hAll₂
+  refine ⟨Lgrow ++ Ldrain, ?_⟩
+  change ∀ w : Fin n, FreshResettingAt Dmax (runPairs P C (Lgrow ++ Ldrain)) w
+  intro w
+  rw [runPairs_append]
+  change FreshResettingAt Dmax (runPairs P C₁ Ldrain) w
+  exact hfresh w
 
 end SSEM
