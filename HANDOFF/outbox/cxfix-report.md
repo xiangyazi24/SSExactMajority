@@ -370,3 +370,77 @@ Verification:
 
 Result: build completed successfully. Grep found no `sorry`, `axiom`, or
 `native_decide` in `SSExactMajority/Convergence/LogRegimeConvergence.lean`.
+
+## Uniform Log-Tree Semantics and Partial Bridge
+
+Spec file executed:
+
+- `HANDOFF/uniform_spec.md`
+
+Mechanism facts checked first:
+
+1. Recruitment record update does not set `answer`: `propagateReset` only sets
+   `role`, `resetcount`, and `delaytimer` on the recruited endpoint at
+   `SSExactMajority/Protocol/RankDelta.lean:120-123`.  The local preservation
+   theorem is `propagateReset_answer_preserved` at
+   `SSExactMajority/Protocol/RankDelta.lean:165-168`.  In the full PEM
+   transition, however, a newly-entering Resetting endpoint is then reset to
+   `answer := .phi` by `transitionPEM_prePhase4` at
+   `SSExactMajority/Protocol/Transition.lean:37-42`.
+2. Answer spreading is between any two Resetting endpoints, not dormant-only:
+   `transitionPEM_prePhase4` copies a non-phi answer into a phi Resetting peer
+   at `SSExactMajority/Protocol/Transition.lean:49-55`.  It does not overwrite
+   an endpoint that already has a non-phi answer.
+3. Leader resolution is in `rankDeltaOSSR`: after `propagateReset`, if both
+   resulting endpoints are Resetting leaders `.L`, the second endpoint is
+   changed to `.F` at `SSExactMajority/Protocol/RankDelta.lean:196-202`.
+   Recruitment itself inherits the recruited endpoint's old leader unless this
+   `.L`/`.L` resolution fires.
+
+Mechanism-level blocker for the bare seed target:
+
+- From only the collision-style seeded agents, the protocol cannot force
+  uniform answer over an arbitrary already-Resetting population.  The only
+  answer-spreading rule copies a non-phi answer into `phi`
+  (`Transition.lean:49-55`); it never overwrites a wrong non-phi Resetting
+  answer.  Therefore the requested unconditional
+  `all_fresh_uniform_from_log_seed` endpoint is not derivable from just the two
+  seed agents without an additional invariant excluding wrong non-phi Resetting
+  answers, or a stronger producer precondition.
+
+Compiled bridge landed under the faithful invariant that every current
+Resetting agent already carries the majority answer:
+
+- `generation_pair_list_answer`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:719`
+- `balanced_tree_generation_answer_root`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1105`
+- `balanced_tree_growth_floor_answer_leader`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1639`
+- `log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:44`
+
+Exact preconditions for
+`log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi`:
+
+- `[Inhabited (Fin n × Fin n)]`
+- `4 <= n`
+- `1 < Dmax`
+- `n <= Dmax`
+- `0 < Rmax`
+- a seed `r` with `(C r).1.role = .Resetting`
+- `Nat.clog 2 n + 1 <= (C r).1.resetcount`
+- `(C r).1.leader = .L`
+- `m0 = majorityAnswer C`
+- `forall w, (C w).1.role = .Resetting -> (C w).1.answer = majorityAnswer C`
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeConvergence
+grep -n "sorry\|axiom\|native_decide" \
+  SSExactMajority/Convergence/LogTreeReset.lean \
+  SSExactMajority/Convergence/LogRegimeConvergence.lean
+```
+
+Result: build completed successfully.  The grep returned no matches.
