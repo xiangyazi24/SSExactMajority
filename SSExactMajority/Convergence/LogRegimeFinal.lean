@@ -1130,6 +1130,1203 @@ theorem ranking_of_no_reset_by_parity_log
             (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
             hn4 hDmax1 hRlog hbad hpar)
 
+theorem follower_dormant_or_nonresetting_to_ranking_goal_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hClean : FollowerDormantOrNonResetting C) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  obtain ⟨L₁, hNoReset₁⟩ :=
+    follower_dormant_or_nonresetting_to_no_reset
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 C hClean
+  let C₁ : Config (AgentState n) Opinion n := runPairs P C L₁
+  have hNoResetC₁ : ∀ w : Fin n, (C₁ w).1.role ≠ .Resetting := by
+    simpa [C₁, P] using hNoReset₁
+  obtain ⟨γ₂, t₂, hgoal₂⟩ :=
+    ranking_of_no_reset_by_parity_log
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 hDmax1 hRlog C₁ hNoResetC₁
+  exact
+    exists_schedule_after_runPairs
+      (Goal := fun C' =>
+        InSrank C' ∧
+          ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (C' μ).1.timer) ∨
+           IsConsensusConfig C'))
+      P C L₁ ⟨γ₂, t₂, by simpa [C₁, P] using hgoal₂⟩
+
+theorem ranking_from_settled_root_zero_resetting_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) {ℓ : Fin n}
+    (hℓ_settled : (C ℓ).1.role = .Settled)
+    (hℓ_rank0 : (C ℓ).1.rank.val = 0)
+    (hℓ_children : (C ℓ).1.children = 0)
+    (hℓ_L : (C ℓ).1.leader = .L)
+    (hResetZero : ∀ w : Fin n, (C w).1.role = .Resetting → (C w).1.resetcount = 0) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  obtain ⟨L₁, hNoReset₁⟩ :=
+    settled_root_zero_resetting_to_no_reset
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 C hℓ_settled hℓ_rank0 hℓ_children hℓ_L hResetZero
+  let C₁ : Config (AgentState n) Opinion n := runPairs P C L₁
+  have hNoResetC₁ : ∀ w : Fin n, (C₁ w).1.role ≠ .Resetting := by
+    simpa [C₁, P] using hNoReset₁
+  obtain ⟨γ₂, t₂, hgoal₂⟩ :=
+    ranking_of_no_reset_by_parity_log
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 hDmax1 hRlog C₁ hNoResetC₁
+  exact
+    exists_schedule_after_runPairs
+      (Goal := fun C' =>
+        InSrank C' ∧
+          ((∀ μ : Fin n, (C' μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (C' μ).1.timer) ∨
+           IsConsensusConfig C'))
+      P C L₁ ⟨γ₂, t₂, by simpa [C₁, P] using hgoal₂⟩
+
+theorem ranking_from_all_resetting_zero_no_leader_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hAllZero : ∀ w : Fin n, (C w).1.resetcount = 0)
+    (hNoLeader : ∀ w : Fin n, (C w).1.leader ≠ .L) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  have hClean : FollowerDormantOrNonResetting C := by
+    intro w
+    refine Or.inl ⟨hAllReset w, hAllZero w, ?_⟩
+    cases hleader : (C w).1.leader with
+    | L => exact False.elim ((hNoLeader w) hleader)
+    | F => rfl
+  exact
+    follower_dormant_or_nonresetting_to_ranking_goal_log
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 hDmax1 hRlog C hClean
+
+theorem ranking_from_all_resetting_zero_unique_leader_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax_pos : 0 < Dmax) (hRmax_pos : 0 < Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hAllZero : ∀ w : Fin n, (C w).1.resetcount = 0)
+    (hUniqueLeader : ∃! ℓ : Fin n, (C ℓ).1.leader = .L) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  have hDormant : IsDormantConfig C := by
+    refine ⟨hAllReset, hAllZero, hUniqueLeader, ?_⟩
+    intro w
+    cases (C w).1.leader <;> simp
+  obtain ⟨L, hEndpoint⟩ :=
+    dormant_to_RankingEndpoint
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 hRmax_pos hDmax_pos C hDormant
+  exact
+    ranking_goal_of_runPairs_RankingEndpoint
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      (C := C) (L := L) hEndpoint
+
+set_option maxHeartbeats 8000000 in
+theorem ranking_from_all_resetting_zero_with_leader_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hAllZero : ∀ w : Fin n, (C w).1.resetcount = 0)
+    (hHasLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hDmax_pos : 0 < Dmax := by omega
+  have hRmax_pos : 0 < Rmax := by omega
+  suffices go :
+      ∀ k (C₀ : Config (AgentState n) Opinion n),
+        resetLeaderCount C₀ = k →
+        (∀ w : Fin n, (C₀ w).1.role = .Resetting) →
+        (∀ w : Fin n, (C₀ w).1.resetcount = 0) →
+        (∃ ℓ : Fin n, (C₀ ℓ).1.leader = .L) →
+        ∃ (γ : DetScheduler n) (t : ℕ),
+          InSrank (execution P C₀ γ t) ∧
+          ((∀ μ : Fin n,
+            (execution P C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (execution P C₀ γ t μ).1.timer) ∨
+           IsConsensusConfig (execution P C₀ γ t)) by
+    simpa [P] using go (resetLeaderCount C) C rfl hAllReset hAllZero hHasLeader
+  intro k
+  induction k using Nat.strongRecOn with
+  | ind k IH =>
+    intro C₀ hk hAllR hAll0 hHasL
+    by_cases hUnique : ∃! ℓ : Fin n, (C₀ ℓ).1.leader = .L
+    · simpa [P] using
+        ranking_from_all_resetting_zero_unique_leader_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax_pos hRmax_pos C₀ hAllR hAll0 hUnique
+    · obtain ⟨ℓ, hℓ_L⟩ := hHasL
+      have hOther : ∃ w : Fin n, w ≠ ℓ ∧ (C₀ w).1.leader = .L := by
+        by_contra hnone
+        push_neg at hnone
+        apply hUnique
+        refine ⟨ℓ, hℓ_L, ?_⟩
+        intro y hyL
+        by_contra hy_ne
+        exact hnone y hy_ne hyL
+      obtain ⟨w, hw_ne_ℓ, hw_L⟩ := hOther
+      have hℓw : ℓ ≠ w := hw_ne_ℓ.symm
+      by_cases hℓ_high : 1 < (C₀ ℓ).1.delaytimer
+      · by_cases hw_high : 1 < (C₀ w).1.delaytimer
+        · let C₁ : Config (AgentState n) Opinion n := C₀.step P ℓ w
+          have hstep :=
+            step_leader_dedup_trace
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₀) (ℓ := ℓ) (w := w) hℓw
+              (hAllR ℓ) (hAll0 ℓ) (hAllR w) (hAll0 w) hℓ_L hw_L
+              hℓ_high hw_high
+          have hAllR₁ : ∀ x : Fin n, (C₁ x).1.role = .Resetting := by
+            intro x
+            by_cases hxℓ : x = ℓ
+            · subst x
+              exact hstep.1
+            · by_cases hxw : x = w
+              · subst x
+                exact hstep.2.2.2.2.1
+              · rw [show C₁ x = C₀ x from hstep.2.2.2.2.2.2.2.2 x hxℓ hxw]
+                exact hAllR x
+          have hAll0₁ : ∀ x : Fin n, (C₁ x).1.resetcount = 0 := by
+            intro x
+            by_cases hxℓ : x = ℓ
+            · subst x
+              exact hstep.2.1
+            · by_cases hxw : x = w
+              · subst x
+                exact hstep.2.2.2.2.2.1
+              · rw [show C₁ x = C₀ x from hstep.2.2.2.2.2.2.2.2 x hxℓ hxw]
+                exact hAll0 x
+          have hHasL₁ : ∃ x : Fin n, (C₁ x).1.leader = .L :=
+            ⟨ℓ, hstep.2.2.1⟩
+          have hcount_lt : resetLeaderCount C₁ < resetLeaderCount C₀ := by
+            simpa [P, C₁] using
+              (step_leader_dedup_resetLeaderCount_lt
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                (C := C₀) (ℓ := ℓ) (w := w) hℓw
+                (hAllR ℓ) (hAll0 ℓ) (hAllR w) (hAll0 w) hℓ_L hw_L
+                hℓ_high hw_high)
+          have hgoal₁ :=
+            IH (resetLeaderCount C₁) (by omega) C₁ rfl hAllR₁ hAll0₁ hHasL₁
+          exact
+            ranking_goal_of_step_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₀) (u := ℓ) (v := w)
+              (by simpa [P, C₁] using hgoal₁)
+        · have hw_low : (C₀ w).1.delaytimer ≤ 1 := by omega
+          let C₁ : Config (AgentState n) Opinion n := C₀.step P w ℓ
+          have hstep :=
+            transitionPEM_dormant_leader_low_dt_L_partner_wakes
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 (C := C₀) (ℓ := w) (w := ℓ) hw_ne_ℓ
+              (hAllR w) (hAll0 w) hw_low hw_L (hAllR ℓ) (hAll0 ℓ) hℓ_L
+          have hResetZero₁ :
+              ∀ x : Fin n, (C₁ x).1.role = .Resetting → (C₁ x).1.resetcount = 0 := by
+            intro x hx_reset
+            by_cases hxw : x = w
+            · subst x
+              rw [hstep.1] at hx_reset
+              cases hx_reset
+            · by_cases hxℓ : x = ℓ
+              · subst x
+                rcases hstep.2.2.2.2 with hsettled | hreset
+                · rw [hsettled] at hx_reset
+                  cases hx_reset
+                · exact hreset.2.1
+              · have hx_old : C₁ x = C₀ x := by
+                  dsimp [C₁, P]
+                  simp [Config.step, hw_ne_ℓ, hxw, hxℓ]
+                rw [hx_old] at hx_reset ⊢
+                exact hAll0 x
+          have hgoal₁ :=
+            ranking_from_settled_root_zero_resetting_log
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 hDmax1 hRlog C₁
+              (ℓ := w) hstep.1 hstep.2.1 hstep.2.2.1 hstep.2.2.2.1 hResetZero₁
+          exact
+            ranking_goal_of_step_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₀) (u := w) (v := ℓ)
+              (by simpa [P, C₁] using hgoal₁)
+      · have hℓ_low : (C₀ ℓ).1.delaytimer ≤ 1 := by omega
+        let C₁ : Config (AgentState n) Opinion n := C₀.step P ℓ w
+        have hstep :=
+          transitionPEM_dormant_leader_low_dt_L_partner_wakes
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            hn4 (C := C₀) (ℓ := ℓ) (w := w) hℓw
+            (hAllR ℓ) (hAll0 ℓ) hℓ_low hℓ_L (hAllR w) (hAll0 w) hw_L
+        have hResetZero₁ :
+            ∀ x : Fin n, (C₁ x).1.role = .Resetting → (C₁ x).1.resetcount = 0 := by
+          intro x hx_reset
+          by_cases hxℓ : x = ℓ
+          · subst x
+            rw [hstep.1] at hx_reset
+            cases hx_reset
+          · by_cases hxw : x = w
+            · subst x
+              rcases hstep.2.2.2.2 with hsettled | hreset
+              · rw [hsettled] at hx_reset
+                cases hx_reset
+              · exact hreset.2.1
+            · have hx_old : C₁ x = C₀ x := by
+                dsimp [C₁, P]
+                simp [Config.step, hℓw, hxℓ, hxw]
+              rw [hx_old] at hx_reset ⊢
+              exact hAll0 x
+        have hgoal₁ :=
+          ranking_from_settled_root_zero_resetting_log
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            hn4 hDmax1 hRlog C₁
+            (ℓ := ℓ) hstep.1 hstep.2.1 hstep.2.2.1 hstep.2.2.2.1 hResetZero₁
+        exact
+          ranking_goal_of_step_ranking_goal
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            (C := C₀) (u := ℓ) (v := w)
+            (by simpa [P, C₁] using hgoal₁)
+
+theorem ranking_from_all_resetting_zero_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hAllZero : ∀ w : Fin n, (C w).1.resetcount = 0) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  by_cases hHasLeader : ∃ ℓ : Fin n, (C ℓ).1.leader = .L
+  · exact
+      ranking_from_all_resetting_zero_with_leader_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hAllReset hAllZero hHasLeader
+  · exact
+      ranking_from_all_resetting_zero_no_leader_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hAllReset hAllZero
+        (by
+          intro w hwL
+          exact hHasLeader ⟨w, hwL⟩)
+
+set_option maxHeartbeats 16000000 in
+theorem ranking_from_all_resetting_single_pos_leader_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) {ℓ v : Fin n}
+    (hℓv : ℓ ≠ v)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hℓ_L : (C ℓ).1.leader = .L)
+    (hℓ_pos : 0 < (C ℓ).1.resetcount)
+    (hOnlyPos : ∀ w : Fin n, w ≠ ℓ → (C w).1.resetcount = 0) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hDmax_pos : 0 < Dmax := by omega
+  have hv_zero : (C v).1.resetcount = 0 := hOnlyPos v hℓv.symm
+  by_cases hv_high : 1 < (C v).1.delaytimer
+  · obtain ⟨L₁, hℓ_role₁, hℓ_rc₁, _hℓ_L₁, hv_role₁, hv_rc₁, _hv_F₁, hothers₁⟩ :=
+      drain_L_pos_any_zero_to_zero
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hDmax_pos C hℓv (hAllReset ℓ) (hAllReset v) hℓ_pos hv_zero hℓ_L hv_high
+    let C₁ : Config (AgentState n) Opinion n := runPairs P C L₁
+    have hAllReset₁ : ∀ w : Fin n, (C₁ w).1.role = .Resetting := by
+      intro w
+      by_cases hwℓ : w = ℓ
+      · subst w
+        simpa [C₁, P] using hℓ_role₁
+      · by_cases hwv : w = v
+        · subst w
+          simpa [C₁, P] using hv_role₁
+        · dsimp [C₁]
+          rw [hothers₁ w hwℓ hwv]
+          exact hAllReset w
+    have hAllZero₁ : ∀ w : Fin n, (C₁ w).1.resetcount = 0 := by
+      intro w
+      by_cases hwℓ : w = ℓ
+      · subst w
+        simpa [C₁, P] using hℓ_rc₁
+      · by_cases hwv : w = v
+        · subst w
+          simpa [C₁, P] using hv_rc₁
+        · dsimp [C₁]
+          rw [hothers₁ w hwℓ hwv]
+          exact hOnlyPos w hwℓ
+    have hgoal₁ :=
+      ranking_from_all_resetting_zero_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C₁ hAllReset₁ hAllZero₁
+    exact
+      ranking_goal_of_runPairs_ranking_goal
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (C := C) (L := L₁)
+        (by simpa [C₁, P] using hgoal₁)
+  · have hv_low : (C v).1.delaytimer ≤ 1 := by omega
+    by_cases hgt : 1 < (C ℓ).1.resetcount
+    · have hstep :=
+        step_L_pos_any_zero_gt_one
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          C hℓv (hAllReset ℓ) (hAllReset v) hgt hv_zero hℓ_L
+      let C₁ : Config (AgentState n) Opinion n := C.step P ℓ v
+      have hℓ_role₁ : (C₁ ℓ).1.role = .Resetting := by
+        simpa [C₁, P] using hstep.1
+      have hv_role₁ : (C₁ v).1.role = .Resetting := by
+        simpa [C₁, P] using hstep.2.1
+      have hℓ_rc₁ : (C₁ ℓ).1.resetcount = (C ℓ).1.resetcount - 1 := by
+        simpa [C₁, P] using hstep.2.2.1
+      have hv_rc₁ : (C₁ v).1.resetcount = (C ℓ).1.resetcount - 1 := by
+        simpa [C₁, P] using hstep.2.2.2.1
+      have hℓ_pos₁ : 0 < (C₁ ℓ).1.resetcount := by
+        rw [hℓ_rc₁]; omega
+      have hv_pos₁ : 0 < (C₁ v).1.resetcount := by
+        rw [hv_rc₁]; omega
+      obtain ⟨L₂, hℓ_fresh₂, hv_fresh₂, hothers₂⟩ :=
+        drain_pair_rc_with_both_delay
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax1 C₁ hℓv hℓ_role₁ hv_role₁ hℓ_pos₁ hv_pos₁
+      let C₂ : Config (AgentState n) Opinion n := runPairs P C₁ L₂
+      have hothers_step : ∀ w : Fin n, w ≠ ℓ → w ≠ v → C₁ w = C w := by
+        intro w hwℓ hwv
+        simp [C₁, Config.step, P, hℓv, hwℓ, hwv]
+      have hAllReset₂ : ∀ w : Fin n, (C₂ w).1.role = .Resetting := by
+        intro w
+        by_cases hwℓ : w = ℓ
+        · subst w
+          exact hℓ_fresh₂.1
+        · by_cases hwv : w = v
+          · subst w
+            exact hv_fresh₂.1
+          · dsimp [C₂]
+            rw [hothers₂ w hwℓ hwv, hothers_step w hwℓ hwv]
+            exact hAllReset w
+      have hAllZero₂ : ∀ w : Fin n, (C₂ w).1.resetcount = 0 := by
+        intro w
+        by_cases hwℓ : w = ℓ
+        · subst w
+          exact hℓ_fresh₂.2.1
+        · by_cases hwv : w = v
+          · subst w
+            exact hv_fresh₂.2.1
+          · dsimp [C₂]
+            rw [hothers₂ w hwℓ hwv, hothers_step w hwℓ hwv]
+            exact hOnlyPos w hwℓ
+      have hgoal₂ :=
+        ranking_from_all_resetting_zero_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax1 hRlog C₂ hAllReset₂ hAllZero₂
+      have hgoal₁ :=
+        ranking_goal_of_runPairs_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C₁) (L := L₂)
+          (by simpa [C₂, P] using hgoal₂)
+      exact
+        ranking_goal_of_step_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C) (u := ℓ) (v := v)
+          (by simpa [C₁, P] using hgoal₁)
+    · have hℓ_one : (C ℓ).1.resetcount = 1 := by omega
+      cases hv_leader : (C v).1.leader with
+      | L =>
+          have hstep :=
+            step_L_pos_one_L_zero_low
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hDmax_pos C hℓv (hAllReset ℓ) (hAllReset v) hℓ_one hv_zero
+              hℓ_L hv_leader hv_low
+          let C₁ : Config (AgentState n) Opinion n := C.step P ℓ v
+          have hResetZero₁ :
+              ∀ w : Fin n, (C₁ w).1.role = .Resetting → (C₁ w).1.resetcount = 0 := by
+            intro w hw_reset
+            by_cases hwℓ : w = ℓ
+            · subst w
+              simpa [C₁, P] using hstep.2.1
+            · by_cases hwv : w = v
+              · subst w
+                have hv_settled : (C₁ v).1.role = .Settled := by
+                  simpa [C₁, P] using hstep.2.2.2.2.1
+                rw [hv_settled] at hw_reset
+                cases hw_reset
+              · have hw_old : C₁ w = C w := by
+                  dsimp [C₁, P]
+                  simp [Config.step, hℓv, hwℓ, hwv]
+                rw [hw_old] at hw_reset ⊢
+                exact hOnlyPos w hwℓ
+          have hgoal₁ :=
+            ranking_from_settled_root_zero_resetting_log
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 hDmax1 hRlog C₁ (ℓ := v)
+              (by simpa [C₁, P] using hstep.2.2.2.2.1)
+              (by simpa [C₁, P] using hstep.2.2.2.2.2.1)
+              (by simpa [C₁, P] using hstep.2.2.2.2.2.2.1)
+              (by simpa [C₁, P] using hstep.2.2.2.2.2.2.2)
+              hResetZero₁
+          exact
+            ranking_goal_of_step_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C) (u := ℓ) (v := v)
+              (by simpa [C₁, P] using hgoal₁)
+      | F =>
+          have hstep₁ :=
+            step_L_pos_one_F_zero_low
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hDmax_pos C hℓv (hAllReset ℓ) (hAllReset v) hℓ_one hv_zero
+              hℓ_L hv_leader hv_low
+          let C₁ : Config (AgentState n) Opinion n := C.step P ℓ v
+          have hstep₂ :=
+            transitionPEM_dormant_leader_with_unsettled_follower_wakes
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₁) (ℓ := ℓ) (w := v) hℓv
+              (by simpa [C₁, P] using hstep₁.1)
+              (by simpa [C₁, P] using hstep₁.2.1)
+              (by simpa [C₁, P] using hstep₁.2.2.1)
+              (by simpa [C₁, P] using hstep₁.2.2.2.2.1)
+              (by simpa [C₁, P] using hstep₁.2.2.2.2.2)
+          let C₂ : Config (AgentState n) Opinion n := C₁.step P ℓ v
+          have hResetZero₂ :
+              ∀ w : Fin n, (C₂ w).1.role = .Resetting → (C₂ w).1.resetcount = 0 := by
+            intro w hw_reset
+            by_cases hwℓ : w = ℓ
+            · subst w
+              have hsettled : (C₂ ℓ).1.role = .Settled := by
+                simpa [C₂, P] using hstep₂.1
+              rw [hsettled] at hw_reset
+              cases hw_reset
+            · by_cases hwv : w = v
+              · subst w
+                have hun : (C₂ v).1.role = .Unsettled := by
+                  simpa [C₂, P] using hstep₂.2.2.2.2.1
+                rw [hun] at hw_reset
+                cases hw_reset
+              · have hw_old₂ : C₂ w = C₁ w := by
+                  dsimp [C₂, P]
+                  simp [Config.step, hℓv, hwℓ, hwv]
+                have hw_old₁ : C₁ w = C w := by
+                  dsimp [C₁, P]
+                  simp [Config.step, hℓv, hwℓ, hwv]
+                rw [hw_old₂, hw_old₁] at hw_reset ⊢
+                exact hOnlyPos w hwℓ
+          have hgoal₂ :=
+            ranking_from_settled_root_zero_resetting_log
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 hDmax1 hRlog C₂ (ℓ := ℓ)
+              (by simpa [C₂, P] using hstep₂.1)
+              (by
+                have hrank : (C₂ ℓ).1.rank = ⟨0, hn⟩ := by
+                  simpa [C₂, P] using hstep₂.2.1
+                rw [hrank])
+              (by simpa [C₂, P] using hstep₂.2.2.1)
+              (by simpa [C₂, P] using hstep₂.2.2.2.1)
+              hResetZero₂
+          have hgoal₁ :=
+            ranking_goal_of_step_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₁) (u := ℓ) (v := v)
+              (by simpa [C₂, P] using hgoal₂)
+          exact
+            ranking_goal_of_step_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C) (u := ℓ) (v := v)
+              (by simpa [C₁, P] using hgoal₁)
+
+set_option maxHeartbeats 16000000 in
+theorem ranking_from_all_resetting_single_pos_follower_F_partner_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) {u v : Fin n}
+    (huv : u ≠ v)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hAllF : ∀ w : Fin n, (C w).1.leader = .F)
+    (hu_F : (C u).1.leader = .F) (hv_F : (C v).1.leader = .F)
+    (hu_pos : 0 < (C u).1.resetcount)
+    (hOnlyPos : ∀ w : Fin n, w ≠ u → (C w).1.resetcount = 0) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hDmax_pos : 0 < Dmax := by omega
+  have hv_zero : (C v).1.resetcount = 0 := hOnlyPos v huv.symm
+  by_cases hv_high : 1 < (C v).1.delaytimer
+  · obtain ⟨L₁, hu_role₁, hu_rc₁, hu_F₁, hv_role₁, hv_rc₁, hv_F₁, hothers₁⟩ :=
+      drain_F_pos_F_zero_to_zero_FF
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hDmax_pos C huv (hAllReset u) (hAllReset v) hu_pos hv_zero
+        hu_F hv_F hv_high
+    let C₁ : Config (AgentState n) Opinion n := runPairs P C L₁
+    have hClean₁ : FollowerDormantOrNonResetting C₁ := by
+      intro w
+      by_cases hwu : w = u
+      · subst w
+        exact Or.inl ⟨by simpa [C₁, P] using hu_role₁,
+          by simpa [C₁, P] using hu_rc₁,
+          by simpa [C₁, P] using hu_F₁⟩
+      · by_cases hwv : w = v
+        · subst w
+          exact Or.inl ⟨by simpa [C₁, P] using hv_role₁,
+            by simpa [C₁, P] using hv_rc₁,
+            by simpa [C₁, P] using hv_F₁⟩
+        · dsimp [C₁]
+          rw [hothers₁ w hwu hwv]
+          exact Or.inl ⟨hAllReset w, hOnlyPos w hwu, hAllF w⟩
+    have hgoal₁ :=
+      follower_dormant_or_nonresetting_to_ranking_goal_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C₁ hClean₁
+    exact
+      ranking_goal_of_runPairs_ranking_goal
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (C := C) (L := L₁)
+        (by simpa [C₁, P] using hgoal₁)
+  · have hv_low : (C v).1.delaytimer ≤ 1 := by omega
+    by_cases hu_gt : 1 < (C u).1.resetcount
+    · have hstep :=
+        step_F_pos_F_zero_gt_one
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          C huv (hAllReset u) (hAllReset v) hu_gt hv_zero hu_F hv_F
+      let C₁ : Config (AgentState n) Opinion n := C.step P u v
+      have hu_role₁ : (C₁ u).1.role = .Resetting := by
+        simpa [C₁, P] using hstep.1
+      have hv_role₁ : (C₁ v).1.role = .Resetting := by
+        simpa [C₁, P] using hstep.2.1
+      have hu_rc₁ : (C₁ u).1.resetcount = (C u).1.resetcount - 1 := by
+        simpa [C₁, P] using hstep.2.2.1
+      have hv_rc₁ : (C₁ v).1.resetcount = (C u).1.resetcount - 1 := by
+        simpa [C₁, P] using hstep.2.2.2.1
+      have hu_pos₁ : 0 < (C₁ u).1.resetcount := by
+        rw [hu_rc₁]; omega
+      have hv_pos₁ : 0 < (C₁ v).1.resetcount := by
+        rw [hv_rc₁]; omega
+      obtain ⟨L₂, hu_role₂, hu_rc₂, hu_F₂, hv_role₂, hv_rc₂, hv_F₂, hothers₂⟩ :=
+        drain_pair_rc_FF
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax_pos C₁ huv hu_role₁ hv_role₁ hu_pos₁ hv_pos₁
+          (by simpa [C₁, P] using hstep.2.2.2.2.1)
+          (by simpa [C₁, P] using hstep.2.2.2.2.2)
+      let C₂ : Config (AgentState n) Opinion n := runPairs P C₁ L₂
+      have hothers_step : ∀ w : Fin n, w ≠ u → w ≠ v → C₁ w = C w := by
+        intro w hwu hwv
+        simp [C₁, Config.step, P, huv, hwu, hwv]
+      have hClean₂ : FollowerDormantOrNonResetting C₂ := by
+        intro w
+        by_cases hwu : w = u
+        · subst w
+          exact Or.inl ⟨by simpa [C₂, P] using hu_role₂,
+            by simpa [C₂, P] using hu_rc₂,
+            by simpa [C₂, P] using hu_F₂⟩
+        · by_cases hwv : w = v
+          · subst w
+            exact Or.inl ⟨by simpa [C₂, P] using hv_role₂,
+              by simpa [C₂, P] using hv_rc₂,
+              by simpa [C₂, P] using hv_F₂⟩
+          · dsimp [C₂]
+            rw [hothers₂ w hwu hwv, hothers_step w hwu hwv]
+            exact Or.inl ⟨hAllReset w, hOnlyPos w hwu, hAllF w⟩
+      have hgoal₂ :=
+        follower_dormant_or_nonresetting_to_ranking_goal_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax1 hRlog C₂ hClean₂
+      have hgoal₁ :=
+        ranking_goal_of_runPairs_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C₁) (L := L₂)
+          (by simpa [C₂, P] using hgoal₂)
+      exact
+        ranking_goal_of_step_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C) (u := u) (v := v)
+          (by simpa [C₁, P] using hgoal₁)
+    · have hu_one : (C u).1.resetcount = 1 := by omega
+      have hstep :=
+        step_F_pos_one_F_zero_low
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax_pos C huv (hAllReset u) (hAllReset v) hu_one hv_zero hu_F hv_F hv_low
+      let C₁ : Config (AgentState n) Opinion n := C.step P u v
+      have hClean₁ : FollowerDormantOrNonResetting C₁ := by
+        intro w
+        by_cases hwu : w = u
+        · subst w
+          exact Or.inl ⟨by simpa [C₁, P] using hstep.1,
+            by simpa [C₁, P] using hstep.2.1,
+            by simpa [C₁, P] using hstep.2.2.1⟩
+        · by_cases hwv : w = v
+          · subst w
+            exact Or.inr (by
+              intro hv_reset
+              have hv_un : (C₁ v).1.role = .Unsettled := by
+                simpa [C₁, P] using hstep.2.2.2.2.1
+              rw [hv_un] at hv_reset
+              cases hv_reset)
+          · dsimp [C₁]
+            simp [Config.step, P, huv, hwu, hwv]
+            exact Or.inl ⟨hAllReset w, hOnlyPos w hwu, hAllF w⟩
+      have hgoal₁ :=
+        follower_dormant_or_nonresetting_to_ranking_goal_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax1 hRlog C₁ hClean₁
+      exact
+        ranking_goal_of_step_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C) (u := u) (v := v)
+          (by simpa [C₁, P] using hgoal₁)
+
+set_option maxHeartbeats 16000000 in
+theorem ranking_from_all_resetting_single_pos_follower_L_partner_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) {u ℓ : Fin n}
+    (hℓu : ℓ ≠ u)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting)
+    (hu_F : (C u).1.leader = .F) (hℓ_L : (C ℓ).1.leader = .L)
+    (hu_pos : 0 < (C u).1.resetcount)
+    (hOnlyPos : ∀ w : Fin n, w ≠ u → (C w).1.resetcount = 0) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  have hDmax_pos : 0 < Dmax := by omega
+  have hℓ_zero : (C ℓ).1.resetcount = 0 := hOnlyPos ℓ hℓu
+  by_cases hu_gt : 1 < (C u).1.resetcount
+  · have hstep :=
+      step_L_zero_F_pos_gt_one
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        C hℓu (hAllReset ℓ) (hAllReset u) hℓ_zero hu_gt hℓ_L hu_F
+    let C₁ : Config (AgentState n) Opinion n := C.step P ℓ u
+    have hℓ_role₁ : (C₁ ℓ).1.role = .Resetting := by
+      simpa [C₁, P] using hstep.1
+    have hu_role₁ : (C₁ u).1.role = .Resetting := by
+      simpa [C₁, P] using hstep.2.1
+    have hℓ_rc₁ : (C₁ ℓ).1.resetcount = (C u).1.resetcount - 1 := by
+      simpa [C₁, P] using hstep.2.2.1
+    have hu_rc₁ : (C₁ u).1.resetcount = (C u).1.resetcount - 1 := by
+      simpa [C₁, P] using hstep.2.2.2.1
+    have hℓ_pos₁ : 0 < (C₁ ℓ).1.resetcount := by
+      rw [hℓ_rc₁]; omega
+    have hu_pos₁ : 0 < (C₁ u).1.resetcount := by
+      rw [hu_rc₁]; omega
+    obtain ⟨L₂, hℓ_fresh₂, hu_fresh₂, hothers₂⟩ :=
+      drain_pair_rc_with_both_delay
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hDmax1 C₁ hℓu hℓ_role₁ hu_role₁ hℓ_pos₁ hu_pos₁
+    let C₂ : Config (AgentState n) Opinion n := runPairs P C₁ L₂
+    have hothers_step : ∀ w : Fin n, w ≠ ℓ → w ≠ u → C₁ w = C w := by
+      intro w hwℓ hwu
+      simp [C₁, Config.step, P, hℓu, hwℓ, hwu]
+    have hAllReset₂ : ∀ w : Fin n, (C₂ w).1.role = .Resetting := by
+      intro w
+      by_cases hwℓ : w = ℓ
+      · subst w
+        exact hℓ_fresh₂.1
+      · by_cases hwu : w = u
+        · subst w
+          exact hu_fresh₂.1
+        · dsimp [C₂]
+          rw [hothers₂ w hwℓ hwu, hothers_step w hwℓ hwu]
+          exact hAllReset w
+    have hAllZero₂ : ∀ w : Fin n, (C₂ w).1.resetcount = 0 := by
+      intro w
+      by_cases hwℓ : w = ℓ
+      · subst w
+        exact hℓ_fresh₂.2.1
+      · by_cases hwu : w = u
+        · subst w
+          exact hu_fresh₂.2.1
+        · dsimp [C₂]
+          rw [hothers₂ w hwℓ hwu, hothers_step w hwℓ hwu]
+          exact hOnlyPos w hwu
+    have hgoal₂ :=
+      ranking_from_all_resetting_zero_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C₂ hAllReset₂ hAllZero₂
+    have hgoal₁ :=
+      ranking_goal_of_runPairs_ranking_goal
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (C := C₁) (L := L₂)
+        (by simpa [C₂, P] using hgoal₂)
+    exact
+      ranking_goal_of_step_ranking_goal
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        (C := C) (u := ℓ) (v := u)
+        (by simpa [C₁, P] using hgoal₁)
+  · have hu_one : (C u).1.resetcount = 1 := by omega
+    by_cases hℓ_high : 1 < (C ℓ).1.delaytimer
+    · have hstep :=
+        step_L_zero_F_pos
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax_pos C hℓu (hAllReset ℓ) (hAllReset u)
+          hℓ_zero hu_pos hℓ_L hu_F hℓ_high
+      let C₁ : Config (AgentState n) Opinion n := C.step P ℓ u
+      have hAllReset₁ : ∀ w : Fin n, (C₁ w).1.role = .Resetting := by
+        intro w
+        by_cases hwℓ : w = ℓ
+        · subst w
+          simpa [C₁, P] using hstep.1
+        · by_cases hwu : w = u
+          · subst w
+            simpa [C₁, P] using hstep.2.1
+          · dsimp [C₁]
+            simp [Config.step, P, hℓu, hwℓ, hwu]
+            exact hAllReset w
+      have hAllZero₁ : ∀ w : Fin n, (C₁ w).1.resetcount = 0 := by
+        intro w
+        by_cases hwℓ : w = ℓ
+        · subst w
+          have hrc : (C₁ ℓ).1.resetcount = (C u).1.resetcount - 1 := by
+            simpa [C₁, P] using hstep.2.2.1
+          rw [hrc, hu_one]
+        · by_cases hwu : w = u
+          · subst w
+            have hrc : (C₁ u).1.resetcount = (C u).1.resetcount - 1 := by
+              simpa [C₁, P] using hstep.2.2.2.1
+            rw [hrc, hu_one]
+          · dsimp [C₁]
+            simp [Config.step, P, hℓu, hwℓ, hwu]
+            exact hOnlyPos w hwu
+      have hgoal₁ :=
+        ranking_from_all_resetting_zero_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax1 hRlog C₁ hAllReset₁ hAllZero₁
+      exact
+        ranking_goal_of_step_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C) (u := ℓ) (v := u)
+          (by simpa [C₁, P] using hgoal₁)
+    · have hℓ_low : (C ℓ).1.delaytimer ≤ 1 := by omega
+      have hstep :=
+        step_L_zero_F_pos_one_low
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hDmax_pos C hℓu (hAllReset ℓ) (hAllReset u)
+          hℓ_zero hu_one hℓ_L hu_F hℓ_low
+      let C₁ : Config (AgentState n) Opinion n := C.step P ℓ u
+      have hResetZero₁ :
+          ∀ w : Fin n, (C₁ w).1.role = .Resetting → (C₁ w).1.resetcount = 0 := by
+        intro w hw_reset
+        by_cases hwℓ : w = ℓ
+        · subst w
+          have hsettled : (C₁ ℓ).1.role = .Settled := by
+            simpa [C₁, P] using hstep.1
+          rw [hsettled] at hw_reset
+          cases hw_reset
+        · by_cases hwu : w = u
+          · subst w
+            simpa [C₁, P] using hstep.2.2.2.2.2.1
+          · have hw_old : C₁ w = C w := by
+              dsimp [C₁, P]
+              simp [Config.step, hℓu, hwℓ, hwu]
+            rw [hw_old] at hw_reset ⊢
+            exact hOnlyPos w hwu
+      have hgoal₁ :=
+        ranking_from_settled_root_zero_resetting_log
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 hDmax1 hRlog C₁ (ℓ := ℓ)
+          (by simpa [C₁, P] using hstep.1)
+          (by simpa [C₁, P] using hstep.2.1)
+          (by simpa [C₁, P] using hstep.2.2.1)
+          (by simpa [C₁, P] using hstep.2.2.2.1)
+          hResetZero₁
+      exact
+        ranking_goal_of_step_ranking_goal
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          (C := C) (u := ℓ) (v := u)
+          (by simpa [C₁, P] using hgoal₁)
+
+set_option maxHeartbeats 32000000 in
+theorem ranking_from_all_resetting_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  suffices go :
+      ∀ k (C₀ : Config (AgentState n) Opinion n),
+        (positiveRcAgents C₀).card = k →
+        (∀ w : Fin n, (C₀ w).1.role = .Resetting) →
+        ∃ (γ : DetScheduler n) (t : ℕ),
+          InSrank (execution P C₀ γ t) ∧
+          ((∀ μ : Fin n,
+            (execution P C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (execution P C₀ γ t μ).1.timer) ∨
+           IsConsensusConfig (execution P C₀ γ t)) by
+    simpa [P] using go (positiveRcAgents C).card C rfl hAllReset
+  intro k
+  induction k using Nat.strongRecOn with
+  | ind k IH =>
+      intro C₀ hcard hAllReset₀
+      by_cases hcard0 : k = 0
+      · have hAllZero₀ : ∀ w : Fin n, (C₀ w).1.resetcount = 0 := by
+          apply positiveRcAgents_eq_zero_iff.mp
+          rw [hcard, hcard0]
+        simpa [P] using
+          ranking_from_all_resetting_zero_log
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            hn4 hDmax1 hRlog C₀ hAllReset₀ hAllZero₀
+      · have hcard_pos : 0 < (positiveRcAgents C₀).card := by
+          rw [hcard]
+          omega
+        obtain ⟨u, hu_pos⟩ :=
+          positiveRcAgents_exists_of_card_pos (C := C₀) hcard_pos
+        by_cases hSecond : ∃ v : Fin n, v ≠ u ∧ 0 < (C₀ v).1.resetcount
+        · obtain ⟨v, hv_ne, hv_pos⟩ := hSecond
+          have huv : u ≠ v := hv_ne.symm
+          obtain ⟨L₁, hu_fresh₁, hv_fresh₁, hothers₁⟩ :=
+            drain_pair_rc_with_both_delay
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hDmax1 C₀ huv (hAllReset₀ u) (hAllReset₀ v) hu_pos hv_pos
+          let C₁ : Config (AgentState n) Opinion n := runPairs P C₀ L₁
+          have hAllReset₁ : ∀ w : Fin n, (C₁ w).1.role = .Resetting := by
+            intro w
+            by_cases hwu : w = u
+            · subst w
+              exact hu_fresh₁.1
+            · by_cases hwv : w = v
+              · subst w
+                exact hv_fresh₁.1
+              · dsimp [C₁]
+                rw [hothers₁ w hwu hwv]
+                exact hAllReset₀ w
+          have hsub : positiveRcAgents C₁ ⊆ (positiveRcAgents C₀).erase u := by
+            intro w hw_mem
+            rw [positiveRcAgents, Finset.mem_filter] at hw_mem
+            have hw_pos : 0 < (C₁ w).1.resetcount := hw_mem.2
+            rw [Finset.mem_erase]
+            refine ⟨?_, ?_⟩
+            · intro hwu
+              subst w
+              rw [hu_fresh₁.2.1] at hw_pos
+              omega
+            · rw [positiveRcAgents, Finset.mem_filter]
+              by_cases hwv : w = v
+              · subst w
+                rw [hv_fresh₁.2.1] at hw_pos
+                omega
+              · have hwu : w ≠ u := by
+                  intro hwu
+                  subst w
+                  rw [hu_fresh₁.2.1] at hw_pos
+                  omega
+                have hw_old : C₁ w = C₀ w := hothers₁ w hwu hwv
+                have hw_old_pos : 0 < (C₀ w).1.resetcount := by
+                  rwa [hw_old] at hw_pos
+                exact ⟨Finset.mem_univ w, hw_old_pos⟩
+          have hu_mem_old : u ∈ positiveRcAgents C₀ := by
+            rw [positiveRcAgents, Finset.mem_filter]
+            exact ⟨Finset.mem_univ u, hu_pos⟩
+          have hcard₁_lt : (positiveRcAgents C₁).card < k := by
+            have hle := Finset.card_le_card hsub
+            have herase :
+                ((positiveRcAgents C₀).erase u).card =
+                  (positiveRcAgents C₀).card - 1 :=
+              Finset.card_erase_of_mem hu_mem_old
+            rw [herase, hcard] at hle
+            omega
+          have hgoal₁ :=
+            IH (positiveRcAgents C₁).card hcard₁_lt C₁ rfl hAllReset₁
+          exact
+            ranking_goal_of_runPairs_ranking_goal
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              (C := C₀) (L := L₁)
+              (by simpa [C₁, P] using hgoal₁)
+        · push_neg at hSecond
+          have hOnlyPos : ∀ w : Fin n, w ≠ u → (C₀ w).1.resetcount = 0 := by
+            intro w hw
+            have hle : (C₀ w).1.resetcount ≤ 0 := hSecond w hw
+            omega
+          have hcard_fin : 1 < Fintype.card (Fin n) := by
+            rw [Fintype.card_fin]
+            omega
+          obtain ⟨v, hv_ne_u⟩ := Fintype.exists_ne_of_one_lt_card hcard_fin u
+          cases hu_leader : (C₀ u).1.leader with
+          | L =>
+              simpa [P] using
+                ranking_from_all_resetting_single_pos_leader_log
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                  hn4 hDmax1 hRlog C₀ hv_ne_u.symm hAllReset₀ hu_leader hu_pos
+                  hOnlyPos
+          | F =>
+              by_cases hHasLeader : ∃ ℓ : Fin n, (C₀ ℓ).1.leader = .L
+              · obtain ⟨ℓ, hℓ_L⟩ := hHasLeader
+                have hℓu : ℓ ≠ u := by
+                  intro h
+                  subst ℓ
+                  rw [hu_leader] at hℓ_L
+                  cases hℓ_L
+                simpa [P] using
+                  ranking_from_all_resetting_single_pos_follower_L_partner_log
+                    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                    hn4 hDmax1 hRlog C₀ hℓu hAllReset₀ hu_leader hℓ_L hu_pos
+                    hOnlyPos
+              · have hAllF : ∀ w : Fin n, (C₀ w).1.leader = .F := by
+                  intro w
+                  cases hw_leader : (C₀ w).1.leader with
+                  | L => exact False.elim (hHasLeader ⟨w, hw_leader⟩)
+                  | F => rfl
+                simpa [P] using
+                  ranking_from_all_resetting_single_pos_follower_F_partner_log
+                    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                    hn4 hDmax1 hRlog C₀ hv_ne_u.symm hAllReset₀ hAllF
+                    hu_leader (hAllF v) hu_pos hOnlyPos
+
+set_option maxHeartbeats 32000000 in
+theorem partial_resetting_to_ranking_goal_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hSomeReset : ∃ r : Fin n, (C r).1.role = .Resetting)
+    (hNotAllReset : ¬ ∀ w : Fin n, (C w).1.role = .Resetting) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+  suffices h_aux :
+      ∀ k : ℕ, ∀ C' : Config (AgentState n) Opinion n,
+        resetFuel C' ≤ k →
+        (∃ r : Fin n, (C' r).1.role = .Resetting) →
+        (¬ ∀ w : Fin n, (C' w).1.role = .Resetting) →
+        ∃ (γ : DetScheduler n) (t : ℕ),
+          InSrank (execution P C' γ t) ∧
+          ((∀ μ : Fin n,
+            (execution P C' γ t μ).1.rank.val + 1 = ceilHalf n →
+            2 ≤ (execution P C' γ t μ).1.timer) ∨
+           IsConsensusConfig (execution P C' γ t)) by
+    simpa [P] using h_aux (resetFuel C) C le_rfl hSomeReset hNotAllReset
+  intro k
+  induction k with
+  | zero =>
+      intro C' hF hSome _hNot
+      obtain ⟨r, hr⟩ := hSome
+      have hcontrib_pos : 0 < resetFuelContribution (C' r).1 := by
+        unfold resetFuelContribution
+        rw [if_pos hr]
+        exact Nat.pow_pos (by decide : (0 : ℕ) < 2)
+      have hsum_pos :
+          0 < ∑ w : Fin n, resetFuelContribution (C' w).1 := by
+        refine Finset.sum_pos' (fun i _ => Nat.zero_le _) ?_
+        exact ⟨r, Finset.mem_univ r, hcontrib_pos⟩
+      have hf_pos : 0 < resetFuel C' := by
+        unfold resetFuel
+        omega
+      omega
+  | succ k ih =>
+      intro C' hF hSome hNot
+      obtain ⟨r, hr_res⟩ := hSome
+      push_neg at hNot
+      obtain ⟨v, hv_not⟩ := hNot
+      have hrv : r ≠ v := fun heq => by
+        subst heq
+        exact hv_not hr_res
+      let C₁ : Config (AgentState n) Opinion n := C'.step P r v
+      have dispatch_after_step :
+          resetFuel C₁ < resetFuel C' →
+          ∃ (γ : DetScheduler n) (t : ℕ),
+            InSrank (execution P C₁ γ t) ∧
+            ((∀ μ : Fin n,
+              (execution P C₁ γ t μ).1.rank.val + 1 = ceilHalf n →
+              2 ≤ (execution P C₁ γ t μ).1.timer) ∨
+             IsConsensusConfig (execution P C₁ γ t)) := by
+        intro h_dec
+        have hF1 : resetFuel C₁ ≤ k := by omega
+        by_cases hAllRes : ∀ w, (C₁ w).1.role = .Resetting
+        · simpa [P] using
+            ranking_from_all_resetting_log
+              (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+              hn4 hDmax1 hRlog C₁ hAllRes
+        · by_cases hNoRes : ∀ w, (C₁ w).1.role ≠ .Resetting
+          · simpa [P] using
+              ranking_of_no_reset_by_parity_log
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                hn4 hDmax1 hRlog C₁ hNoRes
+          · have hSomeC1 : ∃ r' : Fin n, (C₁ r').1.role = .Resetting := by
+              push_neg at hNoRes
+              exact hNoRes
+            exact ih C₁ hF1 hSomeC1 hAllRes
+      by_cases hr_rc : (C' r).1.resetcount = 0
+      · cases hr_leader : (C' r).1.leader with
+        | F =>
+            have h_dec :=
+              dormant_follower_step_resetFuel_lt
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                hrv hr_res hr_rc hr_leader hv_not
+            have h_dec' : resetFuel C₁ < resetFuel C' := by
+              simpa [C₁, P] using h_dec
+            obtain ⟨γ, t, hgoal⟩ := dispatch_after_step h_dec'
+            exact
+              ranking_goal_of_step_ranking_goal
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                (C := C') (u := r) (v := v)
+                (by simpa [C₁, P] using ⟨γ, t, hgoal⟩)
+        | L =>
+            rcases
+              dormant_leader_nonresetting_step_resetFuel_lt_or_seed
+                (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                hrv hr_res hr_rc hr_leader hv_not
+              with h_dec | ⟨r_seed, hseed_res, hseed_rc, hseed_L⟩
+            · have h_dec' : resetFuel C₁ < resetFuel C' := by
+                simpa [C₁, P] using h_dec
+              obtain ⟨γ, t, hgoal⟩ := dispatch_after_step h_dec'
+              exact
+                ranking_goal_of_step_ranking_goal
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                  (C := C') (u := r) (v := v)
+                  (by simpa [C₁, P] using ⟨γ, t, hgoal⟩)
+            · have hReset :
+                  ∃ q : Fin n, (C₁ q).1.role = .Resetting ∧
+                    Rmax ≤ (C₁ q).1.resetcount ∧ (C₁ q).1.leader = .L := by
+                refine ⟨r_seed, ?_, ?_, ?_⟩
+                · simpa [C₁, P] using hseed_res
+                · have hrc : (C₁ r_seed).1.resetcount = Rmax := by
+                    simpa [C₁, P] using hseed_rc
+                  rw [hrc]
+                · simpa [C₁, P] using hseed_L
+              obtain ⟨Ltail, hEndpoint⟩ :=
+                reset_snapshot_to_RankingEndpoint_log
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                  hn4 hDmax1 hRlog C₁ hReset
+              have hgoal₁ :=
+                ranking_goal_of_runPairs_RankingEndpoint
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                  (C := C₁) (L := Ltail) hEndpoint
+              exact
+                ranking_goal_of_step_ranking_goal
+                  (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+                  (C := C') (u := r) (v := v)
+                  (by simpa [C₁, P] using hgoal₁)
+      · have hr_rc_pos : 0 < (C' r).1.resetcount := Nat.pos_of_ne_zero hr_rc
+        have h_dec :=
+          propagate_reset_step_resetFuel_lt
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            hDmax1 C' hrv hr_res hr_rc_pos hv_not
+        have h_dec' : resetFuel C₁ < resetFuel C' := by
+          simpa [C₁, P] using h_dec
+        obtain ⟨γ, t, hgoal⟩ := dispatch_after_step h_dec'
+        exact
+          ranking_goal_of_step_ranking_goal
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            (C := C') (u := r) (v := v)
+            (by simpa [C₁, P] using ⟨γ, t, hgoal⟩)
+
+theorem resetting_exists_to_ranking_goal_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (hReset : ∃ r : Fin n, (C r).1.role = .Resetting) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  by_cases hAllReset : ∀ w : Fin n, (C w).1.role = .Resetting
+  · exact
+      ranking_from_all_resetting_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hAllReset
+  · exact
+      partial_resetting_to_ranking_goal_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hReset hAllReset
+
+theorem ranking_field_proof_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (C : Config (AgentState n) Opinion n) :
+    ∃ (γ : DetScheduler n) (t : ℕ),
+      InSrank (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
+      ((∀ μ : Fin n,
+        (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 = ceilHalf n →
+        2 ≤ (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
+       IsConsensusConfig (execution (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
+  by_cases hReset : ∃ r : Fin n, (C r).1.role = .Resetting
+  · exact
+      resetting_exists_to_ranking_goal_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hReset
+  · have hNoReset : ∀ w : Fin n, (C w).1.role ≠ .Resetting := by
+      intro w hw
+      exact hReset ⟨w, hw⟩
+    exact
+      ranking_of_no_reset_by_parity_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        hn4 hDmax1 hRlog C hNoReset
+
 set_option maxHeartbeats 8000000 in
 -- The log-regime replacement for the old positive-resetcount re-entry:
 -- strong seed -> fresh uniform unique endpoint -> ranking -> swap.
@@ -1368,5 +2565,108 @@ theorem hMedCorrectExit_from_log_reentry_and_strong_seed_prefixes
       (reservoir_reset_leaf_from_strong_seed_and_reentry_log
         (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
         hn4 hDmax1 hRmax_pos hRlog hLeafSeed)
+
+set_option maxHeartbeats 16000000 in
+theorem burmanConvergence_concrete_log_with_strong_seed_prefixes
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (hEntrySeed :
+      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn)
+    (hLeafSeed :
+      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
+    BurmanConvergence Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) where
+  ranking := fun C₀ =>
+    ranking_field_proof_log
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      (hn := hn) hn4 hDmax1 hRlog C₀
+  epidemic := fun C₀ _h_correct => by
+    classical
+    obtain ⟨γ₁, t₁, hInSrank, hdisj⟩ :=
+      ranking_field_proof_log
+        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+        (hn := hn) hn4 hDmax1 hRlog C₀
+    set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
+    have hclose :
+        ∀ E : Config (AgentState n) Opinion n,
+          (∃ (γ : DetScheduler n) (t : ℕ),
+            E = execution P C₀ γ t ∧ IsConsensusConfig E) →
+          ∃ (γ : DetScheduler n) (t : ℕ),
+            InSswap (execution P C₀ γ t) ∧
+            (∀ w : Fin n,
+              (execution P C₀ γ t w).1.answer = majorityAnswer C₀) ∧
+            ((∀ μ : Fin n,
+              (execution P C₀ γ t μ).1.rank.val + 1 = ceilHalf n →
+              1 ≤ (execution P C₀ γ t μ).1.timer) ∨
+             IsConsensusConfig (execution P C₀ γ t)) := by
+      rintro E ⟨γ, t, hEeq, hconsE⟩
+      have hStim : InStim (execution P C₀ γ t) := by
+        rw [← hEeq]; exact (InStim_iff_IsConsensusConfig _).mpr hconsE
+      have hconsE' : IsConsensusConfig (execution P C₀ γ t) := by
+        rw [← hEeq]; exact hconsE
+      refine ⟨γ, t, hStim.toInSswap, ?_, Or.inr hconsE'⟩
+      intro w
+      have hmajγ : majorityAnswer (execution P C₀ γ t) = majorityAnswer C₀ :=
+        majorityAnswer_execution_eq C₀ γ t
+      have hw : (execution P C₀ γ t w).1.answer
+          = majorityAnswer (execution P C₀ γ t) :=
+        hconsE'.allAnswerCorrect w
+      rw [hw, hmajγ]
+    rcases hdisj with htimer | hcons
+    · set E₁ : Config (AgentState n) Opinion n := execution P C₀ γ₁ t₁
+        with hE₁def
+      have hMedCorrectExit :
+          ∀ k : ℕ, ∀ D : Config (AgentState n) Opinion n,
+            InSswap D →
+            (∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n →
+              1 ≤ (D μ).1.timer) →
+            0 < wrongAnswerCount D →
+            (∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n →
+              (D μ).1.answer = majorityAnswer D) →
+            wrongAnswerCount D ≤ k →
+            ∃ (γ : DetScheduler n) (t : ℕ),
+              IsConsensusConfig (execution (protocolPEM n Rmax Rmax
+                (rankDeltaOSSR Rmax Emax Dmax hn)) D γ t) := by
+        exact
+          hMedCorrectExit_from_log_reentry_and_strong_seed_prefixes
+            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+            hn4 hDmax1 (by omega : 0 < Rmax) hRlog hEntrySeed hLeafSeed
+      have hbridge :
+          ∃ (γ : DetScheduler n) (t : ℕ),
+            IsConsensusConfig (execution P E₁ γ t) :=
+        epidemic_timer_branch_to_consensus
+          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          hn4 (C₁ := E₁)
+          (by simpa [E₁, hP] using hInSrank)
+          (by
+            intro μ hμ
+            have h2 := htimer μ (by simpa [E₁, hP] using hμ)
+            omega)
+          (by simpa [hP] using hMedCorrectExit)
+      obtain ⟨γ₂, t₂, hcons₂⟩ := hbridge
+      refine hclose (execution P E₁ γ₂ t₂) ⟨concatScheduler γ₁ t₁ γ₂,
+        t₁ + t₂, ?_, hcons₂⟩
+      rw [hE₁def, execution_concat]
+    · exact hclose (execution P C₀ γ₁ t₁) ⟨γ₁, t₁, rfl, hcons⟩
+
+theorem P_EM_solves_SSEM_log_with_strong_seed_prefixes
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    (hDmax1 : 1 < Dmax)
+    (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
+    (hEntrySeed :
+      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn)
+    (hLeafSeed :
+      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
+    SolvesSSEM (protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) n :=
+  P_EM_solves_SSEM_from_BurmanConvergence_only
+    rankDeltaOSSR_satisfies_fix
+    hn4
+    (burmanConvergence_concrete_log_with_strong_seed_prefixes
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hn4 hDmax1 hRlog hEntrySeed hLeafSeed)
 
 end SSEM

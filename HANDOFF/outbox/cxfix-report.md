@@ -759,3 +759,108 @@ grep -nE '\bsorry\b|\baxiom\b' SSExactMajority/Convergence/LogTreeReset.lean SSE
 
 Result: all target checks completed successfully; the forbidden-token grep
 returned no matches. The build output contains only existing linter warnings.
+
+## Entry Spec Status
+
+Spec file executed:
+
+- `HANDOFF/entry_spec.md`
+
+Mapped old `n <=` consumptions:
+
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2042-2154`
+  (`partial_resetting_to_known_entry`): `n <= Dmax` is used only to get
+  `1 < Dmax`; `n <= Rmax` is used in the seed escape through the old
+  `all_resetting_from_seed_aux`; `n <= Emax` is pass-through.
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2168-2188`
+  (`resetting_exists_to_known_entry`): all three bounds are pass-through to
+  `partial_resetting_to_known_entry`.
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2192-2217`
+  (`reach_known_entry_from_any`): the bounds are pass-through to
+  `phase1_trigger_reset_or_InSrank` and the old resetting entry carrier.
+- `SSExactMajority/Convergence/BurmanProof.lean:7253-7594`
+  (`drain_positive_except_anchor_to_zero`,
+  `drain_positive_except_anchor_to_all_zero`,
+  `all_resetting_pos_with_leader_to_dormant`): `n <= Dmax` is consumed only
+  by the anchor-budget proof at lines 7385, 7523, and 7590.
+  The log entry proof avoids this path by pair-draining positive-resetcount
+  agents and using the no-answer log reset endpoint for seed cases.
+- No genuine statement-level need for `n <= Emax`, `n <= Dmax`, or
+  `n <= Rmax` was found in the arbitrary-entry ranking stack.
+
+Landed clog-level arbitrary-entry ranking stack in
+`SSExactMajority/Convergence/LogRegimeFinal.lean`:
+
+- `SSEM.ranking_from_all_resetting_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:1994`)
+- `SSEM.partial_resetting_to_ranking_goal_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:2139`)
+- `SSEM.resetting_exists_to_ranking_goal_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:2282`)
+- `SSEM.ranking_field_proof_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:2305`)
+
+Landed final assembly skeleton:
+
+- `SSEM.burmanConvergence_concrete_log_with_strong_seed_prefixes`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:2570`)
+- `SSEM.P_EM_solves_SSEM_log_with_strong_seed_prefixes`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:2654`)
+
+Complete landed hypothesis list for the assembly skeleton:
+
+- `[Inhabited (Fin n x Fin n)]`
+- `hn : 0 < n`
+- `hn4 : 4 <= n`
+- `hDmax1 : 1 < Dmax`
+- `hRlog : 2 * Nat.clog 2 n + 2 <= Rmax`
+- `hEntrySeed :
+  MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn`
+- `hLeafSeed :
+  ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn`
+
+Where the strong seed fact is still lost:
+
+- The protocol-level collision facts expose exact strong seeds locally:
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:395`,
+  `:646`, and `:741` give `resetcount = Rmax` and `leader = .L`.
+- The public producer interface erases that exact fact:
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:15102`
+  defines `MedCorrectLiveProducesCorrectSeedOrProgress` with only
+  `CorrectResetSeed C'`; `:15224` proves `med_correct_live_seed_or_progress`
+  with that weak result.
+- The reset-leaf producer has the same erasure:
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:15814`
+  defines `ReservoirCaseProducesCorrectSeedOrProgress` with only
+  `CorrectResetSeed C'`; `:15832` proves
+  `reservoir_case_seed_or_progress` with that weak result.
+- The old re-entry consumers at
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:15776`
+  and `:15864` then route weak `CorrectResetSeed` through the old
+  `correct_reset_seed_to_InSswap_ResAns_phi_zero`, which is exactly the
+  `n <= Dmax`/`n <= Rmax` path being replaced.
+
+Final assembly status:
+
+- `burmanConvergence_concrete_log`: not produced under the requested
+  constants+clog-only hypothesis list.
+- `P_EM_solves_SSEM_log`: not produced under the requested
+  constants+clog-only hypothesis list.
+- Reason: the arbitrary-entry ranking stack is now clog-only, but the
+  answer-faithful epidemic/re-entry side still needs the two strong producer
+  obligations above. Those obligations cannot be derived from the existing
+  public producer theorems because they expose only weak `CorrectResetSeed`
+  and drop the `resetcount = Rmax` witness. Discharging them requires
+  strengthening/duplicating the seed-producing producer layer, not another
+  entry-stack counting argument.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeFinal.lean
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeFinal
+grep -nE '\bsorry\b|\baxiom\b|native_decide' SSExactMajority/Convergence/LogRegimeFinal.lean
+```
+
+Result: all target checks completed successfully; the forbidden-token grep
+returned no matches. The build output contains only existing linter warnings.
