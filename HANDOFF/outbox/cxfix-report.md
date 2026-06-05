@@ -218,6 +218,93 @@ Important preconditions landed for `all_fresh_from_log_seed`:
   any log-fueled seed, producing a schedule after which every agent is
   `Resetting` with positive resetcount
 - a disjoint pair list `pairs` satisfying `PairListDisjoint pairs`
+
+## No-Answer / Finalwire Audit Result
+
+- Added the answer-agnostic fresh+unique endpoint
+  `SSEM.all_fresh_unique_from_log_seed_no_answer`.
+- Re-routed reset snapshots through the log-tree fresh+unique endpoint and
+  then `dormant_to_RankingEndpoint`, with no answer hypothesis and no
+  `n <= Dmax`, `n <= Rmax`, or `n <= Emax`.
+- Re-derived the bad-ranking parity handlers at clog level:
+  the reset-trigger branches now use
+  `step_reset_snapshot_to_RankingEndpoint_log`; the consensus-only branches
+  reuse the existing no-linear lemmas.
+- Re-derived the no-reset ranking entry at clog level:
+  `phase1_no_reset_trigger_snapshot_or_InSrank_log` and
+  `ranking_of_no_reset_by_parity_log`.
+- Did not produce `burmanConvergence_concrete_log` or
+  `P_EM_solves_SSEM_log`. The remaining blocker is genuine in the current
+  interface: `BurmanConvergence.ranking` is for arbitrary configurations, and
+  the case where the initial/current configuration already contains
+  `Resetting` agents but not a strong `rc = Rmax`, leader `.L` seed still
+  routes through the old arbitrary all-Resetting normalization chain.
+
+## No-Answer Theorems
+
+- `SSEM.all_fresh_unique_from_log_seed_no_answer`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:4581`
+- `SSEM.reset_snapshot_to_RankingEndpoint_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:66`
+- `SSEM.step_reset_snapshot_to_RankingEndpoint_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:101`
+- `SSEM.BadRankingStart_even_to_RankingEndpoint_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:573`
+- `SSEM.BadRankingStart_odd_to_RankingEndpoint_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:866`
+- `SSEM.ranking_of_no_reset_by_parity_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:1102`
+
+## No-Answer Landed Hypotheses
+
+- `all_fresh_unique_from_log_seed_no_answer`:
+  `[Inhabited (Fin n x Fin n)]`, `hn : 0 < n`, `hDmax : 1 < Dmax`,
+  `hn2 : 2 <= n`, seed role `Resetting`,
+  `2 * Nat.clog 2 n + 2 <= seed.resetcount`, and seed leader `.L`.
+- `reset_snapshot_to_RankingEndpoint_log` and
+  `step_reset_snapshot_to_RankingEndpoint_log`:
+  `[Inhabited (Fin n x Fin n)]`, `hn : 0 < n`, `hn4 : 4 <= n`,
+  `hDmax1 : 1 < Dmax`, and
+  `hRlog : 2 * Nat.clog 2 n + 2 <= Rmax`.
+- `BadRankingStart_even_to_RankingEndpoint_log`,
+  `BadRankingStart_odd_to_RankingEndpoint_log`, and
+  `ranking_of_no_reset_by_parity_log`:
+  the same `hn4`, `hDmax1`, and `hRlog` clog-level hypotheses only.
+
+## No-Answer Blocker
+
+The exact remaining consumers of the linear arbitrary-reset carrier are:
+
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2192`
+  `reach_known_entry_from_any`, called by
+  `ranking_field_proof` at line `2262`.
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2168`
+  `resetting_exists_to_known_entry`, called when a Resetting agent already
+  exists.
+- `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2042`
+  `partial_resetting_to_known_entry`, whose all-Resetting dispatch can return
+  arbitrary all-Resetting states, not necessarily the strong fresh/unique
+  endpoint.
+- `SSExactMajority/Convergence/BurmanProof.lean:15115`
+  `ranking_from_all_resetting`, with subcases including no leader and mixed
+  low-resetcount leaders:
+  `ranking_from_all_resetting_no_leader` at line `14611` and
+  `ranking_from_all_resetting_zero_leader_mixed` at line `15037`.
+
+Why this is not just a reset-snapshot rewire: the proven log endpoint needs a
+seed with `leader = .L` and reset fuel at least `2 * clog2 n + 2`; the
+arbitrary all-Resetting cases above may have no leader, non-unique leaders,
+or only low resetcounts. The bad-ranking snapshot path does preserve
+`rc = Rmax` and `leader = .L`; that path is now rerouted.
+
+## No-Answer Verification
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeFinal
+grep -nE '\bsorry\b|\baxiom\b' SSExactMajority/Convergence/LogTreeReset.lean SSExactMajority/Convergence/LogRegimeFinal.lean
+```
+
+Result: target build completed successfully. The grep returned no matches.
 - coverage `∀ w, w ∈ pairEndpoints pairs`
 
 Status note: Phase B/drain is fully discharged. The balanced-tree Phase A
@@ -593,3 +680,82 @@ grep -nE "sorry|axiom|native_decide" SSExactMajority/Convergence/LogRegimeFinal.
 Result: both Lean checks completed successfully; the forbidden-token grep
 returned no matches. The build output contains only pre-existing linter
 warnings from imported files.
+
+## No-Answer Final Status (supersedes previous STOP)
+
+Spec file executed:
+
+- `HANDOFF/noanswer_spec.md`
+
+Landed no-answer endpoint and clog-level reset recovery:
+
+- `SSEM.all_fresh_unique_from_log_seed_no_answer`
+  (`SSExactMajority/Convergence/LogTreeReset.lean:4581`)
+- `SSEM.reset_snapshot_to_RankingEndpoint_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:66`)
+- `SSEM.step_reset_snapshot_to_RankingEndpoint_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:101`)
+- `SSEM.BadRankingStart_even_to_RankingEndpoint_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:573`)
+- `SSEM.BadRankingStart_odd_to_RankingEndpoint_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:866`)
+- `SSEM.ranking_of_no_reset_by_parity_log`
+  (`SSExactMajority/Convergence/LogRegimeFinal.lean:1102`)
+
+Complete landed hypothesis list:
+
+- For `all_fresh_unique_from_log_seed_no_answer`:
+  `[Inhabited (Fin n x Fin n)]`, `hn : 0 < n`, `hDmax : 1 < Dmax`,
+  `hn2 : 2 <= n`, seed role `Resetting`,
+  `2 * Nat.clog 2 n + 2 <= seed.resetcount`, and seed leader `.L`.
+- For `reset_snapshot_to_RankingEndpoint_log`,
+  `step_reset_snapshot_to_RankingEndpoint_log`,
+  `BadRankingStart_even_to_RankingEndpoint_log`,
+  `BadRankingStart_odd_to_RankingEndpoint_log`, and
+  `ranking_of_no_reset_by_parity_log`:
+  `[Inhabited (Fin n x Fin n)]`, `hn : 0 < n`, `hn4 : 4 <= n`,
+  `hDmax1 : 1 < Dmax`, and
+  `hRlog : 2 * Nat.clog 2 n + 2 <= Rmax`.
+
+Strong seed-prefix obligations:
+
+- The bad-ranking snapshot path preserves the needed strong seed facts
+  (`resetcount = Rmax`, `leader = .L`) and is now routed through
+  `step_reset_snapshot_to_RankingEndpoint_log`.
+- The fact is still lost in the arbitrary-resetting entry carrier used by the
+  top-level convergence record:
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2192`
+  `reach_known_entry_from_any`, via
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2168`
+  `resetting_exists_to_known_entry` and
+  `SSExactMajority/Convergence/BurmanConvergenceFinal.lean:2042`
+  `partial_resetting_to_known_entry`.
+- The all-Resetting dispatch can enter
+  `SSExactMajority/Convergence/BurmanProof.lean:15115`
+  `ranking_from_all_resetting`, including the no-leader branch
+  `SSExactMajority/Convergence/BurmanProof.lean:14611` and the mixed
+  low-resetcount branch
+  `SSExactMajority/Convergence/BurmanProof.lean:15037`.
+
+Final assembly status:
+
+- `burmanConvergence_concrete_log`: not produced.
+- `P_EM_solves_SSEM_log`: not produced.
+- Reason: `BurmanConvergence.ranking` is for arbitrary configurations. If an
+  initial/current configuration already contains `Resetting` agents, the
+  existing entry chain may normalize from arbitrary all-Resetting states with
+  no leader, non-unique leaders, or low resetcounts. That is genuinely different
+  from the bad-ranking snapshot and does not provide the strong seed
+  precondition required by the clog-level endpoint.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogTreeReset.lean
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeFinal.lean
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeFinal
+grep -nE '\bsorry\b|\baxiom\b' SSExactMajority/Convergence/LogTreeReset.lean SSExactMajority/Convergence/LogRegimeFinal.lean
+```
+
+Result: all target checks completed successfully; the forbidden-token grep
+returned no matches. The build output contains only existing linter warnings.
