@@ -500,3 +500,96 @@ grep -nE "sorry|axiom|native_decide" \
 
 Result: build completed successfully; both single-file Lean checks exited with
 no output; forbidden-token grep returned no matches.
+
+## Final Wire Attempt: Strong Re-entry Landed, Final Theorem Blocked
+
+Spec file executed:
+
+- `HANDOFF/finalwire_spec.md`
+
+New file:
+
+- `SSExactMajority/Convergence/LogRegimeFinal.lean`
+
+Compiled pieces landed:
+
+- `CorrectResetSeedStrong`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:10`
+- `CorrectResetSeedStrong.toCorrectResetSeed`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:22`
+- `correct_reset_seed_strong_to_InSswap_ResAns_phi_zero_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:36`
+- `MedCorrectLiveProducesStrongSeedOrProgress`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:119`
+- `ReservoirCaseProducesStrongSeedOrProgress`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:136`
+- `med_correct_live_InSswap_to_reservoir_entry_from_strong_seed_and_reentry_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:157`
+- `reservoir_reset_leaf_from_strong_seed_and_reentry_log`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:194`
+- `hMedCorrectExit_from_log_reentry_and_strong_seed_prefixes`:
+  `SSExactMajority/Convergence/LogRegimeFinal.lean:241`
+
+What this proves:
+
+- The re-entry consumer formerly using
+  `correct_reset_seed_to_InSswap_ResAns_phi_zero` is now re-derived for a
+  strong seed carrying exact `resetcount = Rmax`.
+- The strong seed route calls the proven answer-faithful log bridge
+  `log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi_log`
+  (`SSExactMajority/Convergence/LogRegimeConvergence.lean:166`), then reuses
+  the existing fresh-ranking-to-swap chain.
+- The resulting re-entry hypotheses are clog/constant-level:
+  `[Inhabited (Fin n x Fin n)]`, `4 <= n`, `1 < Dmax`, `0 < Rmax`,
+  `2 * Nat.clog 2 n + 2 <= Rmax`, plus the two strengthened seed-prefix
+  obligations.
+
+STOP point:
+
+- I did not produce `burmanConvergence_concrete_log` or
+  `P_EM_solves_SSEM_log`.
+- The remaining carrier is the ranking-side bad-ranking reset recovery, not
+  the answer-faithful epidemic re-entry.
+- The old reset recovery is `step_reset_snapshot_to_RankingEndpoint`
+  (`SSExactMajority/Convergence/BurmanProof.lean:11529`), through
+  `reset_snapshot_to_RankingEndpoint`
+  (`SSExactMajority/Convergence/BurmanProof.lean:11468`). Its public snapshot
+  hypothesis gives only `role = Resetting`, `resetcount = Rmax`, and
+  `leader = .L` (`BurmanProof.lean:11534-11542`); it gives no answer
+  invariant.
+- The available `_log` bridge is answer-faithful and requires
+  `forall w, role Resetting -> answer = majorityAnswer C`
+  (`LogRegimeConvergence.lean:176-178`). Therefore it cannot discharge the
+  ranking-side reset snapshot directly.
+- The unconditional log endpoint
+  `all_fresh_from_log_seed_unconditional`
+  (`SSExactMajority/Convergence/LogTreeReset.lean:3761`) gives all fresh
+  Resetting agents but does not give the unique leader needed by
+  `IsDormantConfig`/`dormant_to_RankingEndpoint`
+  (`SSExactMajority/Convergence/BurmanProof.lean:11368`).
+- The unique-leader log endpoint currently available,
+  `all_fresh_uniform_unique_from_log_seed`
+  (`SSExactMajority/Convergence/LogTreeReset.lean:3571`), is also
+  answer-coupled and cannot be used for the answer-agnostic ranking recovery.
+
+Required missing layer for the final wire:
+
+- A no-answer log reset recovery endpoint:
+  growth preserving a root `.L`, fueled leader tournament, and final drain
+  preserving unique leader, ending in all fresh Resetting + unique leader.
+- Then reroute `reset_snapshot_to_RankingEndpoint`,
+  `step_reset_snapshot_to_RankingEndpoint`, and the parity bad-ranking
+  handlers through that endpoint before assembling the final convergence
+  record.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeFinal.lean
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeFinal
+grep -nE "sorry|axiom|native_decide" SSExactMajority/Convergence/LogRegimeFinal.lean
+```
+
+Result: both Lean checks completed successfully; the forbidden-token grep
+returned no matches. The build output contains only pre-existing linter
+warnings from imported files.
