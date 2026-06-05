@@ -159,4 +159,66 @@ theorem fresh_uniform_unique_to_FreshRankingStart_resAns_noPhi
       (all_resetcount_zero_of_all_fresh hFresh)
       hUniqueLeader hm₀ hUniform
 
+/-- Log-fueled answer-faithful reset growth reaches the fresh bridge without
+any linear `n <= Dmax`, `n <= Rmax`, or `n <= Emax` carrier.  The fuel
+constant is `2 * clog2 n + 2`: `clog2 n` for balanced growth, `clog2 n`
+for the fueled leader tournament, and `2` for the final mutual drain. -/
+theorem log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi_log
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n} {m₀ : Answer}
+    (hn4 : 4 ≤ n) (hDmax : 1 < Dmax)
+    (hRmax : 0 < Rmax)
+    (C : Config (AgentState n) Opinion n)
+    (r : Fin n)
+    (hr_role : (C r).1.role = .Resetting)
+    (hr_log : 2 * Nat.clog 2 n + 2 ≤ (C r).1.resetcount)
+    (hr_L : (C r).1.leader = .L)
+    (hm₀ : m₀ = majorityAnswer C)
+    (hAllAns : ∀ w : Fin n, (C w).1.role = .Resetting →
+      (C w).1.answer = majorityAnswer C) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      FreshRankingStart C' ∧
+      ResAns m₀ C' ∧
+      (∀ w : Fin n, (C' w).1.answer ≠ .phi) ∧
+      majorityAnswer C' = majorityAnswer C := by
+  classical
+  set P := protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
+  obtain ⟨Lfresh, hFresh, hUniformMaj, hUnique, hMajFresh⟩ :=
+    all_fresh_uniform_unique_from_log_seed
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      hDmax (by omega : 2 ≤ n) C r hr_role hr_log hr_L hAllAns
+  let C₁ : Config (AgentState n) Opinion n := runPairs P C Lfresh
+  have hFresh₁ : ∀ w : Fin n, FreshResettingAt Dmax C₁ w := by
+    simpa [C₁, hP] using hFresh
+  have hUnique₁ : ∃! ℓ : Fin n, (C₁ ℓ).1.leader = .L := by
+    simpa [C₁, hP] using hUnique
+  have hMaj₁ : majorityAnswer C₁ = majorityAnswer C := by
+    simpa [C₁, hP] using hMajFresh
+  have hm₁ : m₀ = majorityAnswer C₁ := by
+    rw [hMaj₁]
+    exact hm₀
+  have hUniform₁ : ∀ w : Fin n, (C₁ w).1.answer = m₀ := by
+    intro w
+    have hw : (C₁ w).1.answer = majorityAnswer C₁ := by
+      simpa [C₁, hP] using hUniformMaj w
+    rw [← hm₁] at hw
+    exact hw
+  obtain ⟨Ltail, hFreshStart, hRes, hNoPhi, hMajTail⟩ :=
+    fresh_uniform_unique_to_FreshRankingStart_resAns_noPhi
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      (m₀ := m₀) hn4 hRmax (by omega : 0 < Dmax)
+      (C := C₁) hFresh₁ hUnique₁ hm₁ hUniform₁
+  refine ⟨Lfresh ++ Ltail, ?_, ?_, ?_, ?_⟩
+  · rw [runPairs_append]
+    exact hFreshStart
+  · rw [runPairs_append]
+    exact hRes
+  · rw [runPairs_append]
+    exact hNoPhi
+  · rw [runPairs_append]
+    rw [hMajTail]
+    exact hMaj₁
+
 end SSEM

@@ -444,3 +444,59 @@ grep -n "sorry\|axiom\|native_decide" \
 ```
 
 Result: build completed successfully.  The grep returned no matches.
+
+## Eliminate Linear Dmax from Log Endgame
+
+Spec file executed:
+
+- `HANDOFF/eliminate_spec.md`
+
+New / completed proof pieces:
+
+- `leader_tournament_iter`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:1488`
+- `drain_all_floor_two_to_fresh_uniform_unique`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:3466`
+- `all_fresh_uniform_unique_from_log_seed`:
+  `SSExactMajority/Convergence/LogTreeReset.lean:3571`
+- `log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi_log`:
+  `SSExactMajority/Convergence/LogRegimeConvergence.lean:166`
+
+Exact fuel constant landed:
+
+- `2 * Nat.clog 2 n + 2`
+
+Breakdown:
+
+- `Nat.clog 2 n` fuel spent by balanced-tree growth.
+- `Nat.clog 2 n` fuel reserved for the fueled `.L`/`.L` leader tournament.
+- `2` fuel reserved for the final mutual drain to fresh resetcount zero.
+
+Final log theorem carrier status:
+
+- The new final theorem
+  `log_seed_uniform_leader_to_FreshRankingStart_resAns_noPhi_log` has no
+  `n <= Dmax`, no `n <= Rmax`, and no `n <= Emax` hypothesis.
+- Remaining parameter hypotheses are constant/clog-level:
+  `[Inhabited (Fin n x Fin n)]`, `4 <= n`, `1 < Dmax`, `0 < Rmax`,
+  seed role Resetting, seed fuel
+  `2 * Nat.clog 2 n + 2 <= resetcount`, seed leader `.L`, and the faithful
+  invariant that already-Resetting agents carry `majorityAnswer C`.
+- The old compatibility theorem with `hDmax_n` remains in the file, but the
+  new `_log` theorem routes through the fresh bridge
+  `fresh_uniform_unique_to_FreshRankingStart_resAns_noPhi` and does not use
+  the old positive-resetcount drain path.
+
+Verification:
+
+```bash
+/data/home/xhuan5/.elan/bin/lake build SSExactMajority.Convergence.LogRegimeConvergence
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogTreeReset.lean
+/data/home/xhuan5/.elan/bin/lake env lean SSExactMajority/Convergence/LogRegimeConvergence.lean
+grep -nE "sorry|axiom|native_decide" \
+  SSExactMajority/Convergence/LogTreeReset.lean \
+  SSExactMajority/Convergence/LogRegimeConvergence.lean
+```
+
+Result: build completed successfully; both single-file Lean checks exited with
+no output; forbidden-token grep returned no matches.
