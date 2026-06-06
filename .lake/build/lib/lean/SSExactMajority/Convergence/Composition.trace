@@ -6,7 +6,7 @@
   "c": "7da88a280896a241.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.setup.json --json",
+   ".> LEAN_PATH=/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean -o /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.olean -i /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Composition.ilean -c /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.c --setup /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Composition.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["SSExactMajority.Convergence.Composition:deps",
@@ -32,7 +32,7 @@
       ["module plugins", "00000000000006bb"]]]]],
   ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
    "9a2be90fd35343e5"],
-  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean",
+  ["/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Composition.lean",
    "199b89268b9fdb65"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],

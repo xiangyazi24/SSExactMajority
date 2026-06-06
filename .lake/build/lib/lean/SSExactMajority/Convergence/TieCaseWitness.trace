@@ -6,7 +6,7 @@
   "c": "35437f590b7ad204.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TieCaseWitness.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TieCaseWitness.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TieCaseWitness.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TieCaseWitness.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TieCaseWitness.setup.json --json",
+   ".> LEAN_PATH=/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TieCaseWitness.lean -o /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TieCaseWitness.olean -i /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/TieCaseWitness.ilean -c /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TieCaseWitness.c --setup /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/TieCaseWitness.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["SSExactMajority.Convergence.TieCaseWitness:deps",
@@ -29,7 +29,7 @@
       ["module plugins", "00000000000006bb"]]]]],
   ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
    "9a2be90fd35343e5"],
-  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TieCaseWitness.lean",
+  ["/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/TieCaseWitness.lean",
    "16a3306d03e0d6bd"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],

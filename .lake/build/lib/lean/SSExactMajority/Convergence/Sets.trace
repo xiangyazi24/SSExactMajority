@@ -6,7 +6,7 @@
   "c": "06003c9e230677ed.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Sets.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Sets.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Sets.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Sets.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Sets.setup.json --json",
+   ".> LEAN_PATH=/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Sets.lean -o /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Sets.olean -i /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Convergence/Sets.ilean -c /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Sets.c --setup /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Convergence/Sets.setup.json --json",
    "level": "trace"},
   {"message":
    "SSExactMajority/Convergence/Sets.lean:40:74: The syntax is now `structure S : Type extends P` rather than `structure S extends P : Type`\n\nNote: The purpose of this change is to accommodate `structure S extends toP : P` syntax for naming parent projections.",
@@ -36,7 +36,7 @@
       ["module plugins", "00000000000006bb"]]]]],
   ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
    "9a2be90fd35343e5"],
-  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Sets.lean",
+  ["/home/xhuan5/repos/SSExactMajority/SSExactMajority/Convergence/Sets.lean",
    "6cf43bcc32c94210"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],

@@ -6,7 +6,7 @@
   "c": "93e762786271b02a.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /data/home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/RandomScheduler.lean -o /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/RandomScheduler.olean -i /data/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/RandomScheduler.ilean -c /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/RandomScheduler.c --setup /data/home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/RandomScheduler.setup.json --json",
+   ".> LEAN_PATH=/home/xhuan5/repos/SSExactMajority/.lake/packages/Cli/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/batteries/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/Qq/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/aesop/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/importGraph/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/plausible/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/packages/mathlib/.lake/build/lib/lean:/home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean /home/xhuan5/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lean /home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/RandomScheduler.lean -o /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/RandomScheduler.olean -i /home/xhuan5/repos/SSExactMajority/.lake/build/lib/lean/SSExactMajority/Probability/RandomScheduler.ilean -c /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/RandomScheduler.c --setup /home/xhuan5/repos/SSExactMajority/.lake/build/ir/SSExactMajority/Probability/RandomScheduler.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["SSExactMajority.Probability.RandomScheduler:deps",
@@ -15,11 +15,11 @@
        [["@SSExactMajority:extraDep", "00000000000006bb"]]],
       ["imports",
        [["Mathlib.Probability.ProbabilityMassFunction.Constructions transitive imports (legacy)",
-         "bbf69247b249ed05"],
+         "cbce8c3003b1971a"],
         ["Mathlib.Probability.ProbabilityMassFunction.Constructions:importAllArts",
          "85b3dbf7905ef6a1"],
         ["Mathlib.Probability.Distributions.Uniform transitive imports (legacy)",
-         "221e8f8c61c193e8"],
+         "314e66b24ef17dac"],
         ["Mathlib.Probability.Distributions.Uniform:importAllArts",
          "c31fde9800af972b"],
         ["SSExactMajority.Defs.Execution transitive imports (legacy)",
@@ -33,11 +33,11 @@
       ["module plugins", "00000000000006bb"]]]]],
   ["Lean 4.27.0, commit db93fe1608548721853390a10cd40580fe7d22ae",
    "9a2be90fd35343e5"],
-  ["/data/home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/RandomScheduler.lean",
+  ["/home/xhuan5/repos/SSExactMajority/SSExactMajority/Probability/RandomScheduler.lean",
    "ccdfcb72967cd1df"],
   ["options",
    [["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
     ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "cde3e861a9ff5e47"}
+ "depHash": "9f8d4c129eebaca0"}
