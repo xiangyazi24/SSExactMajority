@@ -5,43 +5,9 @@ namespace SSEM
 
 attribute [local instance] Classical.propDecidable
 
-section GenericBasics
-
-variable {n trank Rmax Emax Dmax : ℕ} {hn : 0 < n}
-
-theorem ranking_goal_of_runPairs_RankingEndpoint_trank
-    [Inhabited (Fin n × Fin n)]
-    {C : Config (AgentState n) Opinion n}
-    {L : List (Fin n × Fin n)}
-    (hEndpoint :
-      RankingEndpoint
-        (runPairs (protocolPEM n trank Rmax
-          (rankDeltaOSSR Rmax Emax Dmax hn)) C L)) :
-    ∃ (γ : DetScheduler n) (t : ℕ),
-      InSrank
-        (execution (protocolPEM n trank Rmax
-          (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t) ∧
-      ((∀ μ : Fin n,
-        (execution (protocolPEM n trank Rmax
-          (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.rank.val + 1 =
-            ceilHalf n →
-        2 ≤
-          (execution (protocolPEM n trank Rmax
-            (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t μ).1.timer) ∨
-       IsConsensusConfig
-        (execution (protocolPEM n trank Rmax
-          (rankDeltaOSSR Rmax Emax Dmax hn)) C γ t)) := by
-  exact
-    exists_schedule_of_runPairs
-      (protocolPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) C L
-      (Goal := fun C' =>
-        InSrank C' ∧
-          ((∀ μ : Fin n,
-              (C' μ).1.rank.val + 1 = ceilHalf n → 2 ≤ (C' μ).1.timer) ∨
-           IsConsensusConfig C'))
-      hEndpoint
-
-end GenericBasics
+-- `ranking_goal_of_runPairs_RankingEndpoint_trank` is provided by
+-- `LogRegimeFinal` (over the section variable `τ`) and imported above; the
+-- earlier duplicate here has been removed to avoid a re-declaration clash.
 
 /-- Trank-parametric version of the strong entry seed-prefix obligation. -/
 def MedCorrectLiveProducesStrongSeedOrProgressTrank

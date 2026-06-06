@@ -8415,7 +8415,7 @@ theorem medCorrectLiveProducesStrongSeedOrProgress_holds
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n) (hRmax_pos : 0 < Rmax) :
-    MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn := by
+    MedCorrectLiveProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn := by
   classical
   intro D hSswap hTimer hWrongPos hMedCorrect
   set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
@@ -8605,6 +8605,368 @@ theorem medCorrectLiveProducesStrongSeedOrProgress_holds
       rw [runPairs_append]
       simpa [Ct, hP] using hTail
 
+/-- τ-generic version of `even_upper_wrong_decision_resAns_phi_decrease`.
+The coupled proof only ever instantiates genuinely `trank`-parametric step
+lemmas at `(trank := Rmax)`; re-instantiating them at `(trank := τ)` gives the
+identical argument over `protocolPEM n τ Rmax`. -/
+theorem even_upper_wrong_decision_resAns_phi_decrease_tau
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    {C : Config (AgentState n) Opinion n}
+    (hC : InSswap C)
+    (hRes : ResAns (majorityAnswer C) C)
+    {μ v : Fin n} (hμv : μ ≠ v)
+    (hpar : n % 2 = 0)
+    (hμ_lower : (C μ).1.rank.val + 1 = n / 2)
+    (hv_upper : (C v).1.rank.val + 1 = n / 2 + 1)
+    (hv_wrong : (C v).1.answer ≠ majorityAnswer C) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n τ Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      InSswap C' ∧ ResAns (majorityAnswer C') C' ∧
+        phiCount C' < phiCount C := by
+  classical
+  set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
+  let C' : Config (AgentState n) Opinion n := C.step P μ v
+  have hRfix := rankDeltaOSSR_satisfies_fix
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+  have hmaj_step : majorityAnswer C' = majorityAnswer C := by
+    dsimp [C', P]
+    exact majorityAnswer_step_eq C μ v
+  have hdec :=
+    InSswap_even_median_pair_decision_decreases
+      (trank := τ) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+      hRfix hC hμv hpar hμ_lower hv_upper hn4 (Or.inr hv_wrong)
+  have hSswap' : InSswap C' := by
+    simpa [C', P] using hdec.1
+  have hRes' : ResAns (majorityAnswer C') C' := by
+    rw [hmaj_step]
+    by_cases hTie : nAOf C = nBOf C
+    · have hdis :=
+        InSswap_even_median_pair_inputs_disagree_of_tie
+          hC hpar hTie hμ_lower hv_upper
+      have hsu := hC.allSettled μ
+      have hsv := hC.allSettled v
+      have h_no_swap : ¬((C μ).2 = Opinion.B ∧ (C v).2 = Opinion.A) := by
+        intro h
+        rcases h with ⟨hμB, _hvA⟩
+        have hsum := nAOf_add_nBOf C
+        have hμA : (C μ).2 = Opinion.A := (hC.input_rank μ).mpr (by omega)
+        rw [hμA] at hμB
+        exact Opinion.noConfusion hμB
+      obtain ⟨h_μ, h_v, h_others, _⟩ :=
+        step_at_median_pair_even_disagreed_inputs
+          (trank := τ) (Rmax := Rmax)
+          hRfix hμv hsu hsv hpar hμ_lower hv_upper hdis h_no_swap hn4
+      have h_outT : majorityAnswer C = .outT :=
+        majorityAnswer_eq_outT_of_tie hTie
+      intro w
+      by_cases hwμ : w = μ
+      · subst w
+        left
+        dsimp [C']
+        rw [h_μ, h_outT]
+      · by_cases hwv : w = v
+        · subst w
+          left
+          dsimp [C']
+          rw [h_v, h_outT]
+        · have hww : C' w = C w := by
+            dsimp [C']
+            exact h_others w hwμ hwv
+          rw [hww]
+          exact hRes w
+    · have hagree :=
+        InSswap_even_median_pair_inputs_agree_of_strict
+          hC hpar hTie hμ_lower hv_upper
+      have hsu := hC.allSettled μ
+      have hsv := hC.allSettled v
+      have hC'_eq :=
+        step_at_median_pair_even_agreed_inputs
+          (trank := τ) (Rmax := Rmax)
+          hRfix hμv hsu hsv hpar hμ_lower hv_upper hagree hn4
+      have h_correct : opinionToAnswer (C μ).2 = majorityAnswer C :=
+        opinionToAnswer_lower_median_eq_majorityAnswer_even hC hμ_lower hpar hTie
+      intro w
+      have hval := congrFun hC'_eq w
+      by_cases hwμ : w = μ
+      · left
+        dsimp [C']
+        rw [hval, if_pos hwμ, h_correct]
+      · by_cases hwv : w = v
+        · left
+          dsimp [C']
+          rw [hval, if_neg hwμ, if_pos hwv, h_correct]
+        · dsimp [C']
+          rw [hval, if_neg hwμ, if_neg hwv]
+          exact hRes w
+  refine ⟨[(μ, v)], ?_⟩
+  have hRun : runPairs P C [(μ, v)] = C' := by
+    simp only [runPairs_cons, runPairs_nil, C']
+  rw [hRun]
+  refine ⟨hSswap', hRes', ?_⟩
+  rw [phiCount_eq_wrongAnswerCount_of_resAns hRes',
+    phiCount_eq_wrongAnswerCount_of_resAns hRes]
+  simpa [C', P] using hdec.2
+
+/-- τ-generic version of `even_median_pair_wrong_decision_resAns_phi_decrease`. -/
+theorem even_median_pair_wrong_decision_resAns_phi_decrease_tau
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    {C : Config (AgentState n) Opinion n}
+    (hC : InSswap C)
+    (hRes : ResAns (majorityAnswer C) C)
+    {μ v : Fin n} (hμv : μ ≠ v)
+    (hpar : n % 2 = 0)
+    (hμ_lower : (C μ).1.rank.val + 1 = n / 2)
+    (hv_upper : (C v).1.rank.val + 1 = n / 2 + 1)
+    (hwrong :
+      (C μ).1.answer ≠ majorityAnswer C ∨
+        (C v).1.answer ≠ majorityAnswer C) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n τ Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      InSswap C' ∧ ResAns (majorityAnswer C') C' ∧
+        phiCount C' < phiCount C := by
+  classical
+  set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
+  let C' : Config (AgentState n) Opinion n := C.step P μ v
+  have hRfix := rankDeltaOSSR_satisfies_fix
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+  have hmaj_step : majorityAnswer C' = majorityAnswer C := by
+    dsimp [C', P]
+    exact majorityAnswer_step_eq C μ v
+  have hdec :=
+    InSswap_even_median_pair_decision_decreases
+      (trank := τ) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+      hRfix hC hμv hpar hμ_lower hv_upper hn4 hwrong
+  have hSswap' : InSswap C' := by
+    simpa [C', P] using hdec.1
+  have hRes' : ResAns (majorityAnswer C') C' := by
+    rw [hmaj_step]
+    by_cases hTie : nAOf C = nBOf C
+    · have hdis :=
+        InSswap_even_median_pair_inputs_disagree_of_tie
+          hC hpar hTie hμ_lower hv_upper
+      have hsu := hC.allSettled μ
+      have hsv := hC.allSettled v
+      have h_no_swap : ¬((C μ).2 = Opinion.B ∧ (C v).2 = Opinion.A) := by
+        intro h
+        rcases h with ⟨hμB, _hvA⟩
+        have hsum := nAOf_add_nBOf C
+        have hμA : (C μ).2 = Opinion.A := (hC.input_rank μ).mpr (by omega)
+        rw [hμA] at hμB
+        exact Opinion.noConfusion hμB
+      obtain ⟨h_μ, h_v, h_others, _⟩ :=
+        step_at_median_pair_even_disagreed_inputs
+          (trank := τ) (Rmax := Rmax)
+          hRfix hμv hsu hsv hpar hμ_lower hv_upper hdis h_no_swap hn4
+      have h_outT : majorityAnswer C = .outT :=
+        majorityAnswer_eq_outT_of_tie hTie
+      intro w
+      by_cases hwμ : w = μ
+      · subst w
+        left
+        dsimp [C']
+        rw [h_μ, h_outT]
+      · by_cases hwv : w = v
+        · subst w
+          left
+          dsimp [C']
+          rw [h_v, h_outT]
+        · have hww : C' w = C w := by
+            dsimp [C']
+            exact h_others w hwμ hwv
+          rw [hww]
+          exact hRes w
+    · have hagree :=
+        InSswap_even_median_pair_inputs_agree_of_strict
+          hC hpar hTie hμ_lower hv_upper
+      have hsu := hC.allSettled μ
+      have hsv := hC.allSettled v
+      have hC'_eq :=
+        step_at_median_pair_even_agreed_inputs
+          (trank := τ) (Rmax := Rmax)
+          hRfix hμv hsu hsv hpar hμ_lower hv_upper hagree hn4
+      have h_correct : opinionToAnswer (C μ).2 = majorityAnswer C :=
+        opinionToAnswer_lower_median_eq_majorityAnswer_even hC hμ_lower hpar hTie
+      intro w
+      have hval := congrFun hC'_eq w
+      by_cases hwμ : w = μ
+      · left
+        dsimp [C']
+        rw [hval, if_pos hwμ, h_correct]
+      · by_cases hwv : w = v
+        · left
+          dsimp [C']
+          rw [hval, if_neg hwμ, if_pos hwv, h_correct]
+        · dsimp [C']
+          rw [hval, if_neg hwμ, if_neg hwv]
+          exact hRes w
+  refine ⟨[(μ, v)], ?_⟩
+  have hRun : runPairs P C [(μ, v)] = C' := by
+    simp only [runPairs_cons, runPairs_nil, C']
+  rw [hRun]
+  refine ⟨hSswap', hRes', ?_⟩
+  rw [phiCount_eq_wrongAnswerCount_of_resAns hRes',
+    phiCount_eq_wrongAnswerCount_of_resAns hRes]
+  simpa [C', P] using hdec.2
+
+/-- τ-generic version of `odd_timer_zero_only_median_wrong_resAns_phi_decrease`. -/
+theorem odd_timer_zero_only_median_wrong_resAns_phi_decrease_tau
+    [Inhabited (Fin n × Fin n)]
+    {Rmax Emax Dmax : ℕ} {hn : 0 < n}
+    (hn4 : 4 ≤ n)
+    {C : Config (AgentState n) Opinion n}
+    (hC : InSswap C)
+    (hRes : ResAns (majorityAnswer C) C)
+    (hPhiPos : 0 < phiCount C)
+    {μ : Fin n}
+    (hpar : ¬ n % 2 = 0)
+    (hμ_med : (C μ).1.rank.val + 1 = ceilHalf n)
+    (h_timer : (C μ).1.timer = 0)
+    (hOnlyMedianWrong :
+      ∀ w : Fin n, w ≠ μ → (C w).1.answer = majorityAnswer C) :
+    ∃ L : List (Fin n × Fin n),
+      let C' := runPairs (protocolPEM n τ Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn)) C L
+      InSswap C' ∧ ResAns (majorityAnswer C') C' ∧
+        phiCount C' < phiCount C := by
+  classical
+  set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
+  have hcard : 1 < Fintype.card (Fin n) := by
+    rw [Fintype.card_fin]
+    omega
+  obtain ⟨v, hv_ne_mu⟩ := Fintype.exists_ne_of_one_lt_card hcard μ
+  have hμv : μ ≠ v := fun h => hv_ne_mu h.symm
+  have hv_no_med : (C v).1.rank.val + 1 ≠ ceilHalf n := by
+    intro hv_med
+    apply hμv
+    apply hC.ranks_inj
+    apply Fin.eq_of_val_eq
+    have hμ_val : (C μ).1.rank.val = ceilHalf n - 1 := by omega
+    have hv_val : (C v).1.rank.val = ceilHalf n - 1 := by omega
+    exact hμ_val.trans hv_val.symm
+  have h_no_swap :
+      ¬((C μ).1.rank < (C v).1.rank ∧
+        (C μ).2 = Opinion.B ∧ (C v).2 = Opinion.A) :=
+    hC.swap_condition_false μ v
+  have h_median_correct :
+      opinionToAnswer (C μ).2 = majorityAnswer C :=
+    opinionToAnswer_median_eq_majorityAnswer_odd hC hμ_med hpar
+  have hv_correct : (C v).1.answer = majorityAnswer C :=
+    hOnlyMedianWrong v hv_ne_mu
+  have h_post_same : opinionToAnswer (C μ).2 = (C v).1.answer := by
+    rw [h_median_correct, hv_correct]
+  let C' : Config (AgentState n) Opinion n := C.step P μ v
+  have htr :=
+    transitionPEM_timer_zero_no_swap_same_trace
+      (trank := τ) (Rmax := Rmax)
+      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn)
+      (hRank := rankDeltaOSSR_satisfies_fix)
+      (C := C) hC.toInSrank hμv hμ_med hv_no_med h_timer
+      h_no_swap hpar h_post_same
+  have hC'_eq : C' =
+      fun w => if w = μ then
+          ({ (C μ).1 with answer := opinionToAnswer (C μ).2 }, (C μ).2)
+        else if w = v then C v
+        else C w := by
+    funext w
+    dsimp [C', P]
+    unfold Config.step
+    simp only [if_neg hμv]
+    change
+      (if w = μ then
+          ((transitionPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+              (C μ, C v)).1, (C μ).2)
+        else if w = v then
+          ((transitionPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+              (C μ, C v)).2, (C v).2)
+        else C w) =
+      (if w = μ then
+          ({ (C μ).1 with answer := opinionToAnswer (C μ).2 }, (C μ).2)
+        else if w = v then C v
+        else C w)
+    rw [htr]
+  have hrank : ∀ w : Fin n, (C' w).1.rank = (C w).1.rank := by
+    intro w
+    have hw_state := congrFun hC'_eq w
+    rw [hw_state]
+    by_cases hwμ : w = μ
+    · simp [hwμ]
+    · by_cases hwv : w = v
+      · simp [hwμ, hwv, hv_ne_mu]
+      · simp [hwμ, hwv]
+  have hinput : ∀ w : Fin n, (C' w).2 = (C w).2 := by
+    intro w
+    have hw_state := congrFun hC'_eq w
+    rw [hw_state]
+    by_cases hwμ : w = μ
+    · simp [hwμ]
+    · by_cases hwv : w = v
+      · simp [hwμ, hwv, hv_ne_mu]
+      · simp [hwμ, hwv]
+  have hnA : nAOf C' = nAOf C := by
+    simpa [C', P] using
+      (nAOf_step_eq
+        (trank := τ) (Rmax := Rmax)
+        (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn) C μ v)
+  have hmaj : majorityAnswer C' = majorityAnswer C := by
+    simpa [C', P] using
+      (majorityAnswer_step_eq
+        (trank := τ) (Rmax := Rmax)
+        (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn) C μ v)
+  have hSswap' : InSswap C' := by
+    refine
+      { allSettled := ?_
+        ranks_inj := ?_
+        input_rank := ?_ }
+    · intro w
+      have hw_state := congrFun hC'_eq w
+      rw [hw_state]
+      by_cases hwμ : w = μ
+      · simp [hwμ, hC.allSettled μ]
+      · by_cases hwv : w = v
+        · simp [hwμ, hwv, hv_ne_mu, hC.allSettled v]
+        · simp [hwμ, hwv, hC.allSettled w]
+    · intro w₁ w₂ heq
+      apply hC.ranks_inj
+      simpa [hrank w₁, hrank w₂] using heq
+    · intro w
+      rw [hinput w, hrank w, hnA]
+      exact hC.input_rank w
+  have hAllCorrect : ∀ w : Fin n, (C' w).1.answer = majorityAnswer C' := by
+    intro w
+    rw [hmaj]
+    have hw_state := congrFun hC'_eq w
+    rw [hw_state]
+    by_cases hwμ : w = μ
+    · simp [hwμ, h_median_correct]
+    · by_cases hwv : w = v
+      · subst w
+        simp [hv_ne_mu, hv_correct]
+      · simp [hwμ, hwv, hOnlyMedianWrong w hwμ]
+  have hRes' : ResAns (majorityAnswer C') C' := by
+    intro w
+    exact Or.inl (hAllCorrect w)
+  have hPhiZero : phiCount C' = 0 := by
+    rw [phiCount_eq_zero_iff]
+    intro w
+    rw [hAllCorrect w]
+    unfold majorityAnswer
+    split_ifs <;> decide
+  refine ⟨[(μ, v)], ?_⟩
+  have hRun : runPairs P C [(μ, v)] = C' := by
+    simp only [runPairs_cons, runPairs_nil, C']
+  rw [hRun]
+  refine ⟨hSswap', hRes', ?_⟩
+  rw [hPhiZero]
+  exact hPhiPos
+
 theorem med_correct_live_timer_one_strong_seed_or_phi_progress
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
@@ -8668,8 +9030,8 @@ theorem med_correct_live_timer_one_strong_seed_or_phi_progress
         subst w
         exact hw_no_med hμ_med
       obtain ⟨L, hProg⟩ :=
-        even_upper_wrong_decision_resAns_phi_decrease
-          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        even_upper_wrong_decision_resAns_phi_decrease_tau
+          (τ := τ) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
           hn4 hSswap hRes hμw hpar hμ_lower hw_upper hw_wrong
       exact ⟨L, Or.inr hProg⟩
   · obtain ⟨w, hw_no_med, hw_wrong⟩ :=
@@ -9007,8 +9369,8 @@ theorem reservoir_med_correct_timer_zero_strong_seed_or_progress
       subst v
       exact hv_no_med hμ_med
     obtain ⟨L, hProg⟩ :=
-      even_upper_wrong_decision_resAns_phi_decrease
-        (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+      even_upper_wrong_decision_resAns_phi_decrease_tau
+        (τ := τ) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
         hn4 hC hRes hμv hpar hμ_lower hv_upper hv_wrong
     exact ⟨L, Or.inr hProg⟩
 
@@ -9054,8 +9416,8 @@ theorem reservoir_timer_zero_strong_seed_or_progress_core
         subst v
         omega
       obtain ⟨L, hProg⟩ :=
-        even_median_pair_wrong_decision_resAns_phi_decrease
-          (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+        even_median_pair_wrong_decision_resAns_phi_decrease_tau
+          (τ := τ) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
           hn4 hSswap hRes hηv hpar hη_lower hv_upper (Or.inl hη_wrong)
       exact ⟨L, Or.inr hProg⟩
     · have hη_eq_μ : η = μ := by
@@ -9092,8 +9454,8 @@ theorem reservoir_timer_zero_strong_seed_or_progress_core
             have hμ_val : (D μ).1.rank.val = ceilHalf n - 1 := by omega
             exact hw_val.trans hμ_val.symm)
         obtain ⟨L, hProg⟩ :=
-          odd_timer_zero_only_median_wrong_resAns_phi_decrease
-            (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
+          odd_timer_zero_only_median_wrong_resAns_phi_decrease_tau
+            (τ := τ) (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax) (hn := hn)
             hn4 hSswap hRes hPhi hpar hμ_med hμ_timer hOnly
         exact ⟨L, Or.inr hProg⟩
 
@@ -9101,7 +9463,7 @@ theorem reservoirCaseProducesStrongSeedOrProgress_holds
     [Inhabited (Fin n × Fin n)]
     {Rmax Emax Dmax : ℕ} {hn : 0 < n}
     (hn4 : 4 ≤ n) (hRmax_pos : 0 < Rmax) :
-    ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn := by
+    ReservoirCaseProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn := by
   classical
   intro D hSswap hRes hPhi hCase
   rcases hCase with hMedCorrect | hTimerZero
@@ -9137,8 +9499,8 @@ theorem med_correct_live_InSswap_to_reservoir_entry_from_strong_seed_and_reentry
     (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax) (hRmax_pos : 0 < Rmax)
     (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
     (hSeedPrefix :
-      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
-    MedCorrectLiveInSswapToReservoirEntry Rmax Emax Dmax hn := by
+      MedCorrectLiveProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn) :
+    MedCorrectLiveInSswapToReservoirEntry_tau (τ := τ) Rmax Emax Dmax hn := by
   classical
   intro D hSswap hTimer hWrongPos hMedCorrect
   set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
@@ -9174,8 +9536,8 @@ theorem reservoir_reset_leaf_from_strong_seed_and_reentry_log
     (hn4 : 4 ≤ n) (hDmax1 : 1 < Dmax) (hRmax_pos : 0 < Rmax)
     (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
     (hSeedPrefix :
-      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
-    ReservoirResetLeaf Rmax Emax Dmax hn := by
+      ReservoirCaseProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn) :
+    ReservoirResetLeaf_tau (τ := τ) Rmax Emax Dmax hn := by
   classical
   intro D hSswap hRes hPhiPos hCase
   set P := protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) with hP
@@ -9222,9 +9584,9 @@ theorem hMedCorrectExit_from_log_reentry_and_strong_seed_prefixes
     (hDmax1 : 1 < Dmax) (hRmax_pos : 0 < Rmax)
     (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
     (hEntrySeed :
-      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn)
+      MedCorrectLiveProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn)
     (hLeafSeed :
-      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
+      ReservoirCaseProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn) :
     ∀ k : ℕ, ∀ D : Config (AgentState n) Opinion n,
       InSswap D →
       (∀ μ : Fin n, (D μ).1.rank.val + 1 = ceilHalf n → 1 ≤ (D μ).1.timer) →
@@ -9254,9 +9616,9 @@ theorem burmanConvergence_concrete_log_with_strong_seed_prefixes
     (hDmax1 : 1 < Dmax)
     (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
     (hEntrySeed :
-      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn)
+      MedCorrectLiveProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn)
     (hLeafSeed :
-      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
+      ReservoirCaseProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn) :
     BurmanConvergence τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn) where
   ranking := fun C₀ =>
     ranking_field_proof_log
@@ -9338,9 +9700,9 @@ theorem P_EM_solves_SSEM_log_with_strong_seed_prefixes
     (hDmax1 : 1 < Dmax)
     (hRlog : 2 * Nat.clog 2 n + 2 ≤ Rmax)
     (hEntrySeed :
-      MedCorrectLiveProducesStrongSeedOrProgress Rmax Emax Dmax hn)
+      MedCorrectLiveProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn)
     (hLeafSeed :
-      ReservoirCaseProducesStrongSeedOrProgress Rmax Emax Dmax hn) :
+      ReservoirCaseProducesStrongSeedOrProgress (τ := τ) Rmax Emax Dmax hn) :
     SolvesSSEM (protocolPEM n τ Rmax (rankDeltaOSSR Rmax Emax Dmax hn)) n :=
   P_EM_solves_SSEM_from_BurmanConvergence_only
     rankDeltaOSSR_satisfies_fix
