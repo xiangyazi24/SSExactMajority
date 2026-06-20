@@ -1,461 +1,507 @@
-# Q47 / research2 audit: SSExactMajority time-bound sorry dependencies
+# Q47/Q49 research2 audit: SSExactMajority time-bound dependencies and timer-drain restoration
 
 Date: 2026-06-20
 Branch audited: `scratch`
 
-I read the current `scratch` branch files around the time-bound layer, especially:
+## Scope and caveat
 
-- `SSExactMajority/UpperBound/Time.lean`
-- `SSExactMajority/UpperBound/Time/PhaseProofs.lean`
-- `SSExactMajority/UpperBound/Time/CRSOdd.lean`
-- `SSExactMajority/UpperBound/Time/CRSEven.lean`
-- `SSExactMajority/UpperBound/Time/CRSEvenTimerPos.lean`
-- `SSExactMajority/UpperBound/Time/DrainProductive.lean`
+I audited the accessible `scratch` branch around the time-bound layer and tried to fetch the historical ref requested in Q49:
 
-I did not run `lake build` in this environment; this is a mathematical/design audit from the source.
-
-## Executive verdict
-
-1. The original `timer_drain -> CRS_even` call with `MedianTimerAtLeast 1` passed into a theorem requiring median `timer = 0` was a real spec/type bug, not merely v4.30 proof noise.
-
-2. The right fix is not to weaken the med-correct live-break conclusion to `ARS`. The mathematically right bridge is:
-
-```lean
-crs_of_InSswap_break_with_MedC
-  : InSswap D -> MedianAnswerCorrect D ->
-    ¬ InSswap (D.step P i j) ->
-    CorrectResetSeed (D.step P i j)
+```text
+4f9167ea5
 ```
 
-with the timer split hidden internally. The current `scratch` branch already has this exact wrapper in `PhaseProofs.lean`, splitting even parity into median timer `0` vs `>= 1` and delegating the positive-timer branch to `step_InSswap_break_creates_CorrectResetSeed_even_timer_pos`.
+The GitHub connector returned `No commit found` for both `fetch_file` and `fetch_commit`, and commit search did not find that SHA. Therefore I cannot honestly claim that I inspected the exact `4f9167ea5` lines 9658--9973. What I could inspect:
 
-3. The even `timer=0` / `timer>=1` distinction is genuine at the transition-trace level, but it should not be exposed in the high-level progress invariant. It is an implementation-level case split for the proof of the timer-agnostic break-to-CRS theorem.
+- current `SSExactMajority/UpperBound/Time.lean`
+- current `SSExactMajority/UpperBound/Time/PhaseProofs.lean`
+- current `SSExactMajority/UpperBound/Time/CRSOdd.lean`
+- current `SSExactMajority/UpperBound/Time/CRSEven.lean`
+- current `SSExactMajority/UpperBound/Time/CRSEvenTimerPos.lean`
+- current `SSExactMajority/UpperBound/Time/PolynomialBound.lean`
+- current `SSExactMajority/UpperBound/Time/DrainProductive.lean`
+- accessible historical commits around `timer_drain`, especially commit `43d0010352bc5e7504b00fd39a2ed98346f18345` and later commits recorded by GitHub search.
 
-4. `ARS` is structurally provable without `MedianAnswerCorrect`, but it is dangerous as a direct path-to-consensus target. If `AnyResetSeed` carries no answer correctness, then a theorem named/used as `anyResetSeed_to_consensus` is only sound if it proves a full reset/re-entry/re-computation path independent of the seed answer. It is not sound if it is just epidemic propagation of the seed answer.
+The conclusions below are therefore a source-level restoration audit, not a verified build result.
 
-5. The deepest design issue I see is not the timer split; it is whether `DecisionProgress` includes `ARS` as a correctness-level terminal progress disjunct. For the median-correct decision chain, `ARS` should be unnecessary. Prefer a CRS-only med-correct chain and reserve `ARS` for a separate reset/recovery subsystem.
+---
 
-6. There is also a global time-bound-spec issue already documented in `Time.lean`: `PEMProtocolCoupled` couples `trank = Rmax`, and `ConcretePEM n n n ...` has linear timer. The paper's O(n) expected parallel-time decision-window argument is for constant `trank` / constant timer budget. The Lean theorem statement must expose `T_timer` or assume `T_timer = O(1)`; otherwise the timer-drain bound scales as `T_timer * n(n-1)` interactions, i.e. `O(T_timer * n)` parallel time.
+# Q49 executive verdict
 
-## A. The timer mismatch in `timer_drain -> CRS_even`
+Yes: the old `PEM_expected_timer_drain` proof is very likely salvageable by replacing the bogus CRS call with `crs_of_InSswap_break_with_MedC`, but I would **not** restore it as a blind one-line patch. The current branch already contains two better, proved descendants of the old strategy:
 
-The old shape was mathematically invalid:
-
-```lean
-step_InSswap_break_creates_CorrectResetSeed
-  ...
-  (hT : forall μ, median μ -> timer μ = 0)
-  (hS' : ¬ InSswap step)
-  : CorrectResetSeed step
-```
-
-but `timer_drain` had:
+1. `PEM_expected_timer_drain_poly` in `PolynomialBound.lean`, with target
 
 ```lean
-hT : MedianTimerAtLeast 1 D
--- i.e. forall μ, median μ -> 1 <= timer μ
+IsConsensusConfig D ∨ CorrectResetSeed D ∨
+  ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
 ```
 
-Those hypotheses are incompatible unless the median set is empty, which cannot happen under `InSswap` / `InSrank` with `n > 0`. So the old call was not a proof-engineering issue. It was a real theorem-interface mismatch.
-
-The right abstraction is the timer-agnostic theorem:
-
-```lean
-crs_of_InSswap_break_with_MedC
-  {D : Config (AgentState n) Opinion n}
-  (hS : InSswap D)
-  (hM : MedianAnswerCorrect D)
-  (hS' : ¬ InSswap (D.step P i j)) :
-  CorrectResetSeed (D.step P i j)
-```
-
-The current `scratch` branch implements exactly this architecture:
-
-```lean
-by_cases hpar : n % 2 = 0
-· obtain <μ, hμ_med> := hS.toInSrank.exists_median ...
-  by_cases hT0 : (D μ).1.timer = 0
-  · build the old universal timer=0 hypothesis from uniqueness of median rank;
-    use step_InSswap_break_creates_CorrectResetSeed
-  · build MedianTimerAtLeast 1 from uniqueness of median rank and omega;
-    use step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
-· use step_InSswap_break_creates_CorrectResetSeed_odd
-```
-
-This is the clean fix. It also means downstream code should not manually choose between `CRS_even` and `live_break_CRS`; it should call the timer-agnostic `crs_of_InSswap_break_with_MedC`.
-
-## B. Why even `timer=0` and `timer>=1` differ
-
-For odd `n`, there is a unique median rank. In `InSswap`, the median opinion determines the strict majority/tie answer via the sorted-rank invariant, so `opinionToAnswer medianInput = majorityAnswer D`. This is why the odd CRS theorem does not need `MedianAnswerCorrect`: the answer correctness is derived from the input/rank structure.
-
-For even `n`, `ceilHalf n` is the lower median. The lower median's input alone does not determine the majority answer in all cases. In particular, the lower and upper median pair is the tie/strict-majority boundary. Therefore an even CRS proof needs some correctness information about the lower median answer. That is exactly `MedianAnswerCorrect`.
-
-The timer distinction is transition-level:
-
-- In the timer-zero branch, a reset is triggered by a median answer disagreement at the propagation stage. The existing theorem `step_InSswap_break_creates_CorrectResetSeed` assumes all median timers are `0`, then proves that if `InSswap` breaks, the two scheduled agents become Resetting and the reset answer is the median's old answer. `MedianAnswerCorrect` transports that answer to `majorityAnswer`.
-
-- In the positive-timer branch, not every median interaction can reset. The proof has to show that if `InSswap` breaks while the median timer is at least `1`, then the trace classification forces a median--max interaction and the median timer is actually `<= 1`, hence exactly `1`. Then the timer-one trace resets both scheduled agents with `Rmax/L`, and the answer copied from the median is correct by `MedianAnswerCorrect`.
-
-That is why `step_InSswap_break_creates_CorrectResetSeed_even_timer_pos` has this shape:
-
-```lean
-(hS : InSswap D)
-(hM : MedianAnswerCorrect D)
-(hPar : n % 2 = 0)
-(hT : MedianTimerAtLeast 1 D)
-(hS' : ¬ InSswap (D.step P i j))
-: CorrectResetSeed (D.step P i j)
-```
-
-It is a real theorem, not a weakened ARS theorem. It proves CRS by a stronger classification of the break step.
-
-## C. Can `live_break_CRS` be proved, or should it be ARS?
-
-With `MedianAnswerCorrect`, `live_break_CRS` should be CRS, not ARS.
-
-Precise theorem to use/keep:
-
-```lean
-theorem live_break_CRS
-    (hn4 : 4 <= n) (hn0 : 0 < n) (hRmax : n <= Rmax)
-    {D : Config (AgentState n) Opinion n}
-    (hS : InSswap D)
-    (hM : MedianAnswerCorrect D)
-    (hT : MedianTimerAtLeast 1 D)
-    {i j : Fin n}
-    (hS' : ¬ InSswap (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)) :
-    CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j)
-```
-
-Implementation:
-
-```lean
-by_cases hpar : n % 2 = 0
-· exact step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
-    hn4 hn0 hRmax hS hM hpar hT hS'
-· exact step_InSswap_break_creates_CorrectResetSeed_odd
-    hn4 hn0 hRmax hS hpar hS'
-```
-
-Even better, do not expose `hT` at all:
-
-```lean
-exact crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'
-```
-
-because the wrapper already splits timer `0` vs positive.
-
-Without `MedianAnswerCorrect`, the even case can generally only give structural reset information, i.e. `ARS`, not `CRS`. The roles/resetcount/leader fields do not require answer correctness, but `CorrectResetSeed` does. Thus:
-
-```lean
-InSswap D -> ¬ InSswap step -> AnyResetSeed step
-```
-
-is plausible and useful as a structural theorem; however,
-
-```lean
-InSswap D -> ¬ InSswap step -> CorrectResetSeed step
-```
-
-is not plausible in even parity without either `MedianAnswerCorrect` or a theorem proving the lower-median answer from some other invariant.
-
-## D. ARS audit
-
-`ARS` is useful, but it is not a substitute for `CRS` in the correctness chain.
-
-By definition as described in the prompt:
-
-```lean
-AnyResetSeed C := exists μ,
-  role μ = Resetting ∧ resetcount μ = Rmax ∧ leader μ = L
-```
-
-It says nothing about the answer field. Therefore a downstream theorem
-
-```lean
-anyResetSeed_to_consensus : ARS C -> expected time to IsConsensusConfig is finite / bounded
-```
-
-is only sound if its proof is a full reset/recovery proof. It must not be a mere epidemic propagation proof.
-
-Why: if the seed answer is wrong, propagation can spread the wrong answer. `ARS` alone does not tell you that the seed answer equals `majorityAnswer C`, nor that all Resetting agents agree with the majority. By contrast, `CRS` explicitly carries:
-
-- one Resetting leader with resetcount exceeding nonresetting count,
-- correct answer for that witness,
-- every Resetting agent has positive resetcount and correct answer.
-
-Those are exactly the correctness facts needed for a direct epidemic-to-consensus route.
-
-So there are two safe designs:
-
-### Safe design 1: remove ARS from the median-correct decision progress chain
-
-Use:
-
-```lean
-DecisionProgressMC D :=
-  IsConsensusConfig D ∨
-  CorrectResetSeed D ∨
-  (InSswap D ∧ MedianAnswerCorrect D ∧ MedianTimerAtLeast 1 D ∧ TimerBounded D) ∨
-  (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)
-```
-
-The current `DrainProductive.lean` is close to this design: the productive endpoint is
+2. `timer_drain_to_zero_productive` in `DrainProductive.lean`, with the stronger/productive target
 
 ```lean
 IsConsensusConfig D ∨ CorrectResetSeed D ∨
   (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)
 ```
 
-This is the right shape. It avoids the circular weak exit `¬ live` and avoids ARS.
-
-### Safe design 2: keep ARS, but route it through reset/re-entry
-
-If `ARS` remains in `DecisionProgress`, the downstream theorem must be shaped more like:
-
-```lean
-AnyResetSeed C ->
-  expected time to (InSrank ∨ InSswap ∨ IsConsensusConfig ∨ CorrectResetSeed) is bounded
-```
-
-or:
-
-```lean
-AnyResetSeed C ->
-  expected time to a clean post-reset/rerank state is bounded,
-```
-
-followed by a fresh exact-majority computation. It must not claim that an answerless seed directly implies correct consensus.
-
-## E. DecisionProgress design
-
-The prompt's predicate was:
-
-```lean
-DecisionProgress =
-  IsConsensusConfig ∨ CRS ∨ ARS ∨
-  (InSswap ∧ MedCorrect ∧ TimerAtLeast1 ∧ TimerBounded)
-```
-
-This is too coarse for the median-correct timer-drain chain. The fourth disjunct is a working state. If it exits by breaking `InSswap`, then under `MedCorrect` the exit should be `CRS`, not merely `ARS`. If it exits by timer draining, the productive nonterminal endpoint is not `¬ TimerAtLeast1` abstractly; it should be the concrete zero-timer endpoint:
-
-```lean
-InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0
-```
-
-Then a separate zero-timer/reset-trigger stage can push to either consensus or CRS.
-
-Recommended split:
-
-1. **Median-correct productive drain**
-
-```lean
-InSswap ∧ MedianAnswerCorrect ∧ MedianTimerAtLeast 1 ∧ TimerBounded
-  --> expected time to
-IsConsensusConfig ∨ CorrectResetSeed ∨
-  (InSswap ∧ MedianAnswerCorrect ∧ maxMedianTimer = 0)
-```
-
-2. **Zero-timer trigger/decision stage**
-
-```lean
-InSswap ∧ MedianAnswerCorrect ∧ maxMedianTimer = 0
-  --> expected time to IsConsensusConfig ∨ CorrectResetSeed
-```
-
-3. **Correct reset epidemic/recovery**
-
-```lean
-CorrectResetSeed --> expected time to IsConsensusConfig
-```
-
-This is better than putting `ARS` into the same `DecisionProgress` predicate.
-
-## F. Minimal root theorem set
-
-For the 10-sorry dependency graph described in the prompt, the minimal root set is smaller than 10. The real mathematical roots are:
-
-### Root 1: odd break-to-CRS answer correctness
-
-```lean
-step_InSswap_break_creates_CorrectResetSeed_odd
-  : InSswap D -> n % 2 ≠ 0 -> ¬ InSswap step -> CorrectResetSeed step
-```
-
-The structural reset facts are not the hard part. The hard part is the answer-correctness bridge:
-
-```lean
-opinionToAnswer (median input) = majorityAnswer D
-```
-
-from sorted ranks and odd parity. This is mathematically valid.
-
-### Root 2: even timer-zero break-to-CRS
-
-```lean
-step_InSswap_break_creates_CorrectResetSeed
-  : InSswap D -> MedianAnswerCorrect D ->
-    (forall median, timer = 0) ->
-    ¬ InSswap step -> CorrectResetSeed step
-```
-
-This is valid, but it should be treated as a helper only. It should not be called from a live-timer proof.
-
-### Root 3: even positive-timer break-to-CRS
-
-```lean
-step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
-  : InSswap D -> MedianAnswerCorrect D -> n % 2 = 0 ->
-    MedianTimerAtLeast 1 D ->
-    ¬ InSswap step -> CorrectResetSeed step
-```
-
-This is the correct replacement for the old bogus call in `timer_drain`.
-
-### Root 4: timer-agnostic wrapper
-
-```lean
-crs_of_InSswap_break_with_MedC
-  : InSswap D -> MedianAnswerCorrect D ->
-    ¬ InSswap step -> CorrectResetSeed step
-```
-
-This wrapper should be the only break-to-CRS theorem used by higher-level expected-time code.
-
-### Root 5: productive timer drain
-
-```lean
-timer_drain_to_zero_productive
-  : InSswap C -> MedianAnswerCorrect C -> MedianTimerAtLeast 1 C ->
-    IsTimerBoundedConfig T_timer C ->
-    E[T to consensus ∨ CRS ∨ (InSswap ∧ MAC ∧ maxMedianTimer = 0)]
-      <= T_timer * n * (n - 1)
-```
-
-This is the right high-level lemma. It uses Root 4 in the `hInvStep` and endpoint cases.
-
-### Root 6: zero-timer stage
-
-A zero-timer stage should connect:
-
-```lean
-InSswap ∧ MedianAnswerCorrect ∧ maxMedianTimer = 0
-```
-
-to:
-
-```lean
-IsConsensusConfig ∨ CorrectResetSeed
-```
-
-In the older prompt, this corresponds roughly to `allR_to_consensus` / reset-trigger composition. It should not require `MedianTimerAtLeast 1`.
-
-### Root 7: CRS-to-consensus
-
-```lean
-CorrectResetSeed C -> expected time to IsConsensusConfig is bounded / finite
-```
-
-This is safe because CRS carries answer correctness.
-
-### Optional root: ARS-to-recovery, not ARS-to-consensus-by-epidemic
-
-Only needed if you keep ARS in the global progress predicate:
-
-```lean
-AnyResetSeed C -> expected time to clean reset/re-entry state is bounded
-```
-
-Do not use an answerless `ARS` as if it were `CRS`.
-
-## G. Answers to the four explicit questions
-
-### 1. Is the timer=0 vs timer>=1 split genuine?
-
-Yes at the transition-trace level; no at the high-level progress API.
-
-It is genuine because the phase4 propagation traces distinguish median timer zero from timer one/positive cases. In even parity, positive timer reset requires a more constrained median--max classification. But the high-level expected-time proof should hide the split behind:
-
-```lean
-crs_of_InSswap_break_with_MedC
-```
-
-### 2. Can live_break_CRS be proved, or should it be weakened to ARS?
-
-It can and should be proved as CRS, provided `MedianAnswerCorrect` is available. The current branch's `step_InSswap_break_creates_CorrectResetSeed_even_timer_pos` is exactly the even positive-timer proof, and `crs_of_InSswap_break_with_MedC` combines it with the timer-zero and odd cases.
-
-If `MedianAnswerCorrect` is absent in even parity, then CRS is too strong and the right structural theorem is only ARS.
-
-### 3. Is there a design bug in the dependency chain?
-
-There are two design bugs to avoid:
-
-1. The old direct call from `MedianTimerAtLeast 1` into a timer-zero CRS theorem was a real bug. It is fixed by the timer-agnostic wrapper.
-
-2. `ARS` must not be treated as a direct correctness seed. If `DecisionProgress` includes `ARS`, the downstream proof must be reset/recovery/re-entry, not epidemic propagation of an answer.
-
-There is also a theorem-statement risk: if the final claimed time bound is for `ConcretePEM n n n ...` or any coupled setting with `trank = Rmax >= n`, then the timer-drain term is not O(n) parallel time unless a separate argument removes the linear timer factor. The paper's O(n) expected decision time requires constant timer budget or an explicit `T_timer = O(1)` hypothesis.
-
-### 4. What is the minimal set of sorries that unlocks everything else?
-
-Minimal if you choose the CRS-only median-correct chain:
-
-1. Odd break-to-CRS answer correctness.
-2. Even timer-zero break-to-CRS.
-3. Even positive-timer break-to-CRS.
-4. Timer-agnostic wrapper `crs_of_InSswap_break_with_MedC`.
-5. Productive timer drain to `consensus ∨ CRS ∨ zero-timer productive endpoint`.
-6. Zero-timer trigger/decision stage to `consensus ∨ CRS`.
-7. CRS-to-consensus.
-8. Final expected-time composition/arithmetic.
-
-The original ARS theorem is not on the minimal path if the median-correct chain always upgrades a break to CRS. If you keep ARS in `DecisionProgress`, then add a separate ARS-to-reset-recovery theorem, but do not use ARS as a correctness seed.
-
-## H. Recommended Lean-level edits
-
-1. Make higher-level proofs call only:
+For the current single remaining `StepProofs` sorry, the best strategy is:
+
+- if the caller at `Time.lean:890` expects the **old weak exit** theorem, port `PEM_expected_timer_drain_poly` almost verbatim;
+- if the caller can accept the **productive endpoint**, port `timer_drain_to_zero_productive` instead;
+- in either case, every place that previously tried to prove CRS from an `InSswap` break should call:
 
 ```lean
 crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'
 ```
 
-not the parity/timer-specific lemmas.
+not any timer-specific CRS theorem.
 
-2. Rename the positive timer bridge if desired:
-
-```lean
-live_break_CRS := step_InSswap_break_creates_CorrectResetSeed_even_timer_pos + odd case
-```
-
-but prefer the timer-agnostic wrapper.
-
-3. Replace weak exit predicates of the form:
+The old exact change:
 
 ```lean
-¬ (InSswap ∧ MedianTimerAtLeast 1)
+-- OLD, invalid when hT : MedianTimerAtLeast 1 D
+step_InSswap_break_creates_CorrectResetSeed hn4 hn0 hRmax hS hM hT hS'
+
+-- NEW, type-correct and semantically right
+crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'
 ```
 
-with a productive endpoint:
+is mathematically correct. But depending on the old proof's goal nesting, the term must be wrapped in the appropriate `Or` constructors.
+
+---
+
+# 1. Does `crs_of_InSswap_break_with_MedC` match `PEMProtocolCoupled`?
+
+Yes, it should.
+
+In the current source, `PEMProtocolCoupled` is an abbrev:
+
+```lean
+abbrev PEMProtocol (n trank Rmax Emax Dmax : Nat) (hn : 0 < n) :
+    Protocol (AgentState n) Opinion Output :=
+  protocolPEM n trank Rmax (rankDeltaOSSR Rmax Emax Dmax hn)
+
+abbrev PEMProtocolCoupled (n Rmax Emax Dmax : Nat) (hn : 0 < n) :
+    Protocol (AgentState n) Opinion Output :=
+  PEMProtocol n Rmax Rmax Emax Dmax hn
+```
+
+Therefore:
+
+```lean
+PEMProtocolCoupled n Rmax Emax Dmax hn0
+```
+
+unfolds to:
+
+```lean
+protocolPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+```
+
+If your branch's `crs_of_InSswap_break_with_MedC` is stated directly using `protocolPEM`, then the call should close with one of:
+
+```lean
+exact crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'
+```
+
+or, if Lean does not unfold the abbrevs automatically:
+
+```lean
+simpa [PEMProtocolCoupled, PEMProtocol] using
+  (crs_of_InSswap_break_with_MedC
+    (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+    hn4 hn0 hRmax hS hM hS')
+```
+
+The current `scratch` branch already uses `crs_of_InSswap_break_with_MedC` with `PEMProtocolCoupled` in `PolynomialBound.lean` and `DrainProductive.lean`, so definitional equality is not the serious risk.
+
+The serious risk is **import direction**. If the remaining theorem is in `StepProofs.lean`, and `crs_of_InSswap_break_with_MedC` currently lives in a higher file that imports `StepProofs.lean`, then directly importing it may create a cycle. In that case, move the wrapper down next to the timer-specific CRS proofs, or create a lower `CRSBreak.lean` file containing:
+
+```lean
+step_InSswap_break_creates_CorrectResetSeed_odd
+step_InSswap_break_creates_CorrectResetSeed
+step_InSswap_break_creates_CorrectResetSeed_even_timer_pos
+crs_of_InSswap_break_with_MedC
+```
+
+Then both `StepProofs.lean` and `Time.lean` can import that lower wrapper.
+
+---
+
+# 2. What changes are needed besides the CRS call?
+
+## 2.1 Replace the break branch according to the exact goal shape
+
+There are two common goal shapes.
+
+### Weak-exit timer drain
+
+If the restored theorem's target is:
+
+```lean
+Goal D :=
+  IsConsensusConfig D ∨ CorrectResetSeed D ∨
+    ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+```
+
+then in a proof obligation returning `Goal (D.step P i j)`, the CRS branch is:
+
+```lean
+exact Or.inr (Or.inl
+  (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'))
+```
+
+In a proof obligation returning `Inv step ∨ Goal step`, it is:
+
+```lean
+exact Or.inr (Or.inr (Or.inl
+  (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+but note: for the weak-exit goal, an arbitrary `InSswap` break can also be sent to the exit branch:
+
+```lean
+exact Or.inr (Or.inr (Or.inr (fun h => hS' h.1)))
+```
+
+This is what `PEM_expected_timer_drain_poly` does in its `hInvStep` for arbitrary scheduler pairs. It reserves the CRS proof for the **chosen median--max descent pair** branch, where a break is treated productively.
+
+### Productive timer drain
+
+If the target is:
+
+```lean
+Goal D :=
+  IsConsensusConfig D ∨ CorrectResetSeed D ∨
+    (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)
+```
+
+then an `InSswap` break has no weak exit branch. It must be CRS:
+
+```lean
+exact Or.inr (Or.inr (Or.inl
+  (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+This is the cleaner high-level theorem and matches `DrainProductive.lean`.
+
+## 2.2 Keep `hT : MedianTimerAtLeast 1` for timer descent; just stop passing it to CRS
+
+The old proof likely uses `hT` in three legitimate places:
+
+1. to initialize the invariant;
+2. to show the chosen median has positive timer;
+3. in `hDescent`, to split:
+
+```lean
+by_cases hTimer2 : 2 <= (D μ).1.timer
+· -- timer >= 2: strict timer descent, invariant preserved
+· -- timer = 1: chosen median--max step drains to 0, so goal/exit is reached
+```
+
+Do not remove `hT`. Only remove it from the CRS creation theorem call.
+
+## 2.3 Ensure the theorem uses the correct median-correct preservation lemma
+
+The current branch has/use variants named:
+
+```lean
+step_median_answer_of_InSswap_both
+step_median_answer_of_InSswap_both_v2
+```
+
+If the restored body came from an older commit, it may call the wrong suffix. This is a simple rename/import issue. The intended proof obligation is:
+
+```lean
+have hM' : MedianAnswerCorrect (D.step P i j) :=
+  step_median_answer_of_InSswap_both hn0 hn4 hS hS' hM
+```
+
+or `_v2` depending on the file.
+
+## 2.4 If the old proof uses `Finite.surjective_of_injective`, check API drift
+
+I saw current code using both styles in different places:
+
+```lean
+Finite.injective_iff_surjective.mp hS.toInSrank.ranks_inj
+```
+
+and older code may use:
+
+```lean
+Finite.surjective_of_injective hInj
+```
+
+If v4.30 rejects the latter, replace it with:
+
+```lean
+have hsurj : Function.Surjective (fun v => (D v).1.rank) :=
+  Finite.injective_iff_surjective.mp hS.toInSrank.ranks_inj
+```
+
+This is unrelated to the CRS bug.
+
+## 2.5 Keep the localized transition-unfold proofs, but avoid global `simp_all`
+
+The timer-drain body contains local proofs such as:
+
+```lean
+show (transitionPEM n Rmax Rmax (rankDeltaOSSR Rmax Emax Dmax hn0)
+  (D μ, D v)).1.timer = (D μ).1.timer - 1
+
+unfold transitionPEM transitionPEM_phase4 transitionPEM_prePhase4
+  phase4_swap phase4_decide phase4_propagate
+simp only [hRDapp, hsi, hsv, ne_eq,
+  role_settled_ne_resetting,
+  not_true_eq_false, not_false_eq_true,
+  false_and, and_false, if_false,
+  and_self, if_true, h_no_swap, hμ_med, hv_max]
+by_cases hpar : n % 2 = 0
+· simp only [hpar, if_true]
+  split_ifs <;> dsimp only [] <;> omega
+· simp only [hpar, if_false]
+  split_ifs <;> dsimp only [] <;> omega
+```
+
+This pattern is present in current proved files and is much safer in v4.30 than the old large-proof pattern:
+
+```lean
+split_ifs <;> simp_all
+```
+
+If the restored 310-line body has `split_ifs <;> simp_all` after unfolding the whole transition, replace it with the localized `simp only [...]` style above.
+
+---
+
+# 3. Are the `split_ifs` in timer_drain broken in v4.30?
+
+The evidence says: **the small/local timer-drain `split_ifs` are salvageable and probably already safe**.
+
+The v4.30 disaster mode was the CRS construction proof style: unfold a deeply nested `transitionPEM`, then `split_ifs <;> simp_all` across a huge context. That can explode or produce brittle `change` failures.
+
+Timer drain's transition computations are much narrower. They only need timer equality for the selected median after a median--max interaction. Current proved code uses exactly this style in two places:
+
+1. `timer_ge_two_descent_step`: proves timer drops by one when pre-timer is at least `2`.
+2. `PEM_expected_timer_drain_poly` / `timer_drain_to_zero_productive`: handles the `timer = 1` exit by proving post median timer is `0`.
+
+Those proofs still use `split_ifs`, but only after pre-normalizing nearly all relevant branches with known hypotheses (`hRDapp`, settled roles, no-swap, median rank, max rank, timer value). That is the right v4.30-safe style.
+
+So: do not fear `split_ifs` in timer_drain as such. Fear unbounded `simp_all` after a full transition unfold. If the old proof uses `split_ifs <;> dsimp only [] <;> omega` or can be changed to that, it is fine.
+
+---
+
+# 4. Is one-line restoration enough?
+
+Likely **almost**, but not literally guaranteed.
+
+The CRS-call change is the only mathematical/spec correction. The remaining possible compile blockers are ordinary v4.30/API issues:
+
+- theorem suffix/name drift (`step_median_answer_of_InSswap_both` vs `_v2`);
+- `Finite.surjective_of_injective` API drift;
+- `congr_arg` vs `congrArg` spelling if the restored code is old;
+- `simpa [PEMProtocolCoupled, PEMProtocol]` needed around protocol abbrev unfolding;
+- replacing large `simp_all` blocks with local `simp only` blocks;
+- final arithmetic may need `norm_num`, `omega`, or `ring_nf` adjustment.
+
+None of these indicate a design rewrite is needed.
+
+However, if the old proof's target is the weak exit:
+
+```lean
+IsConsensusConfig ∨ CorrectResetSeed ∨ ¬ (InSswap ∧ MedianTimerAtLeast 1)
+```
+
+then it is formally salvageable but compositionally less clean. It can exit through `¬live`, which may be circular or unproductive for the later consensus chain. The current `DrainProductive.lean` target is better because it converts timer expiration into the concrete useful endpoint:
 
 ```lean
 InSswap ∧ MedianAnswerCorrect ∧ maxMedianTimer = 0
 ```
 
-This avoids circular progress reasoning and matches the current `DrainProductive.lean` design.
+So the engineering recommendation is:
 
-4. Split `DecisionProgress` into two predicates:
+- for minimal caller compatibility: restore the old weak-exit theorem using `PEM_expected_timer_drain_poly`;
+- for the final design: use or port `timer_drain_to_zero_productive`.
 
-```lean
-DecisionProgressMC
-ResetRecoveryProgress
-```
+---
 
-where `ARS` appears only in reset recovery, not in the med-correct decision chain.
+# 5. Concrete restoration patch sketch
 
-5. In the final theorem statement, expose the timer budget:
+Assume the old proof has:
 
 ```lean
-T_timer
+set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
+set Goal := fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+  ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)
+set Inv := fun D => InSswap D ∧ MedianAnswerCorrect D ∧ MedianTimerAtLeast 1 D
 ```
 
-or state the bound for a protocol family with constant `trank`. Do not silently claim the paper's O(n) expected parallel-time bound for a protocol instance whose timer is linear in `n`.
+## 5.1 Arbitrary-step invariant branch
+
+If the old `hInvStep` had:
+
+```lean
+intro D ⟨hS, hM, hT⟩ hG i j
+by_cases hS' : InSswap (D.step P i j)
+· ... preserve Inv or exit timer-live ...
+· exact Or.inr (Or.inr (Or.inl
+    (step_InSswap_break_creates_CorrectResetSeed hn4 hn0 hRmax hS hM hT hS')))
+```
+
+replace with either the productive CRS branch:
+
+```lean
+· exact Or.inr (Or.inr (Or.inl
+    (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+or, for the weak-exit theorem, the simpler exit branch:
+
+```lean
+· exact Or.inr (Or.inr (Or.inr (fun hLive => hS' hLive.1)))
+```
+
+The second version is what the current `PEM_expected_timer_drain_poly` architecture uses for arbitrary scheduler pairs.
+
+## 5.2 Chosen median--max descent branch
+
+In the deterministic descent witness, if the chosen median--max step breaks `InSswap`, use CRS:
+
+```lean
+by_cases hS' : InSswap (D.step P μ v)
+· -- prove invariant and strict maxMedianTimer descent
+· right
+  exact Or.inr (Or.inl
+    (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'))
+```
+
+For the productive target, the nesting is:
+
+```lean
+· exact Or.inr (Or.inr (Or.inl
+    (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+## 5.3 Protocol abbrev fallback
+
+If Lean complains about the step protocol not matching:
+
+```lean
+have hcrs : CorrectResetSeed (D.step P i j) := by
+  subst P
+  simpa [PEMProtocolCoupled, PEMProtocol] using
+    (crs_of_InSswap_break_with_MedC
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax hS hM hS')
+```
+
+or avoid `set P` in the call site and write the step explicitly.
+
+---
+
+# 6. Recommended theorem to restore
+
+If the caller at `Time.lean:890` truly expects the old theorem name/signature `PEM_expected_timer_drain`, restore it as a wrapper around the already-proved polynomial theorem shape, not by resurrecting all 310 historical lines.
+
+Example, if the old expected target is weak-exit:
+
+```lean
+ theorem PEM_expected_timer_drain
+    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
+    [DecidableEq (Config (AgentState n) Opinion n)]
+    (hn4 : 4 ≤ n) (hn0 : 0 < n) (hRmax : n ≤ Rmax)
+    (T_timer : ℕ)
+    (C : Config (AgentState n) Opinion n)
+    (hSswap : InSswap C)
+    (hMedCorrect : MedianAnswerCorrect C)
+    (hTimerLo : MedianTimerAtLeast 1 C)
+    (hTimerHi : IsTimerBoundedConfig T_timer C) :
+    Probability.expectedHittingTime
+      (PEMProtocolCoupled n Rmax Emax Dmax hn0)
+      (by omega : 2 ≤ n) C
+      (fun D => IsConsensusConfig D ∨ CorrectResetSeed D ∨
+        ¬ (InSswap D ∧ MedianTimerAtLeast 1 D)) ≤
+      ((T_timer * n * (n - 1) : ℕ) : ENNReal) := by
+  exact PEM_expected_timer_drain_poly
+    hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi
+```
+
+If the old theorem has `T_timer = 7 * (Rmax + 4)` baked in, instantiate the wrapper:
+
+```lean
+  simpa using
+    (PEM_expected_timer_drain_poly
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax (7 * (Rmax + 4)) C
+      hSswap hMedCorrect hTimerLo hTimerHi)
+```
+
+If the caller can consume the productive endpoint, prefer:
+
+```lean
+exact timer_drain_to_zero_productive
+  hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi
+```
+
+This avoids weak `¬live` exits and is the better final design.
+
+---
+
+# 7. Answers to the explicit Q49 questions
+
+## 1. What needs to change besides the CRS call?
+
+Mathematically, nothing major. Engineering-wise:
+
+- wrap the new CRS term in the correct `Or` nesting;
+- possibly add `simpa [PEMProtocolCoupled, PEMProtocol]` for protocol abbrev unfolding;
+- adjust theorem names (`step_median_answer_of_InSswap_both` vs `_v2`);
+- replace any large `split_ifs <;> simp_all` with local `simp only [...]` plus `split_ifs <;> dsimp only [] <;> omega`;
+- check `Finite.injective_iff_surjective.mp` vs older finite-surjectivity APIs;
+- consider replacing the restored body with a thin wrapper around `PEM_expected_timer_drain_poly` or `timer_drain_to_zero_productive` if those are available in the import graph.
+
+## 2. Are there other v4.30 blockers in the timer_drain body?
+
+Likely only small API/tactic blockers, not design blockers. The current branch demonstrates that the timer-drain split-ifs are manageable in v4.30 when localized. The fragile proof style was the old CRS transition case analysis, not the timer-drain potential proof.
+
+Potential blockers to expect:
+
+- timeout if old code uses `simp_all` globally;
+- finite-rank surjectivity API name changes;
+- theorem rename/suffix drift;
+- final `norm_cast`/arithmetic cleanup.
+
+None require a full rewrite.
+
+## 3. Is the proof salvageable, or does it need full rewrite?
+
+Salvageable.
+
+The minimal salvage is replacing the bad CRS call and doing minor v4.30 cleanup. The robust salvage is to reuse the current proven `PEM_expected_timer_drain_poly`/`DrainProductive` skeleton rather than resurrecting the old 310-line body. If you need the old name because `Time.lean:890` calls it, make `PEM_expected_timer_drain` a wrapper around the proven theorem with the matching target.
+
+My recommendation:
+
+1. First try a wrapper around `PEM_expected_timer_drain_poly` if the target matches.
+2. If the target wants productive zero endpoint, use `timer_drain_to_zero_productive`.
+3. Only if imports prevent those wrappers, paste the old proof body and replace the CRS call with `crs_of_InSswap_break_with_MedC`, using localized `simp only` for transition timer equalities.
+
+---
+
+# 8. Final restoration strategy
+
+The shortest safe path for the remaining `StepProofs` sorry is probably:
+
+```lean
+-- in StepProofs.lean, after importing the file that defines PEM_expected_timer_drain_poly
+ theorem PEM_expected_timer_drain ... := by
+  simpa [expected target definitions, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm] using
+    (PEM_expected_timer_drain_poly
+      (Rmax := Rmax) (Emax := Emax) (Dmax := Dmax)
+      hn4 hn0 hRmax T_timer C hSswap hMedCorrect hTimerLo hTimerHi)
+```
+
+If import direction prevents this, move the timer-drain proof itself to a lower module where both `StepProofs.lean` and `Time.lean` can import it. Do not reintroduce dead `CRS_even`/`CRS_odd`/`ARS` dependencies. The one live break-to-reset dependency should be exactly:
+
+```lean
+crs_of_InSswap_break_with_MedC
+```
