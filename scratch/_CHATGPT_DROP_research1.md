@@ -1,349 +1,264 @@
-# SSExactMajority v4.30 migration audit — research1
+# Q48 / research1 audit round 2 — dead code and timer-drain dependency
 
-## Executive summary
+Date: 2026-06-20
+Branch requested: `scratch`
 
-The root cause is not that `split_ifs` itself became unusable. The root cause is that the old proofs ask the simplifier to rediscover a long deterministic execution trace of `transitionPEM` from scratch after each case split. In v4.30 that is too brittle: hidden projection types, changed negation normal forms, structure-update syntax changes, and heavier `simp_all` search combine badly.
+## Important source-state caveat
 
-The robust migration path is:
+I checked the connected GitHub `scratch` branch first. As visible through the connector, `scratch` is currently only ahead of `main` by the scratch markdown files; the Lean source tree itself is not changed on that branch. In particular, the connected branch still has the old source layout in which `PhaseProofs.lean` calls `step_InSswap_break_creates_CorrectResetSeed` from `PEM_expected_reset_trigger_v2`.
 
-1. Normalize the `Config.step`/`P.δ` bridge once into an equality whose RHS is explicitly `transitionPEM`.
-2. Use trace lemmas for the exact post-state of `transitionPEM`.
-3. Project fields only from explicit `AgentState n` equalities, or avoid projection by rewriting whole state equalities.
-4. Use `simp only`/`rw`/`omega` on tiny residual goals, not `split_ifs <;> simp_all` on the whole transition.
+So there are two separate statements:
 
-The current split files already point in the right direction: the trace-builder lemmas `CRS_from_odd_trace`, `CRS_from_odd_trace_responder_median`, `CRS_from_even_trace`, and the `*_trace` lemmas are the right replacement for the old 350–477 line unfold/split proofs.
+1. **On the connected `scratch` branch as actually pushed:** I cannot confirm the Q46/Q48 source edits, because they are not present in the pushed source tree. The branch does not contain the “replace reset-trigger call with `crs_of_InSswap_break_with_MedC`” edit described in the prompt.
+2. **Assuming the local Q48 state described in the prompt is the intended current source state:** the dependency analysis below is the right one. In that state, the three CRS/ARS step theorems are dead once the last reset-trigger call has been redirected to the timer-agnostic wrapper.
 
----
-
-## 1. Systematic v4.30 fix for `congrArg AgentState.field hfst`
-
-### Diagnosis
-
-The fragile pattern is:
-
-```lean
-have h_fst := Config.step_fst_state P D hij
-rw [← show ∀ p, P.δ p = transitionPEM n Rmax Rmax
-  (rankDeltaOSSR Rmax Emax Dmax hn0) p from fun _ => rfl,
-  ← congrArg AgentState.role h_fst]
-```
-
-or:
-
-```lean
-rw [congrArg AgentState.role h_fst, hP_δ]
-```
-
-This relies on Lean inferring that the equality endpoints of `h_fst` are exactly `AgentState n`, and also on reducing `P.δ` to `transitionPEM` at the right time. In v4.30, the implicit `n` in `AgentState.role` and the still-opaque `P.δ` can make the projection elaboration fail.
-
-### Preferred fix: prove the normalized state equality first
-
-Use a whole-state equality whose RHS is already `transitionPEM`, then rewrite with it.
-
-```lean
-set P := PEMProtocolCoupled n Rmax Emax Dmax hn0
-
-have hfst_state :
-    (D.step P i j i).1 =
-      (transitionPEM n Rmax Rmax
-        (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1 := by
-  rw [Config.step_fst_state P D hij]
-  change
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1 =
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1
-  rfl
-
-have hsnd_state :
-    (D.step P i j j).1 =
-      (transitionPEM n Rmax Rmax
-        (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2 := by
-  rw [Config.step_snd_state P D hij (Ne.symm hij)]
-  change
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2 =
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2
-  rfl
-```
-
-Then convert a post-step role hypothesis into a raw `transitionPEM` role hypothesis without any projected `congrArg`:
-
-```lean
-have h_i_res_raw :
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1.role = .Resetting := by
-  rw [← hfst_state]
-  exact h_i_res
-
-have h_j_res_raw :
-    (transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).2.role = .Resetting := by
-  rw [← hsnd_state]
-  exact h_j_res
-```
-
-And if a trace lemma gives the exact pair result:
-
-```lean
-have h_step_i : (D.step P i j i).1 = out₁ := by
-  rw [hfst_state]
-  simpa using congrArg Prod.fst htr
-
-have h_step_j : (D.step P i j j).1 = out₂ := by
-  rw [hsnd_state]
-  simpa using congrArg Prod.snd htr
-```
-
-This is the single most important migration pattern. It also fixes the ARS blocker: `AnyResetSeed` only needs structural/reset fields, so transfer the role/resetcount/leader facts through `hfst_state` and `hsnd_state` instead of projecting `h_fst` directly.
-
-### Acceptable fallback: annotate the projection function
-
-If projection is genuinely convenient, project only after the equality endpoints are visibly `AgentState n`:
-
-```lean
-have hfst_role :
-    (D.step P i j i).1.role =
-      (transitionPEM n Rmax Rmax
-        (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1.role := by
-  exact congrArg (fun s : AgentState n => s.role) hfst_state
-
-have hfst_answer :
-    (D.step P i j i).1.answer =
-      (transitionPEM n Rmax Rmax
-        (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j)).1.answer := by
-  exact congrArg (fun s : AgentState n => s.answer) hfst_state
-```
-
-Avoid `congrArg AgentState.role h_fst` directly. Prefer `congrArg (fun s : AgentState n => s.role) hfst_state`.
+Everything below is therefore phrased as the audit of the **described post-Q46 source state**, with the caveat above.
 
 ---
 
-## 2. Clean hpair_ans strategy for CRS_odd answer correctness
+## 1. StepProofs / step-level blockers
 
-The clean proof should not unfold `transitionPEM` at all. Strengthen or use the trace lemma so that the two output states already carry the answer field:
+### Verdict
 
-```lean
-(h_out1_ans : out₁.answer = opinionToAnswer (D i).2)
-(h_out2_ans : out₂.answer = opinionToAnswer (D i).2)
+Assuming your grep result is from the current local post-Q46 tree, yes:
+
+```text
+PEM_expected_timer_drain
 ```
 
-for initiator-median, and similarly with `(D j).2` for responder-median.
+is the only sorry'd theorem in the StepProofs/time-step layer that still has a live caller.
 
-Then answer correctness follows from exactly two semantic facts:
+The caller you found is the relevant one:
 
-```lean
-have h_maj : majorityAnswer (D.step P i j) = majorityAnswer D := by
-  simpa [P, PEMProtocolCoupled, PEMProtocol] using
-    majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
-      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D i j
-
-have hμ_majority : opinionToAnswer (D i).2 = majorityAnswer D :=
-  opinionToAnswer_median_eq_majorityAnswer_odd hS h_i_med hOdd
+```text
+PEM_expected_median_correct_to_consensus
+  -> PEM_expected_timer_drain
 ```
 
-The local `hpair_ans` proof can then be this shape:
+I would treat this as the only live StepProofs sorry unless another source file outside `Time.lean` imports and explicitly calls it. In the intended post-Q46 dependency graph, the following are dead:
 
-```lean
-have hpair_ans :
-    ∀ w : Fin n,
-      (D.step P i j w).1.role = .Resetting →
-      (D.step P i j w).1.answer = majorityAnswer (D.step P i j) := by
-  intro w hw_res
-  by_cases hwi : w = i
-  · subst hwi
-    rw [h_step_i, h_out1_ans, hμ_majority, h_maj]
-  · by_cases hwj : w = j
-    · subst hwj
-      rw [h_step_j, h_out2_ans, hμ_majority, h_maj]
-    · exfalso
-      have h_post_other : D.step P i j w = D w := by
-        unfold Config.step
-        simp [hij, hwi, hwj]
-      rw [show (D.step P i j w).1 = (D w).1 from
-        congrArg Prod.fst h_post_other] at hw_res
-      rw [hS.allSettled w] at hw_res
-      exact Role.noConfusion hw_res
+```text
+step_InSswap_break_creates_CorrectResetSeed       -- CRS_even / timer=0 even case
+step_InSswap_break_creates_CorrectResetSeed_odd   -- CRS_odd
+step_InSswap_break_creates_AnyResetSeed           -- ARS
 ```
 
-For responder-median, replace the median answer fact with:
+### Why those three become dead
+
+After changing the reset-trigger proof to call:
 
 ```lean
-have hμ_majority : opinionToAnswer (D j).2 = majorityAnswer D :=
-  opinionToAnswer_median_eq_majorityAnswer_odd hS h_j_med hOdd
+crs_of_InSswap_break_with_MedC
 ```
 
-and use `h_out1_ans : out₁.answer = opinionToAnswer (D j).2`, `h_out2_ans : out₂.answer = opinionToAnswer (D j).2`.
-
-### Recommended helper boundary
-
-The best helper is exactly the already-emerging pattern:
+there should be no high-level caller that needs the old parity-specialized break lemmas directly. The wrapper has the right abstraction boundary:
 
 ```lean
-private theorem CRS_from_odd_trace
-    {n Rmax Emax Dmax : ℕ} [Inhabited (Fin n × Fin n)]
-    (hn0 : 0 < n) (hRmax : n ≤ Rmax)
-    {D : Config (AgentState n) Opinion n}
-    (hS : InSswap D)
-    {i j : Fin n} (hij : i ≠ j)
-    (h_i_med : (D i).1.rank.val + 1 = ceilHalf n)
-    (hOdd : n % 2 ≠ 0)
-    {out₁ out₂ : AgentState n}
-    (htr : transitionPEM n Rmax Rmax
-      (rankDeltaOSSR Rmax Emax Dmax hn0) (D i, D j) = (out₁, out₂))
-    (h_out1_role : out₁.role = .Resetting)
-    (h_out1_rc : out₁.resetcount = Rmax)
-    (h_out1_leader : out₁.leader = .L)
-    (h_out1_ans : out₁.answer = opinionToAnswer (D i).2)
-    (h_out2_role : out₂.role = .Resetting)
-    (h_out2_rc : out₂.resetcount = Rmax)
-    (h_out2_ans : out₂.answer = opinionToAnswer (D i).2) :
-    CorrectResetSeed (D.step (PEMProtocolCoupled n Rmax Emax Dmax hn0) i j) := by
-  -- bridge step outputs to out₁/out₂ once;
-  -- prove resetcount/leader/answer obligations by rw;
-  -- all other resetters are impossible because bystanders remain Settled.
-  ...
+crs_of_InSswap_break_with_MedC
+  : InSswap D ->
+    MedianAnswerCorrect D ->
+    ¬ InSswap (D.step P i j) ->
+    CorrectResetSeed (D.step P i j)
 ```
 
-This makes hpair answer correctness a 3-line rewrite in each relevant branch rather than a new `transitionPEM` proof.
+The old theorems become implementation details of the wrapper. If the wrapper is fully proved and does not depend on the sorry versions anymore, then they can be deleted. If the wrapper still internally calls the old theorem names, then the names are not dead implementation-wise; they are just no longer public callers. Your prompt says they have 0 callers, so I am assuming the wrapper has already been refactored away from them or their replacements are separate proved lemmas.
+
+### Timer-drain live edge
+
+The live edge is:
+
+```text
+PEM_expected_median_correct_to_consensus
+  calls PEM_expected_timer_drain
+```
+
+That makes `PEM_expected_timer_drain` live even if every CRS/ARS step theorem is deleted.
 
 ---
 
-## 3. Is there a simpler way than trace lemmas?
+## 2. The five `Time.lean` sorries: callers and dependency DAG
 
-For this code base, no: the trace-lemma approach is the simpler approach. Trying to revive the old proof style with larger limits will remain unstable.
+The five named holes split into two categories:
 
-### Why `split_ifs <;> simp_all` is the wrong unit of proof
+```text
+A. stage-bound theorems
+  PEM_expected_allR_to_consensus
+  PEM_expected_epidemic_to_consensus
+  PEM_expected_anyResetSeed_to_consensus
 
-The unfolded `transitionPEM` contains:
-
-- prePhase4 reset/settled/timer/epidemic logic,
-- phase4 swap,
-- phase4 decide,
-- phase4 propagate,
-- structure updates over many fields,
-- rank/input invariants,
-- parity-dependent median cases.
-
-A single `simp_all` after global `split_ifs` asks Lean to solve all field, rank, parity, and contradiction obligations simultaneously. In v4.30, that is exactly where you see simp-step exhaustion, huge CPU time, or failed `change`.
-
-### Use this reduction sequence instead
-
-At transition-level lemmas, reduce only the outer shell:
-
-```lean
-simp only [transitionPEM] at h ⊢
-rw [transitionPEM_prePhase4_eq_of_settled_distinct hFix hsi hsj hrij] at h ⊢
-unfold transitionPEM_phase4 at h ⊢
-simp only [hsi, hsj, and_self, ite_true] at h ⊢
+B. composition/root theorem and its arithmetic
+  nlinarith arithmetic inside the median-correct or bridge composition
+  PEM_hConsensusBound_from_bridge
 ```
 
-Then use small phase lemmas:
+### Likely live/dead classification
 
-```lean
-have hsw₀ : (phase4_swap s₀ s₁ x₀ x₁).1.role = .Settled := by
-  unfold phase4_swap
-  split_ifs <;> assumption
+In the intended post-Q46 graph:
 
-have hsd₀ :
-    (phase4_decide n (phase4_swap s₀ s₁ x₀ x₁).1
-      (phase4_swap s₀ s₁ x₀ x₁).2 x₀ x₁).1.role = .Settled := by
-  simp only [phase4_decide]
-  split_ifs <;> simp [hsw₀]
+| item | status | reason |
+|---|---:|---|
+| `PEM_expected_allR_to_consensus` | live if `epidemic_to_consensus` or `anyResetSeed_to_consensus` is live | Usually a downstream stage used after reset propagation reaches an all-resetting/recovery state. |
+| `PEM_expected_epidemic_to_consensus` | live | Needed from `CorrectResetSeed`, and `CorrectResetSeed` is still a live endpoint of timer drain / reset trigger. |
+| `PEM_expected_anyResetSeed_to_consensus` | conditional | Live only if the bridge target still has an `AnyResetSeed` disjunct. Dead if the post-Q46 bridge/DecisionProgress predicate has removed ARS. |
+| arithmetic `nlinarith` at line 952 | live if it is inside `PEM_expected_median_correct_to_consensus` or `PEM_hConsensusBound_from_bridge` | It is not a theorem dependency; it is a live proof obligation of its containing theorem. |
+| `PEM_hConsensusBound_from_bridge` | live/root | This is the exported bridge composition theorem. Even with no internal caller, it is the root deliverable of this layer unless superseded. |
+
+### True dependency DAG, assuming ARS is still in the bridge target
+
+If `DecisionProgress` / the bridge target still contains an `AnyResetSeed` branch, the dependency graph is:
+
+```text
+PEM_hConsensusBound_from_bridge
+├─ already-proved bridge/hitting theorem to DecisionProgress
+├─ PEM_expected_median_correct_to_consensus
+│  ├─ PEM_expected_timer_drain                  -- live StepProofs sorry
+│  ├─ PEM_expected_reset_trigger / reset trigger stage
+│  │  └─ crs_of_InSswap_break_with_MedC          -- proved wrapper
+│  ├─ PEM_expected_epidemic_to_consensus         -- Time.lean sorry
+│  │  └─ PEM_expected_allR_to_consensus          -- Time.lean sorry, if epidemic routes via all-R
+│  └─ arithmetic line 952                       -- live if inside this theorem
+├─ PEM_expected_epidemic_to_consensus            -- for direct CRS branch
+│  └─ PEM_expected_allR_to_consensus
+└─ PEM_expected_anyResetSeed_to_consensus        -- only if ARS branch still exists
+   └─ PEM_expected_allR_to_consensus             -- likely route, depending implementation
 ```
 
-At leaf phase proofs, `split_ifs` is fine, but avoid `simp_all`. Use named conditions and targeted simplification:
+In this graph, all five Time.lean holes are live, except that `PEM_expected_allR_to_consensus` is live transitively rather than as a root.
 
-```lean
-simp only [phase4_propagate] at h ⊢
-by_cases hmed₀ : b₀.rank.val + 1 = ceilHalf n
-· simp only [hmed₀, ite_true] at h ⊢
-  by_cases hmax₁ : b₁.rank.val + 1 = n
-  · simp only [hmax₁, ite_true] at h ⊢
-    split_ifs with hg at h ⊢
-    · rcases hg with ⟨htimer, hans⟩
-      -- explicit contradiction or constructor
-      ...
-    · ...
-  · simp only [hmax₁, ite_false] at h ⊢
-    ...
-· simp only [hmed₀, ite_false] at h ⊢
-  ...
+### True dependency DAG, if ARS has been removed from the bridge target
+
+If the bridge target is now CRS-only, with no `AnyResetSeed` disjunct, the graph becomes:
+
+```text
+PEM_hConsensusBound_from_bridge
+├─ already-proved bridge/hitting theorem to DecisionProgress
+├─ PEM_expected_median_correct_to_consensus
+│  ├─ PEM_expected_timer_drain
+│  ├─ PEM_expected_reset_trigger / reset trigger stage
+│  │  └─ crs_of_InSswap_break_with_MedC
+│  ├─ PEM_expected_epidemic_to_consensus
+│  │  └─ PEM_expected_allR_to_consensus
+│  └─ arithmetic line 952
+└─ PEM_expected_epidemic_to_consensus            -- for direct CRS branch, if present
+   └─ PEM_expected_allR_to_consensus
 ```
 
-### Limit bumps are not a real fix
+Then:
 
-`set_option maxHeartbeats` and `set_option maxRecDepth` are useful to unblock isolated old lemmas, but they should not be the main strategy. Increasing simplifier limits only makes the proof less predictable. It also hides the actual boundary you want: one lemma per semantic transition trace.
+```text
+PEM_expected_anyResetSeed_to_consensus
+```
 
-`cbv` in v4.30 is better than before and can sometimes reduce closed computation-like terms, but it is not the right primitive for this blocker because your goals depend on hypotheses controlling conditionals. The trace lemmas plus targeted `rw` are more maintainable.
+is dead code and can be deleted or moved to a separate reset-recovery file as a future optional theorem.
+
+### Recommendation
+
+Run the caller audit on exactly these names in the local tree:
+
+```bash
+rg -n "\bPEM_expected_allR_to_consensus\b" SSExactMajority
+rg -n "\bPEM_expected_epidemic_to_consensus\b" SSExactMajority
+rg -n "\bPEM_expected_anyResetSeed_to_consensus\b" SSExactMajority
+rg -n "\bPEM_expected_timer_drain\b" SSExactMajority
+rg -n "\bPEM_hConsensusBound_from_bridge\b" SSExactMajority
+```
+
+Interpretation rule:
+
+- A theorem with 0 call sites can still be live if it is the public target theorem of the layer.
+- A theorem with only self-reference/declaration occurrences is dead unless imported as a public API target.
+- `PEM_expected_anyResetSeed_to_consensus` is dead exactly when no live predicate has an `AnyResetSeed` branch.
 
 ---
 
-## Blocker-by-blocker audit
+## 3. Can `timer_drain` be restored from original commit `4f9167ea5`?
 
-### A1. `CRS_even` / `step_InSswap_break_creates_CorrectResetSeed`
+### Verdict
 
-Use the same pattern as odd:
+Yes, it should be restorable now that the timer-agnostic wrapper is proved, but do not paste the original proof verbatim. Restore the original deterministic-descent structure and replace the old break-to-CRS call with the wrapper.
 
-1. Handle `i = j` by `simp [Config.step]` and contradiction with `hS'`.
-2. Establish `hsi`, `hsj`, `hrij`, `hFix`, and `h_no_swap`.
-3. Bridge step roles to raw `transitionPEM` roles using `hfst_state`/`hsnd_state`, not projected `congrArg h_fst`.
-4. Use role dichotomy and no-mixed-reset lemmas to show either both outputs are Settled, contradicting broken `InSswap`, or both outputs are Resetting.
-5. Classify the Resetting branch by even median cases and apply an exact trace lemma.
-6. Build `CorrectResetSeed` with a `CRS_from_even_trace`-style helper.
-
-For answer correctness in the even CRS helper, do not unfold. Use:
+The old type mismatch was real:
 
 ```lean
-have hcor : (D μ).1.answer = majorityAnswer D := hM μ hμ_med
-have hmaj : majorityAnswer (D.step P μ v) = majorityAnswer D := by
-  simpa [P, PEMProtocolCoupled, PEMProtocol] using
-    majorityAnswer_step_eq (trank := Rmax) (Rmax := Rmax)
-      (rankDelta := rankDeltaOSSR Rmax Emax Dmax hn0) D μ v
+-- old CRS_even needed timer = 0
+(hT : ∀ μ, median μ -> timer μ = 0)
 
--- then after h_post_μ / h_post_v:
-rw [h_post_μ, h1a, hcor, hmaj]
+-- timer_drain has only timer >= 1
+(hT : MedianTimerAtLeast 1 D)
 ```
 
-### A2. `CRS_odd hpair_ans`
-
-Close it with the `opinionToAnswer_median_eq_majorityAnswer_odd` + `majorityAnswer_step_eq` rewrite shown above. If your current trace lemma only returns structural fields, strengthen it to return the answer fields too. The trace itself determines the answer; the CRS constructor should not have to unfold `transitionPEM` again.
-
-### A3. `ARS`
-
-`AnyResetSeed` should be easier than CRS because it does not need global answer correctness. The only v4.30-specific issue is the step/transition bridge. Use:
+That mismatch disappears if the break branch calls:
 
 ```lean
-have hfst_state : (D.step P i j i).1 = (transitionPEM ... (D i, D j)).1 := by
-  rw [Config.step_fst_state P D hij]
-  change (transitionPEM ... (D i, D j)).1 = (transitionPEM ... (D i, D j)).1
-  rfl
-
-have hsnd_state : (D.step P i j j).1 = (transitionPEM ... (D i, D j)).2 := by
-  rw [Config.step_snd_state P D hij (Ne.symm hij)]
-  change (transitionPEM ... (D i, D j)).2 = (transitionPEM ... (D i, D j)).2
-  rfl
+crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS'
 ```
 
-Then rewrite whole states or explicitly annotated field projections. Do not use `congr_arg (·.role) hfst` on the original `Config.step_fst_state` equality.
-
-### B4/B5. `live_break_CRS` and `timer_drain`
-
-Once CRS_even/CRS_odd are stable, these should be shallow parity dispatches. The `push_neg` migration is important in the timer branch:
+because the wrapper only needs:
 
 ```lean
-push_neg at hNonUpper
--- now: hNonUpper : ∀ v, (D v).1.answer ≠ majorityAnswer D →
---   (D v).1.rank.val + 1 = n / 2 + 1
-
-have hv_upper : (D v).1.rank.val + 1 = n / 2 + 1 :=
-  hNonUpper v hv_wrong
+InSswap D
+MedianAnswerCorrect D
+¬ InSswap (D.step P i j)
 ```
 
-Do not destruct `hNonUpper v` as a disjunction in v4.30.
+### Patch shape inside `hInvStep`
 
-Also update every rank/timer preservation call with explicit interaction indices:
+For the original goal shape:
+
+```lean
+Goal D :=
+  IsConsensusConfig D ∨ CorrectResetSeed D ∨
+    (InSswap D ∧ MedianAnswerCorrect D ∧ ¬ MedianTimerAtLeast 1 D)
+```
+
+use:
+
+```lean
+intro D ⟨hS, hM, hT⟩ hG i j
+by_cases hS' : InSswap (D.step P i j)
+· by_cases hT' : MedianTimerAtLeast 1 (D.step P i j)
+  · by_cases hM' : MedianAnswerCorrect (D.step P i j)
+    · exact Or.inl ⟨hS', hM', hT'⟩
+    · exact absurd (step_median_answer_of_InSswap_both hn0 hn4 hS hS' hM) hM'
+  · have hM' := step_median_answer_of_InSswap_both hn0 hn4 hS hS' hM
+    exact Or.inr (Or.inr (Or.inr ⟨hS', hM', hT'⟩))
+· exact Or.inr (Or.inr (Or.inl
+    (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+For the refined productive endpoint:
+
+```lean
+Goal D :=
+  IsConsensusConfig D ∨ CorrectResetSeed D ∨
+    (InSswap D ∧ MedianAnswerCorrect D ∧ maxMedianTimer D = 0)
+```
+
+then the non-break/no-timer branch needs the local helper:
+
+```lean
+have hmax_zero_of_not_live :
+    ∀ D, InSswap D -> ¬ MedianTimerAtLeast 1 D -> maxMedianTimer D = 0 := ...
+```
+
+and the break branch is still the same wrapper call:
+
+```lean
+exact Or.inr (Or.inr (Or.inl
+  (crs_of_InSswap_break_with_MedC hn4 hn0 hRmax hS hM hS')))
+```
+
+### v4.30 edits still required
+
+The restored proof still needs the v4.30 mechanical fixes:
+
+```lean
+-- old
+exact Nat.zero_le _
+
+-- v4.30-friendly
+exact zero_le
+```
 
 ```lean
 step_rank_preserved_of_InSswap (Rmax := Rmax) (Emax := Emax)
@@ -353,58 +268,145 @@ step_timer_le_of_InSswap (Rmax := Rmax) (Emax := Emax)
   (Dmax := Dmax) (i := i) (j := j) hn0 hS w
 ```
 
-### C6–C9. Time composition proofs
-
-These are independent of the transition blocker. I would isolate them behind small generic lemmas:
-
-- monotonicity of hitting goals,
-- two-stage expected hitting time composition,
-- Strong Markov stage composition with named intermediate predicates,
-- one lemma per stage bound.
-
-Do not mix transition proof repair with Strong Markov algebra. First make the stage lemmas compile; then compose them with a thin arithmetic layer.
-
-### C10. arithmetic inequality
-
-The inequality
-
 ```lean
-7 * (Rmax + 4) * n * (n - 1) + n * (n - 1) + 4 * Rmax * n * n ≤
-  18 * Rmax * n * n
+have hval : (D μ).1.rank.val = ceilHalf n - 1 :=
+  congrArg (fun r : Fin n => r.val) hμ
 ```
 
-is true from `4 ≤ n` and `n ≤ Rmax`. If `nlinarith` is failing on `n - 1`, introduce the predecessor as a named variable and expose `m + 1 = n`:
+Also, if the original proof has a raw projection from `Config.step_fst_state`, prefer a normalized state equality first:
 
 ```lean
-have hR4 : 4 ≤ Rmax := le_trans hn4 hRmax
-set m : ℕ := n - 1 with hmdef
-have hm : m + 1 = n := by
-  dsimp [m]
-  omega
--- Then try the original goal after normalization:
-nlinarith [hn4, hRmax, hR4, hm]
+have hfst_state :
+    (D.step P μ v μ).1 =
+      (transitionPEM n Rmax Rmax
+        (rankDeltaOSSR Rmax Emax Dmax hn0) (D μ, D v)).1 := by
+  rw [Config.step_fst_state P D huv]
+  change
+    (transitionPEM n Rmax Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn0) (D μ, D v)).1 =
+    (transitionPEM n Rmax Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn0) (D μ, D v)).1
+  rfl
 ```
 
-If that still does not close, prove the key middle estimate explicitly:
+Then project from `hfst_state`, not from the raw `h_fst`:
 
 ```lean
-have hkey : 29 * (n - 1) ≤ 7 * Rmax * n := by
-  set m : ℕ := n - 1 with hmdef
-  have hm : m + 1 = n := by dsimp [m]; omega
-  nlinarith [hn4, hRmax, hm]
+rw [show (D.step P μ v μ).1.timer =
+    (transitionPEM n Rmax Rmax
+      (rankDeltaOSSR Rmax Emax Dmax hn0) (D μ, D v)).1.timer from
+  congrArg (fun s : AgentState n => s.timer) hfst_state]
 ```
 
-Then finish by rewriting `7 * (Rmax + 4) + 1` as `7 * Rmax + 29` and using `nlinarith [hkey]`. The important point is to avoid asking `nlinarith` to discover the predecessor relation by itself.
+### Bottom line for timer_drain
+
+Restoring from `4f9167ea5` should be substantially faster than re-proving it, because the main logical blocker was the break-to-CRS theorem interface. The likely remaining proof work is only v4.30 elaboration hygiene and replacing a few broad `simp_all`/raw projection patterns.
 
 ---
 
-## Practical migration checklist
+## 4. Arithmetic / `nlinarith` hole
 
-1. Add local bridge equalities `hfst_state`/`hsnd_state` in every CRS/ARS proof.
-2. Replace projected `congrArg AgentState.role hfst` with `rw [← hfst_state]` or an annotated projection.
-3. Strengthen odd/even trace helpers to include answer fields where CRS needs them.
-4. Replace global `unfold transitionPEM ...; split_ifs <;> simp_all` with a trace lemma call.
-5. Use `simp only` with named hypotheses, never broad `simp_all`, after unfolding only one leaf phase.
-6. Update preservation lemmas with explicit `(i := ...) (j := ...)`.
-7. Replace old `push_neg` disjunction destructs with implication use.
-8. Keep Time.lean composition and arithmetic in separate lemmas so transition repair does not contaminate Strong Markov proofs.
+Target:
+
+```lean
+7 * (Rmax + 4) * n * (n - 1) +
+  n * (n - 1) +
+  4 * Rmax * n * n ≤
+18 * Rmax * n * n
+```
+
+Hypotheses:
+
+```lean
+hn4 : 4 ≤ n
+hRmax : n ≤ Rmax
+```
+
+### Does the simple `set m := n - 1; have hm : m + 1 = n; nlinarith` work?
+
+I cannot run Lean in this environment, so I cannot literally certify the exact tactic script. Mathematically, yes, that is the right normalization. In Lean, the most robust version is to rewrite `n` to `m + 1`, simplify `(m + 1) - 1`, prove the key linearized bound, and then let `nlinarith` finish.
+
+Try this first:
+
+```lean
+by
+  set m : ℕ := n - 1 with hmdef
+  have hm : m + 1 = n := by
+    dsimp [m]
+    omega
+  rw [← hm] at hn4 hRmax ⊢
+  simp only [Nat.add_sub_cancel] at hn4 hRmax ⊢
+  nlinarith [hn4, hRmax]
+```
+
+If that is still too much for `nlinarith`, use the explicit key estimate:
+
+```lean
+by
+  set m : ℕ := n - 1 with hmdef
+  have hm : m + 1 = n := by
+    dsimp [m]
+    omega
+  rw [← hm] at hn4 hRmax ⊢
+  simp only [Nat.add_sub_cancel] at hn4 hRmax ⊢
+  have hkey : 29 * m ≤ 7 * Rmax * (m + 2) := by
+    nlinarith [hn4, hRmax]
+  have hmul : (m + 1) * (29 * m) ≤ (m + 1) * (7 * Rmax * (m + 2)) :=
+    Nat.mul_le_mul_left (m + 1) hkey
+  nlinarith [hmul]
+```
+
+Why this works mathematically:
+
+```text
+7*(R+4)*n*(n-1) + n*(n-1) + 4*R*n*n
+= 7*R*n*(n-1) + 29*n*(n-1) + 4*R*n*n
+```
+
+It is enough to show:
+
+```text
+29*(n-1) ≤ 7*R*(n+1)
+```
+
+because multiplying by `n` gives:
+
+```text
+29*n*(n-1) ≤ 7*R*n*(n+1)
+```
+
+and then:
+
+```text
+7*R*n*(n-1) + 7*R*n*(n+1) + 4*R*n*n
+= 18*R*n*n.
+```
+
+With `m = n - 1`, the key estimate becomes:
+
+```text
+29*m ≤ 7*R*(m+2)
+```
+
+which follows immediately from `4 ≤ m+1` and `m+1 ≤ R`.
+
+### Possible Nat/ring issue
+
+If the final `nlinarith [hmul]` still complains because of `Nat` multiplication normalization, insert one `ring_nf` after the `simp`:
+
+```lean
+  ring_nf at hmul ⊢
+  nlinarith [hmul]
+```
+
+If `ring_nf` refuses because the goal is still over `Nat`, cast the arithmetic lemma to `Int` or prove the bound in `Nat` through the `hkey` multiplication as above. The `m` rewrite is still the right first move; the main problem is avoiding raw `n - 1` in a nonlinear natural-number inequality.
+
+---
+
+## Final actionable summary
+
+1. **Delete the three step-level CRS/ARS theorems only after verifying the pushed tree has no wrapper/internal references.** In the described Q48 state, they are dead.
+2. **Keep and repair `PEM_expected_timer_drain`.** It is live through `PEM_expected_median_correct_to_consensus`.
+3. **For the five Time.lean holes:** `epidemic_to_consensus`, `allR_to_consensus`, the arithmetic obligation, and `PEM_hConsensusBound_from_bridge` are live in the CRS-only chain. `anyResetSeed_to_consensus` is live only if the bridge target still contains an ARS disjunct; otherwise it is dead.
+4. **Restore timer_drain from `4f9167ea5` with wrapper replacement.** The old type mismatch is gone if all break branches call `crs_of_InSswap_break_with_MedC`.
+5. **Use the `m := n - 1` arithmetic normalization.** The two-stage `hkey` proof is the safest Lean 4.30 shape for the line-952 arithmetic sorry.
