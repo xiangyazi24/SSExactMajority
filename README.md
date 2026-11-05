@@ -1,5 +1,7 @@
 # SSExactMajority — Lean 4 Formalization
 
+*Formalized by [Formally Correct](https://formallycorrect.com/work/exact-majority), which formalizes mathematics and theoretical computer science papers in Lean 4.*
+
 A Lean 4 / Mathlib formalization of the population-protocol results in:
 
 > **Time- and Space-Optimal Silent Self-Stabilizing Exact Majority in
